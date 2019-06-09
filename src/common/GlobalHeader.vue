@@ -12,7 +12,10 @@
         <div class="qc-header-unit  qc-header-user">
           <div class="qc-nav-user">
             <div class="qc-user-inner">
-              <span class="qc-user-name" ></span><i class="qc-nav-arrows"></i>
+              <span class="qc-user-name">
+              admin
+              </span>
+              <i class="qc-nav-arrows"></i>
               <div class="qc-user-info qc-user-panel">
                 <div class="qc-user-panel-inner">
                   <a href="javascript:;">退出登录</a>

@@ -17,9 +17,9 @@ export default {
     return {
     }
   },
-  computed : {
-    isLoading() {
-      return this.$route.name === 'Login' ? true : false;
+  computed: {
+    isLoading () {
+      return this.$route.name === 'Login';
     }
   }
 };
