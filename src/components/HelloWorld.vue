@@ -13,8 +13,6 @@ export default {
     };
   },
   beforeCreate () {
-    this.$router.push({name: 'Login'});
-    console.log('创建以前执行');
   }
 };
 </script>
