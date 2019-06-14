@@ -1,7 +1,7 @@
 <template>
   <div class="aside" data-focus="二级带tab">
     <div class="menu">
-      <h2>资源共享</h2>
+      <h2>腾讯云智·天枢平台</h2>
       <dl class="menu-list">
         <dd class="act">
           <a href="javascript:;" class="menu-lv2">
@@ -29,9 +29,10 @@
       </dl>
     </div>
     <a href="javascript:void(0);"
-       title="收起"
+       :title="folding ? '展开' : '收起' "
        class="btn-fold-menu"
-       @click="onClickMenuToggle">收起</a>
+       :class="{retract: folding}"
+       @click="onClickMenuToggle"></a>
   </div>
 </template>
 <script>

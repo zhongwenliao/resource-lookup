@@ -4,14 +4,14 @@
     <div class="qc-header-inner">
       <div class="qc-header-unit qc-header-logo">
         <div class="qc-nav-logo">
-          <a href="##" title="LOGO" class="qc-logo-inner">
+          <a href="javascript:;" title="LOGO" class="qc-logo-inner">
             <img src="@static/img/logo.png">
           </a>
         </div>
       </div>
       <div class="qc-header-unit qc-header-service">
         <div class="qc-nav-overview">
-          <a href="##" class="qc-overview-inner">
+          <a href="javascript:;" class="qc-overview-inner">
             <span class="qc-overview-text">首页</span>
           </a>
         </div>
