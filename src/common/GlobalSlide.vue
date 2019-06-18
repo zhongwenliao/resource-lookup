@@ -1,30 +1,24 @@
 <template>
-  <div class="aside" data-focus="二级带tab">
+  <div class="aside">
     <div class="menu">
       <h2>腾讯云智·天枢平台</h2>
       <dl class="menu-list">
-        <dd class="act">
-          <a href="javascript:;" class="menu-lv2">
-            <span>框架</span>
-            <i class="white-down-icon">收起</i>
+        <dd class="act"
+            v-for="menu in menuList"
+            :key="menu.text">
+          <a href="javascript:;" class="menu-lv2"
+              :class="{act: menu === menuList[0]}">
+            <span>{{ menu.text }}</span>
+            <i v-if="menu.menus" class="white-down-icon">收起</i>
           </a>
           <ul class="menu-sub">
-            <li>
-                <a href="javascript:;" class="menu-lv3"><span>一级</span></a>
-            </li>
-            <li>
-                <a href="javascript:;" class="menu-lv3 act"><span>一级带tab</span></a>
-            </li>
-            <li>
-                <a href="javascript:;" class="menu-lv3"><span>二级</span></a>
+            <li v-for="item in menu.menus"
+                :key="item.text">
+                <a href="javascript:;" class="menu-lv3">
+                  <span>{{ item.text }}</span>
+                </a>
             </li>
           </ul>
-        </dd>
-        <dd>
-          <a href="javascript:;" class="menu-lv2"><span>登录页</span></a>
-        </dd>
-        <dd>
-          <a href="javascript:;" class="menu-lv2"><span>布局</span></a>
         </dd>
       </dl>
     </div>
@@ -42,7 +36,36 @@ export default {
   data () {
     return {
       // 折叠
-      folding: false
+      folding: false,
+      // 菜单列表
+      menuList: [{
+        text: '实时监控'
+      }, {
+        text: '布控策略'
+      }, {
+        text: '检索追溯'
+      }, {
+        text: '数据分析',
+        menus: [{
+          text: '客群分析'
+        }, {
+          text: '用户分析'
+        }]
+      }, {
+        text: '资源管理',
+        menus: [{
+          text: '设备管理'
+        }, {
+          text: '人脸库管理'
+        }]
+      }, {
+        text: '系统管理',
+        menus: [{
+          text: '帐户权限'
+        }, {
+          text: '历史记录'
+        }]
+      }]
     };
   },
   methods: {
