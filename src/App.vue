@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <!-- GlobalHeader头部公共组件 -->
     <GlobalHeader v-if="!isLoading"></GlobalHeader>
     <div v-if="!isLoading" class="container" :style="{ left: folding ? '-201px' : '0px'}">
-      <!-- GlobalSlide侧边公共栏组件 -->
       <GlobalSlide @handMenuToggle="onClickMenuToggle"></GlobalSlide>
-      <router-view/>
+      <div class="main">
+        <router-view/>
+      </div>
     </div>
     <template v-else>
       <router-view/>

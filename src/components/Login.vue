@@ -36,6 +36,7 @@
 <script>
 import CanvasNest from 'canvas-nest.js';
 import { mapActions } from 'vuex';
+
 export default {
   name: 'Login',
   data () {
@@ -70,7 +71,7 @@ export default {
     login () {
       this.postLogin()
         .then(data => {
-          console.log('输出请求返回的数据', data);
+          this.$router.push({name: 'HelloWorld'});
         });
     }
   },
