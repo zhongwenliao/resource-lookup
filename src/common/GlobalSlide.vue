@@ -1,7 +1,7 @@
 <template>
   <div class="aside">
     <div class="menu">
-      <h2>腾讯云智·天枢平台</h2>
+      <h2>资源查询</h2>
       <dl class="menu-list">
         <dd class="act"
             v-for="menu in menuList"
@@ -39,27 +39,40 @@ export default {
       folding: false,
       // 菜单列表
       menuList: [{
-        text: '实时监控'
+        text: '猜你喜欢'
       }, {
-        text: '布控策略'
-      }, {
-        text: '检索追溯'
-      }, {
-        text: '数据分析',
+        text: '音乐资源',
         menus: [{
-          text: '客群分析'
+          text: '歌名'
         }, {
-          text: '用户分析'
+          text: '歌词'
         }]
       }, {
-        text: '资源管理',
+        text: '视频资源',
         menus: [{
-          text: '设备管理'
+          text: '电影'
         }, {
-          text: '人脸库管理'
+          text: '电视剧'
+        }, {
+          text: '综艺'
+        }, {
+          text: '动漫'
+        }, {
+          text: '其他'
         }]
       }, {
-        text: '系统管理',
+        text: '应用资源',
+        menus: [{
+          text: '安卓APP'
+        }, {
+          text: '苹果APP'
+        }, {
+          text: '桌面应用'
+        }, {
+          text: 'MAC专区'
+        }]
+      }, {
+        text: '其他',
         menus: [{
           text: '帐户权限'
         }, {
