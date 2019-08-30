@@ -75,12 +75,12 @@ export default {
         text: '实体经营',
         menus: [{
           text: '手机卡'
-        },{
+        }, {
           text: '信用卡'
-        },{
+        }, {
           text: '贴膜'
         }]
-      },{
+      }, {
         text: '其他',
         menus: [{
           text: '帐户权限'
