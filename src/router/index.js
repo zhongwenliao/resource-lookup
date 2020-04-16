@@ -6,15 +6,15 @@ import Router from 'vue-router';
 Vue.use(Router);
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: () => import(/* webpackCunkName: "HelloWorld" */ '@/components/HelloWorld')
+    routes: [{
+        path: '/',
+        name: 'HelloWorld',
+        component: () =>
+            import ( /* webpackCunkName: "HelloWorld" */ '@/components/HelloWorld')
     }, {
-      path: '/login',
-      name: 'Login',
-      component: () => import(/* webpackCunkName: "Login" */ '@/components/Login')
-    }
-  ]
+        path: '/login',
+        name: 'Login',
+        component: () =>
+            import ( /* webpackCunkName: "Login" */ '@/components/Login')
+    }]
 });

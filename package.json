@@ -17,6 +17,7 @@
     "canvas-nest.js": "^2.0.4",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "prettier": "^1.19.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.1.1"
