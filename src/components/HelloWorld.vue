@@ -1,19 +1,22 @@
 <template>
   <div>
     <h1>欢迎进入新世界</h1>
+    <CheckVue></CheckVue>
   </div>
 </template>
 
 <script>
+import CheckVue from './batch_edit/batchEdit';
+
 export default {
+  components: {
+    CheckVue
+  },
   name: 'HelloWorld',
   data () {
     return {
     };
   },
-  created () {
-    console.log('我在这里打了一个断点');
-  }
 };
 </script>
 
