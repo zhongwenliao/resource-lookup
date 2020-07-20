@@ -14,7 +14,7 @@
           <ul class="menu-sub">
             <li v-for="item in menu.menus"
                 :key="item.text">
-                <a href="javascript:;" class="menu-lv3">
+                <a href="javascript:;" @click="handleGoLink" class="menu-lv3">
                   <span>{{ item.text }}</span>
                 </a>
             </li>
@@ -95,6 +95,9 @@ export default {
     onClickMenuToggle () {
       this.folding = !this.folding;
       this.$emit('handMenuToggle', this.folding);
+    },
+    handleGoLink () {
+
     }
   }
 }

@@ -12,6 +12,10 @@ export default new Router({
     name: 'HelloWorld',
     component: loadingLazy('HelloWorld')
   }, {
+    path: '/Resources',
+    name: 'Resources',
+    component: loadingLazy('Resources/Index')
+  }, {
     path: '/login',
     name: 'Login',
     component: loadingLazy('Login')

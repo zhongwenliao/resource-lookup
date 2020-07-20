@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>欢迎进入新世界</h1>
+    <h1>这里大概是些视频应用的</h1>
   </div>
 </template>
 
