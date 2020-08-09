@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>欢迎进入新世界</h1>
+    <h1>这里写猜你喜欢</h1>
   </div>
 </template>
 

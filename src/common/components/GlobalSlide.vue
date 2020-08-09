@@ -3,19 +3,25 @@
     <div class="menu">
       <h2>资源查询</h2>
       <dl class="menu-list">
-        <dd class="act"
-            v-for="menu in menuList"
-            :key="menu.text">
+        <dd v-for="aslide in aslideConfig"
+            :key="aslide.path">
           <a href="javascript:;" class="menu-lv2"
-              :class="{act: menu === menuList[0]}">
-            <span>{{ menu.text }}</span>
-            <i v-if="menu.menus" class="white-down-icon">收起</i>
+             :class="{'act qc-aside-select': aslide.meta.module === menuList[0]}">
+            <span>{{ aslide.meta.name }}</span>
+            <i v-if="aslide.children"
+               style="line-height: 30px; padding-right: 10px;"
+               class="pull-right"
+               :class="aslide.children ? 'el-icon-arrow-right' : 'el-icon-arrow-down'"
+               title="展开"
+               @click="handleFold"></i>
           </a>
           <ul class="menu-sub">
-            <li v-for="item in menu.menus"
-                :key="item.text">
-                <a href="javascript:;" @click="handleGoLink" class="menu-lv3">
-                  <span>{{ item.text }}</span>
+            <li v-for="sub in aslide.children"
+                :key="sub.path">
+                <a href="javascript:;"
+                   class="menu-lv3"
+                   @click="handleGoLink(sub)">
+                  <span>{{ sub.meta.name }}</span>
                 </a>
             </li>
           </ul>
@@ -30,8 +36,16 @@
   </div>
 </template>
 <script>
+import { getAsideConfig } from '@/router.js';
+
 export default {
   props: {
+  },
+  computed: {
+    // 侧边栏数据
+    aslideConfig() {
+      return getAsideConfig().configAslide
+    }
   },
   data () {
     return {
@@ -90,14 +104,21 @@ export default {
       }]
     };
   },
+  created() {
+    console.log(this.$route.meta);
+  },
   methods: {
     // 点击折叠按钮
     onClickMenuToggle () {
       this.folding = !this.folding;
       this.$emit('handMenuToggle', this.folding);
     },
-    handleGoLink () {
-
+    handleGoLink (i) {
+      this.$router.push({path: i.path});
+      console.log('这里是调整');
+    },
+    handleFold() {
+      console.log('折叠侧边栏');
     }
   }
 }
