@@ -3,17 +3,19 @@
     <div class="menu">
       <h2>资源查询</h2>
       <dl class="menu-list">
-        <dd v-for="aslide in aslideConfig"
-            :key="aslide.path">
-          <a href="javascript:;" class="menu-lv2"
-             :class="{'act qc-aside-select': aslide.meta.module === menuList[0]}">
+        <dd v-for="(aslide, i) in aslideConfig"
+            :key="i"
+            :class="{'act': aslide.active}">
+          <a href="javascript:;"
+             class="menu-lv2"
+             :class="{'act': aslide.active}"
+             @click="handleGoLink(aslide,i)">
             <span>{{ aslide.meta.name }}</span>
             <i v-if="aslide.children"
                style="line-height: 30px; padding-right: 10px;"
                class="pull-right"
-               :class="aslide.children ? 'el-icon-arrow-right' : 'el-icon-arrow-down'"
-               title="展开"
-               @click="handleFold"></i>
+               :class="aslide.children && aslide.active? 'el-icon-arrow-down' : 'el-icon-arrow-right'"
+               title="展开"></i>
           </a>
           <ul class="menu-sub">
             <li v-for="sub in aslide.children"
@@ -42,15 +44,16 @@ export default {
   props: {
   },
   computed: {
-    // 侧边栏数据
-    aslideConfig() {
-      return getAsideConfig().configAslide
-    }
+    // // 侧边栏数据
+    // aslideConfig() {
+    //   return getAsideConfig().configAslide
+    // }
   },
   data () {
     return {
       // 折叠
       folding: false,
+      aslideConfig: [],
       // 菜单列表
       menuList: [{
         text: '猜你喜欢'
@@ -104,8 +107,9 @@ export default {
       }]
     };
   },
-  created() {
-    console.log(this.$route.meta);
+  created () {
+    const { configAslide } = getAsideConfig();
+    this.aslideConfig = { ...configAslide };
   },
   methods: {
     // 点击折叠按钮
@@ -113,12 +117,22 @@ export default {
       this.folding = !this.folding;
       this.$emit('handMenuToggle', this.folding);
     },
-    handleGoLink (i) {
-      this.$router.push({path: i.path});
-      console.log('这里是调整');
-    },
-    handleFold() {
-      console.log('折叠侧边栏');
+    // 跳转链接
+    handleGoLink (v, i) {
+      if (v.children) {
+        if (v['active']) {
+          v.active = false;
+        } else {
+          this.$set(this.aslideConfig[i], 'active', true);
+        }
+      } else {
+        if (v['active']) {
+          v.active = false;
+        } else {
+          this.$set(this.aslideConfig[i], 'active', true);
+        }
+        this.$router.push({path: v.path});
+      }
     }
   }
 }
