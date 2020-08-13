@@ -1,6 +1,7 @@
 # resource-lookup
 
-> 这是一个资源查找项目
+使用vue脚手架搭建的项目
+这是一个资源查找项目
 
 ## Build Setup
 

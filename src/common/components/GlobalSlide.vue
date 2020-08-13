@@ -3,19 +3,27 @@
     <div class="menu">
       <h2>资源查询</h2>
       <dl class="menu-list">
-        <dd class="act"
-            v-for="menu in menuList"
-            :key="menu.text">
-          <a href="javascript:;" class="menu-lv2"
-              :class="{act: menu === menuList[0]}">
-            <span>{{ menu.text }}</span>
-            <i v-if="menu.menus" class="white-down-icon">收起</i>
+        <dd v-for="(aslide, i) in aslideConfig"
+            :key="i"
+            :class="{'act': aslide.active}">
+          <a href="javascript:;"
+             class="menu-lv2"
+             :class="{'act': aslide.active}"
+             @click="handleGoLink(aslide,i)">
+            <span>{{ aslide.meta.name }}</span>
+            <i v-if="aslide.children"
+               style="line-height: 30px; padding-right: 10px;"
+               class="pull-right"
+               :class="aslide.children && aslide.active? 'el-icon-arrow-down' : 'el-icon-arrow-right'"
+               title="展开"></i>
           </a>
           <ul class="menu-sub">
-            <li v-for="item in menu.menus"
-                :key="item.text">
-                <a href="javascript:;" class="menu-lv3">
-                  <span>{{ item.text }}</span>
+            <li v-for="sub in aslide.children"
+                :key="sub.path">
+                <a href="javascript:;"
+                   class="menu-lv3"
+                   @click="handleGoLink(sub)">
+                  <span>{{ sub.meta.name }}</span>
                 </a>
             </li>
           </ul>
@@ -30,13 +38,22 @@
   </div>
 </template>
 <script>
+import { getAsideConfig } from '@/router.js';
+
 export default {
   props: {
+  },
+  computed: {
+    // // 侧边栏数据
+    // aslideConfig() {
+    //   return getAsideConfig().configAslide
+    // }
   },
   data () {
     return {
       // 折叠
       folding: false,
+      aslideConfig: [],
       // 菜单列表
       menuList: [{
         text: '猜你喜欢'
@@ -90,11 +107,32 @@ export default {
       }]
     };
   },
+  created () {
+    const { configAslide } = getAsideConfig();
+    this.aslideConfig = { ...configAslide };
+  },
   methods: {
     // 点击折叠按钮
     onClickMenuToggle () {
       this.folding = !this.folding;
       this.$emit('handMenuToggle', this.folding);
+    },
+    // 跳转链接
+    handleGoLink (v, i) {
+      if (v.children) {
+        if (v['active']) {
+          v.active = false;
+        } else {
+          this.$set(this.aslideConfig[i], 'active', true);
+        }
+      } else {
+        if (v['active']) {
+          v.active = false;
+        } else {
+          this.$set(this.aslideConfig[i], 'active', true);
+        }
+        this.$router.push({path: v.path});
+      }
     }
   }
 }
