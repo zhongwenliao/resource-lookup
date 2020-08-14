@@ -9,7 +9,7 @@
           <a href="javascript:;"
              class="menu-lv2"
              :class="{'act': aslide.active}"
-             @click="handleGoLink(aslide,i)">
+             @click="handleGoLink(aslide, i)">
             <span>{{ aslide.meta.name }}</span>
             <i v-if="aslide.children"
                style="line-height: 30px; padding-right: 10px;"
@@ -18,11 +18,11 @@
                title="展开"></i>
           </a>
           <ul class="menu-sub">
-            <li v-for="sub in aslide.children"
+            <li v-for="(sub,subi) in aslide.children"
                 :key="sub.path">
                 <a href="javascript:;"
                    class="menu-lv3"
-                   @click="handleGoLink(sub)">
+                   @click="handleGoLink(sub, i, subi)">
                   <span>{{ sub.meta.name }}</span>
                 </a>
             </li>
@@ -43,73 +43,17 @@ import { getAsideConfig } from '@/router.js';
 export default {
   props: {
   },
-  computed: {
-    // // 侧边栏数据
-    // aslideConfig() {
-    //   return getAsideConfig().configAslide
-    // }
-  },
   data () {
     return {
       // 折叠
       folding: false,
-      aslideConfig: [],
-      // 菜单列表
-      menuList: [{
-        text: '猜你喜欢'
-      }, {
-        text: '音乐资源',
-        menus: [{
-          text: '歌名'
-        }, {
-          text: '歌词'
-        }]
-      }, {
-        text: '视频资源',
-        menus: [{
-          text: '电影'
-        }, {
-          text: '电视剧'
-        }, {
-          text: '综艺'
-        }, {
-          text: '动漫'
-        }, {
-          text: '其他'
-        }]
-      }, {
-        text: '应用资源',
-        menus: [{
-          text: '安卓APP'
-        }, {
-          text: '苹果APP'
-        }, {
-          text: '桌面应用'
-        }, {
-          text: 'MAC专区'
-        }]
-      }, {
-        text: '实体经营',
-        menus: [{
-          text: '手机卡'
-        }, {
-          text: '信用卡'
-        }, {
-          text: '贴膜'
-        }]
-      }, {
-        text: '其他',
-        menus: [{
-          text: '帐户权限'
-        }, {
-          text: '历史记录'
-        }]
-      }]
+      // 侧边栏数据
+      aslideConfig: []
     };
   },
   created () {
     const { configAslide } = getAsideConfig();
-    this.aslideConfig = { ...configAslide };
+    this.aslideConfig = [ ...configAslide ];
   },
   methods: {
     // 点击折叠按钮
@@ -118,21 +62,17 @@ export default {
       this.$emit('handMenuToggle', this.folding);
     },
     // 跳转链接
-    handleGoLink (v, i) {
-      if (v.children) {
-        if (v['active']) {
-          v.active = false;
-        } else {
-          this.$set(this.aslideConfig[i], 'active', true);
+    handleGoLink (v, i, z) {
+      this.aslideConfig.forEach((e) => {
+        if (e.path === v.path) {
+          if (v.active) {
+            v.active = false;
+          } else {
+            this.$set(this.aslideConfig[i], 'active', true);
+          }
         }
-      } else {
-        if (v['active']) {
-          v.active = false;
-        } else {
-          this.$set(this.aslideConfig[i], 'active', true);
-        }
-        this.$router.push({path: v.path});
-      }
+      });
+      this.$router.push({path: v.path});
     }
   }
 }

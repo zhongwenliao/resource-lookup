@@ -27,7 +27,7 @@ const routeConfig = [{
     name: 'Movie',
     component: loadingLazy('Resources/Index'),
     meta: {
-      name: '电影',
+      name: '电影解析',
       module: 'resourceVideo',
       hideAslide: false
     }
@@ -36,11 +36,39 @@ const routeConfig = [{
     name: 'Variety',
     component: loadingLazy('Resources/Index'),
     meta: {
-      name: '综艺',
+      name: '在线综艺',
       module: 'resourceVideo',
+      hideAslide: false
+    }
+  }]
+}, {
+  path: '/resourceMusic',
+  name: 'ResourceMusic',
+  component: loadingLazy('Resources/Index'),
+  meta: {
+    name: '音乐资源',
+    module: 'resourceMusic',
+    hideAslide: false
+  },
+  children: [{
+    path: 'movie',
+    name: 'Movie',
+    component: loadingLazy('Resources/Index'),
+    meta: {
+      name: '歌名',
+      module: 'resourceMusic',
+      hideAslide: false
+    }
+  }, {
+    path: 'variety',
+    name: 'Variety',
+    component: loadingLazy('Resources/Index'),
+    meta: {
+      name: '歌词',
+      module: 'resourceMusic',
       hideAslide: true
     }
-  } ]
+  }]
 }];
 
 /**
