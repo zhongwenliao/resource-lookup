@@ -9,7 +9,7 @@
           <a href="javascript:;"
              class="menu-lv2"
              :class="{'act': aslide.active}"
-             @click="handleGoLink(aslide, i)">
+             @click="handleGoLink(aslide)">
             <span>{{ aslide.meta.name }}</span>
             <i v-if="aslide.children"
                style="line-height: 30px; padding-right: 10px;"
@@ -18,11 +18,11 @@
                title="展开"></i>
           </a>
           <ul class="menu-sub">
-            <li v-for="(sub,subi) in aslide.children"
+            <li v-for="sub in aslide.children"
                 :key="sub.path">
                 <a href="javascript:;"
                    class="menu-lv3"
-                   @click="handleGoLink(sub, i, subi)">
+                   @click="handleGoLink(sub)">
                   <span>{{ sub.meta.name }}</span>
                 </a>
             </li>
@@ -62,14 +62,12 @@ export default {
       this.$emit('handMenuToggle', this.folding);
     },
     // 跳转链接
-    handleGoLink (v, i, z) {
-      this.aslideConfig.forEach((e) => {
-        if (e.path === v.path) {
-          if (v.active) {
-            v.active = false;
-          } else {
-            this.$set(this.aslideConfig[i], 'active', true);
-          }
+    handleGoLink (v) {
+      this.aslideConfig.forEach(e => {
+        if (e.name === v.name) {
+          this.$set(e, 'active', true);
+        } else {
+          e.active = false;
         }
       });
       this.$router.push({path: v.path});
