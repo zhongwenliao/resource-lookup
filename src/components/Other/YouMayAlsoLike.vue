@@ -3,13 +3,12 @@
       <el-input  v-model="input" placeholder="请输入你需要查找的视频名称">
           <el-button slot="append" @click="handleSearch" icon="el-icon-search">搜索</el-button>
       </el-input>
-      <video id="videoElement"></video>
+      <video id="videoElementRef"></video>
   </div>
 </template>
 
 <script>
-
-import flvjs from 'flv.js';
+import FlvJs from 'flv.js';
 
 export default {
   components: {
@@ -17,28 +16,35 @@ export default {
   name: 'YouMayAlsoLike',
   data () {
     return {
-      input: ''
+      input: '',
+      // flv格式视频播放地址
+      flvUrl: ''
     };
   },
   created () {
-    try {
-      if (flvjs.isSupported()) {
-        let videoElement = document.getElementById('videoElement');
-        let flvPlayer = flvjs.createPlayer({
-          type: 'flv',
-          url: 'http://49.234.78.75:32302/proxy/b2701dce8c3892d5b84dc398dd22938d.flv'
-        });
-        flvPlayer.attachMediaElement(videoElement);
-        flvPlayer.load();
-        flvPlayer.play();
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    this.initPlay();
   },
   methods: {
     handleSearch () {
       console.log('点击搜索');
+    },
+    initPlay () {
+      try {
+        if (FlvJs.isSupported()) {
+          const videoElement = document.getElementById('videoElementRef');
+          const flvPlayer = FlvJs.createPlayer({
+            type: 'flv',
+            url: this.flvUrl
+          }, {
+            
+          });
+          flvPlayer.attachMediaElement(videoElement);
+          flvPlayer.load();
+          flvPlayer.play();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };
