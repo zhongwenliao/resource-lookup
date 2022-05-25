@@ -7,7 +7,7 @@ const loadingLazy = (view) => () => import(/* webpackChunkName: "view-[request]"
 const routeConfig = [{
   path: '/',
   name: 'YouMayAlsoLike',
-  component: loadingLazy('HelloWorld'),
+  component: loadingLazy('Other/YouMayAlsoLike'),
   meta: {
     name: '猜你喜欢',
     module: 'youMayAlsoLike',

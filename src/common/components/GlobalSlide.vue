@@ -18,7 +18,7 @@
                title="展开"></i>
           </a>
           <ul class="menu-sub">
-            <li v-for="(sub,subi) in aslide.children"
+            <li v-for="sub in aslide.children"
                 :key="sub.path">
                 <a href="javascript:;"
                    class="menu-lv3"
@@ -63,11 +63,11 @@ export default {
     },
     // 跳转链接
     handleGoLink (v) {
-      this.aslideConfig.forEach(item => {
-        if (item.name === v.name) {
-          this.$set(item, 'active', true);
+      this.aslideConfig.forEach(e => {
+        if (e.name === v.name) {
+          this.$set(e, 'active', true);
         } else {
-          item.active = false;
+          e.active = false;
         }
       });
     }
