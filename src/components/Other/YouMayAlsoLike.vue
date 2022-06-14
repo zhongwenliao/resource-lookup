@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import FlvJs from 'flv.js';
+// import FlvJs from 'flv.js';
 
 export default {
   components: {
@@ -29,22 +29,21 @@ export default {
       console.log('点击搜索');
     },
     initPlay () {
-      try {
-        if (FlvJs.isSupported()) {
-          const videoElement = document.getElementById('videoElementRef');
-          const flvPlayer = FlvJs.createPlayer({
-            type: 'flv',
-            url: this.flvUrl
-          }, {
-            
-          });
-          flvPlayer.attachMediaElement(videoElement);
-          flvPlayer.load();
-          flvPlayer.play();
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   if (FlvJs.isSupported()) {
+      //     const videoElement = document.getElementById('videoElementRef');
+      //     const flvPlayer = FlvJs.createPlayer({
+      //       type: 'flv',
+      //       url: this.flvUrl
+      //     }, {
+      //     });
+      //     flvPlayer.attachMediaElement(videoElement);
+      //     flvPlayer.load();
+      //     flvPlayer.play();
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     }
   }
 };

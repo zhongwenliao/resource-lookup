@@ -40,6 +40,15 @@ const routeConfig = [{
       module: 'resourceVideo',
       hideAslide: false
     }
+  }, {
+    path: 'panorama',
+    name: 'Panorama',
+    component: loadingLazy('Resources/Panorama'),
+    meta: {
+      name: '360全景图',
+      module: 'resourceVideo',
+      hideAslide: false
+    }
   }]
 }, {
   path: '/resourceMusic',
@@ -51,8 +60,8 @@ const routeConfig = [{
     hideAslide: false
   },
   children: [{
-    path: 'movie',
-    name: 'Movie',
+    path: 'songName',
+    name: 'SongName',
     component: loadingLazy('Resources/Index'),
     meta: {
       name: '歌名',
@@ -60,8 +69,8 @@ const routeConfig = [{
       hideAslide: false
     }
   }, {
-    path: 'variety',
-    name: 'Variety',
+    path: 'songWord',
+    name: 'SongWord',
     component: loadingLazy('Resources/Index'),
     meta: {
       name: '歌词',
@@ -134,6 +143,7 @@ export default function generateRouter (store, callback) {
       routes: config
     });
     callback(router);
+    // 这里做路由守卫，既权限控制
     router.beforeEach((to, from, next) => {
       next();
     });

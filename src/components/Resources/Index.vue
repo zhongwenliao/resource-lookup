@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>这里大概是些视频应用的</h1>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 export default {
   components: {
   },
-  name: 'HelloWorld',
+  name: 'Index',
   data () {
     return {
     };
