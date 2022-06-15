@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>这里实现全景图dome</h1>
+  <!-- <iframe src="http://192.168.1.208:61115" frameborder="0" style="height:80vh; width:100%;"></iframe> -->
+  <div id="pano">
   </div>
 </template>
 
@@ -18,6 +18,11 @@ export default {
   },
   created () {
     this.init();
+  },
+  mounted () {
+    // eslint-disable-next-line no-undef
+    window.embedpano({ xml: '../../../static/vtour/tour.xml', target: 'pano', html5: 'only', mobilescale: 1.0, passQueryParameters: 'startscene,startlookat'});
+    // embedpano({xml: '../../../static/vtour/tour.xml', target:"pano", html5:"only", mobilescale:1.0, passQueryParameters:"startscene,startlookat"});
   },
   methods: {
     init () {
@@ -50,6 +55,9 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style stylt="less" scoped>
+#pano {
+  width:100%;
+  height:100%;
+}
 </style>

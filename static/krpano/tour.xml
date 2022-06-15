@@ -1,0 +1,49 @@
+﻿<krpano>
+	<!-- 预览图设置 -->
+	<preview  url="./image/01.jpg" type="SPHERE" />
+
+	<view hlookat="0" vlookat="0" fovtype="MFOV" fov="100" fovmin="60" fovmax="150" />
+
+
+	<!-- 带有当前拖动热点信息的文本字段 -->
+	<plugin name="hotspot_pos_info"
+	        type="text"
+	        html="拖动热点获取热点坐标信息"
+	        css="font-family:Courier;"
+	        padding="8"
+	        align="lefttop" x="10" y="100"
+	        width="200"
+	        enabled="false"
+	        />
+
+
+	<!-- 拖动热点的动作-在ondown事件中调用它一次 -->
+	<action name="draghotspot">
+		spheretoscreen(ath, atv, hotspotcenterx, hotspotcentery, calc(mouse.stagex LT stagewidth/2 ? 'l' : 'r'));
+		sub(drag_adjustx, mouse.stagex, hotspotcenterx);
+		sub(drag_adjusty, mouse.stagey, hotspotcentery);
+		asyncloop(pressed,
+			sub(dx, mouse.stagex, drag_adjustx);
+			sub(dy, mouse.stagey, drag_adjusty);
+			screentosphere(dx, dy, ath, atv);
+			print_hotspot_pos();
+		  );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+	</action>
+	
+	<!-- 显示热点位置的XML代码 -->
+	<action name="print_hotspot_pos"><![CDATA[
+		copy(print_ath, ath);
+		copy(print_atv, atv);
+		roundval(print_ath, 3);
+		roundval(print_atv, 3);
+		calc(plugin[hotspot_pos_info].html, '&lt;hotspot name="' + name + '"[br]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...[br]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ath="' + print_ath + '"[br]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;atv="' + print_atv + '"[br]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...[br]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&gt;');
+	]]></action>
+
+
+	<!-- 例子的热点地区 
+		ath类似x轴坐标，atv类似y轴坐标
+		0,0 表示位于图正中心
+	-->
+	<hotspot name="图标节点1" url="./icon/hotspot.png" scale="0.5" ath="0" atv="0"  ondown="draghotspot();" />
+
+</krpano>
