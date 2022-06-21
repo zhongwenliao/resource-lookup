@@ -1,0 +1,61 @@
+<krpano version="1.20.7" title="热点上悬浮文字" onstart="loadscene(hongqi);">
+	<scene name="hongqi">
+		<preview url="http://124.71.75.230/hongqi/icon/01.jpg" type="SPHERE" />
+        <view hlookat="0" vlookat="0" hlookatmin="-180" hlookatmax="180" vlookatmin="-90" vlookatmax="90" fovtype="MFOV" fov="90" fovmin="60" fovmax="150" />
+        <hotspot name="hua_he_7_1" url="icon/new_spotd12_gif.png" 
+            ath="99.525"
+            atv="1.793" 
+            scale="0.6" 
+            zoom="true"
+            device_title="华和终端1号"
+            device_type="huahe"
+            onloaded="do_crop_animation();add_all_the_time_tooltip();"
+            onclick="handle_message_info()" />
+	</scene>
+    <!-- 热点动画 -->
+	<action name="do_crop_animation" scope="local">
+		calc(local.xframes, (caller.imagewidth /128) BOR 0);
+		calc(local.frames, xframes * ((caller.imageheight / 128) BOR 0));
+		def(local.frame, integer, 0);
+		calc(caller.crop, '0|0|' + 128 + '|' + 128);
+		setinterval(calc('crop_anim_' + caller.name), 0.03,
+			if(caller.loaded,
+				inc(frame);
+				if(frame GE frames, if(caller.onlastframe !== null, callwith(caller, onlastframe() ) ); set(frame,0); );
+				mod(xpos, frame, xframes);
+				div(ypos, frame, xframes);
+				Math.floor(ypos);
+				mul(xpos, 128);
+				mul(ypos, 128);
+				calc(caller.crop, xpos + '|' + ypos + '|' + 128 + '|' + 128);
+			  ,
+				clearinterval(calc('crop_anim_' + caller.name));
+			);
+		,10);
+	</action>
+    <!-- 热点一直显示文字 -->
+    <action name="add_all_the_time_tooltip">
+        txtadd(tooltipname, 'tooltip_', get(name));
+        addplugin(get(tooltipname)); txtadd(plugin[get(tooltipname)].parent, 'hotspot[',get(name),']');
+        set(plugin[get(tooltipname)].url,'%SWFPATH%/plugins/textfield.swf');
+        set(plugin[get(tooltipname)].align,top);
+        set(plugin[get(tooltipname)].edge,bottom);
+        set(plugin[get(tooltipname)].x,0);
+        set(plugin[get(tooltipname)].y,0);
+        set(plugin[get(tooltipname)].autowidth,true); 
+        set(plugin[get(tooltipname)].autoheight,true);
+        set(plugin[get(tooltipname)].background,false);
+        set(plugin[get(tooltipname)].border,false);
+        set(plugin[get(tooltipname)].css,'text-align:center; color:#FFFFFF; font-family: PingFangSC-Medium,PingFang SC; font-weight:bold; font-size:16px;');
+        set(plugin[get(tooltipname)].textshadow,1);
+        set(plugin[get(tooltipname)].textshadowrange,6.0);
+        set(plugin[get(tooltipname)].textshadowangle,90);
+        copy(plugin[get(tooltipname)].html,hotspot[get(name)].device_title);
+        set(plugin[get(tooltipname)].enabled,false);
+    </action>
+
+    <!-- 把当前热点的ID或name值传到js那边去 -->
+    <action name="handle_message_info">
+        js(handleGetXMLname(get(device_type)));
+    </action>
+</krpano>
