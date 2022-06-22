@@ -15,14 +15,12 @@ export default {
     };
   },
   created () {
-    this.init();
+    // this.init();
   },
   mounted () {
     // eslint-disable-next-line standard/object-curly-even-spacing
-    window.embedpano({ xml: 0, target: 'pano', html5: 'only', mobilescale: 1.0, passQueryParameters: 'startscene,startlookat'});
-    var krpano = document.getElementById('krpanoSWFObject');
-    krpano.call(`loadxml('<krpano><preview url="http://124.71.75.230/hongqi/icon/05.jpg" type="SPHERE" /></krpano>');`);
-    console.log(this.xmlDomData);
+    window.embedpano({ xml: 'http://127.0.0.1:5500/template.xml', target: 'pano', html5: 'only', mobilescale: 1.0, passQueryParameters: 'startscene,startlookat'});
+    window['handleClickHotSpots'] = this.handleClickHotSpots;
   },
   methods: {
     init () {
@@ -32,6 +30,9 @@ export default {
       xmlDom.documentElement.appendChild(child);
       console.log(xmlDom);
       this.xmlDomData = xmlDom;
+    },
+    handleClickHotSpots (deviceType, targetScene) {
+      console.log(deviceType, targetScene);
     }
   }
 };
