@@ -11,7 +11,7 @@ export default {
   name: 'Panorama',
   data () {
     return {
-
+      xmlDomData: ``
     };
   },
   created () {
@@ -19,10 +19,19 @@ export default {
   },
   mounted () {
     // eslint-disable-next-line standard/object-curly-even-spacing
-    window.embedpano({ xml: 'http://124.71.75.230/hongqi/main.xml', target: 'pano', html5: 'only', mobilescale: 1.0, passQueryParameters: 'startscene,startlookat'});
+    window.embedpano({ xml: 0, target: 'pano', html5: 'only', mobilescale: 1.0, passQueryParameters: 'startscene,startlookat'});
+    var krpano = document.getElementById('krpanoSWFObject');
+    krpano.call(`loadxml('<krpano><preview url="http://124.71.75.230/hongqi/icon/05.jpg" type="SPHERE" /></krpano>');`);
+    console.log(this.xmlDomData);
   },
   methods: {
     init () {
+      let xmlDom = document.implementation.createDocument('', 'root', null);
+      // 创建一个子节点
+      let child = xmlDom.createElement('child');
+      xmlDom.documentElement.appendChild(child);
+      console.log(xmlDom);
+      this.xmlDomData = xmlDom;
     }
   }
 };
