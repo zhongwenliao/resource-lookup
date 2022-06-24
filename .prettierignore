@@ -1,0 +1,3 @@
+# public文件夹下有压缩文件，无需格式化处理
+/public
+dist

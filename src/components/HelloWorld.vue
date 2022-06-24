@@ -5,19 +5,14 @@
 </template>
 
 <script>
-
 export default {
-  components: {
-  },
+  components: {},
   name: 'HelloWorld',
-  data () {
-    return {
-    };
+  data() {
+    return {}
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>
+<style scoped></style>

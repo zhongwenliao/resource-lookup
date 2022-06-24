@@ -4,13 +4,11 @@ export default {
     userName: 'superAdmin',
     passWord: 'adminsuper'
   },
-  getters: {
-  },
-  mutations: {
-  },
+  getters: {},
+  mutations: {},
   actions: {
-    postLogin ({ state, comments }, payload) {
-      return '{userName: "admin", passWord: "admin123"}';
+    postLogin({ state, comments }, payload) {
+      return '{userName: "admin", passWord: "admin123"}'
     }
   }
-};
+}

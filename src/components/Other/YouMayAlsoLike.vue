@@ -1,9 +1,9 @@
 <template>
   <div>
-      <el-input  v-model="input" placeholder="请输入你需要查找的视频名称">
-          <el-button slot="append" @click="handleSearch" icon="el-icon-search">搜索</el-button>
-      </el-input>
-      <video id="videoElementRef"></video>
+    <el-input v-model="input" placeholder="请输入你需要查找的视频名称">
+      <el-button slot="append" @click="handleSearch" icon="el-icon-search">搜索</el-button>
+    </el-input>
+    <video id="videoElementRef"></video>
   </div>
 </template>
 
@@ -11,24 +11,23 @@
 // import FlvJs from 'flv.js';
 
 export default {
-  components: {
-  },
+  components: {},
   name: 'YouMayAlsoLike',
-  data () {
+  data() {
     return {
       input: '',
       // flv格式视频播放地址
       flvUrl: ''
-    };
+    }
   },
-  created () {
-    this.initPlay();
+  created() {
+    this.initPlay()
   },
   methods: {
-    handleSearch () {
-      console.log('点击搜索');
+    handleSearch() {
+      console.log('点击搜索')
     },
-    initPlay () {
+    initPlay() {
       // try {
       //   if (FlvJs.isSupported()) {
       //     const videoElement = document.getElementById('videoElementRef');
@@ -46,10 +45,8 @@ export default {
       // }
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>
+<style scoped></style>

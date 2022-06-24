@@ -1,8 +1,8 @@
 <template>
-    <div :class="className">
-        <h2>{{ title }}</h2>
-        <slot></slot>
-    </div>
+  <div :class="className">
+    <h2>{{ title }}</h2>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -18,8 +18,6 @@ export default {
       default: 'manage-area-title'
     }
   },
-  methods: {
-
-  }
+  methods: {}
 }
 </script>

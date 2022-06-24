@@ -7,20 +7,13 @@
 <script>
 export default {
   name: 'v-pagination',
-  data () {
-    return {
-    };
+  data() {
+    return {}
   },
-  beforeCreate () {
-  },
-  created () {
-  },
-  beforeUpdate () {
-
-  }
-};
+  beforeCreate() {},
+  created() {},
+  beforeUpdate() {}
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
