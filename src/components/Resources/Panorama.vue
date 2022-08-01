@@ -6,17 +6,17 @@
 export default {
   components: {},
   name: 'Panorama',
-  data () {
+  data() {
     return {
       xmlDomData: `<krpano version="1.20.7" onstart="loadscene(scene_hongqi);">
 <scene name="scene_hongqi">
-<preview url="http://127.0.0.1:5500/img/01.jpg" type="SPHERE"/>
+<preview url="http://124.71.75.230/hongqi/icon/01.jpg" type="SPHERE"/>
 <view hlookat="0" vlookat="0" hlookatmin="-180" hlookatmax="180" vlookatmin="-90" vlookatmax="90" fovtype="MFOV" fovmin="60" fovmax="150" fov="90"/>
-<hotspot name="spot_scene" url="http://127.0.0.1:5500/icon/hotspot.png" ath="0" atv="0" scale="0.6" zoom="true" device_type="" device_title="" target_scene="scene_hongqi_1" onloaded="hotspot_do_animation();hotspot_show_title();" onclick="hotspot_click();"/>
-<hotspot name="spot_device" url="http://127.0.0.1:5500/icon/new_spotd12_gif.png" ath="90" atv="0" scale="0.6" zoom="true" device_type="dahua" device_title="大华设备" target_scene="" onloaded="hotspot_do_animation();hotspot_show_title();" onclick="hotspot_click();"/>
+<hotspot name="spot_scene" url="http://124.71.75.230/hongqi/icon/new_spotd1_gif.png" ath="0" atv="0" scale="0.6" zoom="true" device_type="" device_title="" target_scene="scene_hongqi_1" onloaded="hotspot_do_animation();hotspot_show_title();" onclick="hotspot_click();"/>
+<hotspot name="spot_device" url="http://124.71.75.230/hongqi/icon/new_spotd12_gif.png" ath="90" atv="0" scale="0.6" zoom="true" device_type="dahua" device_title="大华设备" target_scene="" onloaded="hotspot_do_animation();hotspot_show_title();" onclick="hotspot_click();"/>
 </scene>
 <scene name="scene_hongqi_1">
-<preview url="http://127.0.0.1:5500/img/02.jpg" type="SPHERE"/>
+<preview url="http://124.71.75.230/hongqi/icon/01.jpg" type="SPHERE"/>
 <view hlookat="0" vlookat="0" hlookatmin="-180" hlookatmax="180" vlookatmin="-90" vlookatmax="90" fovtype="MFOV" fovmin="60" fovmax="150" fov="90"/>
 </scene>
 <!--  热点增加动画  -->
@@ -31,15 +31,15 @@ export default {
       krpanoDom: null
     }
   },
-  beforeCreate () {},
-  created () {
+  beforeCreate() {},
+  created() {
     this.init()
   },
-  beforeMount () {
+  beforeMount() {
     window['initKrpanoReady'] = this.initKrpanoReady
     window['handleClickHotSpots'] = this.handleClickHotSpots
   },
-  mounted () {
+  mounted() {
     // eslint-disable-next-line standard/object-curly-even-spacing
     window.embedpano({
       xml: 0,
@@ -51,23 +51,10 @@ export default {
     })
   },
   methods: {
-    init () {
-      // var xmlDoc = this.loadXMLString(`${this.xmlDomData})`)
-      // let sceneList = xmlDoc.getElementsByTagName('scene')
-      // var newNode = xmlDoc.createElement('hotspot5')
-      // newNode.setAttribute('name', '10086')
-      // for (const key in sceneList) {
-      //   if (Object.hasOwnProperty.call(sceneList, key)) {
-      //     const element = sceneList[key];
-      //     if (element.attributes.name.nodeValue === 'scene_hongqi') {
-      //       element.appendChild(newNode)
-      //     }
-      //   }
-      // }
-      // console.log(xmlDoc)
+    init() {
       this.handleXMLElementDom(this.xmlDomData, 'scene_hongqi', 'hotspot', [{ name: '10086', title: '设备传感器' }])
     },
-    handleXMLElementDom (XMLdata, targetName, createLabel, labelAttribute) {
+    handleXMLElementDom(XMLdata, targetName, createLabel, labelAttribute) {
       try {
         let xmlDoc = this.loadXMLString(`${XMLdata})`)
         let createNode = xmlDoc.createElement(createLabel)
@@ -90,11 +77,11 @@ export default {
         }
         console.log(xmlDoc)
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     // 操作xml
-    loadXMLString (txt) {
+    loadXMLString(txt) {
       let xmlDoc
       if (window.DOMParser) {
         let parser = new DOMParser()
@@ -107,11 +94,11 @@ export default {
       return xmlDoc
     },
     // krpano对象初始化完成后调用
-    initKrpanoReady () {
+    initKrpanoReady() {
       this.krpanoDom = document.getElementById('krpanoSWFObject')
       this.krpanoDom.call(`loadxml(${this.xmlDomData})`)
     },
-    handleClickHotSpots (deviceType, targetScene) {
+    handleClickHotSpots(deviceType, targetScene) {
       if (deviceType) {
         console.log('这里做弹框操作')
       } else {
