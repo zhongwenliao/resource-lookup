@@ -39,7 +39,7 @@ export default {
         this.$nextTick(() => {
           this.onLoad(
             data.map(i => ({
-              count: Math.floor(Math.random() * 100 + 10),
+              count: i+1,
               lat: i.gpsLat,
               lng: i.gpsLng
             }))
@@ -64,14 +64,7 @@ export default {
         // 缓冲半径。
         radius: 30,
         // 颜色梯度变化
-        gradient: {
-          0: '#282323',
-          0.25: 'rgb(0,0,0)',
-          0.45: 'rgb(0,0,255)',
-          0.65: 'rgb(250,120,10)',
-          0.85: 'rgb(255,255,0)',
-          1.0: 'rgb(217,33,13)'
-        },
+        gradient: { 0.25: '#A8B8E2', 0.55: 'rgb(0,255,0)', 0.85: 'yellow', 1.0: 'rgb(255,0,0)' },
         // 透明度
         opacity: 0.6,
         maxOpacity: 1,
@@ -79,9 +72,10 @@ export default {
         renderer: 'canvas2d'
       })
       this.map.addOverLay(this.heatmapOverlay)
+      console.log(hotMapData);
       this.heatmapOverlay.setDataSet({
         data: hotMapData,
-        max: 100
+        max: 300
       })
     },
     openHeatmap() {
