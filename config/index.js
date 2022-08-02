@@ -3,13 +3,25 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const resolve = dir => path.resolve(__dirname, dir)
 
 module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/': {
+        target: 'http://113.108.88.200:81/', // 请求本地 需要jeecg-boot后台项目
+        ws: false,
+        changeOrigin: true
+      },
+      '/jeecg-boot': {
+        target: 'http://113.108.88.200:81/', // 请求本地 需要jeecg-boot后台项目
+        ws: false,
+        changeOrigin: true
+      }
+    },
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
@@ -70,5 +82,11 @@ module.exports = {
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report
+  },
+  resolve: {
+    // 设置别名
+    alias: {
+      '@': resolve('src') // 这样配置后 @ 可以指向 src 目录
+    }
   }
 }

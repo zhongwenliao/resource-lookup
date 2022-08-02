@@ -15,33 +15,44 @@
 </template>
 <script>
 import Heatmap from 'heatmap.js'
+import request from '@/common/utils/request'
 
 export default {
   data() {
     return {
-      geoCoordMap: {
-        深圳: [114.06667, 22.61667]
-      },
-      data: [{ name: '深圳', value: 20 }],
+      hotMap: [],
       map: null,
       heatmapOverlay: null
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.onLoad()
-    })
-    //  this.initHotMap()
+  computed: {},
+  created() {
+    this.init()
   },
   methods: {
-    onLoad() {
+    init() {
+      request({
+        url: '/monitorManagement/monitorPointManagement/list-by-common-parameter',
+        method: 'GET'
+      }).then(data => {
+        this.hotMap = data
+        this.$nextTick(() => {
+          this.onLoad(
+            data.map(i => ({
+              count: Math.floor(Math.random() * 100 + 10),
+              lat: i.gpsLat,
+              lng: i.gpsLng
+            }))
+          )
+        })
+      })
+    },
+    onLoad(hotMapData) {
       // 创建地图实例
       this.map = new T.Map('map')
       // 地图初始化，第一个参数是经纬度坐标，第二个参数是地图级别
       this.map.centerAndZoom(new T.LngLat(114.06667, 22.61667), 12)
 
-      // 热力数据
-      var points = this.convertData()
       // 热力图初始化
       this.heatmapOverlay = new T.HeatmapOverlay({
         // 纬度字段名称。
@@ -53,12 +64,25 @@ export default {
         // 缓冲半径。
         radius: 30,
         // 颜色梯度变化
-        gradient: { 0.25: 'rgb(0,0,255)', 0.55: 'rgb(0,255,0)', 0.85: 'yellow', 1.0: 'rgb(255,0,0)' },
+        gradient: {
+          0: '#282323',
+          0.25: 'rgb(0,0,0)',
+          0.45: 'rgb(0,0,255)',
+          0.65: 'rgb(250,120,10)',
+          0.85: 'rgb(255,255,0)',
+          1.0: 'rgb(217,33,13)'
+        },
         // 透明度
-        opacity: 0.6
+        opacity: 0.6,
+        maxOpacity: 1,
+        minOpacity: 0,
+        renderer: 'canvas2d'
       })
       this.map.addOverLay(this.heatmapOverlay)
-      this.heatmapOverlay.setDataSet({ data: points, max: 30 })
+      this.heatmapOverlay.setDataSet({
+        data: hotMapData,
+        max: 100
+      })
     },
     openHeatmap() {
       console.log('显示热力图')
@@ -68,23 +92,7 @@ export default {
       console.log('关闭热力图')
       this.heatmapOverlay.hide()
     },
-    // 热点数据
-    convertData() {
-      var res = []
-      for (var i = 0; i < this.data.length; i++) {
-        var geoCoord = this.geoCoordMap[this.data[i].name]
-        if (geoCoord) {
-          res.push({
-            name: this.data[i].name,
-            lat: geoCoord[1],
-            lng: geoCoord[0],
-            count: this.data[i].value
-          })
-        }
-      }
-      console.log(res)
-      return res
-    },
+
     // 这个写法是直接展示热力图
     initHotMap() {
       // 创建一个heatmap实例对象
