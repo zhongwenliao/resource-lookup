@@ -14,6 +14,7 @@
     "canvas-nest.js": "^2.0.4",
     "element-ui": "^2.13.1",
     "flv.js": "^1.5.0",
+    "heatmap.js": "^2.0.5",
     "jshint": "^2.12.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",

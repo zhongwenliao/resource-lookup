@@ -54,6 +54,16 @@ const routeConfig = [
           module: 'resourceVideo',
           hideAslide: false
         }
+      },
+      {
+        path: 'heatMap',
+        name: 'HeatMap',
+        component: loadingLazy('Resources/HeatMap'),
+        meta: {
+          name: '热力图',
+          module: 'resourceVideo',
+          hideAslide: false
+        }
       }
     ]
   },
