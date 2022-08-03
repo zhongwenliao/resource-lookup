@@ -1,4 +1,4 @@
 window.GLOBAL_CONFIG = {
-  userName: "",
-  passWord: ""
-};
+  userName: '',
+  passWord: ''
+}
