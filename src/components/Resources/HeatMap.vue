@@ -8,7 +8,6 @@
   </div>
 </template>
 <script>
-import Heatmap from 'heatmap.js'
 import request from '@/common/utils/request'
 
 export default {
@@ -16,7 +15,8 @@ export default {
     return {
       hotMap: [],
       map: null,
-      heatmapOverlay: null
+      heatmapOverlay: null,
+      marker: null
     }
   },
   computed: {},
@@ -33,9 +33,9 @@ export default {
         this.$nextTick(() => {
           this.onLoad(
             data.map(i => ({
-              count: i + 1,
-              lat: i.gpsLat,
-              lng: i.gpsLng
+              count: Math.floor(Math.random() * 50) + 1,
+              lng: i.gpsLng,
+              lat: i.gpsLat
             }))
           )
         })
@@ -69,11 +69,19 @@ export default {
         blur: 0.85
       })
       this.map.addOverLay(this.heatmapOverlay)
-      console.log(hotMapData)
       this.heatmapOverlay.setDataSet({
         data: hotMapData,
-        max: 300
+        max: 50
       })
+
+      // 创建标注
+      for (var i = 0; i < hotMapData.length; i++) {
+        var label = new T.Label({
+          text: String(hotMapData[i].count),
+          position: new T.LngLat(hotMapData[i].lng, hotMapData[i].lat)
+        })
+        this.map.addOverLay(label)
+      }
     },
     openHeatmap() {
       console.log('显示热力图')
@@ -90,7 +98,7 @@ export default {
 <style lang="less">
 #map {
   width: 100%;
-  height: 80vh;
+  height: 82vh;
   background-color: antiquewhite;
 }
 </style>
