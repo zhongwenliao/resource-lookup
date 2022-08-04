@@ -1,6 +1,50 @@
 <template>
   <div>
     <div id="map"></div>
+    <div
+      id="heatmap_mark"
+      style="color: rgba(0, 0, 0, 0.8); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(73, 73, 72, 0.6); width: 428px; height: 81.2188px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 14px; float: none; inset: 679.781px 0px 0px 596px; display: block; border: 0px none rgba(0, 0, 0, 0.8); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 10px; text-decoration: none solid rgba(0, 0, 0, 0.8); list-style: outside none disc; text-align: left;"
+    >
+      <div
+        style="color: rgba(0, 0, 0, 0.8); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 400px; height: 19.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: block; border: 0px none rgba(0, 0, 0, 0.8); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgba(0, 0, 0, 0.8); list-style: outside none disc; text-align: left;"
+      >
+        <span
+          class="heatmap_mark_title"
+          style="color: rgb(255, 255, 255); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: auto; height: auto; font-size: 16px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline; border: 0px none rgb(255, 255, 255); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(255, 255, 255); list-style: outside none disc; text-align: left;"
+          >颜色对应温度密度</span
+        >
+        
+      </div>
+      <div
+        class="linear_color"
+        style="color: rgba(0, 0, 0, 0.8); background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.1), rgb(0, 0, 255), rgb(0, 255, 0), rgb(255, 255, 0), rgb(255, 0, 0), rgb(255, 0, 0)) 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 400px; height: 5px; font-size: 14px; line-height: 18.62px; margin: 10px 0px 0px; padding: 0px; position: static; float: none; inset: auto; display: block; border: 0px none rgba(0, 0, 0, 0.8); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 2px; text-decoration: none solid rgba(0, 0, 0, 0.8); list-style: outside none disc; text-align: left;"
+      ></div>
+      <span
+        class="heatmap_blue heatmap_mark_text heatmap_color_span"
+        style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
+        >0-10°C</span
+      >
+      <span
+        class="heatmap_green heatmap_mark_text heatmap_color_span"
+        style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
+        >10-20°C</span
+      >
+      <span
+        class="heatmap_yellow heatmap_mark_text heatmap_color_span"
+        style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
+        >20-30°C</span
+      >
+      <span
+        class="heatmap_red heatmap_mark_text heatmap_color_span"
+        style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
+        >30-40°C</span
+      >
+      <span
+        class="heatmap_result_red heatmap_mark_text heatmap_color_span"
+        style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
+        >>50°C</span
+      >
+    </div>
     <div>
       <input type="button" @click="openHeatmap" value="显示热力图" />
       <input type="button" @click="closeHeatmap" value="关闭热力图" />
@@ -33,7 +77,7 @@ export default {
         this.$nextTick(() => {
           this.onLoad(
             data.map(i => ({
-              count: Math.floor(Math.random() * 50) + 1,
+              count: Math.floor(Math.random() * 50),
               lng: i.gpsLng,
               lat: i.gpsLat
             }))
@@ -73,13 +117,14 @@ export default {
         data: hotMapData,
         max: 50
       })
-
       // 创建标注
       for (var i = 0; i < hotMapData.length; i++) {
         var label = new T.Label({
           text: String(hotMapData[i].count),
-          position: new T.LngLat(hotMapData[i].lng, hotMapData[i].lat)
+          position: new T.LngLat(hotMapData[i].lng, hotMapData[i].lat),
+          offset: new T.Point(0, 0)
         })
+        label.setZindex(1)
         this.map.addOverLay(label)
       }
     },
@@ -98,7 +143,7 @@ export default {
 <style lang="less">
 #map {
   width: 100%;
-  height: 82vh;
+  height: 72vh;
   background-color: antiquewhite;
 }
 </style>
