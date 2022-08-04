@@ -13,7 +13,6 @@
           style="color: rgb(255, 255, 255); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: auto; height: auto; font-size: 16px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline; border: 0px none rgb(255, 255, 255); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(255, 255, 255); list-style: outside none disc; text-align: left;"
           >颜色对应温度密度</span
         >
-        
       </div>
       <div
         class="linear_color"
@@ -48,12 +47,13 @@
     <div>
       <input type="button" @click="openHeatmap" value="显示热力图" />
       <input type="button" @click="closeHeatmap" value="关闭热力图" />
+      <input type="button" @click="changeHeatmap" value="停止自动切换" />
     </div>
   </div>
 </template>
 <script>
 import request from '@/common/utils/request'
-
+let tempHotmap = null
 export default {
   data() {
     return {
@@ -75,22 +75,35 @@ export default {
       }).then(data => {
         this.hotMap = data
         this.$nextTick(() => {
-          this.onLoad(
-            data.map(i => ({
-              count: Math.floor(Math.random() * 50),
-              lng: i.gpsLng,
-              lat: i.gpsLat
-            }))
-          )
+          this.onLoad()
+          tempHotmap = setInterval(() => {
+            this.initMapInfo(
+              this.hotMap.map(i => ({
+                count: Math.floor(Math.random() * 50),
+                lng: i.gpsLng,
+                lat: i.gpsLat
+              }))
+            )
+          }, 3000)
         })
       })
     },
-    onLoad(hotMapData) {
+    onLoad() {
       // 创建地图实例
       this.map = new T.Map('map')
       // 地图初始化，第一个参数是经纬度坐标，第二个参数是地图级别
       this.map.centerAndZoom(new T.LngLat(114.06667, 22.61667), 12)
-
+    },
+    openHeatmap() {
+      console.log('显示热力图')
+      this.heatmapOverlay.show()
+    },
+    closeHeatmap() {
+      console.log('关闭热力图')
+      this.heatmapOverlay.hide()
+    },
+    initMapInfo() {
+      this.map.clearOverLays()
       // 热力图初始化
       this.heatmapOverlay = new T.HeatmapOverlay({
         backgroundColor: '',
@@ -117,24 +130,9 @@ export default {
         data: hotMapData,
         max: 50
       })
-      // 创建标注
-      for (var i = 0; i < hotMapData.length; i++) {
-        var label = new T.Label({
-          text: String(hotMapData[i].count),
-          position: new T.LngLat(hotMapData[i].lng, hotMapData[i].lat),
-          offset: new T.Point(0, 0)
-        })
-        label.setZindex(1)
-        this.map.addOverLay(label)
-      }
     },
-    openHeatmap() {
-      console.log('显示热力图')
-      this.heatmapOverlay.show()
-    },
-    closeHeatmap() {
-      console.log('关闭热力图')
-      this.heatmapOverlay.hide()
+    changeHeatmap() {
+      clearInterval(tempHotmap)
     }
   }
 }
