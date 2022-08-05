@@ -11,8 +11,11 @@
         <span
           class="heatmap_mark_title"
           style="color: rgb(255, 255, 255); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: auto; height: auto; font-size: 16px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline; border: 0px none rgb(255, 255, 255); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(255, 255, 255); list-style: outside none disc; text-align: left;"
-          >颜色对应温度密度</span
+          >颜色对应温度</span
         >
+        <span style="display: inline-block;float: right;font-size: 16px;">
+          温度最近采集实况: {{gettime}}
+        </span>
       </div>
       <div
         class="linear_color"
@@ -36,18 +39,18 @@
       <span
         class="heatmap_red heatmap_mark_text heatmap_color_span"
         style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
-        >30-40°C</span
+        >30-35°C</span
       >
       <span
         class="heatmap_result_red heatmap_mark_text heatmap_color_span"
         style="color: rgb(223, 223, 223); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: 70px; height: 18.6094px; font-size: 14px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline-block; border: 0px none rgb(223, 223, 223); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(223, 223, 223); list-style: outside none disc; text-align: center;"
-        >>50°C</span
+        >>40°C</span
       >
     </div>
     <div>
       <input type="button" @click="openHeatmap" value="显示热力图" />
       <input type="button" @click="closeHeatmap" value="关闭热力图" />
-      <input type="button" @click="changeHeatmap" value="停止自动切换" />
+      <input type="button" @click="changeHeatmap" value="停止获取最新数据" />
     </div>
   </div>
 </template>
@@ -60,11 +63,13 @@ export default {
       hotMap: [],
       map: null,
       heatmapOverlay: null,
-      marker: null
+      marker: null,
+      gettime:''
     }
   },
   computed: {},
   created() {
+          // this.currentTime();
     this.init()
   },
   methods: {
@@ -77,9 +82,10 @@ export default {
         this.$nextTick(() => {
           this.onLoad()
           tempHotmap = setInterval(() => {
+            this.getTime()
             this.initMapInfo(
               this.hotMap.map(i => ({
-                count: Math.floor(Math.random() * 50),
+                count: Math.floor(Math.random() * 40),
                 lng: i.gpsLng,
                 lat: i.gpsLat
               }))
@@ -128,12 +134,38 @@ export default {
       this.map.addOverLay(this.heatmapOverlay)
       this.heatmapOverlay.setDataSet({
         data: hotMapData,
-        max: 50
+        max: 40
       })
     },
     changeHeatmap() {
       clearInterval(tempHotmap)
-    }
+    },
+    getTime () {
+      var _this = this;
+      let yy = new Date().getFullYear();
+      var mm =
+        new Date().getMonth() < 10
+          ? "0" + (new Date().getMonth() + 1)
+          : new Date().getMonth() + 1;
+      var dd =
+        new Date().getDate() < 10
+          ? "0" + new Date().getDate()
+          : new Date().getDate();
+      let hh = new Date().getHours();
+      let mf =
+        new Date().getMinutes() < 10
+          ? "0" + new Date().getMinutes()
+          : new Date().getMinutes();
+      let ss =
+        new Date().getSeconds() < 10
+          ? "0" + new Date().getSeconds()
+          : new Date().getSeconds();
+      _this.gettime = yy + "-" + mm + "-" + dd + " " + hh + ":" + mf + ":" + ss;
+    },
+    currentTime() {
+      setInterval(this.getTime, 3000);
+    },
+
   }
 }
 </script>

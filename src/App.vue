@@ -5,7 +5,7 @@
       <GlobalSlide @handMenuToggle="onClickMenuToggle"></GlobalSlide>
       <div class="main">
         <div class="manage-area">
-          <MainHead :title="routerInfo.meta.name" className="manage-area-title"></MainHead>
+          <MainHead :title="routerInfo.meta.title" className="manage-area-title"></MainHead>
           <div class="manage-area-main">
             <router-view />
           </div>

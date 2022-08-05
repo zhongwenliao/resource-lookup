@@ -12,12 +12,12 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/': {
-        target: 'http://113.108.88.200:81/', // 请求本地 需要jeecg-boot后台项目
+        target: 'http://192.168.1.200/', // 请求本地 需要jeecg-boot后台项目
         ws: false,
         changeOrigin: true
       },
       '/jeecg-boot': {
-        target: 'http://113.108.88.200:81/', // 请求本地 需要jeecg-boot后台项目
+        target: 'http://192.168.1.200/', // 请求本地 需要jeecg-boot后台项目
         ws: false,
         changeOrigin: true
       }

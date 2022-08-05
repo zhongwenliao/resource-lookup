@@ -11,6 +11,7 @@ const routeConfig = [
     component: loadingLazy('Other/YouMayAlsoLike'),
     meta: {
       name: '猜你喜欢',
+      title: '猜你喜欢',
       module: 'youMayAlsoLike',
       hideAslide: false
     }
@@ -21,6 +22,7 @@ const routeConfig = [
     component: loadingLazy('Resources/Index'),
     meta: {
       name: '视频资源',
+      title: '视频资源',
       module: 'resourceVideo',
       hideAslide: false
     },
@@ -31,6 +33,7 @@ const routeConfig = [
         component: loadingLazy('Resources/Index'),
         meta: {
           name: '电影解析',
+          title: '电影解析',
           module: 'resourceVideo',
           hideAslide: false
         }
@@ -41,6 +44,7 @@ const routeConfig = [
         component: loadingLazy('Resources/Index'),
         meta: {
           name: '在线综艺',
+          title: '在线综艺',
           module: 'resourceVideo',
           hideAslide: false
         }
@@ -51,6 +55,7 @@ const routeConfig = [
         component: loadingLazy('Resources/Panorama'),
         meta: {
           name: '360全景图',
+          title: '360全景图',
           module: 'resourceVideo',
           hideAslide: false
         }
@@ -61,6 +66,7 @@ const routeConfig = [
         component: loadingLazy('Resources/HeatMap'),
         meta: {
           name: '热力图',
+          title: '热力图-深圳市温度变化实况',
           module: 'resourceVideo',
           hideAslide: false
         }
@@ -73,6 +79,7 @@ const routeConfig = [
     component: loadingLazy('Resources/Index'),
     meta: {
       name: '音乐资源',
+      title: '音乐资源',
       module: 'resourceMusic',
       hideAslide: false
     },
@@ -83,6 +90,7 @@ const routeConfig = [
         component: loadingLazy('Resources/Index'),
         meta: {
           name: '歌名',
+          title: '歌名',
           module: 'resourceMusic',
           hideAslide: false
         }
@@ -93,6 +101,7 @@ const routeConfig = [
         component: loadingLazy('Resources/Index'),
         meta: {
           name: '歌词',
+          title: '歌词',
           module: 'resourceMusic',
           hideAslide: true
         }
