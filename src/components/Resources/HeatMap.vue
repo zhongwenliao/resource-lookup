@@ -102,7 +102,7 @@ export default {
       console.log('关闭热力图')
       this.heatmapOverlay.hide()
     },
-    initMapInfo() {
+    initMapInfo(hotMapData) {
       this.map.clearOverLays()
       // 热力图初始化
       this.heatmapOverlay = new T.HeatmapOverlay({
