@@ -13,9 +13,7 @@
           style="color: rgb(255, 255, 255); background: none 0% 0% / auto repeat scroll padding-box border-box rgba(0, 0, 0, 0); width: auto; height: auto; font-size: 16px; line-height: 18.62px; margin: 0px; padding: 0px; position: static; float: none; inset: auto; display: inline; border: 0px none rgb(255, 255, 255); cursor: auto; overflow: visible; box-sizing: border-box; border-radius: 0px; text-decoration: none solid rgb(255, 255, 255); list-style: outside none disc; text-align: left;"
           >颜色对应温度</span
         >
-        <span style="display: inline-block;float: right;font-size: 16px;">
-          温度最近采集实况: {{gettime}}
-        </span>
+        <span style="display: inline-block;float: right;font-size: 16px;"> 温度最近采集实况: {{ gettime }} </span>
       </div>
       <div
         class="linear_color"
@@ -64,12 +62,12 @@ export default {
       map: null,
       heatmapOverlay: null,
       marker: null,
-      gettime:''
+      gettime: ''
     }
   },
   computed: {},
   created() {
-          // this.currentTime();
+    // this.currentTime();
     this.init()
   },
   methods: {
@@ -85,7 +83,7 @@ export default {
             this.getTime()
             this.initMapInfo(
               this.hotMap.map(i => ({
-                count: Math.floor(Math.random() * 40),
+                count: Math.floor(Math.random() * 40) + 10,
                 lng: i.gpsLng,
                 lat: i.gpsLat
               }))
@@ -140,32 +138,19 @@ export default {
     changeHeatmap() {
       clearInterval(tempHotmap)
     },
-    getTime () {
-      var _this = this;
-      let yy = new Date().getFullYear();
-      var mm =
-        new Date().getMonth() < 10
-          ? "0" + (new Date().getMonth() + 1)
-          : new Date().getMonth() + 1;
-      var dd =
-        new Date().getDate() < 10
-          ? "0" + new Date().getDate()
-          : new Date().getDate();
-      let hh = new Date().getHours();
-      let mf =
-        new Date().getMinutes() < 10
-          ? "0" + new Date().getMinutes()
-          : new Date().getMinutes();
-      let ss =
-        new Date().getSeconds() < 10
-          ? "0" + new Date().getSeconds()
-          : new Date().getSeconds();
-      _this.gettime = yy + "-" + mm + "-" + dd + " " + hh + ":" + mf + ":" + ss;
+    getTime() {
+      var _this = this
+      let yy = new Date().getFullYear()
+      var mm = new Date().getMonth() < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1
+      var dd = new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate()
+      let hh = new Date().getHours()
+      let mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
+      let ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
+      _this.gettime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
     },
     currentTime() {
-      setInterval(this.getTime, 3000);
-    },
-
+      setInterval(this.getTime, 3000)
+    }
   }
 }
 </script>
