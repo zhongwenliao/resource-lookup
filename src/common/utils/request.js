@@ -9,7 +9,7 @@ const http = axios.create({
 // 请求拦截
 http.interceptors.request.use(
   config => {
-    localStorage.setItem('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTk2Nzg4NjMsInVzZXJuYW1lIjoiYWRtaW4ifQ.asiFsnd_D-2vRWzUCLVCYtzXdko_Ru0ZbfXD5lSmjkU')
+    localStorage.setItem('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTk5NDk4NjMsInVzZXJuYW1lIjoiYWRtaW4ifQ.76V4HD30St6_qctMIEo9aakeEjTRso_oKOrLvxB6org')
     //请求头设置
     config.headers['X-Access-Token'] = localStorage.getItem('token')
     return config
