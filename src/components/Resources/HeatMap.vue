@@ -83,7 +83,7 @@ export default {
             this.getTime()
             this.initMapInfo(
               this.hotMap.map(i => ({
-                count: Math.floor(Math.random() * 40) + 10,
+                count: parseInt(Math.floor(Math.random() * 40) + 10),
                 lng: i.gpsLng,
                 lat: i.gpsLat
               }))
@@ -108,32 +108,34 @@ export default {
     },
     initMapInfo(hotMapData) {
       this.map.clearOverLays()
+      this.$nextTick(() => {
+        this.heatmapOverlay = new T.HeatmapOverlay({
+          backgroundColor: '',
+          // 纬度字段名称。
+          latField: 'lat',
+          // 经度字段名称。
+          lngField: 'lng',
+          // 权重字段名称。
+          valueField: 'count',
+          // 缓冲半径。
+          radius: 30,
+          // 颜色梯度变化
+          gradient: { 0: 'black', 0.25: 'rgb(0,0,255)', 0.55: 'rgb(0,255,0)', 0.85: 'yellow', 1.0: 'rgb(255,0,0)' },
+          // 整个热图的全局不透明度
+          // opacity: 0.4,
+          maxOpacity: 1,
+          minOpacity: 0,
+          renderer: 'canvas2d',
+          // 模糊因子越高，渐变越平滑
+          blur: 0.85
+        })
+        this.map.addOverLay(this.heatmapOverlay)
+        this.heatmapOverlay.setDataSet({
+          data: hotMapData,
+          max: 40
+        })
+      })
       // 热力图初始化
-      this.heatmapOverlay = new T.HeatmapOverlay({
-        backgroundColor: '',
-        // 纬度字段名称。
-        latField: 'lat',
-        // 经度字段名称。
-        lngField: 'lng',
-        // 权重字段名称。
-        valueField: 'count',
-        // 缓冲半径。
-        radius: 30,
-        // 颜色梯度变化
-        gradient: { 0: 'black', 0.25: 'rgb(0,0,255)', 0.55: 'rgb(0,255,0)', 0.85: 'yellow', 1.0: 'rgb(255,0,0)' },
-        // 整个热图的全局不透明度
-        // opacity: 0.4,
-        maxOpacity: 1,
-        minOpacity: 0,
-        renderer: 'canvas2d',
-        // 模糊因子越高，渐变越平滑
-        blur: 0.85
-      })
-      this.map.addOverLay(this.heatmapOverlay)
-      this.heatmapOverlay.setDataSet({
-        data: hotMapData,
-        max: 40
-      })
     },
     changeHeatmap() {
       clearInterval(tempHotmap)
