@@ -70,6 +70,17 @@ const routeConfig = [
           module: 'resourceVideo',
           hideAslide: false
         }
+      },
+      {
+        path: 'goldMap',
+        name: 'GoldMap',
+        component: loadingLazy('Resources/GoldMap'),
+        meta: {
+          name: '高德地图',
+          title: '高德测试',
+          module: 'resourceVideo',
+          hideAslide: false
+        }
       }
     ]
   },

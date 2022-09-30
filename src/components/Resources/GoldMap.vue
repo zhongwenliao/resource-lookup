@@ -1,0 +1,284 @@
+<template>
+  <div>
+    <div class="demo-title">
+      <h1>呼吸点—深圳高峰期路口延误指数评级</h1>
+      <h3>每个路口的延误指数，其中EF等级是拥堵较严重路口</h3>
+    </div>
+    <div id="map"></div>
+  </div>
+</template>
+<script>
+import request from '@/common/utils/request'
+export default {
+  data() {
+    return {}
+  },
+  computed: {},
+  mounted() {
+    try {
+      var opts = {
+        subdistrict: 0,
+        extensions: 'all',
+        level: 'city'
+      }
+      //利用行政区查询获取边界构建mask路径
+      //也可以直接通过经纬度构建mask路径
+      var district = new AMap.DistrictSearch(opts)
+      console.log('这里执行了', district)
+      district.search('深圳市', function(status, result) {
+        var bounds = result.districtList[0].boundaries
+        var mask = []
+        for (var i = 0; i < bounds.length; i += 1) {
+          mask.push([bounds[i]])
+        }
+        var map = (window.map = new AMap.Map('map', {
+          mask: mask,
+          zoom: 11.7,
+          center: [113.97199630737305, 22.5807295363949],
+          pitch: 50,
+          showLabel: false,
+          features: ['bg', 'road'],
+          mapStyle: 'amap://styles/84ba10a821298afbfc69cac6d854d241',
+          viewMode: '3D'
+        }))
+        var loca = (window.loca = new Loca.Container({
+          map
+        }))
+
+        // 蓝色普通点
+        var geo = new Loca.GeoJSONSource({
+          url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/sz_road.json'
+        })
+        var scatter = new Loca.ScatterLayer({
+          zIndex: 111,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22]
+        })
+        scatter.setSource(geo)
+        scatter.setStyle({
+          color: 'rgba(43,156,75,1)',
+          unit: 'meter',
+          size: [150, 150],
+          borderWidth: 0
+        })
+        loca.add(scatter)
+
+        // 红色呼吸点
+        var geoLevelF = new Loca.GeoJSONSource({
+          // data: [],
+          url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/sz_road_F.json'
+        })
+        var breathRed = new Loca.ScatterLayer({
+          loca,
+          zIndex: 113,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22]
+        })
+        breathRed.setSource(geoLevelF)
+        breathRed.setStyle({
+          unit: 'meter',
+          size: [2600, 2600],
+          borderWidth: 0,
+          texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/breath_red.png',
+          duration: 500,
+          animate: true
+        })
+
+        // 黄色呼吸点
+        var geoLevelE = new Loca.GeoJSONSource({
+          // data: [],
+          url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/sz_road_E.json'
+        })
+        var breathYellow = new Loca.ScatterLayer({
+          loca,
+          zIndex: 112,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22]
+        })
+        breathYellow.setSource(geoLevelE)
+        breathYellow.setStyle({
+          unit: 'meter',
+          size: [1000, 1000],
+          borderWidth: 0,
+          texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/breath_yellow.png',
+          duration: 1000,
+          animate: true
+        })
+        console.log('调用动画')
+
+        //////////////////////////////////
+        //房价
+        //////////////////////////////////
+        var geoZMarker = new Loca.GeoJSONSource({
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [114.06, 22.54]
+                },
+                properties: {
+                  name: '市民中心',
+                  price: 65000,
+                  count: 92
+                }
+              },
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [113.93, 22.54]
+                },
+                properties: {
+                  name: '南山区政府',
+                  price: 65000,
+                  count: 52
+                }
+              }
+            ]
+          }
+        })
+
+        // 文字主体图层
+        var zMarker = new Loca.ZMarkerLayer({
+          loca: loca,
+          zIndex: 120,
+          depth: false
+        })
+        zMarker.setSource(geoZMarker)
+        zMarker.setStyle({
+          content: (i, feat) => {
+            var props = feat.properties
+            var leftColor = props.price < 60000 ? 'rgba(0, 28, 52, 0.6)' : 'rgba(33,33,33,0.6)'
+            var rightColor = props.price < 60000 ? '#038684' : 'rgba(172, 137, 51, 0.3)'
+            var borderColor = props.price < 60000 ? '#038684' : 'rgba(172, 137, 51, 1)'
+            return (
+              '<div style="width: 490px; height: 228px; padding: 0 0;">' +
+              '<p style="display: block; height:80px; line-height:80px;font-size:40px;background-image: linear-gradient(to right, ' +
+              leftColor +
+              ',' +
+              leftColor +
+              ',' +
+              rightColor +
+              ',rgba(0,0,0,0.4)); border:4px solid ' +
+              borderColor +
+              '; color:#fff; border-radius: 15px; text-align:center; margin:0; padding:5px;">' +
+              props['name'] +
+              ': ' +
+              props['price'] / 10000 +
+              '万</p><span style="width: 130px; height: 130px; margin: 0 auto; display: block; background: url(https://a.amap.com/Loca/static/loca-v2/demos/images/prism_' +
+              (props['price'] < 60000 ? 'blue' : 'yellow') +
+              '.png);"></span></div>'
+            )
+          },
+          unit: 'meter',
+          rotation: 0,
+          alwaysFront: true,
+          size: [4900 / 2, 2220 / 2],
+          altitude: 0
+        })
+
+        // 浮动三角
+        var triangleZMarker = new Loca.ZMarkerLayer({
+          loca: loca,
+          zIndex: 119,
+          depth: false
+        })
+        triangleZMarker.setSource(geoZMarker)
+        triangleZMarker.setStyle({
+          content: (i, feat) => {
+            return (
+              '<div style="width: 120px; height: 120px; background: url(https://a.amap.com/Loca/static/loca-v2/demos/images/triangle_' +
+              (feat.properties.price < 60000 ? 'blue' : 'yellow') +
+              '.png);"></div>'
+            )
+          },
+          unit: 'meter',
+          rotation: 0,
+          alwaysFront: true,
+          size: [600, 600],
+          altitude: 15
+        })
+        triangleZMarker.addAnimate({
+          key: 'altitude',
+          value: [0, 1],
+          random: true,
+          transform: 1000,
+          delay: 2000,
+          yoyo: true,
+          repeat: 999999
+        })
+
+        // 呼吸点 蓝色
+        var scatterBlue = new Loca.ScatterLayer({
+          loca,
+          zIndex: 110,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 26],
+          depth: false
+        })
+
+        scatterBlue.setSource(geoZMarker)
+        scatterBlue.setStyle({
+          unit: 'meter',
+          size: function(i, feat) {
+            return feat.properties.price < 60000 ? [900, 900] : [0, 0]
+          },
+          texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/scan_blue.png',
+          altitude: 20,
+          duration: 2000,
+          animate: true
+        })
+
+        // 呼吸点 金色
+        var scatterYellow = new Loca.ScatterLayer({
+          loca,
+          zIndex: 110,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 26],
+          depth: false
+        })
+
+        scatterYellow.setSource(geoZMarker)
+        scatterYellow.setStyle({
+          unit: 'meter',
+          size: function(i, feat) {
+            return feat.properties.price > 60000 ? [900, 900] : [0, 0]
+          },
+          texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/scan_yellow.png',
+          altitude: 20,
+          duration: 2000,
+          animate: true
+        })
+
+        // 启动渲染动画
+        loca.animate.start()
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  methods: {}
+}
+</script>
+
+<style lang="less">
+#container {
+  width: 100%;
+  height: 72vh;
+  background-color: rgb(211, 128, 20);
+}
+.amap-logo {
+  opacity: 0;
+}
+.amap-copyright {
+  opacity: 0;
+}
+</style>
