@@ -81,6 +81,17 @@ const routeConfig = [
           module: 'resourceVideo',
           hideAslide: false
         }
+      },
+      {
+        path: 'testMap',
+        name: 'TestMap',
+        component: loadingLazy('Resources/TestMap'),
+        meta: {
+          name: '高德测试',
+          title: '最基本的启动测试',
+          module: 'resourceVideo',
+          hideAslide: false
+        }
       }
     ]
   },

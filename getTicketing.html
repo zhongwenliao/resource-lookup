@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一个简答的出票系统</title>
+    <style>
+      html,
+      body,
+      #map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .demo-title {
+        top: 25px;
+        left: 25px;
+        z-index: 1;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin: 0;
+        color: rgb(180, 180, 190);
+      }
+
+      h3 {
+        font-size: 12px;
+        font-weight: normal;
+        margin-top: 5px;
+        color: rgb(150, 150, 150);
+      }
+      ul li {
+        list-style-type: none;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: solid 1px #000;
+        background-color: #fff;
+      }
+      #ulleft {
+        float: left;
+      }
+      #ulleft ul {
+        text-align: right;
+      }
+      #ulRigth {
+        float: left;
+      }
+      #ulRigth ul {
+        text-align: left;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="demo-title">
+      <h1>简单的出票系统,目前总共：20个位置</h1>
+      <input id="input" type="text" />
+      <button id="btn">出票</button>
+    </div>
+    <div>
+      <div id="ulleft">
+        <ul>
+          <li id="20"></li>
+          <li id="19"></li>
+          <li id="18"></li>
+          <li id="17"></li>
+        </ul>
+        <ul>
+          <li id="16"></li>
+          <li id="15"></li>
+          <li id="14"></li>
+        </ul>
+        <ul>
+          <li id="13"></li>
+          <li id="12"></li>
+        </ul>
+        <ul>
+          <li id="11"></li>
+        </ul>
+      </div>
+      <div id="ulRigth">
+        <ul>
+          <li id="10"></li>
+          <li id="9"></li>
+          <li id="8"></li>
+          <li id="7"></li>
+        </ul>
+        <ul>
+          <li id="6"></li>
+          <li id="5"></li>
+          <li id="4"></li>
+        </ul>
+        <ul>
+          <li id="3"></li>
+          <li id="2"></li>
+        </ul>
+        <ul>
+          <li id="1"></li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      // 座位号
+      var arrays = []
+      // 座位数
+      var count = 20
+      // 已售出
+      var ticketing = 0
+      function getTicketingTotal() {
+        var a = new Array()
+        for (var i = 0; i < count; i++) {
+          a[i] = i + 1
+        }
+        arrays = a.sort(function() {
+          return 0.5 - Math.random()
+        })
+      }
+      // 每次取几张票
+      function getTicketing(num) {
+        ticketing += parseInt(num)
+        if (ticketing > count) {
+          alert('余票不足')
+          return
+        }
+        if (num >= 1 && num <= 5) {
+          // 这里步骤就是渲染dom document.getElementById('').style.background='red'
+          var tempInfo = arrays.splice(0, num)
+          tempInfo.forEach(i => {
+            document.getElementById(String(i)).style.background = 'red'
+          })
+        } else {
+          alert('取票数异常')
+        }
+      }
+      // 测试模拟取票情况,总共10张票,每次都取2张
+      getTicketingTotal()
+      document.getElementById('btn').addEventListener('click', function() {
+        getTicketing(document.getElementById('input').value)
+      })
+      for (var i = 5; i <= 15; i++) {
+        for (var j = 5; j <= i; j++) {
+          console.log(i)
+          //拼接字符串
+        }
+        console.log('换行')
+      }
+    </script>
+  </body>
+</html>
