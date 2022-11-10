@@ -1,0 +1,412 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "华歌行",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		
+		{
+			"path": "pages/product/product",
+			"style": {
+				"navigationBarTitleText": "详情展示",
+				"app-plus": {
+					"titleNView": {
+						"bounce": "none"
+					}
+				}
+			}
+		}, {
+			"path": "pages/set/set",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/cart/cart",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
+		},
+		{
+			"path": "pages/public/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+			"path": "pages/public/wxlogin",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+			"path": "pages/public/reg",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+			"path": "pages/public/yzmlogin",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+			"path": "pages/public/pwdfoget",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "我的",
+				// #ifdef MP
+				"navigationStyle": "custom",
+				// #endif
+				"app-plus": {
+					"bounce": "none"
+
+				}
+			}
+		}, 
+		{
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, 
+		{
+			"path": "pages/order/ddmx",
+			"style": {
+				"navigationBarTitleText": "订单明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, 
+		{
+			"path": "pages/order/orderjs",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/user/yhq",
+			"style": {
+				"navigationBarTitleText": "我的优惠券",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/order/createOrder",
+			"style": {
+				"navigationBarTitleText": "创建订单"
+			}
+		}, 
+		{
+			"path": "pages/address/address",
+			"style": {
+				"navigationBarTitleText": "收货地址"
+			}
+		}, 
+		{
+			"path": "pages/address/addressManage",
+			"style": {
+				"navigationBarTitleText": "新增地址"
+			}
+			
+		}, 
+		{
+			"path": "pages/address/addressedit",
+			"style": {
+				"navigationBarTitleText": "修改地址"
+			}
+			
+		},
+	    {
+            "path" : "pages/notice/notice",
+            "style" : {
+				"navigationBarTitleText": "通知"
+			}
+        },
+        {
+            "path" : "pages/category/category",
+            "style" : {
+				"navigationBarTitleText": ""
+			}
+        },
+        {
+            "path" : "pages/product/list",
+            "style" : {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "商品列表"
+			}
+        },
+		{
+			"path": "pages/user/myTeam",
+			"style": {
+				"navigationBarTitleText": "我的团队",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/product/product2",
+			"style": {
+				"navigationBarTitleText": "热门活动",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/address/address2",
+			"style": {
+				"navigationBarTitleText": "收货地址",
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent"
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/finance/bill",
+			"style": {
+				"navigationBarTitleText": "用户资金明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/finance/push",
+			"style": {
+				"navigationBarTitleText": "我的团队",
+				"app-plus": {
+					"bounce": "none"
+				},
+				"enablePullDownRefresh":true
+			}			
+		},
+		{
+			"path": "pages/spread/qrcode",
+			"style": {
+				"navigationBarTitleText": "推荐分享" //二维码
+			}
+		},
+		{
+			"path": "pages/bank/list",
+			"style": {
+				"navigationBarTitleText": "银行卡管理"
+			}
+		},
+		{
+			"path": "pages/bank/create",
+			"style": {
+				"navigationBarTitleText": "银行卡编辑"
+			}
+		},
+		{
+			"path": "pages/finance/withdrawal",
+			"style": {
+				"navigationBarTitleText": "提现"
+			}
+		},
+		{
+			"path": "pages/finance/withdbill",
+			"style": {
+				"navigationBarTitleText": "提现明细"
+			}
+		},
+		{
+			"path": "pages/finance/transfers",
+			"style": {
+				"navigationBarTitleText": "余额转赠"
+			}
+		},
+		{
+			"path": "pages/finance/recharge",
+			"style": {
+				"navigationBarTitleText": "充值"
+			}
+		},
+		 {
+			"path": "pages/finance/transactionPassword",
+			"style": {
+				"navigationBarTitleText": "设置交易密码"
+			}
+		 },
+		 {
+			"path": "pages/user/given",
+			"style": {
+				"navigationBarTitleText": "优惠券转赠"
+			}
+		 },
+		 {
+			"path": "pages/spread/web",
+			"style": {
+				"navigationBarTitleText": "" //H5页面
+			}
+		 },
+		 {
+			"path": "pages/category/activity",
+			"style": {
+				"navigationBarTitleText": "热门活动"
+			}
+		 },
+		 {
+		 	"path": "pages/category/shangPinListClient",
+		 	"style": {
+		 		"navigationBarTitleText": ""
+		 	}
+		 },
+		 {
+		 	"path": "pages/user/aboutUs",
+		 	"style": {
+		 		"navigationBarTitleText": "联系我们"
+		 	}
+		 },
+		 {
+		 	"path": "pages/user/myGroup",
+		 	"style": {
+		 		"navigationBarTitleText": "我的团餐"
+		 	}
+		 },
+		 {
+		 	"path": "pages/user/addGroup",
+		 	"style": {
+		 		"navigationBarTitleText": "我要开团"
+		 	}
+		 },
+		 {
+		 	"path": "pages/user/joinGroup",
+		 	"style": {
+		 		"navigationBarTitleText": "加入拼团"
+		 	}
+		},
+        {
+            "path" : "pages/adoption/adoption",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"onReachBottomDistance": 300
+            }
+        },
+		{
+		    "path" : "pages/userName/userName",
+		    "style" :
+		    {
+		        "navigationBarTitleText": "昵称",
+		        "enablePullDownRefresh": false
+		    }
+		},
+        {
+            "path" : "pages/userinfo/userinfo",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个人信息",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path" : "pages/finance/userpoint",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "积分明细",
+                "enablePullDownRefresh": false
+            }
+        }
+        ,{
+            "path" : "pages/dingzhi/dingzhi",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个性私人定制哇咔咔",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"easycom": {
+		"^w-(.*)": "@/uni_modules/wmf-code/components/w-$1/w-$1.vue"
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "华歌行",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#f8f8f8"
+	},
+	"tabBar": {
+		"color": "#C0C4CC",
+		"selectedColor": "#FD7031",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tab-home.png",
+				"selectedIconPath": "static/tab-home-current.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/category/category",
+				"iconPath": "static/tab-cate.png",
+				"selectedIconPath": "static/tab-cate-current.png",
+				"text": "分类"
+			},
+			{
+				"pagePath": "pages/cart/cart",
+				"iconPath": "static/tab-cart.png",
+				"selectedIconPath": "static/tab-cart-current.png",
+				"text": "购物车"
+			},
+			{
+				"pagePath": "pages/user/user",
+				"iconPath": "static/tab-my.png",
+				"selectedIconPath": "static/tab-my-current.png",
+				"text": "我的"
+			}
+		]
+	}
+}
