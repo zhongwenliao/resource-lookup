@@ -1,318 +1,389 @@
 <template>
   <view class="custom">
-    <!-- <view :style="'position:fixed;z-index:9999;background:#ff0000;width:2px;height:2px;left:' + zx + 'px;top:' + zy + 'px;'"></view> -->
-    <view class="head">
-      <image src="/static/img/phone.png"></image>
-      <view class="theme">拖鞋型号：{{ phonetype.name }}</view>
-      <view class="ge"></view>
-      <view @click="handleEidtType" class="edit">更换》</view>
-      <button @getuserinfo="bindGetUserInfo" openType="getUserInfo" v-if="canIUse">下一步</button>
-      <button @click="submitdata" v-else>下一步</button>
-    </view>
-    <view @click="leftbtn" class="pm-top"></view>
-    <view @click="leftbtn" class="pm-left"></view>
-    <view class="content" v-if="!cshow">
-      <view class="fill-top" :style="'height:' + masktop + 'px'"></view>
-      <view class="fill-l" :style="'height: ' + mheight + 'px;width:' + fillw + 'px'"></view>
-      <view class="fill-r" :style="'height: ' + mheight + 'px;width:' + fillw + 'px'"></view>
-      <view class="fill-b" :style="'height:' + fillh + 'px'">
-        <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
-      </view>
-      <view class="mask" :style="'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'"></view>
-      <image
-        v-if="tk.length"
-        :src="tk[0].url"
-        :style="
-          'width: ' +
-          tk[0].picw +
-          'px; height: ' +
-          tk[0].pich +
-          'px;top:' +
-          tk[0].y +
-          'px;left:' +
-          tk[0].x +
-          'px;z-index:1;position: absolute;transform: translate(0, 0) scale(' +
-          tk[0].scale +
-          ') rotate(' +
-          tk[0].rotate +
-          'deg);transform-origin: center center;'
-        "
-      ></image>
-      <image
-        @click="bindqie"
-        :data-idx="index"
-        data-types="pics"
-        :id="'pics' + index"
-        :src="item.url"
-        :style="
-          'position:absolute;width: ' +
-          item.picw +
-          'px; height: ' +
-          item.pich +
-          'px;left: ' +
-          item.x +
-          'px; top: ' +
-          item.y +
-          'px; transform: translate(0, 0) scale(' +
-          item.scale +
-          ') rotate(' +
-          item.rotate +
-          'deg);transform-origin: center center;z-index:' +
-          item.zindex +
-          ' '
-        "
-        v-for="(item, index) in pics"
-        :key="index"
-      ></image>
-      <image
-        class="mbimg"
-        v-if="mb.length"
-        :src="mb[0].url"
-        :style="
-          'width:' +
-          mb[0].picw +
-          'px;height: ' +
-          mb[0].pich +
-          'px;top:' +
-          mb[0].y +
-          'px;left:' +
-          mb[0].x +
-          'px;transform: translate(0, 0) scale(' +
-          mb[0].scale +
-          ') rotate(' +
-          mb[0].rotate +
-          'deg);transform-origin: center center;'
-        "
-      ></image>
-      <image
-        @click="bindqie"
-        :data-idx="index"
-        data-types="tt"
-        v-if="!(item.url ? false : true)"
-        :src="item.url"
-        :style="
-          'position:absolute;width: ' +
-          item.picw +
-          'px; height: ' +
-          item.pich +
-          'px;left: ' +
-          item.x +
-          'px; top: ' +
-          item.y +
-          'px; transform: translate(0, 0) scale(' +
-          item.scale +
-          ') rotate(' +
-          item.rotate +
-          'deg);transform-origin: center center;z-index:' +
-          item.zindex +
-          ' '
-        "
-        v-for="(item, index) in tt"
-        :key="index"
-      ></image>
-      <image
-        @click="bindqie"
-        :data-idx="index"
-        data-types="textimgs"
-        v-if="!(item.url ? false : true)"
-        :src="item.url"
-        :style="
-          'position:absolute;width: ' +
-          item.picw +
-          'px; height: ' +
-          item.pich +
-          'px;left: ' +
-          item.x +
-          'px; top: ' +
-          item.y +
-          'px; transform: translate(0, 0) scale(' +
-          item.scale +
-          ') rotate(' +
-          item.rotate +
-          'deg);transform-origin: center center;z-index:' +
-          item.zindex +
-          ' '
-        "
-        v-for="(item, index) in textimgs"
-        :key="index"
-      ></image>
-      <image
-        @click="addimg"
-        class="addimg"
-        v-if="!addimgshow"
-        src="/static/img/img.png"
-        :style="'bottom:' + addimgtop"
-      ></image>
-    </view>
-    <view @click="leftbtn" class="pm-right"></view>
-    <view @click="leftbtn" class="pm-bottom"></view>
-    <view @click="wenzibtn" class="wenzi">
-      <image src="/static/img/text.png"></image>
-      <view>文字输入</view>
-    </view>
-    <view class="add" v-if="!addshow">
-      <view @click="addimg" style="text-align: center">
-        <image class="addimgbtn" src="/static/img/add.png"></image>
-        <view>添加照片</view>
-      </view>
-      <scroll-view scrollX class="scroll-view_H" style="width: 80%">
-        <view @click.stop.prevent="selcttext" class="li" :data-ind="index" data-types="tk" v-if="tk != ''">
-          <view @click="deltk" class="close">X</view>
-          <image class="imgcl" mode="aspectFit" :src="tk[0].url"></image>
-          <image @click="tkclock" class="clock" :src="tk[0].clock"></image>
-        </view>
-        <view
-          @click.stop.prevent="selcttext"
-          class="li"
-          :data-ind="index"
-          data-types="pics"
-          v-if="pics.url"
-          v-for="(item, index) in pics"
-          :key="index"
-        >
-          <view @click="delpic" class="close" :data-idx="index">X</view>
-          <image class="imgcl" mode="aspectFit" :src="item.url"></image>
-        </view>
-        <view @click.stop.prevent="selcttext" class="li" :data-ind="index" data-types="mb" v-if="mb != ''">
-          <view @click="delmb" class="close">X</view>
-          <image class="imgcl" mode="aspectFit" :src="mb[0].url"></image>
-          <image @click="mbclock" class="clock" :src="mb[0].clock"></image>
-        </view>
-        <view
-          @click.stop.prevent="selcttext"
-          class="li"
-          :data-ind="index"
-          data-types="tt"
-          v-if="tt.url"
-          v-for="(item, index) in tt"
-          :key="index"
-        >
-          <view @click="deltt" class="close" :data-idx="index">X</view>
-
-          <image class="imgcl" mode="aspectFit" :src="item.url"></image>
-        </view>
-        <view
-          @click.stop.prevent="selcttext"
-          class="li"
-          :data-ind="index"
-          data-types="textimgs"
-          v-if="textimgs.url"
-          v-for="(item, index) in textimgs"
-          :key="index"
-        >
-          <view @click="deltextimgs" class="close" :data-idx="index">X</view>
-
-          <image class="imgcl" mode="aspectFit" :src="item.url"></image>
-        </view>
-      </scroll-view>
-    </view>
-    <view @click="catchtxt" class="textedit" v-if="addshow">
-      <view style="background: #fff; position: absolute; bottom: 0; width: 100%">
-        <scroll-view scrollX class="scroll-view_H" style="width: 100%">
-          <image
-            @click.stop.prevent="selectfamily"
-            :class="'familyli ' + item.active"
-            :data-idx="index"
-            mode="widthFix"
-            :src="item.val"
-            style="width: 20%"
-            v-for="(item, index) in falimys"
-            :key="index"
-          ></image>
-        </scroll-view>
-        <scroll-view scrollX class="scroll-view_H" style="width: 100%">
-          <view
-            @click.stop.prevent="selectcolor"
-            :class="'colorbox ' + item.active"
-            :data-idx="index"
-            v-for="(item, index) in colors"
-            :key="index"
-          >
-            <view class="colorli" :style="'background-color:' + item.val"></view>
+      <view @touchend="index.touchend" @touchmove="index.touchmove" @touchstart="index.touchstart" style="width: 100%; height: 100%; position: relative">
+          <view class="head">
+              <image src="/static/img/phone.png" v-if="types != 2"></image>
+              <view style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 43%" v-if="types != 2">
+                  {{ types == 0 ? '手机壳' : '彩膜' }}：{{ phonetype.name }}
+              </view>
+              <view style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 45%" v-else>礼品：{{ phonetype.name }}</view>
+              <view class="ge"></view>
+              <view @tap="eidttype" class="edit">{{ types == 2 ? '换品种' : '换机型' }}》</view>
+              <button @getuserinfo="bindGetUserInfo" openType="getUserInfo" v-if="canIUse">下一步</button>
+              <button @tap="submitdata" v-else>下一步</button>
           </view>
-        </scroll-view>
-        <input
-          @input="inputvalFun"
-          @click.stop.prevent="inptch"
-          id="textval"
-          maxlength="12"
-          placeholder="最多输入12个字符"
-          placeholderStyle="font-size:14px;"
-          style="font-size: 14px"
-          :value="inputval"
-        />
-        <view class="textbtns">
-          <view style="line-height: 30px">文字方向：</view>
-          <view @click.stop.prevent="fxbtn" :class="'fx ' + fx[0].active" data-idx="0">{{ fx[0].name }}</view>
-          <view @click.stop.prevent="fxbtn" :class="'fx ' + fx[1].active" data-idx="1">{{ fx[1].name }}</view>
-          <view @click.stop.prevent="surebtn" class="surebtn">确认添加</view>
-        </view>
+          <view @tap="leftbtn" class="pm-top"></view>
+          <view @tap="leftbtn" class="pm-left"></view>
+          <view class="content" v-if="!cshow">
+              <view class="fill-top" :style="'height:' + masktop + 'px'"></view>
+              <view class="fill-l" :style="'height: ' + mheight + 'px;width:' + fillw + 'px'"></view>
+              <view class="fill-r" :style="'height: ' + mheight + 'px;width:' + fillw + 'px'"></view>
+              <view class="fill-b" :style="'height:' + fillh + 'px'">
+                  <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
+              </view>
+              <view class="mask" :style="'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'"></view>
+              <image
+                  :class="'tk' + idx"
+                  :data-h="item.pich"
+                  :data-idx="idx"
+                  :data-rotate="item.rotate"
+                  :data-scale="item.scale"
+                  data-types="tk"
+                  :data-w="item.picw"
+                  :data-windowheight="windowHeight"
+                  :data-windowwidth="windowWidth"
+                  :data-x="item.x"
+                  :data-y="item.y"
+                  v-if="!(item.url ? false : true)"
+                  :src="item.url"
+                  :style="
+                      'width: ' +
+                      item.picw +
+                      'px; height: ' +
+                      item.pich +
+                      'px;top:' +
+                      item.y +
+                      'px;left:' +
+                      item.x +
+                      'px;position: absolute;transform: translate(0, 0) scale(' +
+                      item.scale +
+                      ') rotate(' +
+                      item.rotate +
+                      'deg);transform-origin: center center;'
+                  "
+                  v-for="(item, idx) in tk"
+                  :key="idx"
+              ></image>
+              <image
+                  @tap.stop.prevent="bindqie"
+                  :class="'pics' + idx"
+                  :data-h="item.pich"
+                  :data-idx="idx"
+                  :data-rotate="item.rotate"
+                  :data-scale="item.scale"
+                  data-types="pics"
+                  :data-w="item.picw"
+                  :data-windowheight="windowHeight"
+                  :data-windowwidth="windowWidth"
+                  :data-x="item.x"
+                  :data-y="item.y"
+                  v-if="!(item.url ? false : true)"
+                  :src="item.url"
+                  :style="
+                      'position:absolute;width: ' +
+                      item.picw +
+                      'px; height: ' +
+                      item.pich +
+                      'px;left: ' +
+                      item.x +
+                      'px; top: ' +
+                      item.y +
+                      'px; transform: translate(0, 0) scale(' +
+                      item.scale +
+                      ') rotate(' +
+                      item.rotate +
+                      'deg);transform-origin: center center;z-index:' +
+                      item.zindex +
+                      ' '
+                  "
+                  v-for="(item, idx) in pics"
+                  :key="idx"
+              ></image>
+              <image
+                  :class="'mb' + idx + ' mbimg'"
+                  :data-h="item.pich"
+                  :data-idx="idx"
+                  :data-rotate="item.rotate"
+                  :data-scale="item.scale"
+                  data-types="mb"
+                  :data-w="item.picw"
+                  :data-windowheight="windowHeight"
+                  :data-windowwidth="windowWidth"
+                  :data-x="item.x"
+                  :data-y="item.y"
+                  v-if="!(item.url ? false : true)"
+                  :src="item.url"
+                  :style="
+                      'width: ' +
+                      item.picw +
+                      'px; height: ' +
+                      item.pich +
+                      'px;top:' +
+                      item.y +
+                      'px;left:' +
+                      item.x +
+                      'px;transform: translate(0, 0) scale(' +
+                      item.scale +
+                      ') rotate(' +
+                      item.rotate +
+                      'deg);transform-origin: center center;'
+                  "
+                  v-for="(item, idx) in mb"
+                  :key="idx"
+              ></image>
+              <image
+                  @tap.stop.prevent="bindqie"
+                  :class="'tt' + idx"
+                  :data-h="item.pich"
+                  :data-idx="idx"
+                  :data-rotate="item.rotate"
+                  :data-scale="item.scale"
+                  data-types="tt"
+                  :data-w="item.picw"
+                  :data-windowheight="windowHeight"
+                  :data-windowwidth="windowWidth"
+                  :data-x="item.x"
+                  :data-y="item.y"
+                  v-if="!(item.url ? false : true)"
+                  :src="item.url"
+                  :style="
+                      'position:absolute;width: ' +
+                      item.picw +
+                      'px; height: ' +
+                      item.pich +
+                      'px;left: ' +
+                      item.x +
+                      'px; top: ' +
+                      item.y +
+                      'px; transform: translate(0, 0) scale(' +
+                      item.scale +
+                      ') rotate(' +
+                      item.rotate +
+                      'deg);transform-origin: center center;z-index:' +
+                      item.zindex +
+                      ' '
+                  "
+                  v-for="(item, idx) in tt"
+                  :key="idx"
+              ></image>
+              <image
+                  @tap.stop.prevent="bindqie"
+                  :class="'textimgs' + idx"
+                  :data-h="item.pich"
+                  :data-idx="idx"
+                  :data-rotate="item.rotate"
+                  :data-scale="item.scale"
+                  data-types="textimgs"
+                  :data-w="item.picw"
+                  :data-windowheight="windowHeight"
+                  :data-windowwidth="windowWidth"
+                  :data-x="item.x"
+                  :data-y="item.y"
+                  v-if="!(item.url ? false : true)"
+                  :src="item.url"
+                  :style="
+                      'position:absolute;width: ' +
+                      item.picw +
+                      'px; height: ' +
+                      item.pich +
+                      'px;left: ' +
+                      item.x +
+                      'px; top: ' +
+                      item.y +
+                      'px; transform: translate(0, 0) scale(' +
+                      item.scale +
+                      ') rotate(' +
+                      item.rotate +
+                      'deg);transform-origin: center center;z-index:' +
+                      item.zindex +
+                      ' '
+                  "
+                  v-for="(item, idx) in textimgs"
+                  :key="idx"
+              ></image>
+              <image @tap="addimg" class="addimg" v-if="!addimgshow" src="/static/img/img.png" :style="'bottom:' + addimgtop"></image>
+          </view>
+          <view @tap="leftbtn" class="pm-right"></view>
+          <view @tap="leftbtn" class="pm-bottom"></view>
+          <view @tap="printoo" class="print" v-if="!admin">
+              <image src="/static/img/p.png"></image>
+              <view>直接打印</view>
+          </view>
+          <view @tap="wenzibtn" class="wenzi">
+              <image src="/static/img/text.png"></image>
+              <view>文字输入</view>
+          </view>
+          <view class="add" v-if="!addshow">
+              <view @tap="addimg" style="text-align: center">
+                  <image class="addimgbtn" src="/static/img/add.png"></image>
+                  <view>添加照片</view>
+              </view>
+              <scroll-view scrollX class="scroll-view_H" style="width: 80%">
+                  <view @tap.stop.prevent="selcttext" class="li" :data-ind="idx" data-types="tk" v-if="item != undefind" v-for="(item, idx) in tk" :key="idx">
+                      <view @tap="deltk" class="close">X</view>
+
+                      <image class="imgcl" mode="aspectFit" :src="tk[idx].url"></image>
+
+                      <image @tap="tkclock" class="clock" :data-ind="idx" :src="tk[idx].clock"></image>
+                  </view>
+                  <view @tap.stop.prevent="selcttext" class="li" :data-ind="idx" data-types="pics" v-if="item != undefind" v-for="(item, idx) in pics" :key="idx">
+                      <view @tap="delpic" class="close" :data-idx="idx">X</view>
+
+                      <image class="imgcl" mode="aspectFit" :src="item.url"></image>
+                  </view>
+                  <view @tap.stop.prevent="selcttext" class="li" :data-ind="idx" data-types="mb" v-if="item != undefind" v-for="(item, idx) in mb" :key="idx">
+                      <view @tap="delmb" class="close">X</view>
+
+                      <image class="imgcl" mode="aspectFit" :src="mb[idx].url"></image>
+
+                      <image @tap="mbclock" class="clock" :data-ind="idx" :src="mb[idx].clock"></image>
+                  </view>
+                  <view @tap.stop.prevent="selcttext" class="li" :data-ind="idx" data-types="tt" v-if="item != undefind" v-for="(item, idx) in tt" :key="idx">
+                      <view @tap.stop.prevent="deltt" class="close" :data-idx="idx">X</view>
+
+                      <image class="imgcl" mode="aspectFit" :src="item.url"></image>
+                  </view>
+                  <view @tap.stop.prevent="selcttext" class="li" :data-ind="idx" data-types="textimgs" v-if="item != undefind" v-for="(item, idx) in textimgs" :key="idx">
+                      <view @tap="deltextimgs" class="close" :data-idx="idx">X</view>
+
+                      <image class="imgcl" mode="aspectFit" :src="item.url"></image>
+                  </view>
+              </scroll-view>
+          </view>
+          <view @tap="catchtxt" class="textedit" v-if="addshow">
+              <view style="background: #fff; position: absolute; bottom: 0; width: 100%">
+                  <scroll-view scrollX class="scroll-view_H" style="width: 100%">
+                      <image
+                          @tap.stop.prevent="selectfamily"
+                          :class="'familyli ' + item.active"
+                          :data-idx="idx"
+                          mode="widthFix"
+                          :src="item.val"
+                          style="width: 20%"
+                          v-for="(item, idx) in falimys"
+                          :key="idx"
+                      ></image>
+                  </scroll-view>
+                  <scroll-view scrollX class="scroll-view_H" style="width: 100%">
+                      <view @tap.stop.prevent="selectcolor" :class="'colorbox ' + item.active" :data-idx="idx" v-for="(item, idx) in colors" :key="idx">
+                          <view class="colorli" :style="'background-color:' + item.val"></view>
+                      </view>
+                  </scroll-view>
+                  <input
+                      @input="inputvalFun"
+                      @tap.stop.prevent="inptch"
+                      id="textval"
+                      maxlength="12"
+                      placeholder="请输入文字"
+                      placeholderStyle="font-size:14px;"
+                      style="font-size: 14px"
+                      :value="inputval"
+                  />
+                  <view class="textbtns">
+                      <view style="line-height: 30px">文字方向：</view>
+                      <view @tap.stop.prevent="fxbtn" :class="'fx ' + fx[0].active" data-idx="0">{{ fx[0].name }}</view>
+                      <view @tap.stop.prevent="fxbtn" :class="'fx ' + fx[1].active" data-idx="1">{{ fx[1].name }}</view>
+                      <view @tap.stop.prevent="surebtn" class="surebtn">确认添加</view>
+                  </view>
+              </view>
+          </view>
+          <view
+              class="picslist"
+              :data-h="pk.h"
+              :data-index="pk.index"
+              :data-rotate="pk.rotate"
+              :data-types="pk.types"
+              :data-w="pk.w"
+              :data-x="pk.x"
+              :data-y="pk.y"
+              :style="
+                  'width:' +
+                  pk.w +
+                  'px;height:' +
+                  pk.h +
+                  'px;left: ' +
+                  pk.x +
+                  'px; top: ' +
+                  pk.y +
+                  'px; transform: translate(0, 0) rotate(' +
+                  pk.rotate +
+                  'deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;'
+              "
+              v-if="!kshow"
+          >
+              <image @tap="delpkpic" class="del" :data-idx="pk.index" :data-types="pk.types" mode="widthFix" src="/static/img/del.png"></image>
+              <image
+                  @touchend.stop.prevent="index.kdtouchend"
+                  @touchmove.stop.prevent="index.kdtouchmove"
+                  @touchstart.stop.prevent="index.kdtouchstart"
+                  class="kd1"
+                  :data-idx="pk.index"
+                  data-kn="kd1"
+                  :data-types="pk.types"
+                  mode="widthFix"
+                  src="/static/img/r.png"
+              ></image>
+              <image
+                  @touchend.stop.prevent="index.kdtouchend"
+                  @touchmove.stop.prevent="index.kdtouchmove"
+                  @touchstart.stop.prevent="index.kdtouchstart"
+                  class="kd2"
+                  :data-idx="pk.index"
+                  data-kn="kd2"
+                  :data-types="pk.types"
+                  mode="widthFix"
+                  src="/static/img/r.png"
+              ></image>
+              <image
+                  @touchend.stop.prevent="index.kdtouchend"
+                  @touchmove.stop.prevent="index.kdtouchmove"
+                  @touchstart.stop.prevent="index.kdtouchstart"
+                  class="xz"
+                  :data-idx="pk.index"
+                  data-kn="xz"
+                  :data-types="pk.types"
+                  mode="widthFix"
+                  src="/static/img/xz.png"
+              ></image>
+              <image
+                  @touchend.stop.prevent="index.kdtouchend"
+                  @touchmove.stop.prevent="index.kdtouchmove"
+                  @touchstart.stop.prevent="index.kdtouchstart"
+                  class="kd"
+                  :data-idx="pk.index"
+                  data-kn="kd"
+                  :data-types="pk.types"
+                  mode="widthFix"
+                  src="/static/img/kd.png"
+              ></image>
+          </view>
+          <view style="height: 50px; width: 100%"></view>
       </view>
-    </view>
-    <view
-      @touchend="bindtouchend"
-      @touchmove="bindtouchmove"
-      @touchstart="bindtouchstart"
-      class="picslist"
-      v-if="!kshow"
-      :style="
-        'width:' +
-        pk.w +
-        'px;height:' +
-        pk.h +
-        'px;left: ' +
-        pk.x +
-        'px; top: ' +
-        pk.y +
-        'px; transform: translate(0, 0) rotate(' +
-        pk.rotate +
-        'deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;'
-      "
-    >
-      <image
-        @click="delpkpic"
-        class="del"
-        :data-idx="pk.index"
-        :data-types="pk.types"
-        mode="widthFix"
-        src="/static/img/del.png"
-      ></image>
-      <image
-        @touchend.stop.prevent="kdtouchend"
-        @touchmove.stop.prevent="kdtouchmove"
-        @touchstart.stop.prevent="kdtouchstart"
-        class="kd"
-        :data-idx="pk.index"
-        data-kn="kd"
-        :data-types="pk.types"
-        mode="widthFix"
-        src="/static/img/kd.png"
-      ></image>
-      <image
-        @touchend.stop.prevent="kdtouchend"
-        @touchmove.stop.prevent="kdtouchmove"
-        @touchstart.stop.prevent="kdtouchstart"
-        class="xz"
-        :data-idx="pk.index"
-        data-kn="xz"
-        :data-types="pk.types"
-        mode="widthFix"
-        src="/static/img/xz.png"
-      ></image>
-    </view>
-    <view style="height: 50px; width: 100%"></view>
-    <canvas canvasId="textcanvas" :style="'width:' + textwidth + 'px;height:' + textheight + 'px; '"></canvas>
-    <canvas
-      canvasId="mycanvas"
-      :disableScroll="true"
-      :style="'width: ' + imgw + 'px; height: ' + imgh + 'px; '"
-    ></canvas>
+      <view class="footer">
+          <navigator style="width: 33.33%" url="/pages/img/img?act=mb">
+              <view class="foot-btn">
+                  <image src="/static/img/t1.png"></image>
+                  <view>蒙版</view>
+              </view>
+          </navigator>
+          <navigator style="width: 33.33%" url="/pages/img/img?act=tk">
+              <view class="foot-btn">
+                  <image src="/static/img/tk1.png"></image>
+                  <view>图库</view>
+              </view>
+          </navigator>
+          <navigator style="width: 33.33%" url="/pages/img/img?act=tt">
+              <view class="foot-btn">
+                  <image src="/static/img/mb1.png"></image>
+                  <view>贴图</view>
+              </view>
+          </navigator>
+      </view>
+      <canvas canvasId="textcanvas" :style="'width:' + textwidth + 'px;height:' + textheight + 'px; '"></canvas>
+      <canvas canvasId="mycanvas" :disableScroll="true" :style="'width: ' + imgw + 'px; height: ' + imgh + 'px; '"></canvas>
+      <canvas canvasId="attendCanvasId" :style="'width:' + imageSize.imageWidth + 'px; height:' + imageSize.imageHeight + 'px;'"></canvas>
   </view>
 </template>
-
+<script src="./index.js"></script>
 <script>
-// var app = getApp()
-// 这个是为了验证功能假的
+var t = (function (t) {
+  return t && t.__esModule
+      ? t
+      : {
+            default: t
+        };
+})(require('../../utils/util.js'));
+// var app = getApp();
 var app = {
   globalData: {
     shop: {
@@ -320,2004 +391,2000 @@ var app = {
     },
     shop_id: 1,
     host: "https://30diy.cn",
+    types: '0',
     openid: "0932wF100b3gTO1N8J000iCaOS32wF1Y",
     imgurl: "",
     userInfo: "",
   },
 }
-var a ;
-var e = false
-var i = false
-var s = ""
-var c = ""
-var h = "SimHei"
-var n = "rgb(0,0,0)"
-var o = ""
-var d = false
-var l = 0
-var g = true
-var p = {
-  x: 0,
-  y: 0,
-}
-var w = {
-  x1: 0,
-  y1: 0,
-  x2: 0,
-  y2: 0,
-}
-var r = {
-  x: 0,
-  y: 0,
-}
-var m = {
-  x: 0,
-  y: 0,
-}
+var e;
+var i = '';
+var s = '';
+var c = 'SimHei';
+var o = 'rgb(0,0,0)';
+var d = '';
+var n = false;
 export default {
   data() {
-    return {
-      canIUse: uni.canIUse("button.open-type.getUserInfo"),
-      fillw: 0,
-      fillh: 0,
-      masktop: 10,
-      addimgtop: "15%",
-      phonetype: {
-        name: "",
-      },
-      cheight: "",
-      mheight: "",
-      mwidth: "",
-      left: 0,
-      cshow: true,
-      bg: "",
-      mb: "",
-      tk: [],
-      tt: [],
-      pics: [],
-      words: [],
-      inputval: "",
-      addimgshow: false,
-      imgh: 0,
-      imgw: 0,
-      addshow: false,
+      return {
+        // 原小程序哪里是
+          types: '1',
+          canIUse: uni.canIUse('button.open-type.getUserInfo'),
+          fillw: 0,
+          fillh: 0,
+          masktop: 10,
+          addimgtop: '15%',
 
-      fx: [
-        {
-          name: "横向",
-          active: "active",
-        },
-        {
-          name: "纵向",
-          active: "",
-        },
-      ],
-
-      falimys: [
-        {
-          val: "/static/img/font1.jpg",
-          name: "1",
-          active: "active",
-        },
-        {
-          val: "/static/img/font2.jpg",
-          name: "2",
-          active: "",
-        },
-        {
-          val: "/static/img/font3.jpg",
-          name: "3",
-          active: "",
-        },
-        {
-          val: "/static/img/font4.jpg",
-          name: "4",
-          active: "",
-        },
-        {
-          val: "/static/img/font5.jpg",
-          name: "5",
-          active: "",
-        },
-        {
-          val: "/static/img/font6.jpg",
-          name: "6",
-          active: "",
-        },
-      ],
-
-      colors: [
-        {
-          val: "rgb(0,0,0)",
-          name: "0,0,0",
-          active: "active",
-        },
-        {
-          val: "rgb(51,51,51)",
-          name: "51,51,51",
-          active: "",
-        },
-        {
-          val: "rgb(102,102,102)",
-          name: "102,102,102",
-          active: "",
-        },
-        {
-          val: "rgb(255,255,255)",
-          name: "255,255,255",
-          active: "",
-        },
-        {
-          val: "rgb(19,67,104)",
-          name: "19,67,104",
-          active: "",
-        },
-        {
-          val: "rgb(32,141,220)",
-          name: "32,141,220",
-          active: "",
-        },
-        {
-          val: "rgb(67,182,195)",
-          name: "67,182,195",
-          active: "",
-        },
-        {
-          val: "rgb(3,94,41)",
-          name: "3,94,41",
-          active: "",
-        },
-        {
-          val: "rgb(152,202,74)",
-          name: "152,202,74",
-          active: "",
-        },
-        {
-          val: "rgb(145,0,114)",
-          name: "145,0,114",
-          active: "",
-        },
-        {
-          val: "rgb(191,35,27)",
-          name: "191,35,27",
-          active: "",
-        },
-        {
-          val: "rgb(251,24,61)",
-          name: "251,24,61",
-          active: "",
-        },
-        {
-          val: "rgb(239,41,94)",
-          name: "239,41,94",
-          active: "",
-        },
-        {
-          val: "rgb(239,105,14)",
-          name: "239,105,14",
-          active: "",
-        },
-        {
-          val: "rgb(241,153,33)",
-          name: "241,153,33",
-          active: "",
-        },
-      ],
-
-      textwidth: 0,
-      textheight: 0,
-      textimgs: [],
-      xc: 0,
-      yc: 0,
-
-      pk: {
-        x: 0,
-        y: 0,
-        rotate: 0,
-        index: 0,
-        types: "",
-        w: "",
-        h: "",
-      },
-
-      bscale: 1,
-      kshow: true,
-      zx: 0,
-      zy: 0,
-      windowWidth: "",
-      windowHeight: "",
-      url: "",
-      picw: "",
-      pich: "",
-      y: "",
-      x: "",
-      scale: "",
-      rotate: "",
-      clock: "",
-      active: "",
-      name: "",
-    }
-  },
-  onLoad: function (t) {
-    a = uni.createCanvasContext("mycanvas")
-    uni.showLoading({
-      title: "加载中...",
-      mask: true,
-    })
-    var that = this
-    if (t.scene) {
-      var e = decodeURIComponent(t.scene)
-      that.getShopNews(e)
-    } else {
-      that.getShopNews("undefined")
-    }
-    uni.getSystemInfo({
-      success: function (t) {
-        if (t.model.indexOf("iPhone") > -1) {
-          t.model = t.model.split("<")[0]
-        }
-        var e = t.windowWidth
-        var i = t.windowHeight
-        that.phonetype = { name: t.model }
-        that.getShopMobile('microsoft', i, e)
-      },
-    })
-  },
-  onShow: function (t) {
-    uni.showLoading({
-      title: "加载中...",
-      mask: true,
-    })
-    var that = this
-    // 设置背景图
-    uni.getStorage({
-      key: "ppselc",
-      success: function (t) {
-        var e = 0
-        var i = 0
-        var s = t.data.bgimage
-        var c = t.data
-        uni.getImageInfo({
-          src: s,
-          success: function (t) {
-            e = t.width
-            i = t.height
-            uni.getSystemInfo({
-              success: function (t) {
-                if (e < i) {
-                  var h = t.windowHeight - 100
-                  if ((g = (e / i) * (p = 0.72 * h)) > 0.66 * t.windowWidth) {
-                    g = 0.66 * t.windowWidth
-                    p = (i / e) * g
-                    var n = (0.66 * t.windowWidth - g) / 2
-                    var o = 0.8 * t.windowHeight - p - 10
-                    var d = 10
-                    var l = "15%"
-                  } else {
-                    var n = (0.66 * t.windowWidth - g) / 2
-                    var o = 0.8 * t.windowHeight - p - 10
-                    var d = 10
-                    var l = "15%"
-                  }
-                } else {
-                  var g = (h = 0.66 * t.windowWidth)
-                  var p = (i / e) * g
-                  if (g > 0.66 * t.windowWidth) {
-                    g = 0.66 * t.windowWidth
-                    p = (i / e) * g
-                    var n = (0.66 * t.windowWidth - g) / 2
-                    var o = 0.8 * t.windowHeight - p - 10
-                    var d = 10
-                    var l = "15%"
-                  } else {
-                    var n = (0.66 * t.windowWidth - g) / 2
-                    var d = (o = (0.8 * t.windowHeight - p) / 2)
-                    var l = 0
-                  }
-                }
-                that.windowWidth = t.windowWidth
-                that.windowHeight = t.windowHeight
-                that.phonetype = c
-                that.bg = s
-                that.cheight = h
-                that.mheight = p
-                that.mwidth = g
-                that.cshow = false
-                that.left = n
-                that.imgw = e
-                that.imgh = i
-                that.xc = n
-                that.yc = d
-                that.fillw = n
-                that.fillh = o
-                that.masktop = d
-                that.addimgtop = l
-                uni.removeStorageSync("ppselc")
-                uni.hideLoading()
-              },
-              fail: function () {
-                uni.showToast({
-                  title: "获取失败!",
-                  icon: "loading",
-                  mask: true,
-                  duration: 2000,
-                })
-              },
-            })
+          phonetype: {
+              name: ''
           },
-          fail: function (t) {},
-        })
-      },
-      fail: function () {
-        uni.hideLoading()
-      },
-    })
-    
-    // // 获取模板
-    // uni.getStorage({
-    //   key: "mb",
-    //   success: function (t) {
-    //     uni.getImageInfo({
-    //       src: t.data.url,
-    //       success: function (t) {
-    //         var e = [
-    //           {
-    //             url: t.path,
-    //             picw: that.mwidth,
-    //             pich: that.mheight,
-    //             x: that.left,
-    //             y: that.masktop,
-    //             scale: 1,
-    //             rotate: 0,
-    //             active: "active",
-    //             zindex: 1,
-    //             clock: "/static/img/clock1.png",
-    //           },
-    //         ]
-    //         that.mb = e
-    //         that.addimgshow = true
-    //         uni.removeStorageSync("mb")
-    //         uni.hideLoading()
-    //       },
-    //       fail: function (t) {},
-    //     })
-    //   },
-    // })
-    
-    // // 获取图库
-    // uni.getStorage({
-    //   key: "tk",
-    //   success: function () {
-    //     uni.getImageInfo({
-    //       src: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
-    //       success: function (t) {
-    //         var e = [
-    //           {
-    //             url: t.path,
-    //             picw: that.mwidth,
-    //             pich: that.mheight,
-    //             x: that.left,
-    //             y: that.masktop,
-    //             scale: 1,
-    //             rotate: 0,
-    //             active: "active",
-    //             zindex: 1,
-    //             clock: "/static/img/clock1.png",
-    //           },
-    //         ]
-    //         that.tk = e
-    //         that.addimgshow = true
-    //         uni.removeStorageSync("tk")
-    //         uni.hideLoading()
-    //       },
-    //       fail: function (t) {},
-    //     })
-    //   },
-    // })
-    
-    // // 获取贴图
-    // uni.getStorage({
-    //   key: "tt",
-    //   success: function (t) {
-    //     uni.getImageInfo({
-    //       src: t.data[0].url,
-    //       success: function (t) {
-    //         var e = t.path
-    //         console.log(t)
-    //         var i = t.width
-    //         var s = t.height
-    //         if (i == s) {
-    //           i = 90
-    //           s = 90
-    //         } else {
-    //           i = 90
-    //           s = (t.height / t.width) * 90
-    //         }
-    //         var c = that.fillw + (that.mwidth - i) / 2
-    //         var h = that.tt
-    //         var n = {
-    //           url: e,
-    //           picw: i,
-    //           pich: s,
-    //           x: c,
-    //           y: that.masktop + (that.mheight - s) / 2,
-    //           scale: 1,
-    //           rotate: 0,
-    //           active: "active",
-    //           zindex: 6,
-    //         }
-    //         var o = {
-    //           w: i,
-    //           h: s,
-    //           x: c + 0.17 * that.windowWidth,
-    //           y: 0.1 * that.windowHeight + that.masktop + (that.mheight - s) / 2,
-    //           rotate: 0,
-    //           types: "tt",
-    //           index: h.length,
-    //         }
-    //         if (h.length > 0) {
-    //           for (var d = 0; d < h.length; d++) {
-    //             h[d].zindex = 5
-    //           }
-    //         }
-    //         h.push(n)
-    //         that.tt = h
-    //         that.addimgshow = true
-    //         that.pk = o
-    //         that.kshow = false
-    //         uni.removeStorageSync("tt")
-    //         uni.hideLoading()
-    //       },
-    //       fail: function (t) {},
-    //     })
-    //   },
-    // })
-  
-  },
-  onShareAppMessage: function () {
-    return {
-      title: app.globalData.shop.nickname,
-      path: "/pages/index/index?scene=" + app.globalData.shop_id,
-    }
-  },
-  methods: {
-    getShopMobile: function (a, e, i) {
-      var that = this
-      var c = 0
-      var h = 0
-      uni.showLoading({
-        title: "加载中...",
-        mask: true,
-      })
-      if ("" != app.globalData.shop_id) {
-        uni.request({
-          url: app.globalData.host + "/api/Index/searchMmobile",
-          data: {
-            model: a,
-            shop_id: app.globalData.shop_id,
-            types: 0
-          },
-          success: function (t) {
-            if (0 == t.data.code) {
-              uni.navigateTo({
-                url: "/pages/selecttypes/selecttypes",
-              })
-            } else {
-              var a = t.data.data;
-              uni.getImageInfo({
-                src: a.bgimage,
-                success: function (t) {
-                  c = t.width
-                  h = t.height
-                  if (c < h) {
-                    var n = (0.66 * i - (p = (c / h) * (w = 0.72 * (g = e - 100)))) / 2
-                    var o = 0.8 * e - w - 10
-                    var d = 10
-                    var l = "15%"
-                  } else {
-                    var g = 0.66 * i
-                    var p = g
-                    var w = (h / c) * p
-                    var n = (0.66 * i - p) / 2
-                    var d = (o = (0.8 * e - w) / 2)
-                    var l = 0
-                  }
-                  that.windowWidth = i
-                  that.windowHeight = e
-                  that.phonetype = a
-                  that.bg = a.bgimage
-                  that.cheight = g
-                  that.mheight = w
-                  that.mwidth = p
-                  that.cshow = false
-                  that.left = n
-                  that.imgw = c
-                  that.imgh = h
-                  that.xc = n
-                  that.yc = 10
-                  that.fillw = n
-                  that.fillh = o
-                  that.masktop = d
-                  that.addimgtop = l
-                },
-              })
-              uni.hideLoading()
-            }
-          },
-        })
-      } else {
-        setTimeout(function () {
-          that.getShopMobile(a, e, i)
-        }, 1000)
-      }
-    },
 
-    getShopNews: function (a) {
-      var that = this
-      uni.showLoading({
-        title: "加载中...",
-        mask: true,
-      })
-      if ("" != app.globalData.openid) {
-        uni.request({
-          url: app.globalData.host + "/api/User/getShopnews",
-          data: {
-            shop_id: a,
-            openid: app.globalData.openid,
-          },
-          success: function (a) {
-            if (1 == a.data.code) {
-              app.globalData.shop_id = a.data.data.id
-              app.globalData.shop = a.data.data
-              uni.setNavigationBarTitle({
-                title: a.data.data.nickname,
-              })
-              uni.setStorage({
-                key: "shop_id",
-                data: app.globalData.shop_id,
-              })
-              uni.hideLoading()
-            }
-          },
-        })
-      } else {
-        setTimeout(function () {
-          that.getShopNews(a)
-        }, 1000)
-      }
-    },
+          cheight: '',
+          mheight: '',
+          mwidth: '',
+          left: 0,
+          cshow: true,
+          bg: '',
+          mb: '',
+          tk: '',
+          tt: [],
+          pics: [],
+          words: [],
+          inputval: '',
+          addimgshow: false,
+          imgh: 0,
+          imgw: 0,
+          addshow: false,
 
-    mbclock: function () {
-      var that = this
-      var a = this.mb
-      if ("/static/img/clock1.png" == a[0].clock) {
-        uni.getImageInfo({
-          src: a[0].url,
-          success: function (e) {
-            var i = e.width
-            i = (i / e.height) * that.mheight
-            var s = (0.66 * that.windowWidth - i) / 2
-            var c = [
+          fx: [{
+            name: '横向',
+            active: 'active'
+          },{
+            name: '纵向',
+            active: ''
+          }],
+
+          falimys: [
               {
-                url: a[0].url,
-                picw: i,
-                pich: that.mheight,
-                x: s,
-                y: that.masktop,
-                scale: 1,
-                rotate: 0,
-                active: "active",
-                zindex: 1,
-                clock: "/static/img/clock2.png",
+                  val: '/static/img/font1.jpg',
+                  name: '1',
+                  active: 'active'
               },
-            ]
-            var h = {
-              w: i,
-              h: that.mheight,
-              x: s + 0.17 * that.windowWidth,
-              y: 0.1 * that.windowHeight + that.masktop,
-              rotate: 0,
-              types: "mb",
-              index: 0,
-            }
-            that.mb = c
-            that.pk = h
-            that.kshow = false
-          },
-        })
-      } else {
-        a[0].clock = "/static/img/clock1.png"
-        that.mb = a
-      }
-    },
-
-    tkclock: function () {
-      var that = this
-      var a = this.tk
-      if ("/static/img/clock1.png" == a[0].clock) {
-        uni.getImageInfo({
-          src: a[0].url,
-          success: function (e) {
-            var i = e.width
-            i = (i / e.height) * that.mheight
-            var s = (0.66 * that.windowWidth - i) / 2
-            var c = [
               {
-                url: a[0].url,
-                picw: i,
-                pich: that.mheight,
-                x: s,
-                y: that.masktop,
-                scale: 1,
-                rotate: 0,
-                active: "active",
-                zindex: 1,
-                clock: "/static/img/clock2.png",
+                  val: '/static/img/font2.jpg',
+                  name: '2',
+                  active: ''
               },
-            ]
-            var h = {
-              w: i,
-              h: that.mheight,
-              x: s + 0.17 * that.windowWidth,
-              y: 0.1 * that.windowHeight + that.masktop,
-              rotate: 0,
-              types: "tk",
-              index: 0,
-            }
-
-            that.tk = c
-            that.pk = h
-            that.kshow = false
-          },
-        })
-      } else {
-        a[0].clock = "/static/img/clock1.png"
-        that.tk = a
-      }
-    },
-
-    handleEidtType: function () {
-      console.log('这里修改拖鞋型号')
-    },
-
-    addimg: function () {
-      var t = this.pics
-      var that = this
-      uni.chooseImage({
-        count: 1,
-        sizeType: ["original"],
-        sourceType: ["album", "camera"],
-        success: function (e) {
-          var i = e.tempFilePaths[0]
-          uni.getImageInfo({
-            src: i,
-            success: function (e) {
-              var s = e.width
-              s = (s / e.height) * that.mheight
-              var c = (0.66 * that.windowWidth - s) / 2
-              var h = {
-                url: i,
-                picw: s,
-                pich: that.mheight,
-                x: c,
-                y: that.masktop,
-                scale: 1,
-                rotate: 0,
-                active: "active",
-                zindex: 4,
+              {
+                  val: '/static/img/font3.jpg',
+                  name: '3',
+                  active: ''
+              },
+              {
+                  val: '/static/img/font4.jpg',
+                  name: '4',
+                  active: ''
+              },
+              {
+                  val: '/static/img/font5.jpg',
+                  name: '5',
+                  active: ''
+              },
+              {
+                  val: '/static/img/font6.jpg',
+                  name: '6',
+                  active: ''
               }
-              var n = {
-                w: s,
-                h: that.mheight,
-                x: c + 0.17 * that.windowWidth,
-                y: 0.1 * that.windowHeight + that.masktop,
-                rotate: 0,
-                types: "pics",
-                index: t.length,
-              }
-              if (t.length > 0) {
-                for (d = 0; d < t.length; d++) {
-                  t[d].zindex = 3
-                  t[d].active = ""
-                }
-              }
-              var o = that.tt
-              if (o.length > 0) {
-                for (var d = 0; d < o.length; d++) {
-                  o[d].zindex = 5
-                  o[d].active = ""
-                }
-              }
-              t.push(h)
-              that.pics = t
-              that.tt = o
-              that.addimgshow = true
-              that.pk = n
-              that.kshow = false
-            },
-          })
-        },
-      })
-    },
+          ],
 
-    delpic: function (t) {
-      var a = this.pics
-      a.splice(t.target.dataset.idx, 1)
-      this.pics = a
-      this.kshow = true
-    },
+          colors: [
+              {
+                  val: 'rgb(0,0,0)',
+                  name: '0,0,0',
+                  active: 'active'
+              },
+              {
+                  val: 'rgb(51,51,51)',
+                  name: '51,51,51',
+                  active: ''
+              },
+              {
+                  val: 'rgb(102,102,102)',
+                  name: '102,102,102',
+                  active: ''
+              },
+              {
+                  val: 'rgb(255,255,255)',
+                  name: '255,255,255',
+                  active: ''
+              },
+              {
+                  val: 'rgb(19,67,104)',
+                  name: '19,67,104',
+                  active: ''
+              },
+              {
+                  val: 'rgb(32,141,220)',
+                  name: '32,141,220',
+                  active: ''
+              },
+              {
+                  val: 'rgb(67,182,195)',
+                  name: '67,182,195',
+                  active: ''
+              },
+              {
+                  val: 'rgb(3,94,41)',
+                  name: '3,94,41',
+                  active: ''
+              },
+              {
+                  val: 'rgb(152,202,74)',
+                  name: '152,202,74',
+                  active: ''
+              },
+              {
+                  val: 'rgb(145,0,114)',
+                  name: '145,0,114',
+                  active: ''
+              },
+              {
+                  val: 'rgb(191,35,27)',
+                  name: '191,35,27',
+                  active: ''
+              },
+              {
+                  val: 'rgb(251,24,61)',
+                  name: '251,24,61',
+                  active: ''
+              },
+              {
+                  val: 'rgb(239,41,94)',
+                  name: '239,41,94',
+                  active: ''
+              },
+              {
+                  val: 'rgb(239,105,14)',
+                  name: '239,105,14',
+                  active: ''
+              },
+              {
+                  val: 'rgb(241,153,33)',
+                  name: '241,153,33',
+                  active: ''
+              }
+          ],
 
-    delpkpic: function (t) {
-      var a = this.pk
-      var e = this[a.types]
-      e.splice(a.index, 1)
-      if ("pics" == a.types) {
-        this.pics = e
-        this.pk = {
-          x: 0,
-          y: 0,
-          scale: 0,
-          rotate: 0,
-          index: 0,
-          types: "",
-        }
-        this.kshow = true
-      } else {
-        if ("tt" == a.types) {
-          this.tt = e
-          this.pk = {
+          textwidth: 0,
+          textheight: 0,
+          textimgs: [],
+          xc: 0,
+          yc: 0,
+
+          pk: {
             x: 0,
             y: 0,
-            scale: 0,
             rotate: 0,
             index: 0,
-            types: "",
-          }
-          this.kshow = true
-        } else {
-          if ("textimgs" == a.types) {
-            this.textimgs = e
-            this.pk = {
-              x: 0,
-              y: 0,
-              scale: 0,
-              rotate: 0,
-              index: 0,
-              types: "",
+            types: '',
+            h: '',
+            w: ''
+          },
+
+          bscale: 1,
+          kshow: true,
+          admin: true,
+
+          imageSize: {
+            imageWidth: '',
+            imageHeight: ''
+          },
+
+          windowWidth: '',
+          windowHeight: '',
+          undefind: '',
+          url: '',
+          clock: '',
+          active: '',
+          name: ''
+      };
+  },
+  onLoad: function (t) {
+      uni.showLoading({
+        title: '加载中...',
+        mask: true
+      });
+      // 这个是接收全局的对象，生成图标的时候用得上
+      e = uni.createCanvasContext("mycanvas");
+      this.setData({
+          types: '0',
+          admin: true
+      });
+      // 中间哪里显示啥
+      uni.setNavigationBarTitle({
+          title: '我是中间显示的标题'
+      });
+      var that = this;
+      uni.getSystemInfo({
+          success: function (t) {
+            if (t.model.indexOf('iPhone') > -1) {
+              t.model = t.model.split('<')[0];
             }
-            this.kshow = true
-          } else {
-            if ("tk" == a.types) {
-              this.tk = ""
-              this.pk = {
-                x: 0,
-                y: 0,
-                scale: 0,
-                rotate: 0,
-                index: 0,
-                types: "",
+            var a = t.windowWidth;
+            var i = t.windowHeight;
+            that.setData({
+                phonetype: {
+                  name: t.model
+                }
+            });
+            that.getShopMobile( i, a);
+          }
+      });
+  },
+  onShow: function (t) {
+      var that = this;
+      if (app.globalData.onloadss) {
+          this.setData({
+            kshow: true
+          });
+          uni.getStorage({
+              key: 'ppselc',
+              success: function (t) {
+                  app.globalData.onloadss = false;
+                  var i = 0;
+                  var s = 0;
+                  var c = t.data.bgimage;
+                  var o = t.data;
+                  uni.showLoading({
+                      title: '加载中...',
+                      mask: true
+                  });
+                  uni.removeStorageSync('ppselcs');
+                  uni.setStorageSync('ppselcs', t.data.bgimage);
+                  uni.getImageInfo({
+                      src: c,
+                      success: function (t) {
+                          i = t.width;
+                          s = t.height;
+                          uni.getSystemInfo({
+                              success: function (t) {
+                                  if (i < s) {
+                                      var a = t.windowHeight - 100;
+                                      if ((g = (i / s) * (r = 0.72 * a)) > 0.66 * t.windowWidth) {
+                                          g = 0.66 * t.windowWidth;
+                                          r = (s / i) * g;
+                                          var d = (0.66 * t.windowWidth - g) / 2;
+                                          var n = 0.8 * t.windowHeight - r - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      } else {
+                                          var d = (0.66 * t.windowWidth - g) / 2;
+                                          var n = 0.8 * t.windowHeight - r - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      }
+                                  } else {
+                                      var g = (a = 0.66 * t.windowWidth);
+                                      var r = (s / i) * g;
+                                      if (g > 0.66 * t.windowWidth) {
+                                          g = 0.66 * t.windowWidth;
+                                          r = (s / i) * g;
+                                          var d = (0.66 * t.windowWidth - g) / 2;
+                                          var n = 0.8 * t.windowHeight - r - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      } else {
+                                          var d = (0.66 * t.windowWidth - g) / 2;
+                                          var h = (n = (0.8 * t.windowHeight - r) / 2);
+                                          var l = 0;
+                                      }
+                                  }
+                                  that.setData({
+                                      windowWidth: t.windowWidth,
+                                      windowHeight: t.windowHeight,
+                                      phonetype: o,
+                                      bg: c,
+                                      cheight: a,
+                                      mheight: r,
+                                      mwidth: g,
+                                      cshow: false,
+                                      left: d,
+                                      imgw: i,
+                                      imgh: s,
+                                      xc: d,
+                                      yc: h,
+                                      fillw: d,
+                                      fillh: n,
+                                      masktop: h,
+                                      addimgtop: l
+                                  });
+                                  uni.removeStorageSync('ppselc');
+                                  uni.hideLoading();
+                              },
+                              fail: function () {
+                                  uni.showToast({
+                                      title: '获取失败!',
+                                      icon: 'loading',
+                                      mask: true,
+                                      duration: 2000
+                                  });
+                              }
+                          });
+                      }
+                  });
+              },
+              fail: function (t) {
+                  if ('' == that.bg) {
+                      uni.showToast({
+                          title: '请选机型!',
+                          icon: 'loading',
+                          mask: true,
+                          duration: 3000
+                      });
+                      setTimeout(function () {
+                          uni.navigateTo({
+                              url: '/pages/selecttypes/selecttypes'
+                          });
+                      }, 2000);
+                  }
               }
-              this.kshow = true
-            } else {
-              if ("mb" == a.types) {
-                this.mb = ""
-                this.pk = {
+          });
+      }
+      uni.getStorage({
+          key: 'mb',
+          success: function (t) {
+              that.setData({
+                  kshow: true
+              });
+              uni.showLoading({
+                  title: '加载中...',
+                  mask: true
+              });
+              uni.getImageInfo({
+                  src: t.data.url,
+                  success: function (t) {
+                      var a = [
+                          {
+                              url: t.path,
+                              picw: that.mwidth,
+                              pich: that.mheight,
+                              x: that.left,
+                              y: that.masktop,
+                              scale: 1,
+                              rotate: 0,
+                              active: 'active',
+                              zindex: 1,
+                              clock: '/static/img/clock1.png'
+                          }
+                      ];
+                      that.setData({
+                          mb: a,
+                          addimgshow: true
+                      });
+                      uni.removeStorageSync('mb');
+                      uni.hideLoading();
+                  },
+                  fail: function (t) {}
+              });
+          }
+      });
+      uni.getStorage({
+          key: 'tk',
+          success: function (t) {
+              that.setData({
+                  kshow: true
+              });
+              uni.showLoading({
+                  title: '加载中...',
+                  mask: true
+              });
+              uni.getImageInfo({
+                  src: t.data.url,
+                  success: function (t) {
+                      var a = [
+                          {
+                              url: t.path,
+                              picw: that.mwidth,
+                              pich: that.mheight,
+                              x: that.left,
+                              y: that.masktop,
+                              scale: 1,
+                              rotate: 0,
+                              active: 'active',
+                              zindex: 1,
+                              clock: '/static/img/clock1.png'
+                          }
+                      ];
+                      that.setData({
+                          tk: a,
+                          addimgshow: true
+                      });
+                      uni.removeStorageSync('tk');
+                      uni.hideLoading();
+                  },
+                  fail: function (t) {}
+              });
+          }
+      });
+      uni.getStorage({
+          key: 'tt',
+          success: function (t) {
+              that.setData({
+                  kshow: true
+              });
+              uni.showLoading({
+                  title: '加载中...',
+                  mask: true
+              });
+              uni.getImageInfo({
+                  src: t.data[0].url,
+                  success: function (t) {
+                      var a = t.path;
+                      var i = t.width;
+                      var s = t.height;
+                      if (i == s) {
+                          i = 90;
+                          s = 90;
+                      } else {
+                          i = 90;
+                          s = (t.height / t.width) * 90;
+                      }
+                      var c = that.fillw + (that.mwidth - i) / 2;
+                      var o = that.tt;
+                      var d = {
+                          url: a,
+                          picw: i,
+                          pich: s,
+                          x: c,
+                          y: that.masktop + (that.mheight - s) / 2,
+                          scale: 1,
+                          rotate: 0,
+                          zindex: 6
+                      };
+                      var n = {
+                          w: i,
+                          h: s,
+                          x: c + 0.17 * that.windowWidth,
+                          y: 0.1 * that.windowHeight + that.masktop + (that.mheight - s) / 2,
+                          rotate: 0,
+                          types: 'tt',
+                          index: o.length
+                      };
+                      if (o.length > 0) {
+                          for (var h = 0; h < o.length; h++) {
+                              if (void 0 != o[h]) {
+                                  o[h].zindex = 5;
+                              }
+                          }
+                      }
+                      o.push(d);
+                      that.setData({
+                          tt: o,
+                          addimgshow: true,
+                          pk: n,
+                          kshow: false
+                      });
+                      uni.removeStorageSync('tt');
+                      uni.hideLoading();
+                  },
+                  fail: function (t) {}
+              });
+          }
+      });
+  },
+  onShareAppMessage: function () {
+      return {
+          title: app.globalData.shop.nickname,
+          path: '/pages/index/index?scene=' + app.globalData.shop_id + ',' + app.globalData.userInfo.id
+      };
+  },
+  methods: {
+      movedata: function (t) {
+          console.log(t);
+          if ('tt' == t.getDataset.types) {
+              var a = this.tt;
+              var e = this.pk;
+              a[t.getDataset.idx].x = t.getDataset.x;
+              a[t.getDataset.idx].y = t.getDataset.y;
+              a[t.getDataset.idx].picw = t.getDataset.w;
+              a[t.getDataset.idx].pich = t.getDataset.h;
+              a[t.getDataset.idx].scale = t.getDataset.scale;
+              a[t.getDataset.idx].rotate = t.getDataset.rotate;
+              e.x = t.picslistdata.x;
+              e.y = t.picslistdata.y;
+              e.w = t.picslistdata.w;
+              e.h = t.picslistdata.h;
+              e.rotate = t.picslistdata.rotate;
+              this.setData({
+                  tt: a,
+                  pk: e
+              });
+          }
+          if ('pics' == t.getDataset.types) {
+              var i = this.pics;
+              var e = this.pk;
+              i[t.getDataset.idx].x = t.getDataset.x;
+              i[t.getDataset.idx].y = t.getDataset.y;
+              i[t.getDataset.idx].picw = t.getDataset.w;
+              i[t.getDataset.idx].pich = t.getDataset.h;
+              i[t.getDataset.idx].scale = t.getDataset.scale;
+              i[t.getDataset.idx].rotate = t.getDataset.rotate;
+              e.x = t.picslistdata.x;
+              e.y = t.picslistdata.y;
+              e.w = t.picslistdata.w;
+              e.h = t.picslistdata.h;
+              e.rotate = t.picslistdata.rotate;
+              this.setData({
+                  pics: i,
+                  pk: e
+              });
+          }
+          if ('textimgs' == t.getDataset.types) {
+              var s = this.textimgs;
+              var e = this.pk;
+              s[t.getDataset.idx].x = t.getDataset.x;
+              s[t.getDataset.idx].y = t.getDataset.y;
+              s[t.getDataset.idx].picw = t.getDataset.w;
+              s[t.getDataset.idx].pich = t.getDataset.h;
+              s[t.getDataset.idx].scale = t.getDataset.scale;
+              s[t.getDataset.idx].rotate = t.getDataset.rotate;
+              e.x = t.picslistdata.x;
+              e.y = t.picslistdata.y;
+              e.w = t.picslistdata.w;
+              e.h = t.picslistdata.h;
+              e.rotate = t.picslistdata.rotate;
+              this.setData({
+                  textimgs: s,
+                  pk: e
+              });
+          }
+          if ('tk' == t.getDataset.types) {
+              var c = this.tk;
+              var e = this.pk;
+              c[0].x = t.getDataset.x;
+              c[0].y = t.getDataset.y;
+              c[0].picw = t.getDataset.w;
+              c[0].pich = t.getDataset.h;
+              c[0].scale = t.getDataset.scale;
+              c[0].rotate = t.getDataset.rotate;
+              e.x = t.picslistdata.x;
+              e.y = t.picslistdata.y;
+              e.w = t.picslistdata.w;
+              e.h = t.picslistdata.h;
+              e.rotate = t.picslistdata.rotate;
+              this.setData({
+                  tk: c,
+                  pk: e
+              });
+          }
+          if ('mb' == t.getDataset.types) {
+              var o = this.mb;
+              var e = this.pk;
+              o[0].x = t.getDataset.x;
+              o[0].y = t.getDataset.y;
+              o[0].picw = t.getDataset.w;
+              o[0].pich = t.getDataset.h;
+              o[0].scale = t.getDataset.scale;
+              o[0].rotate = t.getDataset.rotate;
+              e.x = t.picslistdata.x;
+              e.y = t.picslistdata.y;
+              e.w = t.picslistdata.w;
+              e.h = t.picslistdata.h;
+              e.rotate = t.picslistdata.rotate;
+              this.setData({
+                  mb: o,
+                  pk: e
+              });
+          }
+      },
+
+      getShopMobile: function ( e, i) {
+          var that = this;
+          var c = 0;
+          var o = 0;
+          uni.showLoading({
+              title: '加载中...',
+              mask: true
+          });
+          if ('' != app.globalData.shop_id) {
+              uni.request({
+                  url: app.globalData.host + '/api/Index/searchMmobile',
+                  data: {
+                      model: 'microsoft',
+                      shop_id: app.globalData.shop_id,
+                      types: app.globalData.types
+                  },
+                  success: function (t) {
+                      if (0 == t.data.code) {
+                          app.globalData.onloadss = true;
+                          uni.navigateTo({
+                              url: '/pages/selecttypes/selecttypes'
+                          });
+                          uni.hideLoading();
+                      } else {
+                          var d = t.data.data;
+                          uni.removeStorageSync('ppselcs');
+                          uni.setStorageSync('ppselcs', d.bgimage);
+                          uni.getImageInfo({
+                              src: d.bgimage,
+                              success: function (t) {
+                                  c = t.width;
+                                  o = t.height;
+                                  if (c < o) {
+                                      if ((r = (c / o) * (p = 0.72 * (g = e - 100))) > 0.66 * i) {
+                                          var a = (0.66 * i - (r = 0.66 * i)) / 2;
+                                          var n = 0.8 * e - (p = (o / c) * r) - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      } else {
+                                          var a = (0.66 * i - r) / 2;
+                                          var n = 0.8 * e - p - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      }
+                                  } else {
+                                      var g = 0.66 * i;
+                                      var r = g;
+                                      var p = (o / c) * r;
+                                      if (r > 0.66 * i) {
+                                          var a = (0.66 * i - (r = 0.66 * i)) / 2;
+                                          var n = 0.8 * e - (p = (o / c) * r) - 10;
+                                          var h = 10;
+                                          var l = '15%';
+                                      } else {
+                                          var a = (0.66 * i - r) / 2;
+                                          var h = (n = (0.8 * e - p) / 2);
+                                          var l = 0;
+                                      }
+                                  }
+                                  that.setData({
+                                      windowWidth: i,
+                                      windowHeight: e,
+                                      phonetype: d,
+                                      bg: d.bgimage,
+                                      cheight: g,
+                                      mheight: p,
+                                      mwidth: r,
+                                      cshow: false,
+                                      left: a,
+                                      imgw: c,
+                                      imgh: o,
+                                      xc: a,
+                                      yc: 10,
+                                      fillw: a,
+                                      fillh: n,
+                                      masktop: h,
+                                      addimgtop: l
+                                  });
+                              }
+                          });
+                          uni.hideLoading();
+                      }
+                  }
+              });
+          } else {
+              setTimeout(function () {
+                  that.getShopMobile( e, i);
+              }, 1000);
+          }
+      },
+
+      mbclock: function () {
+          var that = this;
+          var a = this.mb;
+          if ('/static/img/clock1.png' == a[0].clock) {
+              uni.getImageInfo({
+                  src: a[0].url,
+                  success: function (e) {
+                      var i = e.width;
+                      i = (i / e.height) * that.mheight;
+                      var s = (0.66 * that.windowWidth - i) / 2;
+                      var c = [
+                          {
+                              url: a[0].url,
+                              picw: i,
+                              pich: that.mheight,
+                              x: s,
+                              y: that.masktop,
+                              scale: 1,
+                              rotate: 0,
+                              active: 'active',
+                              zindex: 1,
+                              clock: '/static/img/clock2.png'
+                          }
+                      ];
+                      var o = {
+                          w: i,
+                          h: that.mheight,
+                          x: s + 0.17 * that.windowWidth,
+                          y: 0.1 * that.windowHeight + that.masktop,
+                          rotate: 0,
+                          types: 'mb',
+                          index: 0
+                      };
+                      that.setData({
+                          mb: c,
+                          pk: o,
+                          kshow: false
+                      });
+                  }
+              });
+          } else {
+              a[0].clock = '/static/img/clock1.png';
+              that.setData({
+                  mb: a,
+                  kshow: true
+              });
+          }
+      },
+
+      tkclock: function (t) {
+          var that = this;
+          var e = this.tk;
+          if ('/static/img/clock1.png' == e[0].clock) {
+              uni.getImageInfo({
+                  src: e[0].url,
+                  success: function (t) {
+                      var i = t.width;
+                      i = (i / t.height) * that.mheight;
+                      var s = (0.66 * that.windowWidth - i) / 2;
+                      var c = [
+                          {
+                              url: e[0].url,
+                              picw: i,
+                              pich: that.mheight,
+                              x: s,
+                              y: that.masktop,
+                              scale: 1,
+                              rotate: 0,
+                              active: 'active',
+                              zindex: 1,
+                              clock: '/static/img/clock2.png'
+                          }
+                      ];
+                      var o = {
+                          w: i,
+                          h: that.mheight,
+                          x: s + 0.17 * that.windowWidth,
+                          y: 0.1 * that.windowHeight + that.masktop,
+                          rotate: 0,
+                          types: 'tk',
+                          index: 0
+                      };
+                      that.setData({
+                          tk: c,
+                          pk: o,
+                          kshow: false
+                      });
+                  }
+              });
+          } else {
+              e[0].clock = '/static/img/clock1.png';
+              that.setData({
+                  tk: e,
+                  kshow: true
+              });
+          }
+      },
+
+      eidttype: function () {
+          app.globalData.onloadss = true;
+          uni.navigateTo({
+              url: '/pages/selecttypes/selecttypes'
+          });
+      },
+
+      getCanvasImg: function (a, e, i, s) {
+          var that = this;
+          uni.getImageInfo({
+              src: i[0],
+              success: function (o) {
+                  var d = t.default.imageUtil(o);
+                  that.setData({
+                      imageSize: d
+                  });
+                  if (a < i.length) {
+                      var n = uni.createCanvasContext('attendCanvasId');
+                      n.drawImage(i[a], 0, 0, d.imageWidth, d.imageHeight);
+                      n.draw(false, function () {
+                          a += 1;
+                          console.log(d);
+                          uni.canvasToTempFilePath({
+                              x: 0,
+                              y: 0,
+                              width: d.imageWidth,
+                              height: d.imageHeight,
+                              destWidth: d.imageWidth,
+                              destHeight: d.imageHeight,
+                              canvasId: 'attendCanvasId',
+                              fileType: 'jpg',
+                              quality: 1,
+                              success: function (t) {
+                                  console.log(t);
+                                  that.uploadCanvasImg(t.tempFilePath, s[0]);
+                              },
+                              fail: function (t) {
+                                  e += 1;
+                                  that.getCanvasImg(inedx, e, i, s);
+                              }
+                          });
+                      });
+                  }
+              },
+              fail: function () {},
+              complete: function () {}
+          });
+      },
+
+      uploadCanvasImg: function (t, e) {
+          var i = this.pics;
+          var that = this;
+          var c = t;
+          uni.uploadFile({
+              url: app.globalData.host + '/api/Checkfile/Checkfile',
+              filePath: c,
+              name: 'file',
+              success: function (t) {
+                  uni.hideLoading();
+                  if (1 == JSON.parse(t.data).code) {
+                      uni.getImageInfo({
+                          src: e,
+                          success: function (t) {
+                              var a = t.width;
+                              a = (a / t.height) * that.mheight;
+                              var c = (0.66 * that.windowWidth - a) / 2;
+                              var o = {
+                                  url: e,
+                                  picw: a,
+                                  pich: that.mheight,
+                                  x: c,
+                                  y: that.masktop,
+                                  scale: 1,
+                                  rotate: 0,
+                                  active: 'active',
+                                  zindex: 4
+                              };
+                              var d = {
+                                  w: a,
+                                  h: that.mheight,
+                                  x: c + 0.17 * that.windowWidth,
+                                  y: 0.1 * that.windowHeight + that.masktop,
+                                  rotate: 0,
+                                  types: 'pics',
+                                  index: i.length
+                              };
+                              if (i.length > 0) {
+                                  for (h = 0; h < i.length; h++) {
+                                      if (void 0 != i[h]) {
+                                          i[h].zindex = 3;
+                                      }
+                                  }
+                              }
+                              var n = that.tt;
+                              if (n.length > 0) {
+                                  for (var h = 0; h < n.length; h++) {
+                                      if (void 0 != n[h]) {
+                                          n[h].zindex = 5;
+                                      }
+                                  }
+                              }
+                              i.push(o);
+                              that.setData({
+                                  pics: i,
+                                  tt: n,
+                                  addimgshow: true,
+                                  pk: d,
+                                  kshow: false
+                              });
+                              console.log(that.kshow);
+                          }
+                      });
+                  } else {
+                      uni.showToast({
+                          title: '图片不安全',
+                          icon: 'loading',
+                          duration: 2000
+                      });
+                  }
+              }
+          });
+      },
+
+      addimg: function () {
+          var that = this;
+          this.setData({
+              kshow: true
+          });
+          uni.chooseImage({
+              count: 1,
+              sizeType: ['original'],
+              sourceType: ['album', 'camera'],
+              success: function (a) {
+                  var e = a.tempFilePaths;
+                  that.getCanvasImg(0, 0, e, e);
+                  uni.showLoading({
+                      title: '图片验证中',
+                      mask: true
+                  });
+              }
+          });
+      },
+
+      delpic: function (t) {
+          var a = this.pics;
+          a.splice(t.target.dataset.idx, 1);
+          this.setData({
+              pics: a,
+              kshow: true
+          });
+      },
+
+      delpkpic: function (t) {
+          var a = this.pk;
+          var e = this[a.types];
+          e.splice(a.index, 1);
+          console.log(e);
+          if ('pics' == a.types) {
+              this.setData({
+                  pics: e,
+                  pk: {
+                      x: 0,
+                      y: 0,
+                      scale: 0,
+                      rotate: 0,
+                      index: 0,
+                      types: ''
+                  },
+                  kshow: true
+              });
+          } else {
+              if ('tt' == a.types) {
+                  this.setData({
+                      tt: e,
+                      pk: {
+                          x: 0,
+                          y: 0,
+                          scale: 0,
+                          rotate: 0,
+                          index: 0,
+                          types: ''
+                      },
+                      kshow: true
+                  });
+              } else {
+                  if ('textimgs' == a.types) {
+                      this.setData({
+                          textimgs: e,
+                          pk: {
+                              x: 0,
+                              y: 0,
+                              scale: 0,
+                              rotate: 0,
+                              index: 0,
+                              types: ''
+                          },
+                          kshow: true
+                      });
+                  } else {
+                      if ('tk' == a.types) {
+                          this.setData({
+                              tk: '',
+                              pk: {
+                                  x: 0,
+                                  y: 0,
+                                  scale: 0,
+                                  rotate: 0,
+                                  index: 0,
+                                  types: ''
+                              },
+                              kshow: true
+                          });
+                      } else {
+                          if ('mb' == a.types) {
+                              this.setData({
+                                  mb: '',
+                                  pk: {
+                                      x: 0,
+                                      y: 0,
+                                      scale: 0,
+                                      rotate: 0,
+                                      index: 0,
+                                      types: ''
+                                  },
+                                  kshow: true
+                              });
+                          }
+                      }
+                  }
+              }
+          }
+      },
+
+      deltk: function () {
+          this.setData({
+              tk: '',
+              kshow: true
+          });
+      },
+
+      delmb: function () {
+          this.setData({
+              mb: '',
+              kshow: true
+          });
+      },
+
+      deltt: function (t) {
+          var a = this.tt;
+          a.splice(t.target.dataset.idx, 1);
+          this.setData({
+              tt: a,
+              kshow: true
+          });
+      },
+
+      deltextimgs: function (t) {
+          var a = this.textimgs;
+          delete a[t.target.dataset.idx];
+          this.setData({
+              textimgs: a,
+              kshow: true
+          });
+      },
+
+      printoo: function () {
+          this.submitdata(1);
+      },
+
+      bindGetUserInfo: function (t) {
+          uni.showLoading({
+              title: '提交数据...',
+              mask: true,
+              duration: 1000
+          });
+          var that = this;
+          var i = t.detail.userInfo.avatarUrl;
+          var s = t.detail.userInfo.nickName;
+          uni.showLoading({
+              title: s,
+              mask: true
+          });
+          uni.request({
+              url: app.globalData.host + '/api/Index/edituseravater',
+              data: {
+                  shop_id: app.globalData.shop_id,
+                  openid: app.globalData.openid,
+                  avatar: i,
+                  nickname: s
+              },
+              method: 'GET',
+              dataType: 'json',
+              success: function (t) {
+                  if (1 == t.data.code) {
+                      app.globalData.userInfo = t.data.data;
+                      that.setData({
+                          canIUse: false
+                      });
+                      that.submitdata();
+                  }
+              },
+              fail: function (t) {
+                  uni.showLoading({
+                      title: JSON.stringify(t),
+                      mask: true,
+                      duration: 50
+                  });
+              },
+              complete: function (t) {}
+          });
+      },
+
+      submitdata: function () {
+          var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '';
+          if ('' != this.tk || 0 != this.pics.length || '' != this.mb || 0 != this.tt.length || 0 != this.textimgs.length) {
+              uni.showLoading({
+                  title: '图片生成中...',
+                  mask: true,
+                  duration: 200
+              });
+              var that = this;
+              e.clearRect(0, 0, that.imgw, that.imgh);
+              e.fillStyle = '#ffffff';
+              e.fillRect(0, 0, that.imgw, that.imgh);
+              e.save();
+              var i = this.tk;
+              var s = that.imgw / that.mwidth;
+              var c = that.imgh / that.mheight;
+              if (i.length > 0) {
+                  for (var o = 0; o < i.length; o++) {
+                      if (void 0 != i[o]) {
+                          var d = i[o];
+                          var n = d.x - that.xc - (d.picw * (d.scale - 1)) / 2;
+                          var h = d.y - that.yc - (d.pich * (d.scale - 1)) / 2;
+                          var l = n + (d.picw * d.scale) / 2;
+                          var g = h + (d.pich * d.scale) / 2;
+                          e.save();
+                          e.translate(l * s, g * c);
+                          e.rotate((d.rotate * Math.PI) / 180);
+                          e.translate(-l * s, -g * c);
+                          e.drawImage(d.url, n * s, h * c, d.picw * d.scale * s, d.pich * d.scale * c);
+                          e.restore();
+                      }
+                  }
+                  this.drawpic(t);
+              } else {
+                  this.drawpic(t);
+              }
+          } else {
+              uni.showToast({
+                  title: '未选中任何图片！',
+                  icon: 'loading',
+                  duration: 2000
+              });
+          }
+      },
+
+      drawpic: function () {
+          var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '';
+          var that = this;
+          var i = that.imgw / that.mwidth;
+          var s = that.imgh / that.mheight;
+          var c = this.pics;
+          if (c.length > 0) {
+              for (var o = 0; o < c.length; o++) {
+                  if (void 0 != c[o]) {
+                      var d = c[o];
+                      var n = d.x - that.xc - (d.picw * (d.scale - 1)) / 2;
+                      var h = d.y - that.yc - (d.pich * (d.scale - 1)) / 2;
+                      var l = n + (d.picw * d.scale) / 2;
+                      var g = h + (d.pich * d.scale) / 2;
+                      e.save();
+                      e.translate(l * i, g * s);
+                      e.rotate((d.rotate * Math.PI) / 180);
+                      e.translate(-l * i, -g * s);
+                      e.drawImage(d.url, n * i, h * s, d.picw * d.scale * i, d.pich * d.scale * s);
+                      e.restore();
+                  }
+                  if (o == c.length - 1) {
+                      this.drawmb(t);
+                  }
+              }
+          } else {
+              this.drawmb(t);
+          }
+      },
+
+      drawmb: function () {
+          var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '';
+          var that = this;
+          var i = this.mb;
+          var s = that.imgw / that.mwidth;
+          var c = that.imgh / that.mheight;
+          if (i.length > 0) {
+              for (var o = 0; o < i.length; o++) {
+                  if (void 0 != i[o]) {
+                      var d = i[o];
+                      var n = d.x - that.xc - (d.picw * (d.scale - 1)) / 2;
+                      var h = d.y - that.yc - (d.pich * (d.scale - 1)) / 2;
+                      var l = n + (d.picw * d.scale) / 2;
+                      var g = h + (d.pich * d.scale) / 2;
+                      e.save();
+                      e.translate(l * s, g * c);
+                      e.rotate((d.rotate * Math.PI) / 180);
+                      e.translate(-l * s, -g * c);
+                      e.drawImage(d.url, n * s, h * c, d.picw * d.scale * s, d.pich * d.scale * c);
+                      e.restore();
+                  }
+              }
+              this.drawtt(t);
+          } else {
+              this.drawtt(t);
+          }
+      },
+
+      drawtt: function () {
+          var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '';
+          var that = this;
+          var i = that.imgw / that.mwidth;
+          var s = that.imgh / that.mheight;
+          var c = this.tt;
+          if (c.length > 0) {
+              for (var o = 0; o < c.length; o++) {
+                  if (void 0 != c[o]) {
+                      var d = c[o];
+                      var n = d.x - that.xc - (d.picw * (d.scale - 1)) / 2;
+                      var h = d.y - that.yc - (d.pich * (d.scale - 1)) / 2;
+                      var l = n + (d.picw * d.scale) / 2;
+                      var g = h + (d.pich * d.scale) / 2;
+                      e.save();
+                      e.translate(l * i, g * s);
+                      e.rotate((d.rotate * Math.PI) / 180);
+                      e.translate(-l * i, -g * s);
+                      e.drawImage(d.url, n * i, h * s, d.picw * d.scale * i, d.pich * d.scale * s);
+                      e.restore();
+                  }
+                  if (o == c.length - 1) {
+                      this.drawtext(t);
+                  }
+              }
+          } else {
+              this.drawtext(t);
+          }
+      },
+
+      drawtext: function () {
+          var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '';
+          var that = this;
+          var s = that.imgw / that.mwidth;
+          var c = that.imgh / that.mheight;
+          var o = this.textimgs;
+          if (o.length > 0) {
+              for (var d = 0; d < o.length; d++) {
+                  if (void 0 != o[d]) {
+                      var n = o[d];
+                      var h = n.x - that.xc - (n.picw * (n.scale - 1)) / 2;
+                      var l = n.y - that.yc - (n.pich * (n.scale - 1)) / 2;
+                      var g = h + (n.picw * n.scale) / 2;
+                      var r = l + (n.pich * n.scale) / 2;
+                      e.save();
+                      e.translate(g * s, r * c);
+                      e.rotate((n.rotate * Math.PI) / 180);
+                      e.translate(-g * s, -r * c);
+                      e.drawImage(n.url, h * s, l * c, n.picw * n.scale * s, n.pich * n.scale * c);
+                      e.restore();
+                  }
+              }
+          }
+          e.draw(false, function () {
+              uni.canvasToTempFilePath({
                   x: 0,
                   y: 0,
-                  scale: 0,
-                  rotate: 0,
-                  index: 0,
-                  types: "",
-                }
-                this.kshow = true
-              }
-            }
-          }
-        }
-      }
-    },
-
-    deltk: function () {
-      this.tk = ""
-      this.kshow = true
-    },
-
-    delmb: function () {
-      this.mb = ""
-      this.kshow = true
-    },
-
-    deltt: function (t) {
-      var a = this.tt
-      a.splice(t.target.dataset.idx, 1)
-      this.tt = a
-      this.kshow = true
-    },
-
-    deltextimgs: function (t) {
-      var a = this.textimgs
-      a.splice(t.target.dataset.idx, 1)
-      this.textimgs = a
-      this.kshow = true
-    },
-
-    bindGetUserInfo: function (a) {
-      uni.showLoading({
-        title: "提交数据...",
-        mask: true,
-      })
-      var that = this
-      var i = a.detail.userInfo.avatarUrl
-      var s = a.detail.userInfo.nickName
-      uni.showLoading({
-        title: s,
-        mask: true,
-      })
-      uni.request({
-        url: app.globalData.host + "/api/Index/edituseravater",
-        data: {
-          shop_id: app.globalData.shop_id,
-          openid: app.globalData.openid,
-          avatar: i,
-          nickname: s,
-        },
-        method: "GET",
-        dataType: "json",
-        success: function (a) {
-          if (1 == a.data.code) {
-            app.globalData.userInfo = a.data.data
-            that.canIUse = false
-            that.submitdata()
-          }
-        },
-        fail: function (t) {
-          uni.showLoading({
-            title: JSON.stringify(t),
-            mask: true,
-          })
-        },
-        complete: function (t) {},
-      })
-    },
-
-    submitdata: function () {
-      if ("" != this.tk || 0 != this.pics.length || "" != this.mb || 0 != this.tt.length || 0 != this.textimgs.length) {
-        uni.showLoading({
-          title: "图片生成中...",
-          mask: true,
-        })
-        var that = this
-        a.clearRect(0, 0, that.imgw, that.imgh)
-        a.fillStyle = "#ffffff"
-        a.fillRect(0, 0, that.imgw, that.imgh)
-        a.save()
-        var e = this.tk
-        var i = that.imgw / that.mwidth
-        var s = that.imgh / that.mheight
-        if (e.length > 0) {
-          for (var c = 0; c < e.length; c++) {
-            var h = e[c]
-            var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2
-            var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2
-            var d = n + (h.picw * h.scale) / 2
-            var l = o + (h.pich * h.scale) / 2
-            a.save()
-            a.translate(d * i, l * s)
-            a.rotate((h.rotate * Math.PI) / 180)
-            a.translate(-d * i, -l * s)
-            a.drawImage(h.url, n * i, o * s, h.picw * h.scale * i, h.pich * h.scale * s)
-            a.restore()
-          }
-          this.drawpic()
-        } else {
-          this.drawpic()
-        }
-      } else {
-        uni.showToast({
-          title: "未选中任何图片！",
-          icon: "loading",
-          duration: 1000,
-        })
-      }
-    },
-
-    drawpic: function () {
-      var that = this
-      var e = that.imgw / that.mwidth
-      var i = that.imgh / that.mheight
-      var s = this.pics
-      if (s.length > 0) {
-        for (var c = 0; c < s.length; c++) {
-          var h = s[c]
-          var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2
-          var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2
-          var d = n + (h.picw * h.scale) / 2
-          var l = o + (h.pich * h.scale) / 2
-          a.save()
-          a.translate(d * e, l * i)
-          a.rotate((h.rotate * Math.PI) / 180)
-          a.translate(-d * e, -l * i)
-          a.drawImage(h.url, n * e, o * i, h.picw * h.scale * e, h.pich * h.scale * i)
-          a.restore()
-          if (c == s.length - 1) {
-            this.drawmb()
-          }
-        }
-      } else {
-        this.drawmb()
-      }
-    },
-
-    drawmb: function () {
-      var that = this
-      var e = this.mb
-      var i = that.imgw / that.mwidth
-      var s = that.imgh / that.mheight
-      if (e.length > 0) {
-        for (var c = 0; c < e.length; c++) {
-          var h = e[c]
-          var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2
-          var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2
-          var d = n + (h.picw * h.scale) / 2
-          var l = o + (h.pich * h.scale) / 2
-          a.save()
-          a.translate(d * i, l * s)
-          a.rotate((h.rotate * Math.PI) / 180)
-          a.translate(-d * i, -l * s)
-          a.drawImage(h.url, n * i, o * s, h.picw * h.scale * i, h.pich * h.scale * s)
-          a.restore()
-        }
-        this.drawtt()
-      } else {
-        this.drawtt()
-      }
-    },
-
-    drawtt: function () {
-      var that = this
-      var e = that.imgw / that.mwidth
-      var i = that.imgh / that.mheight
-      var s = this.tt
-      if (s.length > 0) {
-        for (var c = 0; c < s.length; c++) {
-          var h = s[c]
-          var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2
-          var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2
-          var d = n + (h.picw * h.scale) / 2
-          var l = o + (h.pich * h.scale) / 2
-          a.save()
-          a.translate(d * e, l * i)
-          a.rotate((h.rotate * Math.PI) / 180)
-          a.translate(-d * e, -l * i)
-          a.drawImage(h.url, n * e, o * i, h.picw * h.scale * e, h.pich * h.scale * i)
-          a.restore()
-          if (c == s.length - 1) {
-            this.drawtext()
-          }
-        }
-      } else {
-        this.drawtext()
-      }
-    },
-
-    drawtext: function () {
-      var that = this
-      var i = that.imgw / that.mwidth
-      var s = that.imgh / that.mheight
-      var c = this.textimgs
-      if (c.length > 0) {
-        for (var h = 0; h < c.length; h++) {
-          var n = c[h]
-          var o = n.x - that.xc - (n.picw * (n.scale - 1)) / 2
-          var d = n.y - that.yc - (n.pich * (n.scale - 1)) / 2
-          var l = o + (n.picw * n.scale) / 2
-          var g = d + (n.pich * n.scale) / 2
-          a.save()
-          a.translate(l * i, g * s)
-          a.rotate((n.rotate * Math.PI) / 180)
-          a.translate(-l * i, -g * s)
-          a.drawImage(n.url, o * i, d * s, n.picw * n.scale * i, n.pich * n.scale * s)
-          a.restore()
-        }
-      }
-      a.draw(false, function () {
-        uni.canvasToTempFilePath({
-          x: 0,
-          y: 0,
-          width: that.imgw,
-          height: that.imgh,
-          destWidth: that.imgw,
-          destHeight: that.imgh,
-          canvasId: "mycanvas",
-          fileType: "jpg",
-          quality: 1,
-          success: function (a) {
-            console.log(a);
-            debugger
-            app.globalData.imgurl = a.tempFilePath
-            uni.setStorage({
-              key: "phonetype",
-              data: that.phonetype,
-            })
-            uni.navigateTo({
-              url: "/pages/ordersure/ordersure",
-            })
-            uni.hideLoading()
-          },
-        })
-      })
-    },
-
-    bindload: function (t) {
-      t.detail.width
-      t.detail.height
-    },
-
-    bindqie: function (t) {
-      c = t.target.dataset.idx
-      s = t.target.dataset.types
-      var a = this.pics
-      var i = this.tt
-      var h = this.textimgs
-      var n = []
-      var o = []
-      var d = []
-      if ("pics" == s) {
-        for (l = 0; l < a.length; l++) {
-          if (l != c) {
-            a[l].zindex = 3
-            n.push(a[l])
-          }
-        }
-        a[c].zindex = 4
-        n.push(a[c])
-        g = {
-          w: a[c].picw * a[c].scale,
-          h: a[c].pich * a[c].scale,
-          x: 0.17 * this.windowWidth + a[c].x + (a[c].picw - a[c].picw * a[c].scale) / 2,
-          y: 0.1 * this.windowHeight + a[c].y + (a[c].pich - a[c].pich * a[c].scale) / 2,
-          rotate: a[c].rotate,
-          types: "pics",
-          index: n.length - 1,
-        }
-        this.pics = n
-        this.tt = i
-        this.textimgs = h
-        this.pk = g
-        this.kshow = false
-      } else if ("tt" == s) {
-        for (l = 0; l < i.length; l++) {
-          if (l != c) {
-            i[l].zindex = 5
-            o.push(i[l])
-          }
-        }
-        i[c].zindex = 6
-        o.push(i[c])
-        g = {
-          w: i[c].picw * i[c].scale,
-          h: i[c].pich * i[c].scale,
-          x: 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2,
-          y: 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2,
-          rotate: i[c].rotate,
-          types: "tt",
-          index: o.length - 1,
-        }
-        this.pics = a
-        this.tt = o
-        this.textimgs = h
-        this.pk = g
-        this.kshow = false
-      } else if ("textimgs" == s) {
-        for (var l = 0; l < h.length; l++) {
-          if (l != c) {
-            h[l].zindex = 5
-            d.push(h[l])
-          }
-        }
-        h[c].zindex = 6
-        d.push(h[c])
-        var g = {
-          w: h[c].picw * h[c].scale,
-          h: h[c].pich * h[c].scale,
-          x: 0.17 * this.windowWidth + h[c].x + (h[c].picw - h[c].picw * h[c].scale) / 2,
-          y: 0.1 * this.windowHeight + h[c].y + (h[c].pich - h[c].pich * h[c].scale) / 2,
-          rotate: h[c].rotate,
-          types: "textimgs",
-          index: d.length - 1,
-        }
-        this.pics = a
-        this.tt = i
-        this.textimgs = d
-        this.pk = g
-        this.kshow = false
-      }
-      if (t.touches.length < 2) {
-        e = true
-        p.x = t.touches[0].pageX
-        p.y = t.touches[0].pageY
-      } else {
-        w.x1 = t.touches[0].pageX
-        w.y1 = t.touches[0].pageY
-        w.x2 = t.touches[1].pageX
-        w.y2 = t.touches[1].pageY
-      }
-    },
-
-    bindtouchstart: function (t) {
-      s = this.pk.types
-      c = this.pk.index
-      var a = this.pics
-      var i = this.tt
-      var h = this.textimgs
-      var n = this.mb
-      var o = this.tk
-      if ("pics" == s) {
-        if (a.length > 0) {
-          for (d = 0; d < a.length; d++) {
-            a[d].zindex = 3
-          }
-        }
-        a[c].zindex = 4
-        l = {
-          w: a[c].picw * a[c].scale,
-          h: a[c].pich * a[c].scale,
-          x: 0.17 * this.windowWidth + a[c].x + (a[c].picw - a[c].picw * a[c].scale) / 2,
-          y: 0.1 * this.windowHeight + a[c].y + (a[c].pich - a[c].pich * a[c].scale) / 2,
-          rotate: a[c].rotate,
-          types: "pics",
-          index: c,
-        }
-        this.pics = a
-        this.tt = i
-        this.textimgs = h
-        this.mb = n
-        this.tk = o
-        this.pk = l
-      } else if ("tt" == s) {
-        if (h.length > 0) {
-          for (d = 0; d < i.length; d++) {
-            i[d].zindex = 5
-          }
-        }
-        i[c].zindex = 6
-        l = {
-          w: i[c].picw * i[c].scale,
-          h: i[c].pich * i[c].scale,
-          x: 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2,
-          y: 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2,
-          rotate: i[c].rotate,
-          types: "tt",
-          index: c,
-        }
-
-        this.pics = a
-        this.tt = i
-        this.textimgs = h
-        this.mb = n
-        this.tk = o
-        this.pk = l
-      } else if ("textimgs" == s) {
-        if (h.length > 0) {
-          for (var d = 0; d < h.length; d++) {
-            h[d].zindex = 5
-          }
-        }
-        h[c].zindex = 6
-        l = {
-          w: h[c].picw * h[c].scale,
-          h: h[c].pich * h[c].scale,
-          x: 0.17 * this.windowWidth + h[c].x + (h[c].picw - h[c].picw * h[c].scale) / 2,
-          y: 0.1 * this.windowHeight + h[c].y + (h[c].pich - h[c].pich * h[c].scale) / 2,
-          rotate: h[c].rotate,
-          types: "textimgs",
-          index: c,
-        }
-        this.pics = a
-        this.tt = i
-        this.textimgs = h
-        this.mb = n
-        this.tk = o
-        this.pk = l
-      } else if ("mb" == s) {
-        n[c].zindex = 6
-        l = {
-          w: n[c].picw * n[c].scale,
-          h: n[c].pich * n[c].scale,
-          x: 0.17 * this.windowWidth + n[c].x + (n[c].picw - n[c].picw * n[c].scale) / 2,
-          y: 0.1 * this.windowHeight + n[c].y + (n[c].pich - n[c].pich * n[c].scale) / 2,
-          rotate: n[c].rotate,
-          types: "mb",
-          index: c,
-        }
-        this.pics = a
-        this.tt = i
-        this.textimgs = h
-        this.mb = n
-        this.tk = o
-        this.pk = l
-      } else if ("tk" == s) {
-        o[c].zindex = 6
-        var l = {
-          w: o[c].picw * o[c].scale,
-          h: o[c].pich * o[c].scale,
-          x: 0.17 * this.windowWidth + o[c].x + (o[c].picw - o[c].picw * o[c].scale) / 2,
-          y: 0.1 * this.windowHeight + o[c].y + (o[c].pich - o[c].pich * o[c].scale) / 2,
-          rotate: o[c].rotate,
-          types: "tk",
-          index: c,
-        }
-        this.pics = a
-        this.tt = i
-        this.textimgs = h
-        this.mb = n
-        this.tk = o
-        this.pk = l
-      }
-      if (t.touches.length < 2) {
-        e = true
-        p.x = t.touches[0].pageX
-        p.y = t.touches[0].pageY
-      } else {
-        w.x1 = t.touches[0].pageX
-        w.y1 = t.touches[0].pageY
-        w.x2 = t.touches[1].pageX
-        w.y2 = t.touches[1].pageY
-      }
-    },
-
-    bindtouchmove: function (t) {
-      var that = this
-      var i = this[s]
-      var h = this.pk
-      if (t.touches.length < 2 && e) {
-        var n = t.touches[0].pageX - p.x
-        var o = t.touches[0].pageY - p.y
-        i[c].x = i[c].x + n
-        h.x = 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2
-        i[c].y = i[c].y + o
-        h.y = 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2
-        if ("pics" == s) {
-          that.pics = i
-          that.pk = h
-        } else {
-          if ("tt" == s) {
-            that.tt = i
-            that.pk = h
-          } else {
-            if ("textimgs" == s) {
-              that.textimgs = i
-              that.pk = h
-            } else {
-              if ("mb" == s) {
-                that.mb = i
-                that.pk = h
-              } else {
-                if ("tk" == s) {
-                  that.tk = i
-                  that.pk = h
-                }
-              }
-            }
-          }
-        }
-        p.x = t.touches[0].pageX
-        p.y = t.touches[0].pageY
-      } else if (t.touches.length > 1) {
-        var d = JSON.parse(JSON.stringify(w))
-        w.x1 = t.touches[0].pageX
-        w.y1 = t.touches[0].pageY
-        w.x2 = t.touches[1].pageX
-        w.y2 = t.touches[1].pageY
-        var l = (360 * Math.atan((d.y1 - d.y2) / (d.x1 - d.x2))) / Math.PI
-        var g = (360 * Math.atan((w.y1 - w.y2) / (w.x1 - w.x2))) / Math.PI
-        if (Math.abs(l - g) > 1) {
-          return
-        }
-        var r = Math.sqrt(Math.pow(d.x1 - d.x2, 2) + Math.pow(d.y1 - d.y2, 2))
-        var m = Math.sqrt(Math.pow(w.x1 - w.x2, 2) + Math.pow(w.y1 - w.y2, 2))
-        i[c].scale = i[c].scale + 0.005 * (m - r)
-        if (i[c].scale > 0.08) {
-          var x = m - r
-          var v = x / i[c].picw
-          i[c].picw += x
-          i[c].pich += i[c].pich * v
-          i[c].x -= x / 2
-          i[c].y -= x / 2
-          i[c].scale = 1
-          h.x = h.x + (h.w - i[c].picw * i[c].scale) / 2
-          h.y = h.y - x / 2
-          h.w = i[c].picw * i[c].scale
-          h.h = i[c].pich * i[c].scale
-          var f = 1 + Math.pow(1 - i[c].scale, 2)
-          if ("pics" == s) {
-            that.pics = i
-            that.pk = h
-            that.bscale = f
-          } else {
-            if ("tt" == s) {
-              that.tt = i
-              that.pk = h
-              that.bscale = f
-            } else {
-              if ("textimgs" == s) {
-                that.textimgs = i
-                that.pk = h
-                that.bscale = f
-              } else {
-                if ("mb" == s) {
-                  that.mb = i
-                  that.pk = h
-                  that.bscale = f
-                } else {
-                  if ("tk" == s) {
-                    that.tk = i
-                    that.pk = h
-                    that.bscale = f
+                  width: that.imgw,
+                  height: that.imgh,
+                  destWidth: that.imgw,
+                  destHeight: that.imgh,
+                  canvasId: 'mycanvas',
+                  fileType: 'jpg',
+                  quality: 1,
+                  success: function (e) {
+                      app.globalData.imgurl = e.tempFilePath;
+                      uni.setStorage({
+                          key: 'phonetype',
+                          data: that.phonetype
+                      });
+                      if (1 == t) {
+                          uni.navigateTo({
+                              url: '/pages/printt/printt'
+                          });
+                      } else {
+                          uni.navigateTo({
+                              url: '/pages/ordersure/ordersure'
+                          });
+                      }
+                      uni.hideLoading();
                   }
-                }
+              });
+          });
+      },
+
+      bindload: function (t) {
+          t.detail.width;
+          t.detail.height;
+      },
+
+      bindqie: function (t) {
+          this.setData({
+              kshow: true
+          });
+          s = t.target.dataset.idx;
+          i = t.target.dataset.types;
+          var a = this.pics;
+          var e = this.tt;
+          var c = this.textimgs;
+          this.setData({
+              tt: [],
+              pics: [],
+              textimgs: []
+          });
+          if ('pics' == i) {
+              for (var o = [], d = 0; d < a.length; d++) {
+                  if (d != s) {
+                      a[d].zindex = 3;
+                      o.push(a[d]);
+                  }
               }
-            }
+              a[s].zindex = 4;
+              o.push(a[s]);
+              l = {
+                  w: a[s].picw * a[s].scale,
+                  h: a[s].pich * a[s].scale,
+                  x: 0.17 * this.windowWidth + a[s].x + (a[s].picw - a[s].picw * a[s].scale) / 2,
+                  y: 0.1 * this.windowHeight + a[s].y + (a[s].pich - a[s].pich * a[s].scale) / 2,
+                  rotate: a[s].rotate,
+                  types: 'pics',
+                  index: o.length - 1
+              };
+              console.log(o);
+              this.setData({
+                  pics: o,
+                  tt: e,
+                  textimgs: c,
+                  pk: l,
+                  kshow: false
+              });
+          } else if ('tt' == i) {
+              for (var n = [], d = 0; d < e.length; d++) {
+                  if (d != s) {
+                      e[d].zindex = 5;
+                      n.push(e[d]);
+                  }
+              }
+              e[s].zindex = 6;
+              n.push(e[s]);
+              l = {
+                  w: e[s].picw * e[s].scale,
+                  h: e[s].pich * e[s].scale,
+                  x: 0.17 * this.windowWidth + e[s].x + (e[s].picw - e[s].picw * e[s].scale) / 2,
+                  y: 0.1 * this.windowHeight + e[s].y + (e[s].pich - e[s].pich * e[s].scale) / 2,
+                  rotate: e[s].rotate,
+                  types: 'tt',
+                  index: n.length - 1
+              };
+              this.setData({
+                  pics: a,
+                  tt: n,
+                  textimgs: c,
+                  pk: l,
+                  kshow: false
+              });
+          } else if ('textimgs' == i) {
+              for (var h = [], d = 0; d < c.length; d++) {
+                  if (d != s) {
+                      c[d].zindex = 5;
+                      h.push(c[d]);
+                  }
+              }
+              c[s].zindex = 6;
+              h.push(c[s]);
+              var l = {
+                  w: c[s].picw * c[s].scale,
+                  h: c[s].pich * c[s].scale,
+                  x: 0.17 * this.windowWidth + c[s].x + (c[s].picw - c[s].picw * c[s].scale) / 2,
+                  y: 0.1 * this.windowHeight + c[s].y + (c[s].pich - c[s].pich * c[s].scale) / 2,
+                  rotate: c[s].rotate,
+                  types: 'textimgs',
+                  index: h.length - 1
+              };
+              this.setData({
+                  pics: a,
+                  tt: e,
+                  textimgs: h,
+                  pk: l,
+                  kshow: false
+              });
           }
-        }
-      }
-    },
+      },
 
-    bindtouchend: function (t) {
-      e = false
-    },
-
-    kdtouchstart: function (t) {
-      i = true
-      p.x = t.touches[0].pageX
-      p.y = t.touches[0].pageY
-      if ("xz" == t.target.dataset.kn) {
-        r.x = t.touches[0].pageX
-        r.y = t.touches[0].pageY
-        g = true
-      }
-    },
-
-    kdtouchmove: function (t) {
-      if (i) {
-        var that = this
-        var e = this[t.target.dataset.types]
-        var h = this.pk
-        c = t.target.dataset.idx
-        s = t.target.dataset.types
-        if ("kd" == t.target.dataset.kn) {
-          var n = e[c].x + e[c].picw / 2 + 0.17 * that.windowWidth
-          var o = e[c].y + e[c].pich / 2 + 0.1 * that.windowHeight
-          var d = Math.sqrt(Math.pow(n - p.x, 2) + Math.pow(o - p.y, 2))
-          var l = Math.sqrt(Math.pow(n - t.touches[0].pageX, 2) + Math.pow(o - t.touches[0].pageY, 2))
-          e[c].scale = e[c].scale + 0.005 * (l - d)
-          h.x = h.x + (h.w - e[c].picw * e[c].scale) / 2
-          h.y = h.y + (h.h - e[c].pich * e[c].scale) / 2
-          h.w = e[c].picw * e[c].scale
-          h.h = e[c].pich * e[c].scale
-          var g = 1 - e[c].scale + 1
-          if ("pics" == s) {
-            that.pics = e
-            that.pk = h
-            that.bscale = g
+      wenzibtn: function () {
+          if (this.addshow) {
+              this.setData({
+                  addshow: false
+              });
           } else {
-            if ("tt" == s) {
-              that.tt = e
-              that.pk = h
-              that.bscale = g
-            } else {
-              if ("textimgs" == s) {
-                that.textimgs = e
-                that.pk = h
-                that.bscale = g
-              } else {
-                if ("mb" == s) {
-                  that.mb = e
-                  that.pk = h
-                  that.bscale = g
-                } else {
-                  if ("tk" == s) {
-                    that.tk = e
-                    that.pk = h
-                    that.bscale = g
-                  }
-                }
-              }
-            }
+              this.setData({
+                  addshow: true
+              });
           }
-        } else if ("xz" == t.target.dataset.kn) {
-          var n = e[c].x + e[c].picw / 2 + 0.17 * that.windowWidth
-          var o = e[c].y + e[c].pich / 2 + 0.1 * that.windowHeight
-          that.zx = n
-          that.zy = o
-          var w = Math.atan((p.y - o) / (p.x - n))
-          var r = Math.atan((t.touches[0].pageY - o) / (t.touches[0].pageX - n))
-          console.log("perAngle", w)
-          console.log("curAngle", r)
-          e[c].rotate = e[c].rotate + r - w
-          h.rotate = e[c].rotate
-          if ("pics" == s) {
-            that.pics = e
-            that.pk = h
+          n = false;
+      },
+
+      selectfamily: function (t) {
+          console.log(t);
+          for (var a = this.falimys, e = 0; e < a.length; e++) {
+              a[e].active = '';
+          }
+          a[t.target.dataset.idx].active = 'active';
+          this.setData({
+              falimys: a
+          });
+          c = a[t.target.dataset.idx].val;
+      },
+
+      selectcolor: function (t) {
+          for (var a = this.colors, e = 0; e < a.length; e++) {
+              a[e].active = '';
+          }
+          a[t.currentTarget.dataset.idx].active = 'active';
+          this.setData({
+              colors: a
+          });
+          o = a[t.currentTarget.dataset.idx].val;
+      },
+
+      fxbtn: function (t) {
+          var a = this.fx;
+          a[0].active = '';
+          a[1].active = '';
+          a[t.target.dataset.idx].active = 'active';
+          if ('active' == a[0].active) {
+              if ('' == d) {
+                  this.setData({
+                      textwidth: 600,
+                      textheight: 80,
+                      fx: a
+                  });
+              } else {
+                  var e = uni.createCanvasContext('textcanvas');
+                  e.font = '50px ' + c;
+                  var i = e.measureText(d);
+                  this.setData({
+                      textwidth: i.width,
+                      textheight: 80,
+                      fx: a
+                  });
+              }
           } else {
-            if ("tt" == s) {
-              that.tt = e
-              that.pk = h
-            } else {
-              if ("textimgs" == s) {
-                that.textimgs = e
-                that.pk = h
-              } else {
-                if ("mb" == s) {
-                  that.mb = e
-                  that.pk = h
-                } else {
-                  if ("tk" == s) {
-                    that.tk = e
-                    that.pk = h
+              this.setData({
+                  textwidth: 80,
+                  textheight: 600,
+                  fx: a
+              });
+          }
+      },
+
+      inputvalFun: function (t) {
+          d = t.detail.value;
+          this.setData({
+              inputval: d
+          });
+      },
+
+      surebtn: function () {
+          this.setData({
+              kshow: true
+          });
+          var t = this.inputval;
+          if ('' != t) {
+              for (var e = this.textimgs, i = this.colors, s = this.falimys, o = this.fx, d = '', h = 0; h < i.length; h++) {
+                  if ('active' == i[h].active) {
+                      d = i[h].name;
                   }
-                }
               }
-            }
-          }
-        }
-        p.x = t.touches[0].pageX
-        p.y = t.touches[0].pageY
-      }
-    },
-
-    kdtouchend: function (t) {
-      i = false
-      m.x = 0
-      m.y = 0
-      r.x = 0
-      r.y = 0
-      g = true
-      l = 0
-    },
-
-    wenzibtn: function () {
-      if (this.addshow) {
-        this.addshow = false
-      } else {
-        this.addshow = true
-      }
-      d = false
-    },
-
-    selectfamily: function (t) {
-      for (var a = this.falimys, e = 0; e < a.length; e++) {
-        a[e].active = ""
-      }
-      a[t.target.dataset.idx].active = "active"
-      this.falimys = a
-      h = a[t.target.dataset.idx].val
-    },
-
-    selectcolor: function (t) {
-      for (var a = this.colors, e = 0; e < a.length; e++) {
-        a[e].active = ""
-      }
-      a[t.currentTarget.dataset.idx].active = "active"
-      this.colors = a
-      n = a[t.currentTarget.dataset.idx].val
-    },
-
-    fxbtn: function (t) {
-      var a = this.fx
-      a[0].active = ""
-      a[1].active = ""
-      a[t.target.dataset.idx].active = "active"
-      if ("active" == a[0].active) {
-        if ("" == o) {
-          this.textwidth = 600
-          this.textheight = 80
-          this.fx = a
-        } else {
-          var e = uni.createCanvasContext("textcanvas")
-          e.font = "50px " + h
-          var i = e.measureText(o)
-          this.textwidth = i.width
-          this.textheight = 80
-          this.fx = a
-        }
-      } else {
-        this.textwidth = 80
-        this.textheight = 600
-        this.fx = a
-      }
-    },
-
-    inputvalFun: function (t) {
-      o = t.detail.value
-      this.inputval = o
-    },
-
-    surebtn: function () {
-      var a = this.inputval
-      if ("" != a) {
-        for (var e = this.textimgs, i = this.colors, s = this.falimys, c = this.fx, n = "", o = 0; o < i.length; o++) {
-          if ("active" == i[o].active) {
-            n = i[o].name
-          }
-        }
-        for (o = 0; o < s.length; o++) {
-          if ("active" == s[o].active) {
-            h = s[o].name
-          }
-        }
-        for (o = 0; o < c.length; o++) {
-          if ("active" == c[o].active) {
-            c = c[o].name
-          }
-        }
-        if (d) {
-          var l = this.pk
-          e.splice(l.index, 1)
-          d = false
-        }
-        var that = this
-        uni.request({
-          url: app.globalData.host + "/api/index/textToImage",
-          data: {
-            shop_id: 1,
-            selectcolor: n,
-            selectfamily: h,
-            fx: c,
-            val: a,
-          },
-          success: function (t) {
-            var a = t.data.data
-            uni.getImageInfo({
-              src: a,
-              success: function (t) {
-                var a = t.path
-                var i = 0.5 * t.width
-                var s = 0.5 * t.height
-                var c = (0.6 * that.windowWidth - i) / 2
-                var h = that.masktop + (that.mheight - s) / 2
-                var n = {
-                  url: a,
-                  picw: i,
-                  pich: s,
-                  x: c,
-                  y: h,
-                  scale: 1,
-                  rotate: 0,
-                  active: "active",
-                  zindex: 6,
-                  falimys: that.falimys,
-                  fx: that.fx,
-                  colors: that.colors,
-                  text: that.inputval,
-                }
-                if (e.length > 0) {
-                  for (var o = 0; o < e.length; o++) {
-                    e[o].zindex = 5
-                    e[o].active = ""
+              for (h = 0; h < s.length; h++) {
+                  if ('active' == s[h].active) {
+                      c = s[h].name;
                   }
-                }
-                var d = {
-                  w: i,
-                  h: s,
-                  x: c + 0.17 * that.windowWidth,
-                  y: 0.1 * that.windowHeight + h,
-                  rotate: 0,
-                  types: "textimgs",
-                  index: e.length,
-                }
-                e.push(n)
-                that.textimgs = e
-                that.addimgshow = true
-                that.addshow = false
-                that.kshow = false
-                that.pk = d
-                that.inputval = ""
-                that.fx = [
+              }
+              for (h = 0; h < o.length; h++) {
+                  if ('active' == o[h].active) {
+                      o = o[h].name;
+                  }
+              }
+              if (n) {
+                  var l = this.pk;
+                  e.splice(l.index, 1);
+                  n = false;
+              }
+              var that = this;
+              uni.request({
+                  url: app.globalData.host + '/api/Checkfile/checkfile',
+                  data: {
+                      types: 1,
+                      content: t
+                  },
+                  success: function (i) {
+                      if (1 == i.data.code) {
+                          uni.request({
+                              url: app.globalData.host + '/api/index/textToImage',
+                              data: {
+                                  shop_id: 1,
+                                  selectcolor: d,
+                                  selectfamily: c,
+                                  fx: o,
+                                  val: t
+                              },
+                              success: function (t) {
+                                  var a = t.data.data;
+                                  uni.getImageInfo({
+                                      src: a,
+                                      success: function (t) {
+                                          var a = t.path;
+                                          var i = 0.3 * t.width;
+                                          var s = 0.3 * t.height;
+                                          var c = (0.6 * that.windowWidth - i) / 2;
+                                          var o = that.masktop + (that.mheight - s) / 2;
+                                          var d = {
+                                              url: a,
+                                              picw: i,
+                                              pich: s,
+                                              x: c,
+                                              y: o,
+                                              scale: 1,
+                                              rotate: 0,
+                                              active: 'active',
+                                              zindex: 6,
+                                              falimys: that.falimys,
+                                              fx: that.fx,
+                                              colors: that.colors,
+                                              text: that.inputval
+                                          };
+                                          if (e.length > 0) {
+                                              for (var n = 0; n < e.length; n++) {
+                                                  if (void 0 != e[n]) {
+                                                      e[n].zindex = 5;
+                                                  }
+                                              }
+                                          }
+                                          var h = {
+                                              w: i,
+                                              h: s,
+                                              x: c + 0.17 * that.windowWidth,
+                                              y: 0.1 * that.windowHeight + o,
+                                              rotate: 0,
+                                              types: 'textimgs',
+                                              index: e.length
+                                          };
+                                          e.push(d);
+                                          that.setData({
+                                              textimgs: e,
+                                              addimgshow: true,
+                                              addshow: false,
+                                              kshow: false,
+                                              pk: h,
+                                              inputval: '',
+                                              fx: [
+                                                  {
+                                                      name: '横向',
+                                                      active: 'active'
+                                                  },
+                                                  {
+                                                      name: '纵向',
+                                                      active: ''
+                                                  }
+                                              ],
+                                              falimys: [
+                                                  {
+                                                      val: '/static/img/font1.jpg',
+                                                      name: '1',
+                                                      active: 'active'
+                                                  },
+                                                  {
+                                                      val: '/static/img/font2.jpg',
+                                                      name: '2',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: '/static/img/font3.jpg',
+                                                      name: '3',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: '/static/img/font4.jpg',
+                                                      name: '4',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: '/static/img/font5.jpg',
+                                                      name: '5',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: '/static/img/font6.jpg',
+                                                      name: '6',
+                                                      active: ''
+                                                  }
+                                              ],
+                                              colors: [
+                                                  {
+                                                      val: 'rgb(0,0,0)',
+                                                      name: '0,0,0',
+                                                      active: 'active'
+                                                  },
+                                                  {
+                                                      val: 'rgb(51,51,51)',
+                                                      name: '51,51,51',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(102,102,102)',
+                                                      name: '102,102,102',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(255,255,255)',
+                                                      name: '255,255,255',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(19,67,104)',
+                                                      name: '19,67,104',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(32,141,220)',
+                                                      name: '32,141,220',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(67,182,195)',
+                                                      name: '67,182,195',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(3,94,41)',
+                                                      name: '3,94,41',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(152,202,74)',
+                                                      name: '152,202,74',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(145,0,114)',
+                                                      name: '145,0,114',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(191,35,27)',
+                                                      name: '191,35,27',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(251,24,61)',
+                                                      name: '251,24,61',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(239,41,94)',
+                                                      name: '239,41,94',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(239,105,14)',
+                                                      name: '239,105,14',
+                                                      active: ''
+                                                  },
+                                                  {
+                                                      val: 'rgb(241,153,33)',
+                                                      name: '241,153,33',
+                                                      active: ''
+                                                  }
+                                              ]
+                                          });
+                                      }
+                                  });
+                              }
+                          });
+                      } else {
+                          uni.showToast({
+                              title: '文字不安全!',
+                              icon: 'loading',
+                              mask: true,
+                              duration: 2000
+                          });
+                      }
+                  }
+              });
+          } else {
+              uni.showToast({
+                  title: '请输入文字',
+                  mask: true,
+                  icon: 'loading',
+                  duration: 2000
+              });
+          }
+      },
+
+      catchtxt: function () {
+          n = false;
+          this.setData({
+              addshow: false,
+              textwidth: 0,
+              textheight: 0,
+              inputval: '',
+              fx: [
                   {
-                    name: "横向",
-                    active: "active",
+                      name: '横向',
+                      active: 'active'
                   },
                   {
-                    name: "纵向",
-                    active: "",
-                  },
-                ]
-                that.falimys = [
+                      name: '纵向',
+                      active: ''
+                  }
+              ],
+              falimys: [
                   {
-                    val: "/static/img/font1.jpg",
-                    name: "1",
-                    active: "active",
-                  },
-                  {
-                    val: "/static/img/font2.jpg",
-                    name: "2",
-                    active: "",
+                      val: '/static/img/font1.jpg',
+                      name: '1',
+                      active: 'active'
                   },
                   {
-                    val: "/static/img/font3.jpg",
-                    name: "3",
-                    active: "",
+                      val: '/static/img/font2.jpg',
+                      name: '2',
+                      active: ''
                   },
                   {
-                    val: "/static/img/font4.jpg",
-                    name: "4",
-                    active: "",
+                      val: '/static/img/font3.jpg',
+                      name: '3',
+                      active: ''
                   },
                   {
-                    val: "/static/img/font5.jpg",
-                    name: "5",
-                    active: "",
+                      val: '/static/img/font4.jpg',
+                      name: '4',
+                      active: ''
                   },
                   {
-                    val: "/static/img/font6.jpg",
-                    name: "6",
-                    active: "",
-                  },
-                ]
-                that.colors = [
-                  {
-                    val: "rgb(0,0,0)",
-                    name: "0,0,0",
-                    active: "active",
+                      val: '/static/img/font5.jpg',
+                      name: '5',
+                      active: ''
                   },
                   {
-                    val: "rgb(51,51,51)",
-                    name: "51,51,51",
-                    active: "",
+                      val: '/static/img/font6.jpg',
+                      name: '6',
+                      active: ''
+                  }
+              ],
+              colors: [
+                  {
+                      val: 'rgb(0,0,0)',
+                      name: '0,0,0',
+                      active: 'active'
                   },
                   {
-                    val: "rgb(102,102,102)",
-                    name: "102,102,102",
-                    active: "",
+                      val: 'rgb(51,51,51)',
+                      name: '51,51,51',
+                      active: ''
                   },
                   {
-                    val: "rgb(255,255,255)",
-                    name: "255,255,255",
-                    active: "",
+                      val: 'rgb(102,102,102)',
+                      name: '102,102,102',
+                      active: ''
                   },
                   {
-                    val: "rgb(19,67,104)",
-                    name: "19,67,104",
-                    active: "",
+                      val: 'rgb(255,255,255)',
+                      name: '255,255,255',
+                      active: ''
                   },
                   {
-                    val: "rgb(32,141,220)",
-                    name: "32,141,220",
-                    active: "",
+                      val: 'rgb(19,67,104)',
+                      name: '19,67,104',
+                      active: ''
                   },
                   {
-                    val: "rgb(67,182,195)",
-                    name: "67,182,195",
-                    active: "",
+                      val: 'rgb(32,141,220)',
+                      name: '32,141,220',
+                      active: ''
                   },
                   {
-                    val: "rgb(3,94,41)",
-                    name: "3,94,41",
-                    active: "",
+                      val: 'rgb(67,182,195)',
+                      name: '67,182,195',
+                      active: ''
                   },
                   {
-                    val: "rgb(152,202,74)",
-                    name: "152,202,74",
-                    active: "",
+                      val: 'rgb(3,94,41)',
+                      name: '3,94,41',
+                      active: ''
                   },
                   {
-                    val: "rgb(145,0,114)",
-                    name: "145,0,114",
-                    active: "",
+                      val: 'rgb(152,202,74)',
+                      name: '152,202,74',
+                      active: ''
                   },
                   {
-                    val: "rgb(191,35,27)",
-                    name: "191,35,27",
-                    active: "",
+                      val: 'rgb(145,0,114)',
+                      name: '145,0,114',
+                      active: ''
                   },
                   {
-                    val: "rgb(251,24,61)",
-                    name: "251,24,61",
-                    active: "",
+                      val: 'rgb(191,35,27)',
+                      name: '191,35,27',
+                      active: ''
                   },
                   {
-                    val: "rgb(239,41,94)",
-                    name: "239,41,94",
-                    active: "",
+                      val: 'rgb(251,24,61)',
+                      name: '251,24,61',
+                      active: ''
                   },
                   {
-                    val: "rgb(239,105,14)",
-                    name: "239,105,14",
-                    active: "",
+                      val: 'rgb(239,41,94)',
+                      name: '239,41,94',
+                      active: ''
                   },
                   {
-                    val: "rgb(241,153,33)",
-                    name: "241,153,33",
-                    active: "",
+                      val: 'rgb(239,105,14)',
+                      name: '239,105,14',
+                      active: ''
                   },
-                ]
-              },
-            })
-          },
-        })
-      } else {
-        uni.showToast({
-          title: "请输入文字",
-          mask: true,
-          icon: "loading",
-          duration: 2000,
-        })
+                  {
+                      val: 'rgb(241,153,33)',
+                      name: '241,153,33',
+                      active: ''
+                  }
+              ]
+          });
+      },
+
+      inptch: function () {
+          console.log(333);
+      },
+
+      leftbtn: function () {
+          n = false;
+          this.setData({
+              kshow: true
+          });
+      },
+
+      selcttext: function (t) {
+          this.setData({
+              kshow: true
+          });
+          p = this.pk;
+          i = t.currentTarget.dataset.types;
+          s = t.currentTarget.dataset.ind;
+          if (1 == n && 'textimgs' == i && p.index == s) {
+              c = this.textimgs;
+              this.setData({
+                  addshow: true,
+                  falimys: c[s].falimys,
+                  fx: c[s].fx,
+                  colors: c[s].colors,
+                  inputval: c[s].text
+              });
+          } else {
+              var a = this.pics;
+              var e = this.tt;
+              var c = this.textimgs;
+              var o = this.tk;
+              var d = this.mb;
+              var h = [];
+              var l = [];
+              var g = [];
+              if ('pics' == i) {
+                  n = false;
+                  for (r = 0; r < a.length; r++) {
+                      if (void 0 != a[r] && r != s) {
+                          a[r].zindex = 3;
+                          h.push(a[r]);
+                      }
+                  }
+                  for (r = 0; r < e.length; r++) {
+                      if (void 0 != e[r]) {
+                          e[r].zindex = 5;
+                          l.push(e[r]);
+                      }
+                  }
+                  for (r = 0; r < c.length; r++) {
+                      if (void 0 != c[r]) {
+                          c[r].zindex = 5;
+                          g.push(c[r]);
+                      }
+                  }
+                  a[s].zindex = 4;
+                  h.push(a[s]);
+                  p = {
+                      w: a[s].picw * a[s].scale,
+                      h: a[s].pich * a[s].scale,
+                      x: 0.17 * this.windowWidth + a[s].x + (a[s].picw - a[s].picw * a[s].scale) / 2,
+                      y: 0.1 * this.windowHeight + a[s].y + (a[s].pich - a[s].pich * a[s].scale) / 2,
+                      rotate: a[s].rotate,
+                      types: 'pics',
+                      index: h.length - 1
+                  };
+              } else if ('tt' == i) {
+                  n = false;
+                  for (r = 0; r < a.length; r++) {
+                      if (void 0 != a[r]) {
+                          a[r].zindex = 3;
+                          h.push(a[r]);
+                      }
+                  }
+                  for (r = 0; r < e.length; r++) {
+                      if (void 0 != e[r] && r != s) {
+                          e[r].zindex = 5;
+                          l.push(e[r]);
+                      }
+                  }
+                  for (r = 0; r < c.length; r++) {
+                      if (void 0 != c[r]) {
+                          c[r].zindex = 5;
+                          g.push(c[r]);
+                      }
+                  }
+                  e[s].zindex = 6;
+                  l.push(e[s]);
+                  p = {
+                      w: e[s].picw * e[s].scale,
+                      h: e[s].pich * e[s].scale,
+                      x: 0.17 * this.windowWidth + e[s].x + (e[s].picw - e[s].picw * e[s].scale) / 2,
+                      y: 0.1 * this.windowHeight + e[s].y + (e[s].pich - e[s].pich * e[s].scale) / 2,
+                      rotate: e[s].rotate,
+                      types: 'tt',
+                      index: l.length - 1
+                  };
+              } else if ('textimgs' == i) {
+                  for (r = 0; r < a.length; r++) {
+                      if (void 0 != a[r]) {
+                          a[r].zindex = 3;
+                          h.push(a[r]);
+                      }
+                  }
+                  for (r = 0; r < e.length; r++) {
+                      if (void 0 != e[r]) {
+                          e[r].zindex = 5;
+                          l.push(e[r]);
+                      }
+                  }
+                  for (var r = 0; r < c.length; r++) {
+                      if (void 0 != c[r] && r != s) {
+                          c[r].zindex = 5;
+                          g.push(c[r]);
+                      }
+                  }
+                  c[s].zindex = 6;
+                  g.push(c[s]);
+                  p = {
+                      w: c[s].picw * c[s].scale,
+                      h: c[s].pich * c[s].scale,
+                      x: 0.17 * this.windowWidth + c[s].x + (c[s].picw - c[s].picw * c[s].scale) / 2,
+                      y: 0.1 * this.windowHeight + c[s].y + (c[s].pich - c[s].pich * c[s].scale) / 2,
+                      rotate: c[s].rotate,
+                      types: 'textimgs',
+                      index: g.length - 1
+                  };
+                  n = true;
+              } else if ('tk' == i) {
+                  if ({}) {
+                      if ('/static/img/clock2.png' == o[0].clock) {
+                          p = {
+                              w: o[s].picw * o[s].scale,
+                              h: o[s].pich * o[s].scale,
+                              x: 0.17 * this.windowWidth + o[s].x + (o[s].picw - o[s].picw * o[s].scale) / 2,
+                              y: 0.1 * this.windowHeight + o[s].y + (o[s].pich - o[s].pich * o[s].scale) / 2,
+                              rotate: o[s].rotate,
+                              types: 'tk',
+                              index: s
+                          };
+                      } else {
+                          p = '';
+                      }
+                  }
+                  n = true;
+              } else if ('mb' == i) {
+                  h = a;
+                  l = e;
+                  g = c;
+                  s = 0;
+                  if ('/static/img/clock2.png' == d[0].clock) {
+                      p = {
+                          w: d[s].picw * d[s].scale,
+                          h: d[s].pich * d[s].scale,
+                          x: 0.17 * this.windowWidth + d[s].x + (d[s].picw - d[s].picw * d[s].scale) / 2,
+                          y: 0.1 * this.windowHeight + d[s].y + (d[s].pich - d[s].pich * d[s].scale) / 2,
+                          rotate: d[s].rotate,
+                          types: 'mb',
+                          index: s
+                      };
+                  } else {
+                      var p = '';
+                  }
+                  n = true;
+              }
+              this.setData({
+                  pics: h,
+                  tt: l,
+                  textimgs: g,
+                  pk: p,
+                  tk: o,
+                  mb: d,
+                  kshow: false
+              });
+          }
       }
-    },
-
-    catchtxt: function () {
-      d = false
-      this.addshow = false
-      this.textwidth = 0
-      this.textheight = 0
-      this.inputval = ""
-      this.fx = [
-        {
-          name: "横向",
-          active: "active",
-        },
-        {
-          name: "纵向",
-          active: "",
-        },
-      ]
-      this.falimys = [
-        {
-          val: "/static/img/font1.jpg",
-          name: "1",
-          active: "active",
-        },
-        {
-          val: "/static/img/font2.jpg",
-          name: "2",
-          active: "",
-        },
-        {
-          val: "/static/img/font3.jpg",
-          name: "3",
-          active: "",
-        },
-        {
-          val: "/static/img/font4.jpg",
-          name: "4",
-          active: "",
-        },
-        {
-          val: "/static/img/font5.jpg",
-          name: "5",
-          active: "",
-        },
-        {
-          val: "/static/img/font6.jpg",
-          name: "6",
-          active: "",
-        },
-      ]
-      this.colors = [
-        {
-          val: "rgb(0,0,0)",
-          name: "0,0,0",
-          active: "active",
-        },
-        {
-          val: "rgb(51,51,51)",
-          name: "51,51,51",
-          active: "",
-        },
-        {
-          val: "rgb(102,102,102)",
-          name: "102,102,102",
-          active: "",
-        },
-        {
-          val: "rgb(255,255,255)",
-          name: "255,255,255",
-          active: "",
-        },
-        {
-          val: "rgb(19,67,104)",
-          name: "19,67,104",
-          active: "",
-        },
-        {
-          val: "rgb(32,141,220)",
-          name: "32,141,220",
-          active: "",
-        },
-        {
-          val: "rgb(67,182,195)",
-          name: "67,182,195",
-          active: "",
-        },
-        {
-          val: "rgb(3,94,41)",
-          name: "3,94,41",
-          active: "",
-        },
-        {
-          val: "rgb(152,202,74)",
-          name: "152,202,74",
-          active: "",
-        },
-        {
-          val: "rgb(145,0,114)",
-          name: "145,0,114",
-          active: "",
-        },
-        {
-          val: "rgb(191,35,27)",
-          name: "191,35,27",
-          active: "",
-        },
-        {
-          val: "rgb(251,24,61)",
-          name: "251,24,61",
-          active: "",
-        },
-        {
-          val: "rgb(239,41,94)",
-          name: "239,41,94",
-          active: "",
-        },
-        {
-          val: "rgb(239,105,14)",
-          name: "239,105,14",
-          active: "",
-        },
-        {
-          val: "rgb(241,153,33)",
-          name: "241,153,33",
-          active: "",
-        },
-      ]
-    },
-
-    inptch: function () {
-      console.log(333)
-    },
-
-    leftbtn: function () {
-      d = false
-      this.kshow = true
-    },
-
-    selcttext: function (t) {
-      w = this.pk
-      s = t.currentTarget.dataset.types
-      c = t.currentTarget.dataset.ind
-      if (1 == d && "textimgs" == s && w.index == c) {
-        i = this.textimgs
-        this.addshow = true
-        this.falimys = i[c].falimys
-        this.fx = i[c].fx
-        this.colors = i[c].colors
-        this.inputval = i[c].text
-      } else {
-        for (
-          var a = this.pics, e = this.tt, i = this.textimgs, h = this.tk, n = this.mb, o = [], l = [], g = [], p = 0;
-          p < a.length;
-          p++
-        ) {
-          if (p != c) {
-            a[p].zindex = 3
-            o.push(a[p])
-          }
-        }
-        for (p = 0; p < e.length; p++) {
-          if (p != c) {
-            e[p].zindex = 5
-            l.push(e[p])
-          }
-        }
-        for (p = 0; p < i.length; p++) {
-          if (p != c) {
-            i[p].zindex = 5
-            g.push(i[p])
-          }
-        }
-        if ("pics" == s) {
-          d = false
-          a[c].zindex = 4
-          o.push(a[c])
-          w = {
-            w: a[c].picw * a[c].scale,
-            h: a[c].pich * a[c].scale,
-            x: 0.17 * this.windowWidth + a[c].x + (a[c].picw - a[c].picw * a[c].scale) / 2,
-            y: 0.1 * this.windowHeight + a[c].y + (a[c].pich - a[c].pich * a[c].scale) / 2,
-            rotate: a[c].rotate,
-            types: "pics",
-            index: o.length - 1,
-          }
-          this.pics = o
-          this.tt = e
-          this.textimgs = i
-          this.pk = w
-          this.tk = h
-          this.mb = n
-          this.kshow = false
-        } else if ("tt" == s) {
-          d = false
-          e[c].zindex = 6
-          l.push(e[c])
-          w = {
-            w: e[c].picw * e[c].scale,
-            h: e[c].pich * e[c].scale,
-            x: 0.17 * this.windowWidth + e[c].x + (e[c].picw - e[c].picw * e[c].scale) / 2,
-            y: 0.1 * this.windowHeight + e[c].y + (e[c].pich - e[c].pich * e[c].scale) / 2,
-            rotate: e[c].rotate,
-            types: "tt",
-            index: l.length - 1,
-          }
-          this.pics = a
-          this.tt = l
-          this.textimgs = i
-          this.pk = w
-          this.tk = h
-          this.mb = n
-          this.kshow = false
-        } else if ("textimgs" == s) {
-          i[c].zindex = 6
-          g.push(i[c])
-          w = {
-            w: i[c].picw * i[c].scale,
-            h: i[c].pich * i[c].scale,
-            x: 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2,
-            y: 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2,
-            rotate: i[c].rotate,
-            types: "textimgs",
-            index: g.length - 1,
-          }
-          d = true
-          this.pics = a
-          this.tt = e
-          this.textimgs = g
-          this.pk = w
-          this.tk = h
-          this.mb = n
-          this.kshow = false
-        } else if ("tk" == s) {
-          w = {
-            w: h[(c = 0)].picw * h[c].scale,
-            h: h[c].pich * h[c].scale,
-            x: 0.17 * this.windowWidth + h[c].x + (h[c].picw - h[c].picw * h[c].scale) / 2,
-            y: 0.1 * this.windowHeight + h[c].y + (h[c].pich - h[c].pich * h[c].scale) / 2,
-            rotate: h[c].rotate,
-            types: "tk",
-            index: c,
-          }
-          d = true
-          this.pics = a
-          this.tt = e
-          this.textimgs = i
-          this.pk = w
-          this.tk = h
-          this.mb = n
-          this.kshow = false
-        } else if ("mb" == s) {
-          var w = {
-            w: n[(c = 0)].picw * n[c].scale,
-            h: n[c].pich * n[c].scale,
-            x: 0.17 * this.windowWidth + n[c].x + (n[c].picw - n[c].picw * n[c].scale) / 2,
-            y: 0.1 * this.windowHeight + n[c].y + (n[c].pich - n[c].pich * n[c].scale) / 2,
-            rotate: n[c].rotate,
-            types: "mb",
-            index: c,
-          }
-          d = true
-          this.pics = a
-          this.tt = e
-          this.textimgs = i
-          this.pk = w
-          this.tk = h
-          this.mb = n
-          this.kshow = false
-        }
-      }
-    },
-  },
-}
+  }
+};
 </script>
 <style>
-@import "./index.css";
+@import './index.css';
 </style>

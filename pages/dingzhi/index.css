@@ -3,7 +3,7 @@
   overflow: hidden;
   font-size: 0.8rem;
   width: 100%;
-  height: 90vh;
+  height: 100vh;
 }
 
 .head {
@@ -15,19 +15,13 @@
   line-height: 30px;
   position: absolute;
   z-index: 1900;
-  width: 100%;
+  width: 96%;
 }
 
 .head image {
   width: 20px;
   height: 20px;
   margin-top: 5px;
-}
-.head .theme {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 45%;
 }
 
 .head button {
@@ -89,7 +83,8 @@
   color: #666;
 }
 
-.content .pm-bottom {
+.content,
+.pm-bottom {
   position: relative;
   background: #fff;
 }
@@ -98,6 +93,7 @@
   z-index: 12;
   width: 66%;
   height: 80%;
+  float: left;
 }
 
 .fill-top {
@@ -213,11 +209,30 @@
   border-radius: 100%;
 }
 
+.print {
+  position: absolute;
+  top: 53%;
+  left: 0;
+  z-index: 32;
+  padding: 5px;
+  font-size: 0.75rem;
+  color: #f8441f;
+  text-align: center;
+}
+
+.print image {
+  width: 15px;
+  height: 15px;
+  background: #f8441f;
+  padding: 10px;
+  border-radius: 100%;
+}
+
 .add {
   position: absolute;
   top: 77%;
   left: 0;
-  z-index: 32;
+  z-index: 13;
   padding: 5px;
   font-size: 0.75rem;
   color: #f8441f;
@@ -444,34 +459,57 @@
 .picslist .del {
   background: #f8441f;
   border-radius: 20px;
+  left: -12.5px;
+  top: -12.5px;
+}
+
+.picslist .del,
+.picslist .kd {
   width: 15px;
   height: 15px;
   position: absolute;
-  left: -12.5px;
-  top: -12.5px;
   padding: 5px;
   z-index: 10;
 }
 
 .picslist .kd {
+  border-radius: 25px;
+  right: -12.5px;
   bottom: -12.5px;
   background: #047b00;
 }
 
-.picslist .kd,
+.picslist .kd1 {
+  right: -12.5px;
+  bottom: calc(50% - 12.5px);
+}
+
+.picslist .kd1,
+.picslist .kd2 {
+  border-radius: 25px;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+}
+
+.picslist .kd2 {
+  bottom: -12.5px;
+  right: calc(50% - 12.5px);
+  transform: rotate(90deg);
+}
+
 .picslist .xz {
   border-radius: 25px;
   width: 15px;
   height: 15px;
   position: absolute;
   right: -12.5px;
-  padding: 5px;
-  z-index: 10;
-}
-
-.picslist .xz {
   top: -12.5px;
+  padding: 5px;
   background: #d3941e;
+  z-index: 10;
 }
 
 .textedit {
@@ -548,6 +586,7 @@ input {
   height: 2.8rem;
   border-radius: 10px;
 }
+
 .footer {
   width: 100%;
   height: 50px;
