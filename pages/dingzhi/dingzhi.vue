@@ -22,7 +22,10 @@
                   <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
               </view>
               <view class="mask" :style="'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'"></view>
-              <image
+              <template v-for="(item, idx) in tk">
+                <image
+                  v-if="item.url"
+                  :key="idx"
                   :class="'tk' + idx"
                   :data-h="item.pich"
                   :data-idx="idx"
@@ -34,27 +37,29 @@
                   :data-windowwidth="windowWidth"
                   :data-x="item.x"
                   :data-y="item.y"
-                  v-if="!(item.url ? false : true)"
                   :src="item.url"
                   :style="
-                      'width: ' +
-                      item.picw +
-                      'px; height: ' +
-                      item.pich +
-                      'px;top:' +
-                      item.y +
-                      'px;left:' +
-                      item.x +
-                      'px;position: absolute;transform: translate(0, 0) scale(' +
-                      item.scale +
-                      ') rotate(' +
-                      item.rotate +
-                      'deg);transform-origin: center center;'
+                    'width: ' +
+                    item.picw +
+                    'px; height: ' +
+                    item.pich +
+                    'px;top:' +
+                    item.y +
+                    'px;left:' +
+                    item.x +
+                    'px;position: absolute;transform: translate(0, 0) scale(' +
+                    item.scale +
+                    ') rotate(' +
+                    item.rotate +
+                    'deg);transform-origin: center center;'
                   "
-                  v-for="(item, idx) in tk"
+                ></image>
+              </template>
+              
+              <template v-for="(item, idx) in pics">
+                <image
+                  v-if="item.url"
                   :key="idx"
-              ></image>
-              <image
                   @tap.stop.prevent="bindqie"
                   :class="'pics' + idx"
                   :data-h="item.pich"
@@ -67,29 +72,30 @@
                   :data-windowwidth="windowWidth"
                   :data-x="item.x"
                   :data-y="item.y"
-                  v-if="!(item.url ? false : true)"
                   :src="item.url"
                   :style="
-                      'position:absolute;width: ' +
-                      item.picw +
-                      'px; height: ' +
-                      item.pich +
-                      'px;left: ' +
-                      item.x +
-                      'px; top: ' +
-                      item.y +
-                      'px; transform: translate(0, 0) scale(' +
-                      item.scale +
-                      ') rotate(' +
-                      item.rotate +
-                      'deg);transform-origin: center center;z-index:' +
-                      item.zindex +
-                      ' '
+                    'position:absolute;width: ' +
+                    item.picw +
+                    'px; height: ' +
+                    item.pich +
+                    'px;left: ' +
+                    item.x +
+                    'px; top: ' +
+                    item.y +
+                    'px; transform: translate(0, 0) scale(' +
+                    item.scale +
+                    ') rotate(' +
+                    item.rotate +
+                    'deg);transform-origin: center center;z-index:' +
+                    item.zindex
                   "
-                  v-for="(item, idx) in pics"
-                  :key="idx"
               ></image>
-              <image
+              </template>
+              <!-- 模板 -->
+              <template v-for="(item, idx) in mb">
+                <image
+                  v-if="item.url"
+                  :key="idx"
                   :class="'mb' + idx + ' mbimg'"
                   :data-h="item.pich"
                   :data-idx="idx"
@@ -101,27 +107,30 @@
                   :data-windowwidth="windowWidth"
                   :data-x="item.x"
                   :data-y="item.y"
-                  v-if="!(item.url ? false : true)"
                   :src="item.url"
                   :style="
-                      'width: ' +
-                      item.picw +
-                      'px; height: ' +
-                      item.pich +
-                      'px;top:' +
-                      item.y +
-                      'px;left:' +
-                      item.x +
-                      'px;transform: translate(0, 0) scale(' +
-                      item.scale +
-                      ') rotate(' +
-                      item.rotate +
-                      'deg);transform-origin: center center;'
+                    'width: ' +
+                    item.picw +
+                    'px; height: ' +
+                    item.pich +
+                    'px;top:' +
+                    item.y +
+                    'px;left:' +
+                    item.x +
+                    'px;transform: translate(0, 0) scale(' +
+                    item.scale +
+                    ') rotate(' +
+                    item.rotate +
+                    'deg);transform-origin: center center;'
                   "
-                  v-for="(item, idx) in mb"
-                  :key="idx"
               ></image>
-              <image
+              </template>
+              
+              <!-- 图库 -->
+              <template v-for="(item, idx) in tt">
+                <image
+                  v-if="item.url"
+                  :key="idx"
                   @tap.stop.prevent="bindqie"
                   :class="'tt' + idx"
                   :data-h="item.pich"
@@ -134,29 +143,31 @@
                   :data-windowwidth="windowWidth"
                   :data-x="item.x"
                   :data-y="item.y"
-                  v-if="!(item.url ? false : true)"
                   :src="item.url"
                   :style="
-                      'position:absolute;width: ' +
-                      item.picw +
-                      'px; height: ' +
-                      item.pich +
-                      'px;left: ' +
-                      item.x +
-                      'px; top: ' +
-                      item.y +
-                      'px; transform: translate(0, 0) scale(' +
-                      item.scale +
-                      ') rotate(' +
-                      item.rotate +
-                      'deg);transform-origin: center center;z-index:' +
-                      item.zindex +
-                      ' '
+                    'position:absolute;width: ' +
+                    item.picw +
+                    'px; height: ' +
+                    item.pich +
+                    'px;left: ' +
+                    item.x +
+                    'px; top: ' +
+                    item.y +
+                    'px; transform: translate(0, 0) scale(' +
+                    item.scale +
+                    ') rotate(' +
+                    item.rotate +
+                    'deg);transform-origin: center center;z-index:' +
+                    item.zindex 
                   "
-                  v-for="(item, idx) in tt"
-                  :key="idx"
               ></image>
-              <image
+              </template>
+              
+              <!-- 文字绘制的图片 -->
+              <template v-for="(item, idx) in textimgs">
+                <image
+                  v-if="item.url"
+                  :key="idx"
                   @tap.stop.prevent="bindqie"
                   :class="'textimgs' + idx"
                   :data-h="item.pich"
@@ -169,28 +180,26 @@
                   :data-windowwidth="windowWidth"
                   :data-x="item.x"
                   :data-y="item.y"
-                  v-if="!(item.url ? false : true)"
                   :src="item.url"
                   :style="
-                      'position:absolute;width: ' +
-                      item.picw +
-                      'px; height: ' +
-                      item.pich +
-                      'px;left: ' +
-                      item.x +
-                      'px; top: ' +
-                      item.y +
-                      'px; transform: translate(0, 0) scale(' +
-                      item.scale +
-                      ') rotate(' +
-                      item.rotate +
-                      'deg);transform-origin: center center;z-index:' +
-                      item.zindex +
-                      ' '
+                    'position:absolute;width: ' +
+                    item.picw +
+                    'px; height: ' +
+                    item.pich +
+                    'px;left: ' +
+                    item.x +
+                    'px; top: ' +
+                    item.y +
+                    'px; transform: translate(0, 0) scale(' +
+                    item.scale +
+                    ') rotate(' +
+                    item.rotate +
+                    'deg);transform-origin: center center;z-index:' +
+                    item.zindex 
                   "
-                  v-for="(item, idx) in textimgs"
-                  :key="idx"
               ></image>
+              </template>
+              <!-- 添加图片按钮 -->
               <image @tap="addimg" class="addimg" v-if="!addimgshow" src="/static/img/img.png" :style="'bottom:' + addimgtop"></image>
           </view>
           <view @tap="leftbtn" class="pm-right"></view>
@@ -287,17 +296,17 @@
               :data-x="pk.x"
               :data-y="pk.y"
               :style="
-                  'width:' +
-                  pk.w +
-                  'px;height:' +
-                  pk.h +
-                  'px;left: ' +
-                  pk.x +
-                  'px; top: ' +
-                  pk.y +
-                  'px; transform: translate(0, 0) rotate(' +
-                  pk.rotate +
-                  'deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;'
+                'width:' +
+                pk.w +
+                'px;height:' +
+                pk.h +
+                'px;left: ' +
+                pk.x +
+                'px; top: ' +
+                pk.y +
+                'px; transform: translate(0, 0) rotate(' +
+                pk.rotate +
+                'deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;'
               "
               v-if="!kshow"
           >
@@ -374,14 +383,12 @@
       <canvas canvasId="attendCanvasId" :style="'width:' + imageSize.imageWidth + 'px; height:' + imageSize.imageHeight + 'px;'"></canvas>
   </view>
 </template>
-<script src="./index.js"></script>
+<!-- <script src="./index.js"></script> -->
+<script module="index" lang="wxs" src="./index.wxs"></script>
+
 <script>
 var t = (function (t) {
-  return t && t.__esModule
-      ? t
-      : {
-            default: t
-        };
+  return t && t.__esModule ? t : { default: t};
 })(require('../../utils/util.js'));
 // var app = getApp();
 var app = {
@@ -404,6 +411,8 @@ var c = 'SimHei';
 var o = 'rgb(0,0,0)';
 var d = '';
 var n = false;
+// import  { touchmove, touchend, touchstart, kdtouchstart, kdtouchmove, kdtouchend } from './index'
+
 export default {
   data() {
       return {
@@ -416,7 +425,7 @@ export default {
           addimgtop: '15%',
 
           phonetype: {
-              name: ''
+            name: ''
           },
 
           cheight: '',
@@ -1319,6 +1328,7 @@ export default {
           });
       },
 
+      // 删除
       delpkpic: function (t) {
           var a = this.pk;
           var e = this[a.types];
