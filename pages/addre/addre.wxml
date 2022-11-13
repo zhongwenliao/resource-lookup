@@ -1,0 +1,46 @@
+<form bindsubmit="formSubmit">
+    <view class="section">
+        <view class="section__title">收货人：</view>
+        <input name="realname" value="{{data.name}}"></input>
+    </view>
+    <view class="section">
+        <view class="section__title">联系电话：</view>
+        <input name="mobile" value="{{data.mobile}}"></input>
+    </view>
+    <view class="section">
+        <view class="section__title">收货城市：</view>
+        <picker bindchange="bindRegionChange" customItem="{{customItem}}" mode="region" value="{{region}}">
+            <view class="picker">
+				{{region[0]}}，{{region[1]}}，{{region[2]}}
+			</view>
+        </picker>
+    </view>
+    <view class="section">
+        <view class="section__title">详细地址：</view>
+        <input name="address" value="{{data.address}}"></input>
+    </view>
+    <view class="page">
+        <view class="fui-cell-group">
+            <view bindtap="chooseInpt" class="fui-cell">
+                <view class="fui-cell-text" style="color:{{color}};transition:0.5s;">智能填写</view>
+                <span class="{{intelShow?'remarkRotate':'intel'}}" style="margin-left: 10rpx;position: relative;"></span>
+            </view>
+            <view style="height:{{height}}rpx">
+                <view class="fui-cell remark">
+                    <view class="intelligence">
+                        <textarea bindblur="onShowText" bindinput="bindtextarea" focus="{{onFacus}}" placeholder="粘贴地址信息，可自动识别并填写如：姓名，电话，福建省漳州市xxx区xxx街道xxxxxxx" placeholderClass="intelColor" row="2" value="{{textRemark}}" wx:if="{{!showText}}"></textarea>
+                        <text bindtap="showTextarea" class="showText {{textRemark==''?'intelColor':''}}" wx:else>{{textRemark==''?'粘贴地址信息，可自动识别并填写如：姓名，电话，福建省漳州市xxx区xxx街道xxxxxxx':textRemark}}</text>
+                        <view class="line"></view>
+                        <view bindtap="bindCopy" class="copy">粘贴</view>
+                    </view>
+                </view>
+                <view class="fui-cell remark subBtn">
+                    <view bindtap="intelligenceSubmit" class="intelligenceSubmit">识别</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="btn-area">
+        <button formType="submit">保 存</button>
+    </view>
+</form>

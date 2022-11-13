@@ -1,0 +1,47 @@
+<view class="top">
+    <view class="money">
+        <image src="../../img/m.png"></image>
+        <view>￥{{list.score}}</view>
+    </view>
+    <view class="tj">
+        <view>预计收益：￥{{list.yj}}</view>
+        <view>实际收益：￥{{list.sj}}</view>
+    </view>
+</view>
+<view class="box">
+    <view bindtap="reforderlist" class="list" style="margin-top:20px;">
+        <view style="display: flex;">
+            <image src="../../img/order.png"></image>
+            <view style="margin:0px 10px;">推广订单</view>
+        </view>
+        <image src="../../img/right.png"></image>
+    </view>
+    <view bindtap="refcode" class="list">
+        <view style="display: flex;">
+            <image src="../../img/2.png"></image>
+            <view style="margin:0px 10px;">推 广 码</view>
+        </view>
+        <image src="../../img/right.png"></image>
+    </view>
+    <view bindtap="monelog" class="list">
+        <view style="display: flex;">
+            <image src="../../img/m.png"></image>
+            <view style="margin:0px 10px;">零钱记录</view>
+        </view>
+        <image src="../../img/right.png"></image>
+    </view>
+    <view bindtap="outmoney" class="list">
+        <view style="display: flex;">
+            <image src="../../img/3.png"></image>
+            <view style="margin:0px 10px;">申请提现</view>
+        </view>
+        <image src="../../img/right.png"></image>
+    </view>
+    <view bindtap="shopdata" class="list">
+        <view style="display: flex;">
+            <image src="../../img/4.png"></image>
+            <view style="margin:0px 10px;">商家信息</view>
+        </view>
+        <image src="../../img/right.png"></image>
+    </view>
+</view>

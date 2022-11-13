@@ -1,0 +1,161 @@
+page {
+    background: #ebebeb;
+}
+
+.address {
+    width: 100%;
+    background: #fff;
+    margin-top: 1px;
+    font-size: 14px;
+}
+
+.emptyadd {
+    line-height: 60px;
+    text-align: center;
+    color: #bfbfbf;
+}
+
+.address .right {
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-top: -10%;
+}
+
+.paytype {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #bfbfbf;
+    background: #fff;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.paytype image {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 2px 15px;
+}
+
+.ordernews {
+    background: #fff;
+    display: flex;
+    height: 36vw;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.ordernews .orderbox {
+    width: 10vw;
+    margin: 20px;
+    position: relative;
+}
+
+.ordernews .left {
+    width: 10vw;
+    position: absolute;
+    z-index: 1;
+}
+
+.orderbox .box-right {
+    width: 10vw;
+    position: absolute;
+    z-index: 2;
+}
+
+.ordernews .right {
+    font-size: 14px;
+    margin: 20px;
+    width: 80%;
+    line-height: 25px;
+}
+
+.songtype {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    background: #fff;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.songbtn {
+    border: 1px solid #bfbfbf;
+    color: #666;
+    border-radius: 5px;
+}
+
+.songbtn,.songbtn.active {
+    padding: 5px 10px;
+    margin: 0 10px;
+}
+
+.songbtn.active {
+    border: 1px solid #fc5900;
+    color: #fc5900;
+    border-radius: 5px;
+}
+
+.msg {
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.foot,.msg {
+    background: #fff;
+    font-size: 14px;
+}
+
+.foot {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    z-index: 999;
+}
+
+.allprice {
+    font-weight: 700;
+    line-height: 50px;
+    margin-left: 10px;
+}
+
+.allprice text {
+    color: #fc5900;
+}
+
+.btnlist .left {
+    color: #fff;
+    background: #fc5900;
+    height: 50px;
+    line-height: 50px;
+    width: 30vw;
+    text-align: center;
+}
+
+.shopnews {
+    background: #fff;
+    font-size: 14px;
+    border-top: 1px solid #bfbfbf;
+}
+
+.shopnews .inp {
+    display: flex;
+    padding: 5px 0;
+}
+
+.shopnews .inp input {
+    text-align: center;
+    width: 50%;
+    height: 30px;
+}
+
+.shopnews .news {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #bfbfbf;
+    padding: 10px;
+}

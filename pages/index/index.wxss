@@ -1,0 +1,31 @@
+.zbio {
+    font-size: 70rpx;
+    color: #f8471f;
+}
+
+.fbio,.zbio {
+    text-align: center;
+    line-height: 80rpx;
+}
+
+.fbio {
+    font-size: 35rpx;
+    color: #977c72;
+}
+
+.slide-image {
+    width: 100%;
+}
+
+.btn {
+    width: 50%;
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    font-size: 30rpx;
+    color: #f8471f;
+    border: 1px solid #f8471f;
+    border-radius: 80rpx;
+    margin-top: 10rpx;
+    margin-left: 25%;
+}

@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/test/test",
+    "pages/adminindex/adminindex",
+    "pages/sheji/index",
+    "pages/img/img",
+    "pages/my/my",
+    "pages/selecttypes/selecttypes",
+    "pages/addre/addre",
+    "pages/orderlist/orderlist",
+    "pages/ordersure/ordersure",
+    "pages/buyorder/buyorder",
+    "pages/address/address",
+    "pages/shopcar/shopcar",
+    "pages/paycar/paycar",
+    "pages/lookkd/lookkd",
+    "pages/fenxiao/fenxiao",
+    "pages/fenxiaosend/fenxiaosend",
+    "pages/shopdata/shopdata",
+    "pages/refcode/refcode",
+    "pages/monelog/monelog",
+    "pages/reforderlist/reforderlist",
+    "pages/outmoney/outmoney",
+    "pages/adminlogin/adminlogin",
+    "pages/printorder/printorder",
+    "pages/printt/printt"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap33.json"
+}

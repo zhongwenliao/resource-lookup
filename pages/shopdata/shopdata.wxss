@@ -1,0 +1,8 @@
+.list {
+    border-bottom: 1px solid #bfbfbf;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    background: #fff;
+}

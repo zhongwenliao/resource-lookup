@@ -1,0 +1,56 @@
+.top,page {
+    background: #fff;
+}
+
+.top {
+    width: 98%;
+    margin: 1%;
+    border-radius: 10px;
+}
+
+.money {
+    display: flex;
+    justify-content: center;
+}
+
+.money image {
+    width: 50px;
+    height: 50px;
+}
+
+.money view {
+    font-size: 20px;
+    line-height: 50px;
+    color: #e79a0c;
+}
+
+.tj {
+    display: flex;
+}
+
+.tj view {
+    width: 50%;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.list {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    padding: 10px;
+    border-bottom: 1px solid #bfbfbf;
+}
+
+.list image {
+    width: 20px;
+    height: 20px;
+}
+
+.box {
+    width: 100%;
+    margin: 10px 0 0;
+    padding: 5px 0;
+    background: #fff;
+    border-radius: 10px;
+}

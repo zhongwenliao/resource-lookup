@@ -1,0 +1,182 @@
+page {
+    background: #ebebeb;
+}
+
+.head {
+    width: 100%;
+    height: 84vw;
+    background-image: url(https://30diy.cn/public/img/timg.jpg);
+    background-size: 100% 100%;
+    position: relative;
+}
+
+.mask {
+    z-index: 30;
+    background-image: url(https://30diy.cn/A7.png);
+}
+
+.head image,.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-size: 100% 100%;
+    pointer-events: none;
+    width: 30vw;
+    height: 60vw;
+}
+
+.head image {
+    z-index: 29;
+}
+
+.list {
+    border-bottom: 1px solid #bfbfbf;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    background: #fff;
+}
+
+.print-btn {
+    width: 80px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border: 1px solid #666;
+    color: #666;
+    border-radius: 10px;
+}
+
+.print-btn.active {
+    border: 1px solid #f8441f;
+    color: #f8441f;
+}
+
+.title {
+    font-size: 33rpx;
+    font-weight: 700;
+}
+
+.editcc,.title {
+    line-height: 35px;
+}
+
+.editcc {
+    width: 60px;
+    height: 35px;
+    text-align: center;
+    background: #80c269;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.toast-box {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.toastbg {
+    opacity: .2;
+    background-color: #000;
+    position: absolute;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.showToast {
+    position: absolute;
+    opacity: 1;
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 40%;
+}
+
+.toast-title {
+    padding-left: 5%;
+    background-color: #f8441f;
+    color: #fff;
+    border-top-right-radius: 16rpx;
+    border-top-left-radius: 16rpx;
+}
+
+.toast-main,.toast-title {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+.toast-main {
+    background-color: #fff;
+    text-align: center;
+}
+
+.toast-input {
+    margin-left: 5%;
+    margin-right: 5%;
+    border: 1px solid #ddd;
+    padding: 1vh 2vh;
+}
+
+.toast-button {
+    display: flex;
+}
+
+.button1,.button2 {
+    width: 50%;
+}
+
+.button1 button {
+    color: red;
+    border-radius: 0;
+    border-bottom-left-radius: 16rpx;
+}
+
+.button1 button,.button2 button {
+    width: 100%;
+    background-color: #fff;
+}
+
+.button2 button {
+    color: #000;
+    border-radius: 0;
+    border-bottom-right-radius: 16rpx;
+}
+
+.muban {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.muban .li {
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border-bottom: 1px solid #bfbfbf;
+}
+
+.muban .close {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 30px;
+    text-align: center;
+    line-height: 30px;
+    float: right;
+    margin: 20px;
+    font-size: 18px;
+}

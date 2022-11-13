@@ -1,0 +1,27 @@
+<view class="zbio">11</view>
+<view class="fbio">222</view>
+<image mode="aspectFit" src="{{image}}" style="width:100%;height:600rpx;"></image>
+<view style="height:165px;line-height:50px;" wx:if="{{shop.ftypes!=1&&shop.status=='normal'}}">
+    <navigator url="/pages/sheji/index?types=0">
+        <view class="btn" wx:if="{{shop.sjk==1}}">手机壳定制</view>
+    </navigator>
+    <navigator url="/pages/sheji/index?types=1">
+        <view class="btn" wx:if="{{shop.caimo==1}}">彩 膜 定 制</view>
+    </navigator>
+    <navigator url="/pages/sheji/index?types=2">
+        <view class="btn" wx:if="{{shop.lipin==1}}">礼 品 定 制</view>
+    </navigator>
+</view>
+<view style="height:50px;width:100%;"></view>
+<view class="footer">
+    <view class="foot-btn active" style="width:50%;">
+        <image src="../../img/h2.png"></image>
+        <view>首页</view>
+    </view>
+    <navigator openType="redirect" style="width:50%;" url="/pages/my/my">
+        <view class="foot-btn">
+            <image src="../../img/m1.png"></image>
+            <view>我的</view>
+        </view>
+    </navigator>
+</view>

@@ -1,0 +1,526 @@
+page {
+    background: #ebebeb;
+    overflow: hidden;
+    font-size: .8rem;
+    width: 100%;
+    height: 100%;
+}
+
+.head {
+    display: flex;
+    padding: 2%;
+    font-size: 1rem;
+    background: #fff;
+    justify-content: space-between;
+    line-height: 30px;
+    position: absolute;
+    z-index: 1900;
+    width: 96%;
+}
+
+.head image {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.head button {
+    height: 30px;
+    background: #f8441f;
+    color: #fff;
+    line-height: 30px;
+    font-size: .75rem;
+    margin-right: 0;
+}
+
+.head .ge {
+    width: 2px;
+    height: 17px;
+    background: #ebebeb;
+    margin: 5px 10px;
+}
+
+.head .edit {
+    color: #4e9ef9;
+}
+
+.pm-top {
+    opacity: .9;
+    position: relative;
+    z-index: 13;
+    background: #fff;
+    width: 100%;
+    height: 10%;
+    overflow: hidden;
+}
+
+.pm-left {
+    float: left;
+}
+
+.pm-left,.pm-right {
+    position: relative;
+    z-index: 13;
+    opacity: .9;
+    width: 20%;
+    height: 80%;
+    background: #fff;
+}
+
+.pm-right {
+    float: right;
+}
+
+.pm-bottom {
+    z-index: 13;
+    filter: alpha(opacity=90);
+    opacity: .9;
+    height: 10%;
+    clear: both;
+    text-align: center;
+    overflow: hidden;
+    color: #666;
+}
+
+.content,.pm-bottom {
+    position: relative;
+    background: #fff;
+}
+
+.content {
+    z-index: 12;
+    width: 60%;
+    height: 80%;
+    float: left;
+}
+
+.fill-top {
+    width: 100%;
+    top: 0;
+    height: 10px;
+}
+
+.fill-l,.fill-top {
+    pointer-events: none;
+    opacity: .9;
+    z-index: 1998;
+    position: absolute;
+    left: 0;
+    background: #fff;
+}
+
+.fill-l {
+    top: 10px;
+}
+
+.fill-r {
+    right: 0;
+    top: 10px;
+}
+
+.fill-b,.fill-r {
+    pointer-events: none;
+    opacity: .9;
+    z-index: 1998;
+    position: absolute;
+    background: #fff;
+}
+
+.fill-b {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.mask {
+    z-index: 1999;
+}
+
+.mask,.mbimg {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-size: 100% 100%;
+    pointer-events: none;
+}
+
+.mbimg {
+    z-index: 4;
+}
+
+.addimg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 15%;
+    margin: auto;
+    z-index: 32;
+    width: 40px;
+    height: 40px;
+    background: #f8441f;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+.left {
+    top: 20%;
+    left: 10%;
+}
+
+.left,.right {
+    position: absolute;
+    z-index: 32;
+    padding: 10px;
+    font-size: .75rem;
+    margin: 0 auto;
+    width: 20px;
+    line-height: 18px;
+}
+
+.right {
+    top: 15%;
+    left: 78%;
+}
+
+.wenzi {
+    position: absolute;
+    top: 65%;
+    left: 0;
+    z-index: 32;
+    padding: 5px;
+    font-size: .75rem;
+    color: #f8441f;
+    text-align: center;
+}
+
+.wenzi image {
+    width: 15px;
+    height: 15px;
+    background: #f8441f;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+.add {
+    position: absolute;
+    top: 77%;
+    left: 0;
+    z-index: 32;
+    padding: 5px;
+    font-size: .75rem;
+    color: #f8441f;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.addimgbtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    margin-left: 2px;
+}
+
+.add .list {
+    margin-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.add .li {
+    border: 1px solid #f8441f;
+    border-radius: 5px;
+    position: relative;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.add .li image {
+    width: 66px;
+    height: 66px;
+    margin-top: 2px;
+}
+
+.add .li .close {
+    color: #f8441f;
+    border: 1px solid #f8441f;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    right: 0;
+    top: 0;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.add .li .close,.types {
+    text-align: center;
+    position: absolute;
+}
+
+.types {
+    font-size: .75rem;
+    top: 5%;
+    left: 0;
+    width: 100%;
+}
+
+.types text {
+    color: #f8441f;
+}
+
+.section {
+    line-height: 82rpx;
+    border-top: 2rpx solid #f2f3f5;
+    border-bottom: 2rpx solid #f2f3f5;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: content-box;
+    position: relative;
+}
+
+.sel {
+    padding: 0 60rpx 0 30rpx;
+    font-size: 32rpx;
+    color: #3f4552;
+}
+
+.picker {
+    position: relative;
+}
+
+.triangle {
+    display: block;
+    width: 20rpx;
+    height: 12rpx;
+    position: absolute;
+    top: 46%;
+    right: -30rpx;
+    transition: transform .2s ease-in;
+    transition: transform .2s ease-in,-webkit-transform .2s ease-in;
+}
+
+.triangle::before {
+    right: 0;
+    border-left: 10rpx solid transparent;
+    border-top: 10rpx solid #9fa8b7;
+    border-right: 10rpx solid transparent;
+}
+
+.triangle::before,.triangle:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.triangle:after {
+    right: 2rpx;
+    border-left: 8rpx solid transparent;
+    border-top: 8rpx solid #fff;
+    border-right: 8rpx solid transparent;
+}
+
+.picker.active {
+    color: #3a78ff;
+}
+
+.picker.active .triangle {
+    transform: rotate(180deg);
+}
+
+.picker.active .triangle::before {
+    border-top: 10rpx solid #3a78ff;
+}
+
+.rank-active {
+    width: 100%;
+    position: absolute;
+    top: 80rpx;
+    background: #fff;
+    display: none;
+    transition: all .2s;
+}
+
+.rank-active.active {
+    display: block;
+}
+
+.rank-active .scroll-list {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    border-top: 2rpx solid #f2f3f5;
+    border-bottom: 2rpx solid #f2f3f5;
+}
+
+.rank-active .scroll-list scroll-view {
+    height: 371rpx;
+    padding: 0 30rpx;
+}
+
+.rank-active .scroll-list scroll-view:nth-child(2) {
+    background: #f9f9f9;
+}
+
+.rank-active .scroll-list scroll-view view {
+    line-height: 90rpx;
+    color: #3f4552;
+    font-size: 30rpx;
+    border-bottom: 2rpx solid #efefef;
+}
+
+.rank-active .scroll-list scroll-view view.active {
+    color: #3a78ff;
+}
+
+.rank-active .scroll-list scroll-view view:last-child {
+    border-bottom: none;
+}
+
+.button {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 30rpx;
+    line-height: 98rpx;
+    font-size: 32rpx;
+    color: #9fa8b7;
+}
+
+.button view:last-child {
+    color: #3a78ff;
+}
+
+.rank-active-bg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.7);
+    display: none;
+}
+
+.rank-active-bg.active {
+    display: block;
+}
+
+.picslist {
+    position: absolute;
+}
+
+.picslist.active {
+    border: 1px dashed #f8441f;
+}
+
+.picslist .del {
+    background: #f8441f;
+    border-radius: 20px;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 5px;
+    z-index: 10;
+}
+
+.picslist .kd {
+    bottom: 0;
+    background: #047b00;
+}
+
+.picslist .kd,.picslist .xz {
+    border-radius: 25px;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right: 0;
+    padding: 5px;
+    z-index: 10;
+}
+
+.picslist .xz {
+    top: 0;
+    background: #d3941e;
+}
+
+.textedit {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3);
+    position: absolute;
+    bottom: 9%;
+    padding-bottom: 5px;
+    z-index: 40;
+}
+
+.familylist {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.scroll-view_H {
+    white-space: nowrap;
+}
+
+.familyli {
+    padding: 10px;
+    display: inline-block;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.familyli.active {
+    border-bottom: 2px solid #f8441f;
+}
+
+.colorbox {
+    display: inline-block;
+}
+
+.colorli {
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    margin: 10px;
+    border: 1px solid #9fa8b7;
+}
+
+.colorbox.active {
+    border-bottom: 2px solid #f8441f;
+}
+
+.textbtns {
+    display: flex;
+    justify-content: space-around;
+    font-size: 14px;
+}
+
+.fx {
+    padding: 5px 10px;
+}
+
+.fx.active,.surebtn {
+    background: #f8441f;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+input {
+    width: 80%;
+    margin-left: 5%;
+    border: 1px solid #9fa8b7;
+    padding: 0 5%;
+    margin-bottom: 5px;
+    height: 2.8rem;
+    border-radius: 10px;
+}

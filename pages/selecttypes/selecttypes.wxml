@@ -1,0 +1,35 @@
+<view class="search">
+    <input bindinput="searchtxt" placeholder="搜索机型"></input>
+    <view bindtap="searchbtn">搜索</view>
+</view>
+<scroll-view scrollY bindscroll="scroll" bindscrolltolower="lower" bindscrolltoupper="upper" class="left" scrollIntoView="{{toView}}" scrollTop="{{scrollTop}}" style="height: {{h}}px;">
+    <view bindtap="selectleft" class="{{item.active}}" data-ind="{{index}}" wx:for="{{pp}}">{{item.name}}</view>
+</scroll-view>
+<scroll-view scrollY bindscroll="scroll" bindscrolltolower="lower" bindscrolltoupper="upper" class="right" scrollIntoView="{{toView}}" scrollTop="{{scrollTop}}" style="height: {{h}}px;">
+    <block wx:if="{{item.active=='active'}}" wx:for="{{pp}}">
+        <block wx:for="{{item.children}}" wx:for-index="xlidx" wx:for-item="xl">
+            <view class="title">{{xl.xl}}</view>
+            <view class="list">
+                <view bindtap="selectright" class="li" data-icidx="{{icidx}}" data-xlidx="{{xlidx}}" wx:for="{{xl.children}}" wx:for-index="icidx" wx:for-item="ic">{{ic.name}}</view>
+            </view>
+        </block>
+    </block>
+</scroll-view>
+<view class="searsul" hidden="{{searshow}}">
+    <view>
+        <view class="title">搜索结果</view>
+        <view bindtap="closesear" class="close">X</view>
+    </view>
+    <view class="li">
+        <view>品牌</view>
+        <view>机型</view>
+        <view>操作</view>
+    </view>
+    <view class="li" wx:for="{{list}}">
+        <view>{{item.pp}}</view>
+        <view>{{item.name}}</view>
+        <view>
+            <button bindtap="selectser" data-ind="{{index}}">选择</button>
+        </view>
+    </view>
+</view>

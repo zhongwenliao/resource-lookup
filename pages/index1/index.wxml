@@ -1,0 +1,109 @@
+<view style="position:fixed;z-index:9999;background:#ff0000;width:2px;height:2px;left:{{zx}}px;top:{{zy}}px;"></view>
+<view class="head">
+    <image src="../../img/phone.png"></image>
+    <view style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45%;">机型：{{phonetype.name}}</view>
+    <view class="ge"></view>
+    <view bindtap="eidttype" class="edit">换机型》</view>
+    <button bindgetuserinfo="bindGetUserInfo" openType="getUserInfo" wx:if="{{canIUse}}">下一步</button>
+    <button bindtap="submitdata" wx:else>下一步</button>
+</view>
+<view bindtap="leftbtn" class="pm-top"></view>
+<view bindtap="leftbtn" class="pm-left"></view>
+<view class="content" hidden="{{cshow}}">
+    <view class="fill-top" style="height:{{masktop}}px"></view>
+    <view class="fill-l" style="height: {{mheight}}px;width:{{fillw}}px"></view>
+    <view class="fill-r" style="height: {{mheight}}px;width:{{fillw}}px"></view>
+    <view class="fill-b" style="height:{{fillh}}px">
+        <view class="types" hidden="{{addshow}}">
+      可用单指拖动 双指缩放
+    </view>
+    </view>
+    <view class="mask" style="background-image:url('{{bg}}');width:{{mwidth}}px;height: {{mheight}}px;top:{{masktop}}px"></view>
+    <image src="{{tk[0].url}}" style="width: {{tk[0].picw}}px; height: {{tk[0].pich}}px;top:{{tk[0].y}}px;left:{{tk[0].x}}px;z-index:1;position: absolute;transform: translate(0, 0) scale({{tk[0].scale}}) rotate({{tk[0].rotate}}deg);transform-origin: center center;"></image>
+    <image bindtap="bindqie" data-idx="{{index}}" data-types="pics" id="pics{{index}}" src="{{item.url}}" style="position:absolute;width: {{item.picw}}px; height: {{item.pich}}px;left: {{item.x}}px; top: {{item.y}}px; transform: translate(0, 0) scale({{item.scale}}) rotate({{item.rotate}}deg);transform-origin: center center;z-index:{{item.zindex}} " wx:for="{{pics}}"></image>
+    <image class="mbimg" hidden="{{mb[0].url?false:true}}" src="{{mb[0].url}}" style="width:{{mb[0].picw}}px;height: {{mb[0].pich}}px;top:{{mb[0].y}}px;left:{{mb[0].x}}px;transform: translate(0, 0) scale({{mb[0].scale}}) rotate({{mb[0].rotate}}deg);transform-origin: center center;"></image>
+    <image bindtap="bindqie" data-idx="{{index}}" data-types="tt" hidden="{{item.url?false:true}}" src="{{item.url}}" style="position:absolute;width: {{item.picw}}px; height: {{item.pich}}px;left: {{item.x}}px; top: {{item.y}}px; transform: translate(0, 0) scale({{item.scale}}) rotate({{item.rotate}}deg);transform-origin: center center;z-index:{{item.zindex}} " wx:for="{{tt}}"></image>
+    <image bindtap="bindqie" data-idx="{{index}}" data-types="textimgs" hidden="{{item.url?false:true}}" src="{{item.url}}" style="position:absolute;width: {{item.picw}}px; height: {{item.pich}}px;left: {{item.x}}px; top: {{item.y}}px; transform: translate(0, 0) scale({{item.scale}}) rotate({{item.rotate}}deg);transform-origin: center center;z-index:{{item.zindex}} " wx:for="{{textimgs}}"></image>
+    <image bindtap="addimg" class="addimg" hidden="{{addimgshow}}" src="../../img/img.png " style="bottom:{{addimgtop}}"></image>
+</view>
+<view bindtap="leftbtn" class="pm-right"></view>
+<view bindtap="leftbtn" class="pm-bottom"></view>
+<view bindtap="wenzibtn" class="wenzi">
+    <image src="../../img/text.png"></image>
+    <view>文字输入</view>
+</view>
+<view class="add" hidden="{{addshow}}">
+    <view bindtap="addimg" style="text-align:center;">
+        <image class="addimgbtn" src="../../img/add.png"></image>
+        <view>添加照片</view>
+    </view>
+    <scroll-view scrollX class="scroll-view_H " style="width:80%; ">
+        <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="tk" wx:if="{{tk!=''}}">
+            <view bindtap="deltk" class="close">X</view>
+            <image class="imgcl" mode="aspectFit" src="{{tk[0].url}}"></image>
+            <image bindtap="tkclock" class="clock" src="{{tk[0].clock}}"></image>
+        </view>
+        <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="pics" hidden="pics.url?false:true" wx:for="{{pics}}">
+            <view bindtap="delpic" class="close" data-idx="{{index}}">X</view>
+            <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+        </view>
+        <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="mb" wx:if="{{mb!=''}}">
+            <view bindtap="delmb" class="close">X</view>
+            <image class="imgcl" mode="aspectFit" src="{{mb[0].url}}"></image>
+            <image bindtap="mbclock" class="clock" src="{{mb[0].clock}}"></image>
+        </view>
+        <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="tt" hidden="tt.url?false:true" wx:for="{{tt}}">
+            <view bindtap="deltt" class="close" data-idx="{{index}}">X</view>
+            <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+        </view>
+        <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="textimgs" hidden="textimgs.url?false:true" wx:for="{{textimgs}}">
+            <view bindtap="deltextimgs" class="close" data-idx="{{index}}">X</view>
+            <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+        </view>
+    </scroll-view>
+</view>
+<view bindtap="catchtxt" class="textedit" hidden="{{!addshow}}">
+    <view style="background:#fff;position:absolute;bottom:0;width:100%;">
+        <scroll-view scrollX class="scroll-view_H " style="width:100%; ">
+            <image catchtap="selectfamily" class="familyli {{item.active}}" data-idx="{{index}}" mode="widthFix" src="{{item.val}}" style="width:20%;" wx:for="{{falimys}}"></image>
+        </scroll-view>
+        <scroll-view scrollX class="scroll-view_H " style="width:100%; ">
+            <view catchtap="selectcolor" class="colorbox {{item.active}}" data-idx="{{index}}" wx:for="{{colors}}">
+                <view class="colorli" style="background-color:{{item.val}}"></view>
+            </view>
+        </scroll-view>
+        <input bindinput="inputval" catchtap="inptch" id="textval" maxlength="12" placeholder="最多输入12个字符" placeholderStyle="font-size:14px;" style="font-size:14px;" value="{{inputval}}"></input>
+        <view class="textbtns">
+            <view style="line-height:30px;">文字方向：</view>
+            <view catchtap="fxbtn" class="fx {{fx[0].active}}" data-idx="0">{{fx[0].name}}</view>
+            <view catchtap="fxbtn" class="fx {{fx[1].active}}" data-idx="1"> {{fx[1].name}}</view>
+            <view catchtap="surebtn" class="surebtn">确认添加</view>
+        </view>
+    </view>
+</view>
+<view bindtouchend="bindtouchend" bindtouchmove="bindtouchmove" bindtouchstart="bindtouchstart" class="picslist" hidden="{{kshow}}" style="width:{{pk.w}}px;height:{{pk.h}}px;left: {{pk.x}}px; top: {{pk.y}}px; transform: translate(0, 0) rotate({{pk.rotate}}deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;">
+    <image bindtap="delpkpic" class="del" data-idx="{{pk.index}}" data-types="{{pk.types}}" mode="widthFix" src="../../img/del.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="kd" data-idx="{{pk.index}}" data-kn="kd" data-types="{{pk.types}}" mode="widthFix" src="../../img/kd.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="xz" data-idx="{{pk.index}}" data-kn="xz" data-types="{{pk.types}}" mode="widthFix" src="../../img/xz.png"></image>
+</view>
+<view style="height:50px;width:100%;"></view>
+<view class="footer">
+    <view class="foot-btn active">
+        <image src="../../img/h2.png"></image>
+        <view>设计</view>
+    </view>
+    <navigator url="/pages/img/img?act=index">
+        <view class="foot-btn">
+            <image src="../../img/t1.png"></image>
+            <view>图库</view>
+        </view>
+    </navigator>
+    <navigator openType="redirect" url="/pages/my/my">
+        <view class="foot-btn">
+            <image src="../../img/m1.png"></image>
+            <view>我的</view>
+        </view>
+    </navigator>
+</view>
+<canvas canvasId="textcanvas" style="width:{{textwidth}}px;height:{{textheight}}px; "></canvas>
+<canvas canvasId="mycanvas" disableScroll="true" style="width: {{imgw}}px; height: {{imgh}}px; "></canvas>

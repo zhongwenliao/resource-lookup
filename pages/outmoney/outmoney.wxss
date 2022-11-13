@@ -1,0 +1,51 @@
+.top {
+    width: 98%;
+    margin: 1%;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.money {
+    display: flex;
+    justify-content: center;
+}
+
+.money view {
+    font-size: 20px;
+    line-height: 50px;
+    color: #e79a0c;
+}
+
+.section {
+    border-bottom: 1px solid #bfbfbf;
+    display: flex;
+    font-size: 14px;
+    padding: 10px;
+}
+
+.section__title {
+    width: 30%;
+}
+
+input {
+    width: 70%;
+}
+
+.btn-area {
+    width: 80%;
+    margin: 10%;
+}
+
+.btn-area button {
+    background: #f8441f;
+    color: #fff;
+    font-size: 14px;
+}
+
+.list {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    padding: 10px;
+    border-bottom: 1px solid #bfbfbf;
+}

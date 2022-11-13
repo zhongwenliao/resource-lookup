@@ -1,0 +1,1 @@
+<image bindtap="lookimg" mode="widthFix" src="{{host}}{{img}}" style="width:100%;"></image>

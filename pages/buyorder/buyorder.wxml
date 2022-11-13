@@ -1,0 +1,103 @@
+<view bindtap="address" class="address">
+    <view class="emptyadd" wx:if="{{linkman==null}}">暂无联系地址，点击此处添加地址！</view>
+    <block wx:else>
+        <view style="display:flex; width:90%;justify-content: space-between;margin-left:5%;padding:5px 0px;">
+      收货人： {{linkman.name}} {{linkman.mobile}}
+    </view>
+        <view style="display:flex; width:90%;margin-left:5%;padding:5px 0px;">
+      收货地址： {{linkman.address}}
+    </view>
+        <image class="right" src="../../img/right.png"></image>
+    </block>
+    <image src="../../img/email.png" style="width:100%;height:5px;margin-top:5px;"></image>
+</view>
+<view class="paytype">
+    <view style="margin:0px 10px;">支付方式</view>
+    <picker bindchange="bindPickerChange" range="{{array}}" value="{{index}}">
+        <view style="display: flex;">
+            <view class="picker">
+        {{array[index]}}
+      </view>
+            <image src="../../img/right.png"></image>
+        </view>
+    </picker>
+</view>
+<view class="ordernews">
+    <view class="orderbox">
+        <image class="box-right" mode="widthFix" src="{{phonetype.bgimage}}"></image>
+        <image class="left" mode="widthFix" src="{{imgurl}}"></image>
+    </view>
+    <view class="right">
+        <view>{{phonetype.name}}</view>
+        <view>样式：{{spec_name}}</view>
+        <view style="display: flex;justify-content: space-between;">
+            <view>数量：{{num}}</view>
+            <view style="color:rgb(252,89,0);">￥{{price}}</view>
+        </view>
+    </view>
+</view>
+<view class="songtype">
+    <view style="margin:0px 10px;line-height:30px;">配送方式</view>
+    <view style="display: flex;">
+        <view bindtap="songtype" class="songbtn {{item.active}}" data-idx="{{index}}" wx:for="{{songtype}}">{{item.name}}</view>
+    </view>
+</view>
+<view class="songtype" hidden="{{showy}}">
+    <view style="margin:0px 10px;line-height:30px;">快递费</view>
+    <view style="padding-right:15px;">
+    {{yprice}}
+  </view>
+</view>
+<view class="shopnews" hidden="{{shopnews}}">
+    <view class="inp">
+        <input bindinput="linkmaninp" placeholder="请输入联系人" style="border-right:1px solid #bfbfbf;"></input>
+        <input bindinput="mobileinp" placeholder="请输入联系电话"></input>
+    </view>
+    <view class="news">
+        <view style="width:100px;">门店信息</view>
+        <view style="text-align:right">
+            <view>{{shop.nickname}}</view>
+            <view>{{shop.mobile}}</view>
+            <view>{{shop.address}}</view>
+        </view>
+    </view>
+</view>
+<view class="msg">
+    <view style="margin:0px 10px;line-height:30px;">买家留言：</view>
+    <input bindinput="textinfo" placeholder="请填写备注" style="margin:0px 10px;border-radius:10px;border:1px solid #bfbfbf;width:89%;padding:10px;"></input>
+</view>
+<view style="width:100%;height:50px;"></view>
+<view class="foot">
+    <view class="allprice">总计：
+    <text>￥{{allprice}}</text>
+    </view>
+    <view class="btnlist">
+        <view bindtap="paybuy" class="left">提交</view>
+    </view>
+</view>
+<view class="toast-box" hidden="{{ifName}}">
+    <view class="toastbg"></view>
+    <view class="showToast">
+        <view class="toast-main">
+        下单成功！
+    </view>
+        <view class="toast-main">
+        分享朋友圈获佣金返现！
+    </view>
+        <view class="toast-button">
+            <view class="button2">
+                <button bindtap="returindex">返回首页</button>
+                <button catchtap="confirm" openType="share">分享</button>
+                <button bindtap="copimage">生成海报</button>
+            </view>
+        </view>
+    </view>
+</view>
+<view class="share" hidden="{{shareshow}}">
+    <image mode="aspectFit" src="{{share2image}}" style="height:500px;"></image>
+    <view>保存海报至相册</view>
+    <view>转发或分享到朋友圈获返利</view>
+    <view bindtap="capybd" class="btn">保存到相册</view>
+</view>
+<canvas canvasId="canvas" style="flex: absolute; top: -3000px; left: -3000px; width: 500px; height: 400px; background: #fff"></canvas>
+<canvas canvasId="shareCanvas" style="flex: absolute; top: -3000px; left: -3000px;width:{{imgW}}px;height:{{imgH}}px;background: #fff"></canvas>

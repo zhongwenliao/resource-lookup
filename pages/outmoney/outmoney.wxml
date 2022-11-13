@@ -1,0 +1,20 @@
+<view class="top">
+    <view class="money">
+        <view>可申请金额：</view>
+        <view>￥{{money}}</view>
+    </view>
+</view>
+<form bindsubmit="formSubmit">
+    <view class="section">
+        <view class="section__title">提现金额：</view>
+        <input name="score" value=""></input>
+    </view>
+    <view class="btn-area">
+        <button formType="submit">申 请</button>
+    </view>
+</form>
+<view class="list" wx:for="{{list}}">
+    <view style="width:60%;text-align:center;">{{item.createtime}}</view>
+    <view style="width:20%">￥{{item.score}}</view>
+    <view style="width:20%">{{item.status}}</view>
+</view>

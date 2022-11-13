@@ -1,0 +1,17 @@
+<view style="padding: 20px;font-size:14px;">
+    <view style="display:flex;justify-content: center;">
+        <view style="font-size:14px;text-align:center;height:20px;line-height:20px;">{{kuaidi}}：{{num}}</view>
+        <view bindtap="copylink" style="color:#f8441f;border:1px solid #f8441f;min-width:60px;font-size:14px;text-align:center;height:20px;line-height:20px;border-radius:10px;margin-left: 20px;">复制单号</view>
+    </view>
+    <view style="display: flex;" wx:for="{{data.Traces}}">
+        <view>
+            <view style="width: 10px;height: 10px;background: #ff0000;border-radius: 10px;"></view>
+            <view style="width: 1px;height: 110px;background: #ff0000;margin-left: 4.5px;"></view>
+        </view>
+        <view style="padding: 20px;">
+            <view>{{item.AcceptTime}}</view>
+            <view>{{item.AcceptStation}}</view>
+            <view>【{{item.Remark}}】</view>
+        </view>
+    </view>
+</view>

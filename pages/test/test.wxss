@@ -1,0 +1,314 @@
+page {
+    background: #ebebeb;
+    overflow: hidden;
+    font-size: .8rem;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.head {
+    display: flex;
+    padding: 2%;
+    font-size: 1rem;
+    background: #fff;
+    justify-content: space-between;
+    line-height: 30px;
+    position: absolute;
+    z-index: 999;
+    width: 96%;
+}
+
+.head image {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.head button {
+    height: 30px;
+    background: #f8441f;
+    color: #fff;
+    line-height: 30px;
+    font-size: .75rem;
+    margin-right: 0;
+}
+
+.head .ge {
+    width: 2px;
+    height: 17px;
+    background: #ebebeb;
+    margin: 5px 10px;
+}
+
+.head .edit {
+    color: #4e9ef9;
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    top: 45px;
+    left: 0;
+}
+
+.content .left {
+    width: 20%;
+    height: 100%;
+}
+
+.content .left,.content .top {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+}
+
+.content .top {
+    width: 100%;
+    height: 1%;
+}
+
+.content .right {
+    width: 20%;
+    height: 100%;
+    right: 0;
+    top: 0;
+}
+
+.content .bottom,.content .right {
+    position: absolute;
+    background: #fff;
+    z-index: 2;
+}
+
+.content .bottom {
+    width: 100%;
+    height: 20%;
+    left: 0;
+    bottom: 0;
+}
+
+.content .editcon {
+    width: 60%;
+    height: 79%;
+    position: absolute;
+    top: 1%;
+    left: 20%;
+    z-index: 1;
+}
+
+.content .editcon .edit {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.content .editcon .edit .mask {
+    position: absolute;
+    z-index: 1999;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.addimg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 32;
+    width: 40px;
+    height: 40px;
+    background: #f8441f;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+.scroll-view_H {
+    white-space: nowrap;
+}
+
+.picslist {
+    position: absolute;
+}
+
+.picslist .del {
+    background: #f8441f;
+    border-radius: 20px;
+    left: -12.5px;
+    top: -12.5px;
+}
+
+.picslist .del,.picslist .kd {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    padding: 5px;
+    z-index: 10;
+}
+
+.picslist .kd {
+    border-radius: 25px;
+    right: -12.5px;
+    bottom: -12.5px;
+    background: #047b00;
+}
+
+.picslist .kd1 {
+    right: -12.5px;
+    bottom: calc(50% - 12.5px);
+}
+
+.picslist .kd1,.picslist .kd2 {
+    border-radius: 25px;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    z-index: 10;
+    background: #fff;
+}
+
+.picslist .kd2 {
+    bottom: -12.5px;
+    right: calc(50% - 12.5px);
+    transform: rotate(90deg);
+}
+
+.picslist .xz {
+    border-radius: 25px;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right: -12.5px;
+    top: -12.5px;
+    padding: 5px;
+    background: #d3941e;
+    z-index: 10;
+}
+
+.fill-top {
+    width: 100%;
+    top: 0;
+}
+
+.fill-l,.fill-top {
+    left: 0;
+}
+
+.fill-l,.fill-r,.fill-top {
+    pointer-events: none;
+    opacity: .9;
+    z-index: 1998;
+    position: absolute;
+    background: #fff;
+}
+
+.fill-r {
+    right: 0;
+}
+
+.fill-b {
+    pointer-events: none;
+    opacity: .9;
+    z-index: 1998;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+}
+
+.fill-b,.wenzi {
+    position: absolute;
+    left: 0;
+}
+
+.wenzi {
+    top: 65%;
+    z-index: 32;
+    padding: 5px;
+    font-size: .75rem;
+    color: #f8441f;
+    text-align: center;
+}
+
+.wenzi image {
+    width: 15px;
+    height: 15px;
+    background: #f8441f;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+.print {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 32;
+    padding: 5px;
+    font-size: .75rem;
+    color: #f8441f;
+    text-align: center;
+}
+
+.print image {
+    width: 15px;
+    height: 15px;
+    background: #f8441f;
+    padding: 10px;
+    border-radius: 100%;
+}
+
+.add {
+    padding: 5px;
+    font-size: .75rem;
+    color: #f8441f;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.addimgbtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    margin-left: 2px;
+}
+
+.add .list {
+    margin-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.add .li {
+    border: 1px solid #f8441f;
+    border-radius: 5px;
+    position: relative;
+    margin-left: 10px;
+    display: inline-block;
+    height: 60px;
+    margin-top: 8px;
+}
+
+.add .li .imgcl {
+    width: 60px;
+    height: 60px;
+    margin-top: 0;
+}
+
+.add .li .close {
+    color: #f8441f;
+    border: 1px solid #f8441f;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    border-radius: 16px;
+    background: #fff;
+}

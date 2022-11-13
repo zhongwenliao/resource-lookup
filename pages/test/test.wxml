@@ -1,0 +1,94 @@
+<view class="head">
+    <image src="../../img/phone.png" wx:if="{{types!=2}}"></image>
+    <view style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:43%;" wx:if="{{types!=2}}">{{types==0?'手机壳':'彩膜'}}：{{phonetype.name}}</view>
+    <view style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45%;" wx:else>礼品：{{phonetype.name}}</view>
+    <view class="ge"></view>
+    <view bindtap="eidttype" class="edit">{{types==2?'换品种':'换机型'}}》</view>
+    <button bindgetuserinfo="bindGetUserInfo" openType="getUserInfo" wx:if="{{canIUse}}">下一步</button>
+    <button bindtap="submitdata" wx:else>下一步</button>
+</view>
+<view bindtouchend="{{test.touchend}}" bindtouchmove="{{test.touchmove}}" bindtouchstart="{{test.touchstart}}" class="content" style="height:{{windowHeight-95}}px;">
+    <view class="left">
+        <view bindtap="printoo" class="print">
+            <image src="../../img/p.png"></image>
+            <view>直接打印</view>
+        </view>
+        <view bindtap="wenzibtn" class="wenzi">
+            <image src="../../img/text.png"></image>
+            <view>文字输入</view>
+        </view>
+    </view>
+    <view class="top"></view>
+    <view class="editcon">
+        <view class="edit">
+            <image bindtap="addimg" class="addimg" hidden="{{addimgshow}}" src="../../img/img.png " style="bottom:{{addimgtop}}"></image>
+            <view class="mask" style="background-image:url('{{bg}}');width:{{mwidth}}px;height: {{mheight}}px;top:{{masktop}}px;left:{{fillw}}px"></view>
+            <view class="fill-top" style="height:{{masktop}}px"></view>
+            <view class="fill-l" style="height: {{mheight}}px;width:{{fillw}}px"></view>
+            <view class="fill-r" style="height: {{mheight}}px;width:{{fillw}}px"></view>
+            <view class="fill-b" style="height:{{fillh}}px"></view>
+            <image class="{{item.active}}" data-h="{{item.h}}" data-index="{{index}}" data-rotate="{{item.rotate}}" data-scale="{{item.scale}}" data-types="tt" data-w="{{item.w}}" data-x="{{item.x}}" data-y="{{item.y}}" hidden="{{!item.show}}" src="{{item.url}}" style="position: absolute;z-index:{{item.zindex}};transform: translateX({{item.x}}px) translateY({{item.y}}px) scale({{item.scale}}) rotate({{item.rotate}}deg);width:{{item.w}}px;height:{{item.h}}px" wx:if="{{tt.length>0}}" wx:for="{{tt}}"></image>
+        </view>
+    </view>
+    <view class="right"></view>
+    <view class="bottom">
+        <view class="add" hidden="{{addshow}}">
+            <view bindtap="addimg" style="text-align:center;">
+                <image class="addimgbtn" src="../../img/add.png"></image>
+                <view>添加照片</view>
+            </view>
+            <scroll-view scrollX class="scroll-view_H " style="width:80%; ">
+                <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="tk" wx:if="{{tk!=''}}">
+                    <view bindtap="deltk" class="close">X</view>
+                    <image class="imgcl" mode="aspectFit" src="{{tk[0].url}}"></image>
+                    <image bindtap="tkclock" class="clock" src="{{tk[0].clock}}"></image>
+                </view>
+                <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="pics" hidden="pics.url?false:true" wx:for="{{pics}}">
+                    <view bindtap="delpic" class="close" data-idx="{{index}}">X</view>
+                    <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+                </view>
+                <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="mb" wx:if="{{mb!=''}}">
+                    <view bindtap="delmb" class="close">X</view>
+                    <image class="imgcl" mode="aspectFit" src="{{mb[0].url}}"></image>
+                    <image bindtap="mbclock" class="clock" src="{{mb[0].clock}}"></image>
+                </view>
+                <view catchtap="qiehuan" class="li" data-index="{{index}}" data-types="tt" wx:if="{{item.show}}" wx:for="{{tt}}">
+                    <view catchtap="deltimgs" class="close" data-index="{{index}}" data-types="tt">X</view>
+                    <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+                </view>
+                <view catchtap="selcttext" class="li" data-ind="{{index}}" data-types="textimgs" hidden="textimgs.url?false:true" wx:for="{{textimgs}}">
+                    <view bindtap="deltextimgs" class="close" data-idx="{{index}}">X</view>
+                    <image class="imgcl" mode="aspectFit" src="{{item.url}}"></image>
+                </view>
+            </scroll-view>
+        </view>
+    </view>
+</view>
+<view class="picslist" data-h="{{pk.h}}" data-rotate="{{pk.rotate}}" data-w="{{pk.w}}" data-x="{{pk.x}}" data-y="{{pk.y}}" hidden="{{kshow}}" style="width:{{pk.w}}px;height:{{pk.h}}px;transform:translate(0, 0) scale(1) rotate({{pk.rotate}}deg); transform-origin: center center;z-index:13;border:1px dashed #ff0000;left:{{pk.x}}px;top:{{pk.y}}px">
+    <image bindtap="deltimgs" class="del" data-index="{{pk.index}}" data-types="{{pk.types}}" mode="widthFix" src="../../img/del.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="kd1" data-idx="{{pk.index}}" data-kn="kd1" data-types="{{pk.types}}" mode="widthFix" src="../../img/r.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="kd2" data-idx="{{pk.index}}" data-kn="kd2" data-types="{{pk.types}}" mode="widthFix" src="../../img/r.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="xz" data-idx="{{pk.index}}" data-kn="xz" data-types="{{pk.types}}" mode="widthFix" src="../../img/xz.png"></image>
+    <image catchtouchend="kdtouchend" catchtouchmove="kdtouchmove" catchtouchstart="kdtouchstart" class="kd" data-idx="{{pk.index}}" data-kn="kd" data-types="{{pk.types}}" mode="widthFix" src="../../img/kd.png"></image>
+</view>
+<view class="footer">
+    <navigator style="width:33.33%;" url="/pages/img/img?act=mb">
+        <view class="foot-btn">
+            <image src="../../img/t1.png"></image>
+            <view>蒙版</view>
+        </view>
+    </navigator>
+    <navigator style="width:33.33%;" url="/pages/img/img?act=tk">
+        <view class="foot-btn">
+            <image src="../../img/tk1.png"></image>
+            <view>图库</view>
+        </view>
+    </navigator>
+    <navigator style="width:33.33%;" url="/pages/img/img?act=tt">
+        <view class="foot-btn">
+            <image src="../../img/mb1.png"></image>
+            <view>贴图</view>
+        </view>
+    </navigator>
+</view>
+<wxs module="test" src="test.wxs" />

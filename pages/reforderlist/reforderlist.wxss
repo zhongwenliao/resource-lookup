@@ -1,0 +1,120 @@
+page {
+    background: #f4f4f4;
+    overflow: auto;
+}
+
+.btnlist {
+    width: 100%;
+    display: flex;
+    background: #fff;
+}
+
+.btnlist .li {
+    width: 20%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #bfbfbf;
+}
+
+.btnlist .li.active {
+    color: #f8441f;
+    border-bottom: 2px solid #f8441f;
+}
+
+.empty {
+    text-align: center;
+    margin-top: 30px;
+    color: #bfbfbf;
+}
+
+.empty image {
+    width: 20vw;
+    height: 20vw;
+}
+
+.empty .btn {
+    width: 30vw;
+    height: 30px;
+    line-height: 30px;
+    background: #f8441f;
+    color: #fff;
+    margin-left: 35vw;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.list {
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 14px;
+    width: 90%;
+    background: #fff;
+    margin-left: 2%;
+    border-radius: 10px;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #bfbfbf;
+    line-height: 30px;
+}
+
+.order {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.center {
+    display: flex;
+    border-bottom: 1px solid #bfbfbf;
+    padding: 5px 30px;
+}
+
+.left {
+    width: 30vw;
+    position: relative;
+    height: 20vw;
+}
+
+.bg {
+    z-index: 2;
+}
+
+.bg,.zm {
+    width: 10vw;
+    position: absolute;
+}
+
+.zm {
+    z-index: 1;
+}
+
+.right {
+    width: 70%;
+}
+
+.linkman,.shop {
+    border-bottom: 1px solid #bfbfbf;
+    line-height: 30px;
+}
+
+.bottom {
+    width: 100%;
+    border-top: 1px solid #bfbfbf;
+    text-align: center;
+}
+
+.bottom image {
+    width: 25px;
+    height: 25px;
+}
+
+.types {
+    display: flex;
+    justify-content: space-between;
+    line-height: 30px;
+    border-bottom: 1px solid #bfbfbf;
+}

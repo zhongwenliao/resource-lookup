@@ -1,0 +1,71 @@
+<view bindtap="address" class="address">
+    <view class="emptyadd" wx:if="{{linkman==null}}">暂无联系地址，点击此处添加地址！</view>
+    <block wx:else>
+        <view style="display:flex; width:90%;justify-content: space-between;margin-left:5%;padding:5px 0px;">
+      收货人： {{linkman.name}} {{linkman.mobile}}
+    </view>
+        <view style="display:flex; width:90%;margin-left:5%;padding:5px 0px;">
+      收货地址： {{linkman.address}}
+    </view>
+        <image class="right" src="../../img/right.png"></image>
+    </block>
+    <image src="../../img/email.png" style="width:100%;height:5px;margin-top:5px;"></image>
+</view>
+<view class="paytype">
+    <view style="margin:0px 10px;">支付方式</view>
+    <picker bindchange="bindPickerChange" range="{{array}}" value="{{index}}">
+        <view style="display: flex;">
+            <view class="picker">
+        {{array[index]}}
+      </view>
+            <image src="../../img/right.png"></image>
+        </view>
+    </picker>
+</view>
+<view class="ordernews" wx:for="{{list}}">
+    <view class="orderbox">
+        <image class="box-right" mode="widthFix" src="{{item.bgimage}}"></image>
+        <image class="left" mode="widthFix" src="{{item.image}}"></image>
+    </view>
+    <view class="right">
+        <view>{{item.models}}</view>
+        <view>样式：{{item.spec}}</view>
+        <view style="display: flex;justify-content: space-between;">
+            <view>数量：{{item.num}}</view>
+            <view style="color:rgb(252,89,0);">￥{{item.price}}</view>
+        </view>
+    </view>
+</view>
+<view class="songtype">
+    <view style="margin:0px 10px;line-height:30px;">配送方式</view>
+    <view style="display: flex;">
+        <view bindtap="songtype" class="songbtn {{item.active}}" data-idx="{{index}}" wx:for="{{songtype}}">{{item.name}}</view>
+    </view>
+</view>
+<view class="shopnews" hidden="{{shopnews}}">
+    <view class="inp">
+        <input bindinput="linkmaninp" placeholder="请输入联系人" style="border-right:1px solid #bfbfbf;"></input>
+        <input bindinput="mobileinp" placeholder="请输入联系电话"></input>
+    </view>
+    <view class="news">
+        <view style="width:100px;">门店信息</view>
+        <view style="text-align:right">
+            <view>{{shop.nickname}}</view>
+            <view>{{shop.mobile}}</view>
+            <view>{{shop.address}}</view>
+        </view>
+    </view>
+</view>
+<view class="msg">
+    <view style="margin:0px 10px;line-height:30px;">买家留言：</view>
+    <input bindinput="textinfo" placeholder="请填写备注" style="margin:0px 10px;border-radius:10px;border:1px solid #bfbfbf;width:89%;padding:10px;"></input>
+</view>
+<view style="width:100%;height:50px;"></view>
+<view class="foot">
+    <view class="allprice">总计：
+    <text>￥{{price}}</text>
+    </view>
+    <view class="btnlist">
+        <view bindtap="paybuy" class="left">提交</view>
+    </view>
+</view>

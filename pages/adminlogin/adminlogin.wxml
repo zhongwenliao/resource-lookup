@@ -1,0 +1,14 @@
+<view class="top">管理员登陆</view>
+<form bindsubmit="formSubmit">
+    <view class="section">
+        <view class="section__title">账号：</view>
+        <input name="username" type="text"></input>
+    </view>
+    <view class=" section">
+        <view class="section__title">密码：</view>
+        <input name="password" type="password"></input>
+    </view>
+    <view class="btn-area">
+        <button formType="submit">登 录</button>
+    </view>
+</form>

@@ -1,0 +1,30 @@
+<view class="list" wx:if="{{data.length>0}}" wx:for="{{data}}">
+    <view style="display:flex; width:80%;justify-content: space-between;margin-left:10%;padding:5px 0px;">
+        <view>{{item.name}}：{{item.mobile}}</view>
+        <image bindtap="editadd" data-idx="{{item.id}}" src="../../img/edit.png" style="width:20px;height:20px;"></image>
+    </view>
+    <view style="display:flex; width:80%;margin-left:10%;padding:5px 0px;">
+        <view style="width:16%;height:25px;line-height:25px;text-align:center;border:1px solid #f8441f;color:#f8441f;border-radius:25px;" wx:if="{{item.status==1}}">默认</view>
+        <view bindtap="moren" data-idx="{{item.id}}" style="width:16%;height:25px;line-height:25px;text-align:center;border:1px solid #bfbfbf;color:#bfbfbf;border-radius:25px;" wx:if="{{item.status==0}}">默认</view>
+        <view style="width:75%;margin-left:2%;">{{item.address}}</view>
+    </view>
+</view>
+<view wx:if="{{data.length==0}}">
+    <image src="../../img/empty.png" style="width:20vw;height:20vw;margin:40vw 40vw 10px 40vw"></image>
+    <view style="text-align:center;font-size:14px;">暂无内容</view>
+</view>
+<view style="height:50px;width:100%;"></view>
+<view class="foot">
+    <view bindtap="addresformy" class="li" style="border-right:1px solid #bfbfbf;">
+        <image src="../../img/add.png"></image>
+        <view style="color:#F8441F;font-size:14px;">手动添加</view>
+    </view>
+    <view bindtap="qingkong" class="li" style="border-right:1px solid #bfbfbf;">
+        <image src="../../img/sc.png"></image>
+        <view style="color:#F8441F;font-size:14px;">清空地址</view>
+    </view>
+    <view bindtap="addresforwx" class="li">
+        <image src="../../img/addv.png"></image>
+        <view style="color:#66af1f;font-size:14px;">从微信添加</view>
+    </view>
+</view>

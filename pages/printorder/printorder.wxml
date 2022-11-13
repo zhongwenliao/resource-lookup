@@ -1,0 +1,70 @@
+<view class="head">
+    <view class="mask" style="background-image:url({{data.mimage}});width:{{data.w}}vw;height:{{data.h}}vw;"></view>
+    <image src="{{data.zimage}}" style="width:{{data.w}}vw;height:{{data.h}}vw"></image>
+</view>
+<view class="list">
+    <view class="title">打印方式</view>
+    <view bindtap="printtype" class="print-btn {{printtype==1?'active':''}}" data-ind="1">云打印</view>
+    <view bindtap="printtype" class="print-btn {{printtype==2?'active':''}}" data-ind="2">WIFI打印</view>
+</view>
+<view class="list">
+    <view class="title">打印方向</view>
+    <view bindtap="printff" class="print-btn {{printff==1?'active':''}}" data-ind="1">横向</view>
+    <view bindtap="printff" class="print-btn {{printff==2?'active':''}}" data-ind="2">竖向</view>
+</view>
+<view class="list">
+    <view class="title">打印尺寸</view>
+    <view style="line-height:35px;">{{w}}*{{h}} cm</view>
+    <view bindtap="editcc" class="editcc">修改</view>
+</view>
+<view class="list" hidden="{{dyjshow}}">
+    <view class="title">打印机选择：</view>
+    <picker bindchange="bindPickerChange1" range="{{array}}" value="{{index}}">
+        <view class="picker" style="font-size: 26rpx;line-height: 35px;color:#666;">
+      {{array[index]}}
+    </view>
+    </picker>
+</view>
+<view class="list">
+    <view class="title">纸张大小</view>
+    <picker bindchange="bindPickerChange2" range="{{array2}}" value="{{index2}}">
+        <view class="picker" style="font-size: 26rpx;line-height: 35px;color:#666;">
+      {{array2[index2]}}
+    </view>
+    </picker>
+</view>
+<view class="list">
+    <view class="title">
+    打印备注
+    <switch bindchange="switch1Change" checked="{{switch1Checked}}"></switch>
+    </view>
+    <view bindtap="fuwei" class="print-btn" style="border:1px solid #f8441f;color:#f8441f;" wx:if="{{btntext=='打印'}}">复位</view>
+    <view bindtap="submitadta" class="print-btn" style="border:1px solid #f8441f;color:#f8441f;">{{btntext}}</view>
+</view>
+<view class="toast-box" hidden="{{ifName}}">
+    <view class="toastbg"></view>
+    <view class="showToast">
+        <view class="toast-title">
+            <text>修改尺寸</text>
+        </view>
+        <view class="toast-main">
+            <view class="toast-input">
+                <input bindinput="setw" placeholder="请输入宽"></input>
+            </view>
+        </view>
+        <view class="toast-main">
+            <view class="toast-input">
+                <input bindinput="seth" placeholder="请输入高"></input>
+            </view>
+        </view>
+        <view class="toast-button">
+            <view class="button1">
+                <button catchtap="cancel">取消</button>
+            </view>
+            <view class="button2">
+                <button catchtap="confirm">确定</button>
+            </view>
+        </view>
+    </view>
+</view>
+<canvas canvasId="canvas" style=" position: fixed; top: -10000px; left: -10000px; width: {{canw}}px; height: {{canh}}px; background: #fff"></canvas>

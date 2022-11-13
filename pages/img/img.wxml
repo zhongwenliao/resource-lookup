@@ -1,0 +1,19 @@
+<scroll-view scrollY bindscroll="scrolll" class="left" scrollTop="{{scrollToplo}}" style="height: {{h}}px;">
+    <view bindtap="selectleft" class="{{item.active}}" data-ind="{{index}}" wx:for="{{lpp}}">{{item.name}}</view>
+</scroll-view>
+<scroll-view scrollY bindscroll="scrollr" bindscrolltolower="bindscrolltolower" class="right" lowerThreshold="50" scrollTop="{{scrollTopro}}" style="height: {{h}}px;">
+    <view bindtap="selectright" class="list" data-xlidx="{{xlidx}}" wx:for="{{pp}}" wx:for-index="xlidx" wx:for-item="xl">
+        <view class="li" style="position:relative" wx:if="{{bg&&(act=='mb'||act=='tk')}}">
+            <view style="position: absolute; top:0 rpx; height: 150px; width:80%; background-image:url('{{bg}}'); background-size: 100% 100%; z-index: 1;"></view>
+            <image bindload="bindload" lazyLoad="true" src="{{host}}{{xl.small}}" style="position: absolute;width: 80%;height: 150px; "></image>
+        </view>
+        <image bindload="bindload" class="li" lazyLoad="true" mode="aspectFit" src="{{host}}{{xl.small}}" wx:else></image>
+    </view>
+</scroll-view>
+<view style="height:50px;width:100%;"></view>
+<view class="footer">
+    <view bindtap="btnbottom" class="foot-btn {{item.active}}" data-idx="{{index}}" style="width:33.33%;" wx:for="{{bottom}}">
+        <image src="{{item.img}}"></image>
+        <view>{{item.name}}</view>
+    </view>
+</view>

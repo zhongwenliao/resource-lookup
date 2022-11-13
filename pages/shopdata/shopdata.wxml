@@ -1,0 +1,12 @@
+<view class="list">
+    <view>店铺名称</view>
+    <view>{{data.nickname}}</view>
+</view>
+<view class="list">
+    <view>店铺地址</view>
+    <view>{{data.address}}</view>
+</view>
+<view class="list">
+    <view>店铺介绍</view>
+    <view>{{data.bio}}</view>
+</view>

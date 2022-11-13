@@ -1,0 +1,53 @@
+<view bindtap="editaddress" class="head">
+    <open-data style="width:20vw;height:20vw;border-radius:20vw;overflow:hidden;display:block;margin-left:40vw;" type="userAvatarUrl"></open-data>
+    <open-data style="font-size:16px;margin-top:10px;" type="userNickName"></open-data>
+</view>
+<view bindtap="orderlist" class="list" style="margin-top:20px;">
+    <view style="display: flex;">
+        <image src="../../img/order.png"></image>
+        <view style="margin:0px 10px;">我的订单</view>
+    </view>
+    <image src="../../img/right.png"></image>
+</view>
+<view bindtap="shopcar" class="list">
+    <view style="display: flex;">
+        <image src="../../img/car.png"></image>
+        <view style="margin:0px 10px;">购物车</view>
+    </view>
+    <image src="../../img/right.png"></image>
+</view>
+<view bindtap="copylink" class="list">
+    <view style="display: flex;">
+        <image src="../../img/kf1.png"></image>
+        <view style="margin:0px 10px;">客服微信</view>
+    </view>
+    <image src="../../img/right.png"></image>
+</view>
+<view bindtap="fenxiao" class="list" wx:if="{{basedata.fenxiao==1}}">
+    <view style="display: flex;">
+        <image src="../../img/f.png"></image>
+        <view style="margin:0px 10px;">分销中心</view>
+    </view>
+    <image src="../../img/right.png"></image>
+</view>
+<view bindtap="guamnli" class="list">
+    <view style="display: flex;">
+        <image src="../../img/gl.png"></image>
+        <view style="margin:0px 10px;">管理中心</view>
+    </view>
+    <image src="../../img/right.png"></image>
+</view>
+<image bindtap="bohao" class="kf" src="../../img/kf2.png"></image>
+<view style="height:50px;width:100%;"></view>
+<view class="footer">
+    <navigator openType="redirect" style="width:50%;" url="/pages/index/index">
+        <view class="foot-btn">
+            <image src="../../img/h1.png"></image>
+            <view>首页</view>
+        </view>
+    </navigator>
+    <view class="foot-btn active" style="width:50%;">
+        <image src="../../img/m2.png"></image>
+        <view>我的</view>
+    </view>
+</view>

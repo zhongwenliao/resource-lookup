@@ -1,0 +1,122 @@
+page {
+    background: #f4f4f4;
+}
+
+.search {
+    padding: 2%;
+    height: 26px;
+    width: 80%;
+    background: #fff;
+    border-radius: 26px;
+    line-height: 26px;
+    font-size: 14px;
+    margin-left: 7%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.search view {
+    float: right;
+    color: #09c3f1;
+    margin-right: 2%;
+    width: 8vw;
+}
+
+.search input {
+    float: left;
+    margin-left: 2%;
+    width: 60vw;
+}
+
+.left {
+    width: 30%;
+    float: left;
+    background: #fff;
+}
+
+.left view {
+    text-align: center;
+    line-height: 60px;
+}
+
+.left .active {
+    border-right: 3px solid #f8441f;
+    color: #f8441f;
+}
+
+.right {
+    width: 70%;
+    float: left;
+    background: #f4f4f4;
+}
+
+.right .title {
+    font-size: .85rem;
+    width: 100%;
+    text-align: center;
+    line-height: 40px;
+}
+
+.right .list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.right .li {
+    background: #fff;
+    border-radius: 40px;
+    margin-left: 10px;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 10px;
+}
+
+.searsul {
+    width: 76%;
+    height: 56%;
+    overflow-y: auto;
+    background: #fff;
+    position: fixed;
+    z-index: 3;
+    top: 20%;
+    left: 10%;
+    border: 1px solid #bfbfbf;
+    border-radius: 10px;
+    padding: 2%;
+}
+
+.li {
+    display: flex;
+}
+
+.li view {
+    width: 33.33333%;
+    line-height: 30px;
+    border-bottom: 1px solid #bfbfbf;
+    font-size: 14px;
+}
+
+.li view,.title {
+    text-align: center;
+}
+
+.close {
+    float: right;
+    border: 1px solid #bfbfbf;
+    width: 25px;
+    text-align: center;
+    margin-top: -27px;
+}
+
+.close,.li button {
+    height: 25px;
+    line-height: 25px;
+}
+
+.li button {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 3px;
+}

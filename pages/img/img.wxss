@@ -1,0 +1,42 @@
+.left {
+    width: 25%;
+    float: left;
+    background: #fff;
+    margin-top: 10px;
+}
+
+.left view {
+    text-align: center;
+    line-height: 60px;
+}
+
+.left .active {
+    border-right: 3px solid #f8441f;
+    color: #f8441f;
+}
+
+.right {
+    width: 75%;
+    float: left;
+    background: #f4f4f4;
+    margin-top: 10px;
+}
+
+.right .title {
+    font-size: .85rem;
+    width: 100%;
+    text-align: center;
+    line-height: 40px;
+}
+
+.right .list {
+    width: 100%;
+}
+
+.right .li {
+    width: 32%;
+    margin-top: 5px;
+    float: left;
+    margin-left: 1%;
+    height: 150px;
+}

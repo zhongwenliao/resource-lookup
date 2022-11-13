@@ -1,0 +1,128 @@
+<view class="btnlist">
+    <view bindtap="seletab" class="li {{item.active}}" data-ind="{{index}}" data-status="{{item.status}}" wx:for="{{actives}}">{{item.name}}</view>
+</view>
+<view class="empty" wx:if="{{list==null}}">
+    <image src="../../img/eo.png"></image>
+    <view>您暂无相关订单</view>
+</view>
+<checkbox-group bindchange="checkboxChange">
+    <view class="list" wx:for="{{list}}">
+        <view class="head">
+            <view class="order">{{item.ordernumber}}
+				<text style="font-size:12px;font-weight:none;">{{item.types==0?'手机壳':item.types==1?'彩膜':'礼品'}}</text>
+            </view>
+            <view class="status" wx:if="{{item.status==1}}">待发货</view>
+            <view class="status" wx:if="{{item.status==3}}">完成</view>
+            <view class="status" wx:if="{{item.status==4}}">取消</view>
+        </view>
+        <view style="float:right;margin-top:5px;">
+            <view bindtap="printrorder" class="status" data-order_id="{{item.id}}" style="width:60px;font-size:14px;text-align:center;height:25px;line-height:25px;border:1px solid {{item.prints==0?'#f8441f':'rgb(33,11,255)'}};color:{{item.prints==0?'#f8441f':'rgb(33,11,255)'}};border-radius: 10px;margin-top:5px;">{{item.prints==0?'打印':'已打印'}}</view>
+            <view bindtap="sendorder" class="status" data-order_id="{{item.id}}" hidden="{{item.status==2||item.status==3}}" style="width:60px;font-size:14px;text-align:center;height:25px;line-height:25px;border:1px solid {{item.status==2||item.status==3?'#18bc9c':'rgb(33,11,255)'}};color:{{item.status==2||item.status==3?'#18bc9c':'rgb(33,11,255)'}};border-radius: 10px;margin-top:5px;">{{item.status==2||item.status==3?'已发货':'未发货'}}</view>
+            <view bindtap="delrorder" class="status" data-order_id="{{item.id}}" style="width:60px;font-size:14px;text-align:center;height:25px;line-height:25px;border:1px solid #f8441f;color:#f8441f;border-radius: 10px;margin-top:5px;">删除</view>
+        </view>
+        <view class="center">
+            <view>
+                <checkbox value="{{item.id}}"></checkbox>
+            </view>
+            <view bindtap="previmg" class="left" data-img="{{item.zimage}}">
+                <image class="bg" mode="widthFix" src="{{item.mimage}}"></image>
+                <image class="zm" mode="widthFix" src="{{item.zimage}}"></image>
+            </view>
+            <view class="right">
+                <view>型号：{{item.models}}</view>
+                <view>规格：{{item.spec}}</view>
+                <view>数量：{{item.num}}</view>
+                <view>单价：{{item.price}}</view>
+            </view>
+        </view>
+        <view class="types">
+            <view>支付方式：
+				<block wx:if="{{item.status==0}}">未付款</block>
+                <block wx:else>
+                    <block wx:if="{{item.paytype==0}}">线下支付</block>
+                    <block wx:if="{{item.paytype==1}}">微信支付</block>
+                </block>
+            </view>
+            <view>配送方式：
+				<block wx:if="{{item.peitype==0}}">快递</block>
+                <block wx:if="{{item.peitype==1}}">自取</block>
+            </view>
+        </view>
+        <view class="linkman" hidden="{{item.moreshow}}">
+            <view style="display: flex;justify-content: space-around;">
+                <view style="width:50%;">姓名：{{item.realname!='undefined'?item.realname:''}}</view>
+                <view style="width:50%;">电话：{{item.mobile!='undefined'?item.mobile:''}}</view>
+            </view>
+            <view>地址：{{item.address!='undefined'?item.address:''}}</view>
+            <view>备注：{{item.info}}</view>
+            <view style="display:flex;">
+                <view bindtap="copys" data-ind="{{index}}" style="width:90px;height35px;text-align:center;line-height:35px;border: 1px solid #f8441f;color:#f8441f;border-radius: 10px;margin:5px;">复制</view>
+                <view bindtap="editaddress" data-ind="{{index}}" style="width:90px;height35px;text-align:center;line-height:35px;border: 1px solid #f8441f;color:#f8441f;border-radius: 10px;margin:5px;">修改</view>
+            </view>
+        </view>
+        <view>
+            <view bindtap="showmore" class="bottom" data-ind="{{index}}">
+                <image src="{{item.moreshow?'../../img/s1.png':'../../img/s2.png'}}"></image>
+            </view>
+        </view>
+    </view>
+</checkbox-group>
+<view style="height:50px;width:100%;"></view>
+<view style="height:50px;width:100%;position: fixed;bottom:0px;left:0px;display:flex;z-index:999;">
+    <view bindtap="sendall" style="width:33.33333%;text-align:center;line-height:50px;color:#fff;background:rgb(218,82,36);">批量发货</view>
+    <view bindtap="delall" style="width:33.33333%;text-align:center;line-height:50px;color:#fff;background:#ff0000;">批量删除</view>
+    <view bindtap="printall" style="width:33.33333%;text-align:center;line-height:50px;color:#fff;background:rgb(33,11,255);">批量打印</view>
+</view>
+<view class="selprint" hidden="{{showprint}}">
+    <view class="printda">
+        <view class="prlist">
+            <view class="title">打印方向</view>
+            <view bindtap="printff" class="print-btn {{printff==1?'active':''}}" data-ind="1">横向</view>
+            <view bindtap="printff" class="print-btn {{printff==2?'active':''}}" data-ind="2">竖向</view>
+        </view>
+        <view class="prlist">
+            <view class="title">打印机选择：</view>
+            <picker bindchange="bindPickerChange1" range="{{array}}" value="{{index}}">
+                <view class="picker" style="font-size: 26rpx;line-height: 35px;color:#666;">
+					{{array[index]}}
+				</view>
+            </picker>
+        </view>
+        <view class="prlist">
+            <view class="title">纸张大小</view>
+            <picker bindchange="bindPickerChange2" range="{{array2}}" value="{{index2}}">
+                <view class="picker" style="font-size: 26rpx;line-height: 35px;color:#666;">
+					{{array2[index2]}}
+				</view>
+            </picker>
+        </view>
+        <view class="btns">
+            <view bindtap="sureprint" class="ok">打印</view>
+            <view bindtap="notprint" class="no">取消</view>
+        </view>
+    </view>
+</view>
+<view class="mu" hidden="{{editaddres}}">
+    <view class="editaddres">
+        <view class="inp-list">
+            <view class="inp-name">姓 名：</view>
+            <input bindinput="inputrealname" class="inp-text" value="{{editaddresdata.realname}}"></input>
+        </view>
+        <view class="inp-list">
+            <view class="inp-name">地 址：</view>
+            <input bindinput="inputaddress" class="inp-text" value="{{editaddresdata.address}}"></input>
+        </view>
+        <view class="inp-list">
+            <view class="inp-name">电 话：</view>
+            <input bindinput="inputmobile" class="inp-text" value="{{editaddresdata.mobile}}"></input>
+        </view>
+        <view class="inp-list">
+            <view class="inp-name">备 注：</view>
+            <input bindinput="inputinfo" class="inp-text" value="{{editaddresdata.info}}"></input>
+        </view>
+        <view class="inp-list" style="justify-content: space-around;border:none;margin-top:50rpx;">
+            <view bindtap="editok" class="inp-btn ok">修改</view>
+            <view bindtap="editno" class="inp-btn no">取消</view>
+        </view>
+    </view>
+</view>

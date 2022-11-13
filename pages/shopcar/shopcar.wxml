@@ -1,0 +1,22 @@
+<checkbox-group bindchange="checkboxChange">
+    <view class="checkbox" wx:for="{{list}}">
+        <checkbox value="{{item.id}}"></checkbox>
+        <view style="position: relative;">
+            <image mode="widthFix" src="{{item.bgimage}}" style="width:10vw; position: absolute;z-index: 2;"></image>
+            <image mode="widthFix" src="{{item.image}}" style="width:10vw; position: absolute;z-index: 1;"></image>
+        </view>
+        <view class="right" style="line-height:26px;">
+            <view>{{item.mode}}</view>
+            <view>规格：{{item.spec}}</view>
+            <view style="display: flex;justify-content: space-between;">
+                <view>数量：{{item.num}}</view>
+                <view style="color:rgb(252,89,0);">￥{{item.num*item.price}}</view>
+            </view>
+        </view>
+    </view>
+</checkbox-group>
+<view style="width:100%;height:40px;"></view>
+<view class="btnlist">
+    <view bindtap="joincar" class="left">立即结算</view>
+    <view bindtap="buyorder" class="right">清空选中</view>
+</view>

@@ -1,0 +1,25 @@
+.section {
+    border-bottom: 1px solid #bfbfbf;
+    display: flex;
+    font-size: 14px;
+    padding: 10px;
+}
+
+.section__title {
+    width: 30%;
+}
+
+input {
+    width: 70%;
+}
+
+.btn-area {
+    width: 80%;
+    margin: 10%;
+}
+
+.btn-area button {
+    background: #f8441f;
+    color: #fff;
+    font-size: 14px;
+}

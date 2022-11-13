@@ -1,0 +1,39 @@
+<view class="list" wx:for="{{list}}">
+    <view class="head">
+        <view class="order">{{item.ordernumber}}</view>
+        <view class="status">{{item.status}}</view>
+    </view>
+    <view class="center">
+        <view class="left">
+            <image class="bg" mode="widthFix" src="{{item.mimage}}"></image>
+            <image class="zm" mode="widthFix" src="{{item.zimage}}"></image>
+        </view>
+        <view class="right">
+            <view>型号：{{item.models}}</view>
+            <view>规格：{{item.spec}}</view>
+            <view>数量：{{item.num}}</view>
+            <view>单价：{{item.price}}</view>
+        </view>
+    </view>
+    <view class="types">
+        <view>支付方式：
+      <block wx:if="{{item.paytype==0}}">线下支付</block>
+            <block wx:if="{{item.paytype==1}}">微信支付</block>
+        </view>
+        <view>配送方式：
+      <block wx:if="{{item.peitype==0}}">快递</block>
+            <block wx:if="{{item.peitype==1}}">自取</block>
+        </view>
+    </view>
+    <view class="types">
+        <view>佣金:{{item.refscore}}</view>
+        <view>{{item.refstatus==0?'推广有效':'推广无效'}}</view>
+    </view>
+    <view class="linkman" hidden="{{item.moreshow}}">
+        <view>购买用户:</view>
+        <view style="display:flex;">
+            <image mode="widthFix" src="{{item.avatar}}" style="width:15%;"></image>
+            <view>{{item.nickname}}</view>
+        </view>
+    </view>
+</view>

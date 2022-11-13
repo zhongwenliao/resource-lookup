@@ -1,0 +1,112 @@
+page {
+    background: #ebebeb;
+}
+
+.head {
+    width: 100%;
+    height: 100vw;
+    background-size: 100% 100%;
+    position: relative;
+}
+
+.mask {
+    z-index: 30;
+    background-image: url(https://30diy.cn/A7.png);
+}
+
+.head image,.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-size: 100% 100%;
+    pointer-events: none;
+    width: 30vw;
+    height: 60vw;
+}
+
+.head image {
+    z-index: 29;
+}
+
+.list {
+    border-bottom: 1px solid #bfbfbf;
+    padding: 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    background: #fff;
+}
+
+.list,.numbtn {
+    display: flex;
+}
+
+.dpbtn {
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 20px;
+}
+
+.dpbtn,.gg {
+    background: #f4f4f4;
+}
+
+.gg {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+
+.gg.active {
+    background: #fdf5ea;
+    color: #fc6f00;
+}
+
+.foot {
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    font-size: 14px;
+}
+
+.allprice {
+    font-weight: 700;
+    line-height: 50px;
+}
+
+.allprice text {
+    color: #fe9005;
+}
+
+.btnlist {
+    display: flex;
+    margin-top: 7px;
+}
+
+.btnlist .left {
+    background: #fe9005;
+    border-radius: 35px 0 0 35px;
+    padding: 0 10px;
+}
+
+.btnlist .left,.btnlist .right {
+    color: #fff;
+    height: 35px;
+    line-height: 35px;
+}
+
+.btnlist .right {
+    background: #fc5900;
+    border-radius: 0 35px 35px 0;
+    padding: 0 15px;
+}
