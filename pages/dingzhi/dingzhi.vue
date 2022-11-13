@@ -1,6 +1,6 @@
 <template>
   <view class="custom">
-      <view @touchend="index.touchend" @touchmove="index.touchmove" @touchstart="index.touchstart" style="width: 100%; height: 100%; position: relative">
+      <view @touchend="touchend" @touchmove="touchmove" @touchstart="touchstart" style="width: 100%; height: 100%; position: relative">
           <view class="head">
               <image src="/static/img/phone.png" v-if="types != 2"></image>
               <view style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 43%" v-if="types != 2">
@@ -312,9 +312,9 @@
           >
               <image @tap="delpkpic" class="del" :data-idx="pk.index" :data-types="pk.types" mode="widthFix" src="/static/img/del.png"></image>
               <image
-                  @touchend.stop.prevent="index.kdtouchend"
-                  @touchmove.stop.prevent="index.kdtouchmove"
-                  @touchstart.stop.prevent="index.kdtouchstart"
+                  @touchend.stop.prevent="kdtouchend"
+                  @touchmove.stop.prevent="kdtouchmove"
+                  @touchstart.stop.prevent="kdtouchstart"
                   class="kd1"
                   :data-idx="pk.index"
                   data-kn="kd1"
@@ -323,9 +323,9 @@
                   src="/static/img/r.png"
               ></image>
               <image
-                  @touchend.stop.prevent="index.kdtouchend"
-                  @touchmove.stop.prevent="index.kdtouchmove"
-                  @touchstart.stop.prevent="index.kdtouchstart"
+                  @touchend.stop.prevent="kdtouchend"
+                  @touchmove.stop.prevent="kdtouchmove"
+                  @touchstart.stop.prevent="kdtouchstart"
                   class="kd2"
                   :data-idx="pk.index"
                   data-kn="kd2"
@@ -334,9 +334,9 @@
                   src="/static/img/r.png"
               ></image>
               <image
-                  @touchend.stop.prevent="index.kdtouchend"
-                  @touchmove.stop.prevent="index.kdtouchmove"
-                  @touchstart.stop.prevent="index.kdtouchstart"
+                  @touchend.stop.prevent="kdtouchend"
+                  @touchmove.stop.prevent="kdtouchmove"
+                  @touchstart.stop.prevent="kdtouchstart"
                   class="xz"
                   :data-idx="pk.index"
                   data-kn="xz"
@@ -345,9 +345,9 @@
                   src="/static/img/xz.png"
               ></image>
               <image
-                  @touchend.stop.prevent="index.kdtouchend"
-                  @touchmove.stop.prevent="index.kdtouchmove"
-                  @touchstart.stop.prevent="index.kdtouchstart"
+                  @touchend.stop.prevent="kdtouchend"
+                  @touchmove.stop.prevent="kdtouchmove"
+                  @touchstart.stop.prevent="kdtouchstart"
                   class="kd"
                   :data-idx="pk.index"
                   data-kn="kd"
@@ -384,7 +384,6 @@
   </view>
 </template>
 <!-- <script src="./index.js"></script> -->
-<script module="index" lang="wxs" src="./index.wxs"></script>
 
 <script>
 var t = (function (t) {
@@ -411,12 +410,19 @@ var c = 'SimHei';
 var o = 'rgb(0,0,0)';
 var d = '';
 var n = false;
-// import  { touchmove, touchend, touchstart, kdtouchstart, kdtouchmove, kdtouchend } from './index'
+var instances = "";
+var kdinstances = "";
+var picslist = "";
+var picslistdata = "";
+var touches;
+var getDataset;
+var kdtouches;
+var kdgetDataset;
 
 export default {
   data() {
       return {
-        // 原小程序哪里是
+            // 原小程序哪里是
           types: '1',
           canIUse: uni.canIUse('button.open-type.getUserInfo'),
           fillw: 0,
@@ -603,7 +609,7 @@ export default {
         title: '加载中...',
         mask: true
       });
-      // 这个是接收全局的对象，生成图标的时候用得上
+      // 这个是接收全局的对象，生成图片的时候用得上
       e = uni.createCanvasContext("mycanvas");
       this.setData({
           types: '0',
@@ -880,12 +886,6 @@ export default {
               });
           }
       });
-  },
-  onShareAppMessage: function () {
-      return {
-          title: app.globalData.shop.nickname,
-          path: '/pages/index/index?scene=' + app.globalData.shop_id + ',' + app.globalData.userInfo.id
-      };
   },
   methods: {
       movedata: function (t) {
@@ -2216,7 +2216,7 @@ export default {
       },
 
       inptch: function () {
-          console.log(333);
+        console.log(333);
       },
 
       leftbtn: function () {
@@ -2391,7 +2391,164 @@ export default {
                   kshow: false
               });
           }
-      }
+      },
+    touchstart(event, ownerInstance) {
+        picslist = ownerInstance.selectComponent('.picslist');
+        picslistdata = picslist.getDataset();
+        touches = event.touches;
+        instances = ownerInstance.selectComponent('.' + picslistdata.types + picslistdata.index);
+        if (instances == null) return;;
+        getDataset = instances.getDataset()
+    },
+
+    touchmove(event, ownerInstance) {
+        if (instances == null) return;;
+        var newtouches = event.touches;
+        if (newtouches.length <= 1) {
+            var x = newtouches[(0)].pageX - touches[(0)].pageX;
+            var y = newtouches[(0)].pageY - touches[(0)].pageY;
+            getDataset.x += x;
+            getDataset.y += y;
+            instances.setStyle(({
+                "top": getDataset.y + "px",
+                "left": getDataset.x + "px",
+            }));
+            picslistdata.x += x;
+            picslistdata.y += y;
+            picslist.setStyle(({
+                "top": picslistdata.y + "px",
+                "left": picslistdata.x + "px",
+            }))
+        } else {
+            var preDistance = Math.sqrt(Math.pow((touches[(0)].pageX - touches[(1)].pageX), 2) + Math.pow((touches[(0)].pageY - touches[(1)].pageY), 2));
+            var curDistance = Math.sqrt(Math.pow((newtouches[(0)].pageX - newtouches[(1)].pageX), 2) + Math.pow((newtouches[(0)].pageY - newtouches[(1)].pageY), 2));
+            var scale = (curDistance - preDistance) / Math.sqrt(Math.pow(getDataset.w / 2, 2) + Math.pow(getDataset.h / 2, 2));
+            if (getDataset.w + getDataset.w * scale < 10 || getDataset.h + getDataset.h * scale < 10)({});
+            else {
+                getDataset.x = getDataset.x - getDataset.w * scale / 2;
+                getDataset.w = getDataset.w + getDataset.w * scale;
+                getDataset.y = getDataset.y - getDataset.h * scale / 2;
+                getDataset.h = getDataset.h + getDataset.h * scale;
+                instances.setStyle(({
+                    "width": getDataset.w + "px",
+                    "height": getDataset.h + "px",
+                    "top": getDataset.y + "px",
+                    "left": getDataset.x + "px",
+                }));
+                picslistdata.x = picslistdata.x - picslistdata.w * scale / 2;
+                picslistdata.w = picslistdata.w + picslistdata.w * scale;
+                picslistdata.y = picslistdata.y - picslistdata.h * scale / 2;
+                picslistdata.h = picslistdata.h + picslistdata.h * scale;
+                picslist.setStyle(({
+                    "top": picslistdata.y + "px",
+                    "left": picslistdata.x + "px",
+                    "width": picslistdata.w + "px",
+                    "height": picslistdata.h + "px",
+                }))
+            }
+        };
+        touches = newtouches
+    },
+
+    touchend(event, ownerInstance) {
+        if (instances == null) return;;
+        instances.callMethod("movedata", ({
+            "getDataset": getDataset,
+            "picslistdata": picslistdata,
+        }));
+        instances = "";
+        kdinstances = "";
+        picslist = ""
+    },
+
+    kdtouchstart(event, ownerInstance) {
+        kdtouches = event.touches;
+        picslist = ownerInstance.selectComponent('.picslist');
+        picslistdata = picslist.getDataset();
+        kdinstances = ownerInstance.selectComponent('.' + picslistdata.types + picslistdata.index);
+        if (kdinstances == null) return;;
+        kdgetDataset = kdinstances.getDataset()
+    },
+
+    kdtouchmove(event, ownerInstance) {
+        var newkdtouches = event.touches;
+        var zx = kdgetDataset.x + kdgetDataset.w / 2 + kdgetDataset.windowwidth * 0.17;
+        var zy = kdgetDataset.y + kdgetDataset.h / 2 + kdgetDataset.windowheight * 0.1;
+        if (event.currentTarget.dataset.kn == "kd1") {
+            var preDistance = Math.sqrt(Math.pow(zx - kdtouches[(0)].pageX, 2) + Math.pow(zy - kdtouches[(0)].pageY, 2));
+            var curDistance = Math.sqrt(Math.pow(zx - newkdtouches[(0)].pageX, 2) + Math.pow(zy - newkdtouches[(0)].pageY, 2));
+            var scale = (curDistance - preDistance) / Math.sqrt(Math.pow(kdgetDataset.w / 2, 2) + Math.pow(kdgetDataset.h / 2, 2));
+            kdgetDataset.x = kdgetDataset.x - kdgetDataset.w * scale / 2;
+            kdgetDataset.w = kdgetDataset.w + kdgetDataset.w * scale;
+            picslistdata.x = picslistdata.x - picslistdata.w * scale / 2;
+            picslistdata.w = picslistdata.w + picslistdata.w * scale
+        } else if (event.currentTarget.dataset.kn == "kd2") {
+            var preDistance = Math.sqrt(Math.pow(zx - kdtouches[(0)].pageX, 2) + Math.pow(zy - kdtouches[(0)].pageY, 2));
+            var curDistance = Math.sqrt(Math.pow(zx - newkdtouches[(0)].pageX, 2) + Math.pow(zy - newkdtouches[(0)].pageY, 2));
+            var scale = (curDistance - preDistance) / Math.sqrt(Math.pow(kdgetDataset.w / 2, 2) + Math.pow(kdgetDataset.h / 2, 2));
+            kdgetDataset.y = kdgetDataset.y - kdgetDataset.h * scale / 2;
+            kdgetDataset.h = kdgetDataset.h + kdgetDataset.h * scale;
+            picslistdata.y = picslistdata.y - picslistdata.h * scale / 2;
+            picslistdata.h = picslistdata.h + picslistdata.h * scale
+        } else if (event.currentTarget.dataset.kn == "xz") {
+            var perAngle = Math.atan2((kdtouches[(0)].pageY - zy), (kdtouches[(0)].pageX - zx)) * 180 / Math.PI;
+            var curAngle = Math.atan2((newkdtouches[(0)].pageY - zy), (newkdtouches[(0)].pageX - zx)) * 180 / Math.PI;
+            if (Math.abs(perAngle - curAngle) > 1) {
+                var rotate = kdgetDataset.rotate + (curAngle - perAngle);
+                if (Math.abs(rotate % 90) < 15) {
+                    newkdtouches = kdtouches;
+                    rotate = rotate - rotate % 90
+                } else if (Math.abs(rotate % 90) > 75) {
+                    newkdtouches = kdtouches;
+                    if (rotate < 0) {
+                        rotate = rotate - (rotate % 90 + 90)
+                    } else {
+                        rotate = rotate + (90 - rotate % 90)
+                    }
+                };
+                kdgetDataset.rotate = rotate;
+                picslistdata.rotate = rotate
+            }
+        } else if (event.currentTarget.dataset.kn == "kd") {
+            var preDistance = Math.sqrt(Math.pow(zx - kdtouches[(0)].pageX, 2) + Math.pow(zy - kdtouches[(0)].pageY, 2));
+            var curDistance = Math.sqrt(Math.pow(zx - newkdtouches[(0)].pageX, 2) + Math.pow(zy - newkdtouches[(0)].pageY, 2));
+            var scale = (curDistance - preDistance) / Math.sqrt(Math.pow(kdgetDataset.w / 2, 2) + Math.pow(kdgetDataset.h / 2, 2));
+            if (kdgetDataset.h + kdgetDataset.h * scale < 10 || kdgetDataset.w + kdgetDataset.w * scale < 10) return;;
+            kdgetDataset.y = kdgetDataset.y - kdgetDataset.h * scale / 2;
+            kdgetDataset.h = kdgetDataset.h + kdgetDataset.h * scale;
+            kdgetDataset.x = kdgetDataset.x - kdgetDataset.w * scale / 2;
+            kdgetDataset.w = kdgetDataset.w + kdgetDataset.w * scale;
+            picslistdata.y = picslistdata.y - picslistdata.h * scale / 2;
+            picslistdata.h = picslistdata.h + picslistdata.h * scale;
+            picslistdata.x = picslistdata.x - picslistdata.w * scale / 2;
+            picslistdata.w = picslistdata.w + picslistdata.w * scale
+        };
+        kdinstances.setStyle(({
+            'transform': 'scale(' + kdgetDataset.scale + ') rotate(' + kdgetDataset.rotate + 'deg)',
+            "width": kdgetDataset.w + "px",
+            "height": kdgetDataset.h + "px",
+            "top": kdgetDataset.y + "px",
+            "left": kdgetDataset.x + "px",
+        }));
+        picslist.setStyle(({
+            'transform': 'rotate(' + picslistdata.rotate + 'deg)',
+            "width": picslistdata.w + "px",
+            "height": picslistdata.h + "px",
+            "top": picslistdata.y + "px",
+            "left": picslistdata.x + "px",
+        }));
+        kdtouches = newkdtouches
+    },
+
+    kdtouchend(event, ownerInstance) {
+        kdinstances.callMethod("movedata", ({
+            "getDataset": kdgetDataset,
+            "picslistdata": picslistdata,
+        }));
+        instances = "";
+        kdinstances = "";
+        picslist = ""
+    },
   }
 };
 </script>
