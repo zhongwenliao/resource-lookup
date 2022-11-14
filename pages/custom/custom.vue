@@ -159,7 +159,7 @@
             "
         >
             <!-- 删除 -->
-            <image @tap="handleDelImg" class="del" :data-idx="pk.index" :data-types="pk.types" mode="widthFix" src="/static/img/del.png"></image>
+            <image @tap="handleDelImg(pk.types,pk.index)" class="del" src="/static/img/del.png"></image>
             <!-- 缩放 -->
             <image
                 @touchend.stop.prevent="kdtouchend"
@@ -425,18 +425,15 @@ export default {
         }
         uni.getSystemInfo({
             success: function (t) {
-                if (t.model.indexOf('iPhone') > -1) {
-                    t.model = t.model.split('<')[0];
-                }
                 var e = t.windowWidth;
                 var i = t.windowHeight;
-                that.getShopMobile(t.model, i, e);
+                that.getShopMobile(i, e);
             }
         });
     },
 
     methods: {
-        getShopMobile: function (a, e, i) {
+        getShopMobile: function (e, i) {
             var that = this;
             var c = 0;
             var h = 0;
@@ -444,67 +441,45 @@ export default {
                 title: '加载中...',
                 mask: true
             });
-            if ('' != app.globalData.shop_id) {
-                uni.request({
-                    url: app.globalData.host + '/api/Index/searchMmobile',
-                    data: {
-                        model: 'microsoft',
-                        shop_id: app.globalData.shop_id,
-                        types: 0
-                    },
-                    success: function (t) {
-                        if (0 == t.data.code) {
-                            uni.navigateTo({
-                                url: '/pages/selecttypes/selecttypes'
-                            });
-                        } else {
-                            var a = t.data.data;
-                            uni.getImageInfo({
-                                src: a.bgimage,
-                                success: function (t) {
-                                    c = t.width;
-                                    h = t.height;
-                                    if (c < h) {
-                                        var n = (0.66 * i - (p = (c / h) * (w = 0.72 * (g = e - 100)))) / 2;
-                                        var o = 0.8 * e - w - 10;
-                                        var d = 10;
-                                        var l = '15%';
-                                    } else {
-                                        var g = 0.66 * i;
-                                        var p = g;
-                                        var w = (h / c) * p;
-                                        var n = (0.66 * i - p) / 2;
-                                        var d = (o = (0.8 * e - w) / 2);
-                                        var l = 0;
-                                    }
-                                    that.setData({
-                                        windowWidth: i,
-                                        windowHeight: e,
-                                        bg: a.bgimage,
-                                        mheight: w,
-                                        mwidth: p,
-                                        cshow: false,
-                                        left: n,
-                                        imgw: c,
-                                        imgh: h,
-                                        xc: n,
-                                        yc: 10,
-                                        fillw: n,
-                                        fillh: o,
-                                        masktop: d,
-                                        addimgtop: l
-                                    });
-                                }
-                            });
-                            uni.hideLoading();
-                        }
+
+            uni.getImageInfo({
+                src: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
+                success: function (t) {
+                    c = t.width;
+                    h = t.height;
+                    if (c < h) {
+                        var n = (0.66 * i - (p = (c / h) * (w = 0.72 * (g = e - 100)))) / 2;
+                        var o = 0.8 * e - w - 10;
+                        var d = 10;
+                        var l = '15%';
+                    } else {
+                        var g = 0.66 * i;
+                        var p = g;
+                        var w = (h / c) * p;
+                        var n = (0.66 * i - p) / 2;
+                        var d = (o = (0.8 * e - w) / 2);
+                        var l = 0;
                     }
-                });
-            } else {
-                setTimeout(function () {
-                    that.getShopMobile(a, e, i);
-                }, 1000);
-            }
+                    that.setData({
+                        windowWidth: i,
+                        windowHeight: e,
+                        bg: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
+                        mheight: w,
+                        mwidth: p,
+                        cshow: false,
+                        left: n,
+                        imgw: c,
+                        imgh: h,
+                        xc: n,
+                        yc: 10,
+                        fillw: n,
+                        fillh: o,
+                        masktop: d,
+                        addimgtop: l
+                    });
+                }
+            });
+            uni.hideLoading();
         },
 
         getShopNews: function (a) {
@@ -605,10 +580,11 @@ export default {
         },
 
         // 删除框中图片
-        handleDelImg: function (t) {
+        handleDelImg: function (types,index) {
             var a = this.pk;
-            var e = this[a.types];
-            e.splice(a.index, 1);
+            var e = this[types];
+            debugger
+            e.splice(index, 1);
             if ('pics' == a.types) {
                 this.setData({
                     pics: e,
