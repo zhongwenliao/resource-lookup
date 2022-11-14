@@ -250,6 +250,7 @@ export default {
             mwidth: '',
             left: 0,
             cshow: true,
+            // 默认图片
             bg: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
             pics: [],
             inputval: '',
@@ -463,7 +464,6 @@ export default {
                     that.setData({
                         windowWidth: i,
                         windowHeight: e,
-                        bg: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
                         mheight: w,
                         mwidth: p,
                         cshow: false,
