@@ -358,15 +358,22 @@
                 "navigationBarTitleText": "积分明细",
                 "enablePullDownRefresh": false
             }
-        }
-        ,{
+        },
+		{
             "path" : "pages/dingzhi/dingzhi",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "个性私人定制哇咔咔",
                 "enablePullDownRefresh": false
             }
-            
+        },
+		{
+            "path" : "pages/custom/custom",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "定制",
+                "enablePullDownRefresh": false
+            }
         }
     ],
 	"easycom": {

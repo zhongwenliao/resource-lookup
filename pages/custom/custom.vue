@@ -1,13 +1,12 @@
 <template>
-    <view>
+    <view class="custom">
         <view :style="'position:fixed;z-index:9999;background:#ff0000;width:2px;height:2px;left:' + zx + 'px;top:' + zy + 'px;'"></view>
         <view class="head">
             <image src="/static/img/phone.png"></image>
-            <view style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 45%">机型：{{ phonetype.name }}</view>
+            <view class="slippers">拖鞋：{{ phonetype.name }}</view>
             <view class="ge"></view>
-            <view @tap="eidttype" class="edit">换机型》</view>
-            <button @getuserinfo="bindGetUserInfo" openType="getUserInfo" v-if="canIUse">下一步</button>
-            <button @tap="submitdata" v-else>下一步</button>
+            <view @tap="handleChangeType" class="edit">更换》</view>
+            <button @tap="handleSubmitData">下一步</button>
         </view>
         <view @tap="leftbtn" class="pm-top"></view>
         <view @tap="leftbtn" class="pm-left"></view>
@@ -18,124 +17,67 @@
             <view class="fill-b" :style="'height:' + fillh + 'px'">
                 <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
             </view>
+            <!-- 背景图 -->
             <view class="mask" :style="'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'"></view>
-            <image
-                :src="tk[0].url"
-                :style="
-                    'width: ' +
-                    tk[0].picw +
-                    'px; height: ' +
-                    tk[0].pich +
-                    'px;top:' +
-                    tk[0].y +
-                    'px;left:' +
-                    tk[0].x +
-                    'px;z-index:1;position: absolute;transform: translate(0, 0) scale(' +
-                    tk[0].scale +
-                    ') rotate(' +
-                    tk[0].rotate +
-                    'deg);transform-origin: center center;'
-                "
+        
+            <!-- 图片列 -->
+            <template v-for="(item, index) in pics" >
+                <image
+                    v-if="item.url"
+                    :key="index"
+                    @tap="bindqie"
+                    :data-idx="index"
+                    data-types="pics"
+                    :id="'pics' + index"
+                    :src="item.url"
+                    :style="
+                        'position:absolute;width: ' +
+                        item.picw +
+                        'px; height: ' +
+                        item.pich +
+                        'px;left: ' +
+                        item.x +
+                        'px; top: ' +
+                        item.y +
+                        'px; transform: translate(0, 0) scale(' +
+                        item.scale +
+                        ') rotate(' +
+                        item.rotate +
+                        'deg);transform-origin: center center;z-index:' +
+                        item.zindex
+                    "
+                ></image>
+            </template>
+            
+            <!-- 文字图片列 -->
+            <template v-for="(item, index) in textimgs">
+                <image
+                    @tap="bindqie"
+                    :data-idx="index"
+                    data-types="textimgs"
+                    v-if="item.url"
+                    :src="item.url"
+                    :style="
+                        'position:absolute;width: ' +
+                        item.picw +
+                        'px; height: ' +
+                        item.pich +
+                        'px;left: ' +
+                        item.x +
+                        'px; top: ' +
+                        item.y +
+                        'px; transform: translate(0, 0) scale(' +
+                        item.scale +
+                        ') rotate(' +
+                        item.rotate +
+                        'deg);transform-origin: center center;z-index:' +
+                        item.zindex 
+                    "
+                    :key="index"
             ></image>
-            <image
-                @tap="bindqie"
-                :data-idx="index"
-                data-types="pics"
-                :id="'pics' + index"
-                :src="item.url"
-                :style="
-                    'position:absolute;width: ' +
-                    item.picw +
-                    'px; height: ' +
-                    item.pich +
-                    'px;left: ' +
-                    item.x +
-                    'px; top: ' +
-                    item.y +
-                    'px; transform: translate(0, 0) scale(' +
-                    item.scale +
-                    ') rotate(' +
-                    item.rotate +
-                    'deg);transform-origin: center center;z-index:' +
-                    item.zindex +
-                    ' '
-                "
-                v-for="(item, index) in pics"
-                :key="index"
-            ></image>
-            <image
-                class="mbimg"
-                v-if="!(mb[0].url ? false : true)"
-                :src="mb[0].url"
-                :style="
-                    'width:' +
-                    mb[0].picw +
-                    'px;height: ' +
-                    mb[0].pich +
-                    'px;top:' +
-                    mb[0].y +
-                    'px;left:' +
-                    mb[0].x +
-                    'px;transform: translate(0, 0) scale(' +
-                    mb[0].scale +
-                    ') rotate(' +
-                    mb[0].rotate +
-                    'deg);transform-origin: center center;'
-                "
-            ></image>
-            <image
-                @tap="bindqie"
-                :data-idx="index"
-                data-types="tt"
-                v-if="!(item.url ? false : true)"
-                :src="item.url"
-                :style="
-                    'position:absolute;width: ' +
-                    item.picw +
-                    'px; height: ' +
-                    item.pich +
-                    'px;left: ' +
-                    item.x +
-                    'px; top: ' +
-                    item.y +
-                    'px; transform: translate(0, 0) scale(' +
-                    item.scale +
-                    ') rotate(' +
-                    item.rotate +
-                    'deg);transform-origin: center center;z-index:' +
-                    item.zindex +
-                    ' '
-                "
-                v-for="(item, index) in tt"
-                :key="index"
-            ></image>
-            <image
-                @tap="bindqie"
-                :data-idx="index"
-                data-types="textimgs"
-                v-if="!(item.url ? false : true)"
-                :src="item.url"
-                :style="
-                    'position:absolute;width: ' +
-                    item.picw +
-                    'px; height: ' +
-                    item.pich +
-                    'px;left: ' +
-                    item.x +
-                    'px; top: ' +
-                    item.y +
-                    'px; transform: translate(0, 0) scale(' +
-                    item.scale +
-                    ') rotate(' +
-                    item.rotate +
-                    'deg);transform-origin: center center;z-index:' +
-                    item.zindex +
-                    ' '
-                "
-                v-for="(item, index) in textimgs"
-                :key="index"
-            ></image>
-            <image @tap="addimg" class="addimg" v-if="!addimgshow" src="../../img/img.png " :style="'bottom:' + addimgtop"></image>
+            </template>
+            <!-- 上传按钮 -->
+            <image @tap="handleUploadImg" class="addimg" v-if="!addimgshow" src="/static/img/img.png" :style="'bottom:' + addimgtop"></image>
         </view>
         <view @tap="leftbtn" class="pm-right"></view>
         <view @tap="leftbtn" class="pm-bottom"></view>
@@ -144,29 +86,14 @@
             <view>文字输入</view>
         </view>
         <view class="add" v-if="!addshow">
-            <view @tap="addimg" style="text-align: center">
+            <view @tap="handleUploadImg" style="text-align: center">
                 <image class="addimgbtn" src="/static/img/add.png"></image>
                 <view>添加照片</view>
             </view>
+            <!-- 已添加图片列表 -->
             <scroll-view scrollX class="scroll-view_H" style="width: 80%">
-                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="tk" v-if="tk != ''">
-                    <view @tap="deltk" class="close">X</view>
-                    <image class="imgcl" mode="aspectFit" :src="tk[0].url"></image>
-                    <image @tap="tkclock" class="clock" :src="tk[0].clock"></image>
-                </view>
-                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="pics" v-if="!'pics.url?false:true'" v-for="(item, index) in pics" :key="index">
+                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="pics" v-if="pics.length" v-for="(item, index) in pics" :key="index">
                     <view @tap="delpic" class="close" :data-idx="index">X</view>
-
-                    <image class="imgcl" mode="aspectFit" :src="item.url"></image>
-                </view>
-                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="mb" v-if="mb != ''">
-                    <view @tap="delmb" class="close">X</view>
-                    <image class="imgcl" mode="aspectFit" :src="mb[0].url"></image>
-                    <image @tap="mbclock" class="clock" :src="mb[0].clock"></image>
-                </view>
-                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="tt" v-if="!'tt.url?false:true'" v-for="(item, index) in tt" :key="index">
-                    <view @tap="deltt" class="close" :data-idx="index">X</view>
-
                     <image class="imgcl" mode="aspectFit" :src="item.url"></image>
                 </view>
                 <view
@@ -174,16 +101,16 @@
                     class="li"
                     :data-ind="index"
                     data-types="textimgs"
-                    v-if="!'textimgs.url?false:true'"
+                    v-if="textimgs.length"
                     v-for="(item, index) in textimgs"
                     :key="index"
                 >
                     <view @tap="deltextimgs" class="close" :data-idx="index">X</view>
-
                     <image class="imgcl" mode="aspectFit" :src="item.url"></image>
                 </view>
             </scroll-view>
         </view>
+        <!-- 文字输入弹框 -->
         <view @tap="catchtxt" class="textedit" v-if="addshow">
             <view style="background: #fff; position: absolute; bottom: 0; width: 100%">
                 <scroll-view scrollX class="scroll-view_H" style="width: 100%">
@@ -241,7 +168,9 @@
                 'deg);transform-origin: center center;z-index:13;border:1px dashed #ff0000;'
             "
         >
-            <image @tap="delpkpic" class="del" :data-idx="pk.index" :data-types="pk.types" mode="widthFix" src="/static/img/del.png"></image>
+            <!-- 删除 -->
+            <image @tap="handleDelImg" class="del" :data-idx="pk.index" :data-types="pk.types" mode="widthFix" src="/static/img/del.png"></image>
+            <!-- 缩放 -->
             <image
                 @touchend.stop.prevent="kdtouchend"
                 @touchmove.stop.prevent="kdtouchmove"
@@ -253,6 +182,7 @@
                 mode="widthFix"
                 src="/static/img/kd.png"
             ></image>
+            <!-- 旋转 -->
             <image
                 @touchend.stop.prevent="kdtouchend"
                 @touchmove.stop.prevent="kdtouchmove"
@@ -266,32 +196,27 @@
             ></image>
         </view>
         <view style="height: 50px; width: 100%"></view>
-        <view class="footer">
-            <view class="foot-btn active">
-                <image src="/static/img/h2.png"></image>
-                <view>设计</view>
-            </view>
-            <navigator url="/pages/img/img?act=index">
-                <view class="foot-btn">
-                    <image src="/static/img/t1.png"></image>
-                    <view>图库</view>
-                </view>
-            </navigator>
-            <navigator openType="redirect" url="/pages/my/my">
-                <view class="foot-btn">
-                    <image src="/static/img/m1.png"></image>
-                    <view>我的</view>
-                </view>
-            </navigator>
-        </view>
         <canvas canvasId="textcanvas" :style="'width:' + textwidth + 'px;height:' + textheight + 'px; '"></canvas>
         <canvas canvasId="mycanvas" :disableScroll="true" :style="'width: ' + imgw + 'px; height: ' + imgh + 'px; '"></canvas>
     </view>
 </template>
 
 <script>
-var app = getApp();
-var a = uni.createCanvasContext('mycanvas');
+// var app = getApp();
+var app = {
+  globalData: {
+    shop: {
+      nickname: "随意写的用户名",
+    },
+    shop_id: 1,
+    host: "https://30diy.cn",
+    types: '0',
+    openid: "0932wF100b3gTO1N8J000iCaOS32wF1Y",
+    imgurl: "",
+    userInfo: "",
+  },
+}
+var a ;
 var e = false;
 var i = false;
 var s = '';
@@ -338,9 +263,9 @@ export default {
             mwidth: '',
             left: 0,
             cshow: true,
-            bg: '',
+            bg: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
             mb: '',
-            tk: '',
+            tk: [],
             tt: [],
             pics: [],
             words: [],
@@ -511,6 +436,7 @@ export default {
             title: '加载中...',
             mask: true
         });
+        a = uni.createCanvasContext('mycanvas')
         var that = this;
         if (t.scene) {
             var e = decodeURIComponent(t.scene);
@@ -589,7 +515,6 @@ export default {
                                     windowWidth: t.windowWidth,
                                     windowHeight: t.windowHeight,
                                     phonetype: c,
-                                    bg: s,
                                     cheight: h,
                                     mheight: p,
                                     mwidth: g,
@@ -624,126 +549,129 @@ export default {
                 uni.hideLoading();
             }
         });
-        uni.getStorage({
-            key: 'mb',
-            success: function (t) {
-                uni.getImageInfo({
-                    src: t.data.url,
-                    success: function (t) {
-                        var e = [
-                            {
-                                url: t.path,
-                                picw: that.mwidth,
-                                pich: that.mheight,
-                                x: that.left,
-                                y: that.masktop,
-                                scale: 1,
-                                rotate: 0,
-                                active: 'active',
-                                zindex: 1,
-                                clock: '/static/img/clock1.png'
-                            }
-                        ];
-                        that.setData({
-                            mb: e,
-                            addimgshow: true
-                        });
-                        uni.removeStorageSync('mb');
-                        uni.hideLoading();
-                    },
-                    fail: function (t) {}
-                });
-            }
-        });
-        uni.getStorage({
-            key: 'tk',
-            success: function (t) {
-                uni.getImageInfo({
-                    src: t.data.url,
-                    success: function (t) {
-                        var e = [
-                            {
-                                url: t.path,
-                                picw: that.mwidth,
-                                pich: that.mheight,
-                                x: that.left,
-                                y: that.masktop,
-                                scale: 1,
-                                rotate: 0,
-                                active: 'active',
-                                zindex: 1,
-                                clock: '/static/img/clock1.png'
-                            }
-                        ];
-                        that.setData({
-                            tk: e,
-                            addimgshow: true
-                        });
-                        uni.removeStorageSync('tk');
-                        uni.hideLoading();
-                    },
-                    fail: function (t) {}
-                });
-            }
-        });
-        uni.getStorage({
-            key: 'tt',
-            success: function (t) {
-                uni.getImageInfo({
-                    src: t.data[0].url,
-                    success: function (t) {
-                        var e = t.path;
-                        console.log(t);
-                        var i = t.width;
-                        var s = t.height;
-                        if (i == s) {
-                            i = 90;
-                            s = 90;
-                        } else {
-                            i = 90;
-                            s = (t.height / t.width) * 90;
-                        }
-                        var c = that.fillw + (that.mwidth - i) / 2;
-                        var h = that.tt;
-                        var n = {
-                            url: e,
-                            picw: i,
-                            pich: s,
-                            x: c,
-                            y: that.masktop + (that.mheight - s) / 2,
-                            scale: 1,
-                            rotate: 0,
-                            active: 'active',
-                            zindex: 6
-                        };
-                        var o = {
-                            w: i,
-                            h: s,
-                            x: c + 0.17 * that.windowWidth,
-                            y: 0.1 * that.windowHeight + that.masktop + (that.mheight - s) / 2,
-                            rotate: 0,
-                            types: 'tt',
-                            index: h.length
-                        };
-                        if (h.length > 0) {
-                            for (var d = 0; d < h.length; d++) {
-                                h[d].zindex = 5;
-                            }
-                        }
-                        h.push(n);
-                        that.setData({
-                            tt: h,
-                            addimgshow: true,
-                            pk: o,
-                            kshow: false
-                        });
-                        uni.removeStorageSync('tt');
-                        uni.hideLoading();
-                    },
-                    fail: function (t) {}
-                });
-            }
-        });
+
+        // uni.getStorage({
+        //     key: 'mb',
+        //     success: function (t) {
+        //         uni.getImageInfo({
+        //             src: t.data.url,
+        //             success: function (t) {
+        //                 var e = [
+        //                     {
+        //                         url: t.path,
+        //                         picw: that.mwidth,
+        //                         pich: that.mheight,
+        //                         x: that.left,
+        //                         y: that.masktop,
+        //                         scale: 1,
+        //                         rotate: 0,
+        //                         active: 'active',
+        //                         zindex: 1,
+        //                         clock: '/static/img/clock1.png'
+        //                     }
+        //                 ];
+        //                 that.setData({
+        //                     mb: e,
+        //                     addimgshow: true
+        //                 });
+        //                 uni.removeStorageSync('mb');
+        //                 uni.hideLoading();
+        //             },
+        //             fail: function (t) {}
+        //         });
+        //     }
+        // });
+
+        // uni.getStorage({
+        //     key: 'tk',
+        //     success: function (t) {
+        //         uni.getImageInfo({
+        //             src: t.data.url,
+        //             success: function (t) {
+        //                 var e = [
+        //                     {
+        //                         url: t.path,
+        //                         picw: that.mwidth,
+        //                         pich: that.mheight,
+        //                         x: that.left,
+        //                         y: that.masktop,
+        //                         scale: 1,
+        //                         rotate: 0,
+        //                         active: 'active',
+        //                         zindex: 1,
+        //                         clock: '/static/img/clock1.png'
+        //                     }
+        //                 ];
+        //                 that.setData({
+        //                     tk: e,
+        //                     addimgshow: true
+        //                 });
+        //                 uni.removeStorageSync('tk');
+        //                 uni.hideLoading();
+        //             },
+        //             fail: function (t) {}
+        //         });
+        //     }
+        // });
+
+        // uni.getStorage({
+        //     key: 'tt',
+        //     success: function (t) {
+        //         uni.getImageInfo({
+        //             src: t.data[0].url,
+        //             success: function (t) {
+        //                 var e = t.path;
+        //                 console.log(t);
+        //                 var i = t.width;
+        //                 var s = t.height;
+        //                 if (i == s) {
+        //                     i = 90;
+        //                     s = 90;
+        //                 } else {
+        //                     i = 90;
+        //                     s = (t.height / t.width) * 90;
+        //                 }
+        //                 var c = that.fillw + (that.mwidth - i) / 2;
+        //                 var h = that.tt;
+        //                 var n = {
+        //                     url: e,
+        //                     picw: i,
+        //                     pich: s,
+        //                     x: c,
+        //                     y: that.masktop + (that.mheight - s) / 2,
+        //                     scale: 1,
+        //                     rotate: 0,
+        //                     active: 'active',
+        //                     zindex: 6
+        //                 };
+        //                 var o = {
+        //                     w: i,
+        //                     h: s,
+        //                     x: c + 0.17 * that.windowWidth,
+        //                     y: 0.1 * that.windowHeight + that.masktop + (that.mheight - s) / 2,
+        //                     rotate: 0,
+        //                     types: 'tt',
+        //                     index: h.length
+        //                 };
+        //                 if (h.length > 0) {
+        //                     for (var d = 0; d < h.length; d++) {
+        //                         h[d].zindex = 5;
+        //                     }
+        //                 }
+        //                 h.push(n);
+        //                 that.setData({
+        //                     tt: h,
+        //                     addimgshow: true,
+        //                     pk: o,
+        //                     kshow: false
+        //                 });
+        //                 uni.removeStorageSync('tt');
+        //                 uni.hideLoading();
+        //             },
+        //             fail: function (t) {}
+        //         });
+        //     }
+        // });
     },
     onShareAppMessage: function () {
         return {
@@ -764,8 +692,9 @@ export default {
                 uni.request({
                     url: app.globalData.host + '/api/Index/searchMmobile',
                     data: {
-                        model: a,
-                        shop_id: app.globalData.shop_id
+                        model: 'microsoft',
+                        shop_id: app.globalData.shop_id,
+                        types: 0
                     },
                     success: function (t) {
                         if (0 == t.data.code) {
@@ -834,22 +763,18 @@ export default {
                 uni.request({
                     url: app.globalData.host + '/api/User/getShopnews',
                     data: {
-                        shop_id: a,
+                        shop_id: 1,
                         openid: app.globalData.openid
                     },
                     success: function (a) {
-                        if (1 == a.data.code) {
-                            app.globalData.shop_id = a.data.data.id;
-                            app.globalData.shop = a.data.data;
-                            uni.setNavigationBarTitle({
-                                title: a.data.data.nickname
-                            });
-                            uni.setStorage({
-                                key: 'shop_id',
-                                data: app.globalData.shop_id
-                            });
-                            uni.hideLoading();
-                        }
+                        app.globalData.shop_id = a.data.data.id;
+                        app.globalData.shop = a.data.data;
+                        uni.setStorage({
+                            key: 'shop_id',
+                            data: '1'
+                        });
+                        uni.hideLoading();
+                        
                     }
                 });
             } else {
@@ -955,13 +880,14 @@ export default {
             }
         },
 
-        eidttype: function () {
-            uni.navigateTo({
-                url: '/pages/selecttypes/selecttypes'
-            });
+        // 更换类型
+        handleChangeType() {
+            console.log('这里做更换类型的操作')
         },
 
-        addimg: function () {
+        // 图片上传框
+        handleUploadImg() {
+            console.log('文件上传')
             var t = this.pics;
             var that = this;
             uni.chooseImage({
@@ -1032,7 +958,8 @@ export default {
             });
         },
 
-        delpkpic: function (t) {
+        // 删除框中图片
+        handleDelImg: function (t) {
             var a = this.pk;
             var e = this[a.types];
             e.splice(a.index, 1);
@@ -1050,9 +977,9 @@ export default {
                     kshow: true
                 });
             } else {
-                if ('tt' == a.types) {
+                if ('textimgs' == a.types) {
                     this.setData({
-                        tt: e,
+                        textimgs: e,
                         pk: {
                             x: 0,
                             y: 0,
@@ -1063,76 +990,8 @@ export default {
                         },
                         kshow: true
                     });
-                } else {
-                    if ('textimgs' == a.types) {
-                        this.setData({
-                            textimgs: e,
-                            pk: {
-                                x: 0,
-                                y: 0,
-                                scale: 0,
-                                rotate: 0,
-                                index: 0,
-                                types: ''
-                            },
-                            kshow: true
-                        });
-                    } else {
-                        if ('tk' == a.types) {
-                            this.setData({
-                                tk: '',
-                                pk: {
-                                    x: 0,
-                                    y: 0,
-                                    scale: 0,
-                                    rotate: 0,
-                                    index: 0,
-                                    types: ''
-                                },
-                                kshow: true
-                            });
-                        } else {
-                            if ('mb' == a.types) {
-                                this.setData({
-                                    mb: '',
-                                    pk: {
-                                        x: 0,
-                                        y: 0,
-                                        scale: 0,
-                                        rotate: 0,
-                                        index: 0,
-                                        types: ''
-                                    },
-                                    kshow: true
-                                });
-                            }
-                        }
-                    }
                 }
             }
-        },
-
-        deltk: function () {
-            this.setData({
-                tk: '',
-                kshow: true
-            });
-        },
-
-        delmb: function () {
-            this.setData({
-                mb: '',
-                kshow: true
-            });
-        },
-
-        deltt: function (t) {
-            var a = this.tt;
-            a.splice(t.target.dataset.idx, 1);
-            this.setData({
-                tt: a,
-                kshow: true
-            });
         },
 
         deltextimgs: function (t) {
@@ -1144,50 +1003,9 @@ export default {
             });
         },
 
-        bindGetUserInfo: function (a) {
-            uni.showLoading({
-                title: '提交数据...',
-                mask: true
-            });
-            var that = this;
-            var i = a.detail.userInfo.avatarUrl;
-            var s = a.detail.userInfo.nickName;
-            uni.showLoading({
-                title: s,
-                mask: true
-            });
-            wx;
-            uni.request({
-                url: app.globalData.host + '/api/Index/edituseravater',
-                data: {
-                    shop_id: app.globalData.shop_id,
-                    openid: app.globalData.openid,
-                    avatar: i,
-                    nickname: s
-                },
-                method: 'GET',
-                dataType: 'json',
-                success: function (a) {
-                    if (1 == a.data.code) {
-                        app.globalData.userInfo = a.data.data;
-                        that.setData({
-                            canIUse: false
-                        });
-                        that.submitdata();
-                    }
-                },
-                fail: function (t) {
-                    uni.showLoading({
-                        title: JSON.stringify(t),
-                        mask: true
-                    });
-                },
-                complete: function (t) {}
-            });
-        },
-
-        submitdata: function () {
-            if ('' != this.tk || 0 != this.pics.length || '' != this.mb || 0 != this.tt.length || 0 != this.textimgs.length) {
+        // 都搞好了，可以提交了，下一步
+        handleSubmitData () {
+            if ( this.pics.length != 0 || this.textimgs.length != 0 ) {
                 uni.showLoading({
                     title: '图片生成中...',
                     mask: true
@@ -1197,27 +1015,7 @@ export default {
                 a.fillStyle = '#ffffff';
                 a.fillRect(0, 0, that.imgw, that.imgh);
                 a.save();
-                var e = this.tk;
-                var i = that.imgw / that.mwidth;
-                var s = that.imgh / that.mheight;
-                if (e.length > 0) {
-                    for (var c = 0; c < e.length; c++) {
-                        var h = e[c];
-                        var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2;
-                        var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2;
-                        var d = n + (h.picw * h.scale) / 2;
-                        var l = o + (h.pich * h.scale) / 2;
-                        a.save();
-                        a.translate(d * i, l * s);
-                        a.rotate((h.rotate * Math.PI) / 180);
-                        a.translate(-d * i, -l * s);
-                        a.drawImage(h.url, n * i, o * s, h.picw * h.scale * i, h.pich * h.scale * s);
-                        a.restore();
-                    }
-                    this.drawpic();
-                } else {
-                    this.drawpic();
-                }
+                this.drawpic();
             } else {
                 uni.showToast({
                     title: '未选中任何图片！',
@@ -1227,63 +1025,12 @@ export default {
             }
         },
 
-        drawpic: function () {
+        // 验证图片大小
+        drawpic () {
             var that = this;
             var e = that.imgw / that.mwidth;
             var i = that.imgh / that.mheight;
             var s = this.pics;
-            if (s.length > 0) {
-                for (var c = 0; c < s.length; c++) {
-                    var h = s[c];
-                    var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2;
-                    var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2;
-                    var d = n + (h.picw * h.scale) / 2;
-                    var l = o + (h.pich * h.scale) / 2;
-                    a.save();
-                    a.translate(d * e, l * i);
-                    a.rotate((h.rotate * Math.PI) / 180);
-                    a.translate(-d * e, -l * i);
-                    a.drawImage(h.url, n * e, o * i, h.picw * h.scale * e, h.pich * h.scale * i);
-                    a.restore();
-                    if (c == s.length - 1) {
-                        this.drawmb();
-                    }
-                }
-            } else {
-                this.drawmb();
-            }
-        },
-
-        drawmb: function () {
-            var that = this;
-            var e = this.mb;
-            var i = that.imgw / that.mwidth;
-            var s = that.imgh / that.mheight;
-            if (e.length > 0) {
-                for (var c = 0; c < e.length; c++) {
-                    var h = e[c];
-                    var n = h.x - that.xc - (h.picw * (h.scale - 1)) / 2;
-                    var o = h.y - that.yc - (h.pich * (h.scale - 1)) / 2;
-                    var d = n + (h.picw * h.scale) / 2;
-                    var l = o + (h.pich * h.scale) / 2;
-                    a.save();
-                    a.translate(d * i, l * s);
-                    a.rotate((h.rotate * Math.PI) / 180);
-                    a.translate(-d * i, -l * s);
-                    a.drawImage(h.url, n * i, o * s, h.picw * h.scale * i, h.pich * h.scale * s);
-                    a.restore();
-                }
-                this.drawtt();
-            } else {
-                this.drawtt();
-            }
-        },
-
-        drawtt: function () {
-            var that = this;
-            var e = that.imgw / that.mwidth;
-            var i = that.imgh / that.mheight;
-            var s = this.tt;
             if (s.length > 0) {
                 for (var c = 0; c < s.length; c++) {
                     var h = s[c];
@@ -1306,11 +1053,12 @@ export default {
             }
         },
 
+        // 文字图片生成也就是最后一步
         drawtext: function () {
             var that = this;
             var i = that.imgw / that.mwidth;
             var s = that.imgh / that.mheight;
-            var c = this.textimgs;
+            var c = this.textimgs
             if (c.length > 0) {
                 for (var h = 0; h < c.length; h++) {
                     var n = c[h];
@@ -1327,28 +1075,30 @@ export default {
                 }
             }
             a.draw(false, function () {
-                uni.canvasToTempFilePath({
-                    x: 0,
-                    y: 0,
-                    width: that.imgw,
-                    height: that.imgh,
-                    destWidth: that.imgw,
-                    destHeight: that.imgh,
-                    canvasId: 'mycanvas',
-                    fileType: 'jpg',
-                    quality: 1,
-                    success: function (a) {
-                        app.globalData.imgurl = a.tempFilePath;
-                        uni.setStorage({
-                            key: 'phonetype',
-                            data: that.phonetype
-                        });
-                        uni.navigateTo({
-                            url: '/pages/ordersure/ordersure'
-                        });
-                        uni.hideLoading();
-                    }
-                });
+                try {
+                    uni.canvasToTempFilePath({
+                        x: 0,
+                        y: 0,
+                        width: that.imgw,
+                        height: that.imgh,
+                        destWidth: that.imgw,
+                        destHeight: that.imgh,
+                        canvasId: 'mycanvas',
+                        fileType: 'jpg',
+                        quality: 1,
+                        success: function (a) {
+                            console.log('完成，最后的图片数据',a);
+                            app.globalData.imgurl = a.tempFilePath;
+                            uni.setStorage({
+                                key: 'phonetype',
+                                data: that.phonetype
+                            });
+                            uni.hideLoading();
+                        }
+                    });
+                } catch (error) {
+                    console.log('这里大概率会出错',error)   
+                }
             });
         },
 
@@ -1705,8 +1455,10 @@ export default {
         bindtouchend: function (t) {
             e = false;
         },
-
+        // 开始缩放
         kdtouchstart: function (t) {
+            console.log('开始缩放',t)
+            t.preventDefault()
             i = true;
             p.x = t.touches[0].pageX;
             p.y = t.touches[0].pageY;
@@ -2411,550 +2163,5 @@ export default {
 };
 </script>
 <style>
-page {
-    background: #ebebeb;
-    overflow: hidden;
-    font-size: 0.8rem;
-    width: 100%;
-    height: 100%;
-}
-
-.head {
-    display: flex;
-    padding: 2%;
-    font-size: 1rem;
-    background: #fff;
-    justify-content: space-between;
-    line-height: 30px;
-    position: absolute;
-    z-index: 1900;
-    width: 96%;
-}
-
-.head image {
-    width: 20px;
-    height: 20px;
-    margin-top: 5px;
-}
-
-.head button {
-    height: 30px;
-    background: #f8441f;
-    color: #fff;
-    line-height: 30px;
-    font-size: 0.75rem;
-    margin-right: 0;
-}
-
-.head .ge {
-    width: 2px;
-    height: 17px;
-    background: #ebebeb;
-    margin: 5px 10px;
-}
-
-.head .edit {
-    color: #4e9ef9;
-}
-
-.pm-top {
-    opacity: 0.9;
-    position: relative;
-    z-index: 13;
-    background: #fff;
-    width: 100%;
-    height: 10%;
-    overflow: hidden;
-}
-
-.pm-left {
-    float: left;
-}
-
-.pm-left,
-.pm-right {
-    position: relative;
-    z-index: 13;
-    opacity: 0.9;
-    width: 17%;
-    height: 80%;
-    background: #fff;
-}
-
-.pm-right {
-    float: right;
-}
-
-.pm-bottom {
-    z-index: 13;
-    filter: alpha(opacity=90);
-    opacity: 0.9;
-    height: 10%;
-    clear: both;
-    text-align: center;
-    overflow: hidden;
-    color: #666;
-}
-
-.content,
-.pm-bottom {
-    position: relative;
-    background: #fff;
-}
-
-.content {
-    z-index: 12;
-    width: 66%;
-    height: 80%;
-    float: left;
-}
-
-.fill-top {
-    width: 100%;
-    top: 0;
-    height: 10px;
-}
-
-.fill-l,
-.fill-top {
-    pointer-events: none;
-    opacity: 0.9;
-    z-index: 1998;
-    position: absolute;
-    left: 0;
-    background: #fff;
-}
-
-.fill-l {
-    top: 10px;
-}
-
-.fill-r {
-    right: 0;
-    top: 10px;
-}
-
-.fill-b,
-.fill-r {
-    pointer-events: none;
-    opacity: 0.9;
-    z-index: 1998;
-    position: absolute;
-    background: #fff;
-}
-
-.fill-b {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
-
-.mask {
-    z-index: 1999;
-}
-
-.mask,
-.mbimg {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-size: 100% 100%;
-    pointer-events: none;
-}
-
-.mbimg {
-    z-index: 4;
-}
-
-.addimg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    z-index: 32;
-    width: 40px;
-    height: 40px;
-    background: #f8441f;
-    padding: 10px;
-    border-radius: 100%;
-}
-
-.left {
-    top: 20%;
-    left: 10%;
-}
-
-.left,
-.right {
-    position: absolute;
-    z-index: 32;
-    padding: 10px;
-    font-size: 0.75rem;
-    margin: 0 auto;
-    width: 20px;
-    line-height: 18px;
-}
-
-.right {
-    top: 15%;
-    left: 78%;
-}
-
-.wenzi {
-    position: absolute;
-    top: 65%;
-    left: 0;
-    z-index: 32;
-    padding: 5px;
-    font-size: 0.75rem;
-    color: #f8441f;
-    text-align: center;
-}
-
-.wenzi image {
-    width: 15px;
-    height: 15px;
-    background: #f8441f;
-    padding: 10px;
-    border-radius: 100%;
-}
-
-.add {
-    position: absolute;
-    top: 77%;
-    left: 0;
-    z-index: 32;
-    padding: 5px;
-    font-size: 0.75rem;
-    color: #f8441f;
-    display: flex;
-    flex-wrap: nowrap;
-    width: 100%;
-}
-
-.addimgbtn {
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    margin-left: 2px;
-}
-
-.add .list {
-    margin-left: 10px;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.add .li {
-    border: 1px solid #f8441f;
-    border-radius: 5px;
-    position: relative;
-    margin-left: 10px;
-    display: inline-block;
-    height: 60px;
-    margin-top: 8px;
-}
-
-.add .li .imgcl {
-    width: 60px;
-    height: 60px;
-    margin-top: 0;
-}
-
-.add .li .close {
-    color: #f8441f;
-    border: 1px solid #f8441f;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    position: absolute;
-    right: -8px;
-    top: -8px;
-    border-radius: 16px;
-    background: #fff;
-}
-
-.clock {
-    width: 25px;
-    height: 25px;
-    bottom: 0;
-}
-
-.clock,
-.types {
-    position: absolute;
-    left: 0;
-}
-
-.types {
-    text-align: center;
-    font-size: 0.75rem;
-    top: 5%;
-    width: 100%;
-}
-
-.types text {
-    color: #f8441f;
-}
-
-.section {
-    line-height: 82rpx;
-    border-top: 2rpx solid #f2f3f5;
-    border-bottom: 2rpx solid #f2f3f5;
-    display: flex;
-    justify-content: space-between;
-    box-sizing: content-box;
-    position: relative;
-}
-
-.sel {
-    padding: 0 60rpx 0 30rpx;
-    font-size: 32rpx;
-    color: #3f4552;
-}
-
-.picker {
-    position: relative;
-}
-
-.triangle {
-    display: block;
-    width: 20rpx;
-    height: 12rpx;
-    position: absolute;
-    top: 46%;
-    right: -30rpx;
-    transition: transform 0.2s ease-in;
-    transition: transform 0.2s ease-in, -webkit-transform 0.2s ease-in;
-}
-
-.triangle::before {
-    right: 0;
-    border-left: 10rpx solid transparent;
-    border-top: 10rpx solid #9fa8b7;
-    border-right: 10rpx solid transparent;
-}
-
-.triangle::before,
-.triangle:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 0;
-    height: 0;
-}
-
-.triangle:after {
-    right: 2rpx;
-    border-left: 8rpx solid transparent;
-    border-top: 8rpx solid #fff;
-    border-right: 8rpx solid transparent;
-}
-
-.picker.active {
-    color: #3a78ff;
-}
-
-.picker.active .triangle {
-    transform: rotate(180deg);
-}
-
-.picker.active .triangle::before {
-    border-top: 10rpx solid #3a78ff;
-}
-
-.rank-active {
-    width: 100%;
-    position: absolute;
-    top: 80rpx;
-    background: #fff;
-    display: none;
-    transition: all 0.2s;
-}
-
-.rank-active.active {
-    display: block;
-}
-
-.rank-active .scroll-list {
-    display: flex;
-    justify-content: space-between;
-    box-sizing: border-box;
-    border-top: 2rpx solid #f2f3f5;
-    border-bottom: 2rpx solid #f2f3f5;
-}
-
-.rank-active .scroll-list scroll-view {
-    height: 371rpx;
-    padding: 0 30rpx;
-}
-
-.rank-active .scroll-list scroll-view:nth-child(2) {
-    background: #f9f9f9;
-}
-
-.rank-active .scroll-list scroll-view view {
-    line-height: 90rpx;
-    color: #3f4552;
-    font-size: 30rpx;
-    border-bottom: 2rpx solid #efefef;
-}
-
-.rank-active .scroll-list scroll-view view.active {
-    color: #3a78ff;
-}
-
-.rank-active .scroll-list scroll-view view:last-child {
-    border-bottom: none;
-}
-
-.button {
-    display: flex;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding: 0 30rpx;
-    line-height: 98rpx;
-    font-size: 32rpx;
-    color: #9fa8b7;
-}
-
-.button view:last-child {
-    color: #3a78ff;
-}
-
-.rank-active-bg {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: none;
-}
-
-.rank-active-bg.active {
-    display: block;
-}
-
-.picslist {
-    position: absolute;
-}
-
-.picslist.active {
-    border: 1px dashed #f8441f;
-}
-
-.picslist .del {
-    background: #f8441f;
-    border-radius: 20px;
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    left: -12.5px;
-    top: -12.5px;
-    padding: 5px;
-    z-index: 10;
-}
-
-.picslist .kd {
-    bottom: -12.5px;
-    background: #047b00;
-}
-
-.picslist .kd,
-.picslist .xz {
-    border-radius: 25px;
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    right: -12.5px;
-    padding: 5px;
-    z-index: 10;
-}
-
-.picslist .xz {
-    top: -12.5px;
-    background: #d3941e;
-}
-
-.textedit {
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    bottom: 9%;
-    padding-bottom: 5px;
-    z-index: 40;
-}
-
-.familylist {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.scroll-view_H {
-    white-space: nowrap;
-}
-
-.familyli {
-    padding: 10px;
-    display: inline-block;
-    font-size: 14px;
-    text-align: center;
-    margin-bottom: 2px;
-}
-
-.familyli.active {
-    border-bottom: 2px solid #f8441f;
-}
-
-.colorbox {
-    display: inline-block;
-}
-
-.colorli {
-    width: 20px;
-    height: 20px;
-    border-radius: 20px;
-    margin: 10px;
-    border: 1px solid #9fa8b7;
-}
-
-.colorbox.active {
-    border-bottom: 2px solid #f8441f;
-}
-
-.textbtns {
-    display: flex;
-    justify-content: space-around;
-    font-size: 14px;
-}
-
-.fx {
-    padding: 5px 10px;
-}
-
-.fx.active,
-.surebtn {
-    background: #f8441f;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-input {
-    width: 80%;
-    margin-left: 5%;
-    border: 1px solid #9fa8b7;
-    padding: 0 5%;
-    margin-bottom: 5px;
-    height: 2.8rem;
-    border-radius: 10px;
-}
+@import './custom.css';
 </style>
