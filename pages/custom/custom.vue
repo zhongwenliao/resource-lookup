@@ -92,28 +92,20 @@
             </view>
             <!-- 已添加图片列表 -->
             <scroll-view scrollX class="scroll-view_H" style="width: 80%">
-                <view @tap.stop.prevent="selcttext" class="li" :data-ind="index" data-types="pics" v-if="pics.length" v-for="(item, index) in pics" :key="index">
-                    <view @tap="delpic" class="close" :data-idx="index">X</view>
-                    <image class="imgcl" mode="aspectFit" :src="item.url"></image>
+                <view @tap.stop.prevent="selcttext('pics',index)" class="li" v-if="pics.length" v-for="(item, index) in pics" :key="index">
+                    <view @tap="handleDelPicImg(index)" class="close">X</view>
+                    <image class="imgcl" :src="item.url"></image>
                 </view>
-                <view
-                    @tap.stop.prevent="selcttext"
-                    class="li"
-                    :data-ind="index"
-                    data-types="textimgs"
-                    v-if="textimgs.length"
-                    v-for="(item, index) in textimgs"
-                    :key="index"
-                >
-                    <view @tap="deltextimgs" class="close" :data-idx="index">X</view>
-                    <image class="imgcl" mode="aspectFit" :src="item.url"></image>
+                <view @tap.stop.prevent="selcttext('textimgs',index)" class="li" v-if="textimgs.length" v-for="(item, index) in textimgs" :key="index">
+                    <view @tap="handleDelTextImg(index)" class="close">X</view>
+                    <image class="imgcl" :src="item.url"></image>
                 </view>
             </scroll-view>
         </view>
         <!-- 文字输入弹框 -->
         <view @tap="catchtxt" class="textedit" v-if="addshow">
-            <view style="background: #fff; position: absolute; bottom: 0; width: 100%">
-                <scroll-view scrollX class="scroll-view_H" style="width: 100%">
+            <view class="textdiv">
+                <scroll-view scrollX class="scroll-view_H">
                     <image
                         @tap.stop.prevent="selectfamily"
                         :class="'familyli ' + item.active"
@@ -125,20 +117,18 @@
                         :key="index"
                     ></image>
                 </scroll-view>
-                <scroll-view scrollX class="scroll-view_H" style="width: 100%">
+                <scroll-view scrollX class="scroll-view_H">
                     <view @tap.stop.prevent="selectcolor" :class="'colorbox ' + item.active" :data-idx="index" v-for="(item, index) in colors" :key="index">
                         <view class="colorli" :style="'background-color:' + item.val"></view>
                     </view>
                 </scroll-view>
                 <input
-                    @input="inputvalFun"
                     @tap.stop.prevent="inptch"
-                    id="textval"
                     maxlength="12"
                     placeholder="最多输入12个字符"
                     placeholderStyle="font-size:14px;"
                     style="font-size: 14px"
-                    :value="inputval"
+                    v-model="inputval"
                 />
                 <view class="textbtns">
                     <view style="line-height: 30px">文字方向：</view>
@@ -253,38 +243,27 @@ export default {
             fillh: 0,
             masktop: 10,
             addimgtop: '15%',
-
             phonetype: {
-                name: ''
+                name: '华歌行1号'
             },
-
-            cheight: '',
             mheight: '',
             mwidth: '',
             left: 0,
             cshow: true,
             bg: 'https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr',
-            mb: '',
-            tk: [],
-            tt: [],
             pics: [],
-            words: [],
             inputval: '',
             addimgshow: false,
             imgh: 0,
             imgw: 0,
             addshow: false,
-
-            fx: [
-                {
-                    name: '横向',
-                    active: 'active'
-                },
-                {
-                    name: '纵向',
-                    active: ''
-                }
-            ],
+            fx: [{
+                name: '横向',
+                active: 'active'
+            }, {
+                name: '纵向',
+                active: ''
+            }],
 
             falimys: [
                 {
@@ -451,234 +430,11 @@ export default {
                 }
                 var e = t.windowWidth;
                 var i = t.windowHeight;
-                that.setData({
-                    phonetype: {
-                        name: t.model
-                    }
-                });
                 that.getShopMobile(t.model, i, e);
             }
         });
     },
-    onShow: function (t) {
-        uni.showLoading({
-            title: '加载中...',
-            mask: true
-        });
-        var that = this;
-        uni.getStorage({
-            key: 'ppselc',
-            success: function (t) {
-                var e = 0;
-                var i = 0;
-                var s = t.data.bgimage;
-                var c = t.data;
-                uni.getImageInfo({
-                    src: s,
-                    success: function (t) {
-                        e = t.width;
-                        i = t.height;
-                        uni.getSystemInfo({
-                            success: function (t) {
-                                if (e < i) {
-                                    var h = t.windowHeight - 100;
-                                    if ((g = (e / i) * (p = 0.72 * h)) > 0.66 * t.windowWidth) {
-                                        g = 0.66 * t.windowWidth;
-                                        p = (i / e) * g;
-                                        var n = (0.66 * t.windowWidth - g) / 2;
-                                        var o = 0.8 * t.windowHeight - p - 10;
-                                        var d = 10;
-                                        var l = '15%';
-                                    } else {
-                                        var n = (0.66 * t.windowWidth - g) / 2;
-                                        var o = 0.8 * t.windowHeight - p - 10;
-                                        var d = 10;
-                                        var l = '15%';
-                                    }
-                                } else {
-                                    var g = (h = 0.66 * t.windowWidth);
-                                    var p = (i / e) * g;
-                                    if (g > 0.66 * t.windowWidth) {
-                                        g = 0.66 * t.windowWidth;
-                                        p = (i / e) * g;
-                                        var n = (0.66 * t.windowWidth - g) / 2;
-                                        var o = 0.8 * t.windowHeight - p - 10;
-                                        var d = 10;
-                                        var l = '15%';
-                                    } else {
-                                        var n = (0.66 * t.windowWidth - g) / 2;
-                                        var d = (o = (0.8 * t.windowHeight - p) / 2);
-                                        var l = 0;
-                                    }
-                                }
-                                that.setData({
-                                    windowWidth: t.windowWidth,
-                                    windowHeight: t.windowHeight,
-                                    phonetype: c,
-                                    cheight: h,
-                                    mheight: p,
-                                    mwidth: g,
-                                    cshow: false,
-                                    left: n,
-                                    imgw: e,
-                                    imgh: i,
-                                    xc: n,
-                                    yc: d,
-                                    fillw: n,
-                                    fillh: o,
-                                    masktop: d,
-                                    addimgtop: l
-                                });
-                                uni.removeStorageSync('ppselc');
-                                uni.hideLoading();
-                            },
-                            fail: function () {
-                                uni.showToast({
-                                    title: '获取失败!',
-                                    icon: 'loading',
-                                    mask: true,
-                                    duration: 2000
-                                });
-                            }
-                        });
-                    },
-                    fail: function (t) {}
-                });
-            },
-            fail: function () {
-                uni.hideLoading();
-            }
-        });
 
-        // uni.getStorage({
-        //     key: 'mb',
-        //     success: function (t) {
-        //         uni.getImageInfo({
-        //             src: t.data.url,
-        //             success: function (t) {
-        //                 var e = [
-        //                     {
-        //                         url: t.path,
-        //                         picw: that.mwidth,
-        //                         pich: that.mheight,
-        //                         x: that.left,
-        //                         y: that.masktop,
-        //                         scale: 1,
-        //                         rotate: 0,
-        //                         active: 'active',
-        //                         zindex: 1,
-        //                         clock: '/static/img/clock1.png'
-        //                     }
-        //                 ];
-        //                 that.setData({
-        //                     mb: e,
-        //                     addimgshow: true
-        //                 });
-        //                 uni.removeStorageSync('mb');
-        //                 uni.hideLoading();
-        //             },
-        //             fail: function (t) {}
-        //         });
-        //     }
-        // });
-
-        // uni.getStorage({
-        //     key: 'tk',
-        //     success: function (t) {
-        //         uni.getImageInfo({
-        //             src: t.data.url,
-        //             success: function (t) {
-        //                 var e = [
-        //                     {
-        //                         url: t.path,
-        //                         picw: that.mwidth,
-        //                         pich: that.mheight,
-        //                         x: that.left,
-        //                         y: that.masktop,
-        //                         scale: 1,
-        //                         rotate: 0,
-        //                         active: 'active',
-        //                         zindex: 1,
-        //                         clock: '/static/img/clock1.png'
-        //                     }
-        //                 ];
-        //                 that.setData({
-        //                     tk: e,
-        //                     addimgshow: true
-        //                 });
-        //                 uni.removeStorageSync('tk');
-        //                 uni.hideLoading();
-        //             },
-        //             fail: function (t) {}
-        //         });
-        //     }
-        // });
-
-        // uni.getStorage({
-        //     key: 'tt',
-        //     success: function (t) {
-        //         uni.getImageInfo({
-        //             src: t.data[0].url,
-        //             success: function (t) {
-        //                 var e = t.path;
-        //                 console.log(t);
-        //                 var i = t.width;
-        //                 var s = t.height;
-        //                 if (i == s) {
-        //                     i = 90;
-        //                     s = 90;
-        //                 } else {
-        //                     i = 90;
-        //                     s = (t.height / t.width) * 90;
-        //                 }
-        //                 var c = that.fillw + (that.mwidth - i) / 2;
-        //                 var h = that.tt;
-        //                 var n = {
-        //                     url: e,
-        //                     picw: i,
-        //                     pich: s,
-        //                     x: c,
-        //                     y: that.masktop + (that.mheight - s) / 2,
-        //                     scale: 1,
-        //                     rotate: 0,
-        //                     active: 'active',
-        //                     zindex: 6
-        //                 };
-        //                 var o = {
-        //                     w: i,
-        //                     h: s,
-        //                     x: c + 0.17 * that.windowWidth,
-        //                     y: 0.1 * that.windowHeight + that.masktop + (that.mheight - s) / 2,
-        //                     rotate: 0,
-        //                     types: 'tt',
-        //                     index: h.length
-        //                 };
-        //                 if (h.length > 0) {
-        //                     for (var d = 0; d < h.length; d++) {
-        //                         h[d].zindex = 5;
-        //                     }
-        //                 }
-        //                 h.push(n);
-        //                 that.setData({
-        //                     tt: h,
-        //                     addimgshow: true,
-        //                     pk: o,
-        //                     kshow: false
-        //                 });
-        //                 uni.removeStorageSync('tt');
-        //                 uni.hideLoading();
-        //             },
-        //             fail: function (t) {}
-        //         });
-        //     }
-        // });
-    },
-    onShareAppMessage: function () {
-        return {
-            title: app.globalData.shop.nickname,
-            path: '/pages/index/index?scene=' + app.globalData.shop_id
-        };
-    },
     methods: {
         getShopMobile: function (a, e, i) {
             var that = this;
@@ -724,9 +480,7 @@ export default {
                                     that.setData({
                                         windowWidth: i,
                                         windowHeight: e,
-                                        phonetype: a,
                                         bg: a.bgimage,
-                                        cheight: g,
                                         mheight: w,
                                         mwidth: p,
                                         cshow: false,
@@ -784,102 +538,6 @@ export default {
             }
         },
 
-        mbclock: function () {
-            var that = this;
-            var a = this.mb;
-            if ('/static/img/clock1.png' == a[0].clock) {
-                uni.getImageInfo({
-                    src: a[0].url,
-                    success: function (e) {
-                        var i = e.width;
-                        i = (i / e.height) * that.mheight;
-                        var s = (0.66 * that.windowWidth - i) / 2;
-                        var c = [
-                            {
-                                url: a[0].url,
-                                picw: i,
-                                pich: that.mheight,
-                                x: s,
-                                y: that.masktop,
-                                scale: 1,
-                                rotate: 0,
-                                active: 'active',
-                                zindex: 1,
-                                clock: '/static/img/clock2.png'
-                            }
-                        ];
-                        var h = {
-                            w: i,
-                            h: that.mheight,
-                            x: s + 0.17 * that.windowWidth,
-                            y: 0.1 * that.windowHeight + that.masktop,
-                            rotate: 0,
-                            types: 'mb',
-                            index: 0
-                        };
-                        that.setData({
-                            mb: c,
-                            pk: h,
-                            kshow: false
-                        });
-                    }
-                });
-            } else {
-                a[0].clock = '/static/img/clock1.png';
-                that.setData({
-                    mb: a
-                });
-            }
-        },
-
-        tkclock: function () {
-            var that = this;
-            var a = this.tk;
-            if ('/static/img/clock1.png' == a[0].clock) {
-                uni.getImageInfo({
-                    src: a[0].url,
-                    success: function (e) {
-                        var i = e.width;
-                        i = (i / e.height) * that.mheight;
-                        var s = (0.66 * that.windowWidth - i) / 2;
-                        var c = [
-                            {
-                                url: a[0].url,
-                                picw: i,
-                                pich: that.mheight,
-                                x: s,
-                                y: that.masktop,
-                                scale: 1,
-                                rotate: 0,
-                                active: 'active',
-                                zindex: 1,
-                                clock: '/static/img/clock2.png'
-                            }
-                        ];
-                        var h = {
-                            w: i,
-                            h: that.mheight,
-                            x: s + 0.17 * that.windowWidth,
-                            y: 0.1 * that.windowHeight + that.masktop,
-                            rotate: 0,
-                            types: 'tk',
-                            index: 0
-                        };
-                        that.setData({
-                            tk: c,
-                            pk: h,
-                            kshow: false
-                        });
-                    }
-                });
-            } else {
-                a[0].clock = '/static/img/clock1.png';
-                that.setData({
-                    tk: a
-                });
-            }
-        },
-
         // 更换类型
         handleChangeType() {
             console.log('这里做更换类型的操作')
@@ -887,7 +545,6 @@ export default {
 
         // 图片上传框
         handleUploadImg() {
-            console.log('文件上传')
             var t = this.pics;
             var that = this;
             uni.chooseImage({
@@ -928,17 +585,9 @@ export default {
                                     t[d].active = '';
                                 }
                             }
-                            var o = that.tt;
-                            if (o.length > 0) {
-                                for (var d = 0; d < o.length; d++) {
-                                    o[d].zindex = 5;
-                                    o[d].active = '';
-                                }
-                            }
                             t.push(h);
                             that.setData({
                                 pics: t,
-                                tt: o,
                                 addimgshow: true,
                                 pk: n,
                                 kshow: false
@@ -949,13 +598,10 @@ export default {
             });
         },
 
-        delpic: function (t) {
-            var a = this.pics;
-            a.splice(t.target.dataset.idx, 1);
-            this.setData({
-                pics: a,
-                kshow: true
-            });
+        // 删除我选中那个图片
+        handleDelPicImg (t) {
+            this.pics = this.pics.splice(t, 1)
+            this.kshow = true
         },
 
         // 删除框中图片
@@ -994,13 +640,10 @@ export default {
             }
         },
 
-        deltextimgs: function (t) {
-            var a = this.textimgs;
-            a.splice(t.target.dataset.idx, 1);
-            this.setData({
-                textimgs: a,
-                kshow: true
-            });
+        // 删除已添加的文字图片
+        handleDelTextImg: function (t) {
+            this.textimgs = this.textimgs.splice(t, 1);
+            this.kshow =  true
         },
 
         // 都搞好了，可以提交了，下一步
@@ -1010,10 +653,9 @@ export default {
                     title: '图片生成中...',
                     mask: true
                 });
-                var that = this;
-                a.clearRect(0, 0, that.imgw, that.imgh);
+                a.clearRect(0, 0, this.imgw, this.imgh);
                 a.fillStyle = '#ffffff';
-                a.fillRect(0, 0, that.imgw, that.imgh);
+                a.fillRect(0, 0, this.imgw, this.imgh);
                 a.save();
                 this.drawpic();
             } else {
@@ -1025,7 +667,7 @@ export default {
             }
         },
 
-        // 验证图片大小
+        // 验证图片
         drawpic () {
             var that = this;
             var e = that.imgw / that.mwidth;
@@ -1087,12 +729,7 @@ export default {
                         fileType: 'jpg',
                         quality: 1,
                         success: function (a) {
-                            console.log('完成，最后的图片数据',a);
-                            app.globalData.imgurl = a.tempFilePath;
-                            uni.setStorage({
-                                key: 'phonetype',
-                                data: that.phonetype
-                            });
+                            console.log('完成，最后的图片数据，剩下我就不管了',a.tempFilePath);
                             uni.hideLoading();
                         }
                     });
@@ -1111,10 +748,8 @@ export default {
             c = t.target.dataset.idx;
             s = t.target.dataset.types;
             var a = this.pics;
-            var i = this.tt;
             var h = this.textimgs;
             var n = [];
-            var o = [];
             var d = [];
             if ('pics' == s) {
                 for (l = 0; l < a.length; l++) {
@@ -1136,32 +771,6 @@ export default {
                 };
                 this.setData({
                     pics: n,
-                    tt: i,
-                    textimgs: h,
-                    pk: g,
-                    kshow: false
-                });
-            } else if ('tt' == s) {
-                for (l = 0; l < i.length; l++) {
-                    if (l != c) {
-                        i[l].zindex = 5;
-                        o.push(i[l]);
-                    }
-                }
-                i[c].zindex = 6;
-                o.push(i[c]);
-                g = {
-                    w: i[c].picw * i[c].scale,
-                    h: i[c].pich * i[c].scale,
-                    x: 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2,
-                    y: 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2,
-                    rotate: i[c].rotate,
-                    types: 'tt',
-                    index: o.length - 1
-                };
-                this.setData({
-                    pics: a,
-                    tt: o,
                     textimgs: h,
                     pk: g,
                     kshow: false
@@ -1186,7 +795,6 @@ export default {
                 };
                 this.setData({
                     pics: a,
-                    tt: i,
                     textimgs: d,
                     pk: g,
                     kshow: false
@@ -1208,10 +816,7 @@ export default {
             s = this.pk.types;
             c = this.pk.index;
             var a = this.pics;
-            var i = this.tt;
             var h = this.textimgs;
-            var n = this.mb;
-            var o = this.tk;
             if ('pics' == s) {
                 if (a.length > 0) {
                     for (d = 0; d < a.length; d++) {
@@ -1230,37 +835,10 @@ export default {
                 };
                 this.setData({
                     pics: a,
-                    tt: i,
                     textimgs: h,
-                    mb: n,
-                    tk: o,
                     pk: l
                 });
-            } else if ('tt' == s) {
-                if (h.length > 0) {
-                    for (d = 0; d < i.length; d++) {
-                        i[d].zindex = 5;
-                    }
-                }
-                i[c].zindex = 6;
-                l = {
-                    w: i[c].picw * i[c].scale,
-                    h: i[c].pich * i[c].scale,
-                    x: 0.17 * this.windowWidth + i[c].x + (i[c].picw - i[c].picw * i[c].scale) / 2,
-                    y: 0.1 * this.windowHeight + i[c].y + (i[c].pich - i[c].pich * i[c].scale) / 2,
-                    rotate: i[c].rotate,
-                    types: 'tt',
-                    index: c
-                };
-                this.setData({
-                    pics: a,
-                    tt: i,
-                    textimgs: h,
-                    mb: n,
-                    tk: o,
-                    pk: l
-                });
-            } else if ('textimgs' == s) {
+            }  else if ('textimgs' == s) {
                 if (h.length > 0) {
                     for (var d = 0; d < h.length; d++) {
                         h[d].zindex = 5;
@@ -1278,48 +856,7 @@ export default {
                 };
                 this.setData({
                     pics: a,
-                    tt: i,
                     textimgs: h,
-                    mb: n,
-                    tk: o,
-                    pk: l
-                });
-            } else if ('mb' == s) {
-                n[c].zindex = 6;
-                l = {
-                    w: n[c].picw * n[c].scale,
-                    h: n[c].pich * n[c].scale,
-                    x: 0.17 * this.windowWidth + n[c].x + (n[c].picw - n[c].picw * n[c].scale) / 2,
-                    y: 0.1 * this.windowHeight + n[c].y + (n[c].pich - n[c].pich * n[c].scale) / 2,
-                    rotate: n[c].rotate,
-                    types: 'mb',
-                    index: c
-                };
-                this.setData({
-                    pics: a,
-                    tt: i,
-                    textimgs: h,
-                    mb: n,
-                    tk: o,
-                    pk: l
-                });
-            } else if ('tk' == s) {
-                o[c].zindex = 6;
-                var l = {
-                    w: o[c].picw * o[c].scale,
-                    h: o[c].pich * o[c].scale,
-                    x: 0.17 * this.windowWidth + o[c].x + (o[c].picw - o[c].picw * o[c].scale) / 2,
-                    y: 0.1 * this.windowHeight + o[c].y + (o[c].pich - o[c].pich * o[c].scale) / 2,
-                    rotate: o[c].rotate,
-                    types: 'tk',
-                    index: c
-                };
-                this.setData({
-                    pics: a,
-                    tt: i,
-                    textimgs: h,
-                    mb: n,
-                    tk: o,
                     pk: l
                 });
             }
@@ -1352,32 +889,11 @@ export default {
                         pk: h
                     });
                 } else {
-                    if ('tt' == s) {
+                    if ('textimgs' == s) {
                         that.setData({
-                            tt: i,
+                            textimgs: i,
                             pk: h
                         });
-                    } else {
-                        if ('textimgs' == s) {
-                            that.setData({
-                                textimgs: i,
-                                pk: h
-                            });
-                        } else {
-                            if ('mb' == s) {
-                                that.setData({
-                                    mb: i,
-                                    pk: h
-                                });
-                            } else {
-                                if ('tk' == s) {
-                                    that.setData({
-                                        tk: i,
-                                        pk: h
-                                    });
-                                }
-                            }
-                        }
                     }
                 }
                 p.x = t.touches[0].pageX;
@@ -1416,37 +932,13 @@ export default {
                             bscale: f
                         });
                     } else {
-                        if ('tt' == s) {
+                        if ('textimgs' == s) {
                             that.setData({
-                                tt: i,
+                                textimgs: i,
                                 pk: h,
                                 bscale: f
                             });
-                        } else {
-                            if ('textimgs' == s) {
-                                that.setData({
-                                    textimgs: i,
-                                    pk: h,
-                                    bscale: f
-                                });
-                            } else {
-                                if ('mb' == s) {
-                                    that.setData({
-                                        mb: i,
-                                        pk: h,
-                                        bscale: f
-                                    });
-                                } else {
-                                    if ('tk' == s) {
-                                        that.setData({
-                                            tk: i,
-                                            pk: h,
-                                            bscale: f
-                                        });
-                                    }
-                                }
-                            }
-                        }
+                        } 
                     }
                 }
             }
@@ -1494,36 +986,12 @@ export default {
                             bscale: g
                         });
                     } else {
-                        if ('tt' == s) {
+                        if ('textimgs' == s) {
                             that.setData({
-                                tt: e,
+                                textimgs: e,
                                 pk: h,
                                 bscale: g
                             });
-                        } else {
-                            if ('textimgs' == s) {
-                                that.setData({
-                                    textimgs: e,
-                                    pk: h,
-                                    bscale: g
-                                });
-                            } else {
-                                if ('mb' == s) {
-                                    that.setData({
-                                        mb: e,
-                                        pk: h,
-                                        bscale: g
-                                    });
-                                } else {
-                                    if ('tk' == s) {
-                                        that.setData({
-                                            tk: e,
-                                            pk: h,
-                                            bscale: g
-                                        });
-                                    }
-                                }
-                            }
                         }
                     }
                 } else if ('xz' == t.target.dataset.kn) {
@@ -1546,33 +1014,12 @@ export default {
                             pk: h
                         });
                     } else {
-                        if ('tt' == s) {
+                        if ('textimgs' == s) {
                             that.setData({
-                                tt: e,
+                                textimgs: e,
                                 pk: h
                             });
-                        } else {
-                            if ('textimgs' == s) {
-                                that.setData({
-                                    textimgs: e,
-                                    pk: h
-                                });
-                            } else {
-                                if ('mb' == s) {
-                                    that.setData({
-                                        mb: e,
-                                        pk: h
-                                    });
-                                } else {
-                                    if ('tk' == s) {
-                                        that.setData({
-                                            tk: e,
-                                            pk: h
-                                        });
-                                    }
-                                }
-                            }
-                        }
+                        } 
                     }
                 }
                 p.x = t.touches[0].pageX;
@@ -1654,13 +1101,6 @@ export default {
                     fx: a
                 });
             }
-        },
-
-        inputvalFun: function (t) {
-            o = t.detail.value;
-            this.setData({
-                inputval: o
-            });
         },
 
         surebtn: function () {
@@ -2008,7 +1448,7 @@ export default {
         },
 
         inptch: function () {
-            console.log(333);
+            // 这里是为了取消默认事件
         },
 
         leftbtn: function () {
@@ -2018,10 +1458,11 @@ export default {
             });
         },
 
-        selcttext: function (t) {
+        selcttext: function (types, ind) {
+            console.log(types, ind)
             w = this.pk;
-            s = t.currentTarget.dataset.types;
-            c = t.currentTarget.dataset.ind;
+            s = types;
+            c = ind;
             if (1 == d && 'textimgs' == s && w.index == c) {
                 i = this.textimgs;
                 this.setData({
@@ -2032,7 +1473,7 @@ export default {
                     inputval: i[c].text
                 });
             } else {
-                for (var a = this.pics, e = this.tt, i = this.textimgs, h = this.tk, n = this.mb, o = [], l = [], g = [], p = 0; p < a.length; p++) {
+                for (var a = this.pics, i = this.textimgs, o = [], l = [], g = [], p = 0; p < a.length; p++) {
                     if (p != c) {
                         a[p].zindex = 3;
                         o.push(a[p]);
@@ -2065,33 +1506,8 @@ export default {
                     };
                     this.setData({
                         pics: o,
-                        tt: e,
                         textimgs: i,
                         pk: w,
-                        tk: h,
-                        mb: n,
-                        kshow: false
-                    });
-                } else if ('tt' == s) {
-                    d = false;
-                    e[c].zindex = 6;
-                    l.push(e[c]);
-                    w = {
-                        w: e[c].picw * e[c].scale,
-                        h: e[c].pich * e[c].scale,
-                        x: 0.17 * this.windowWidth + e[c].x + (e[c].picw - e[c].picw * e[c].scale) / 2,
-                        y: 0.1 * this.windowHeight + e[c].y + (e[c].pich - e[c].pich * e[c].scale) / 2,
-                        rotate: e[c].rotate,
-                        types: 'tt',
-                        index: l.length - 1
-                    };
-                    this.setData({
-                        pics: a,
-                        tt: l,
-                        textimgs: i,
-                        pk: w,
-                        tk: h,
-                        mb: n,
                         kshow: false
                     });
                 } else if ('textimgs' == s) {
@@ -2109,54 +1525,11 @@ export default {
                     d = true;
                     this.setData({
                         pics: a,
-                        tt: e,
                         textimgs: g,
                         pk: w,
-                        tk: h,
-                        mb: n,
                         kshow: false
                     });
-                } else if ('tk' == s) {
-                    w = {
-                        w: h[(c = 0)].picw * h[c].scale,
-                        h: h[c].pich * h[c].scale,
-                        x: 0.17 * this.windowWidth + h[c].x + (h[c].picw - h[c].picw * h[c].scale) / 2,
-                        y: 0.1 * this.windowHeight + h[c].y + (h[c].pich - h[c].pich * h[c].scale) / 2,
-                        rotate: h[c].rotate,
-                        types: 'tk',
-                        index: c
-                    };
-                    d = true;
-                    this.setData({
-                        pics: a,
-                        tt: e,
-                        textimgs: i,
-                        pk: w,
-                        tk: h,
-                        mb: n,
-                        kshow: false
-                    });
-                } else if ('mb' == s) {
-                    var w = {
-                        w: n[(c = 0)].picw * n[c].scale,
-                        h: n[c].pich * n[c].scale,
-                        x: 0.17 * this.windowWidth + n[c].x + (n[c].picw - n[c].picw * n[c].scale) / 2,
-                        y: 0.1 * this.windowHeight + n[c].y + (n[c].pich - n[c].pich * n[c].scale) / 2,
-                        rotate: n[c].rotate,
-                        types: 'mb',
-                        index: c
-                    };
-                    d = true;
-                    this.setData({
-                        pics: a,
-                        tt: e,
-                        textimgs: i,
-                        pk: w,
-                        tk: h,
-                        mb: n,
-                        kshow: false
-                    });
-                }
+                }  
             }
         }
     }
