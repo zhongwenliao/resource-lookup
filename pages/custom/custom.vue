@@ -787,7 +787,6 @@ export default {
     },
 
     bindtouchstart: function (t) {
-      console.log("开始拖动", t)
       s = this.pk.types
       c = this.pk.index
       var a = this.pics
@@ -976,11 +975,8 @@ export default {
             zx: n,
             zy: o,
           })
-          console.log(e[c].rotate)
           var w = Math.atan((p.y - o) / (p.x - n))
           var r = Math.atan((t.touches[0].pageY - o) / (t.touches[0].pageX - n))
-          console.log("perAngle", w)
-          console.log("curAngle", r)
           e[c].rotate = e[c].rotate + r - w
           h.rotate = e[c].rotate
           if ("pics" == s) {
