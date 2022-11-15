@@ -24,7 +24,7 @@
             <template v-for="(item, index) in pics" >
                 <image
                     v-if="item.url"
-                    :key="index"
+                    :key="`picImg${index}`"
                     @tap="bindqie"
                     :data-idx="index"
                     data-types="pics"
@@ -52,10 +52,11 @@
             <!-- 文字图片列 -->
             <template v-for="(item, index) in textimgs">
                 <image
+                    v-if="item.url"
+                    :key="`txtImg${index}`"
                     @tap="bindqie"
                     :data-idx="index"
                     data-types="textimgs"
-                    v-if="item.url"
                     :src="item.url"
                     :style="
                         'position:absolute;width: ' +
@@ -73,8 +74,7 @@
                         'deg);transform-origin: center center;z-index:' +
                         item.zindex 
                     "
-                    :key="index"
-            ></image>
+                ></image>
             </template>
             <!-- 上传按钮 -->
             <image @tap="handleUploadImg" class="addimg" v-if="!addimgshow" src="/static/img/img.png" :style="'bottom:' + addimgtop"></image>
@@ -92,11 +92,11 @@
             </view>
             <!-- 已添加图片列表 -->
             <scroll-view scrollX class="scroll-view_H" style="width: 80%">
-                <view @tap.stop.prevent="selcttext('pics',index)" class="li" v-if="pics.length" v-for="(item, index) in pics" :key="index">
+                <view @tap.stop.prevent="selcttext('pics',index)" class="li" v-if="pics.length" v-for="(item, index) in pics" :key="`addPicImg${index}`">
                     <view @tap="handleDelPicImg(index)" class="close">X</view>
                     <image class="imgcl" :src="item.url"></image>
                 </view>
-                <view @tap.stop.prevent="selcttext('textimgs',index)" class="li" v-if="textimgs.length" v-for="(item, index) in textimgs" :key="index">
+                <view @tap.stop.prevent="selcttext('textimgs',index)" class="li" v-if="textimgs.length" v-for="(item, index) in textimgs" :key="`addTxtImg${index}`">
                     <view @tap="handleDelTextImg(index)" class="close">X</view>
                     <image class="imgcl" :src="item.url"></image>
                 </view>
@@ -138,10 +138,11 @@
                 </view>
             </view>
         </view>
+        <!-- 整个页面拖放 -->
         <view
-            @touchend="bindtouchend"
-            @touchmove="bindtouchmove"
             @touchstart="bindtouchstart"
+            @touchmove="bindtouchmove"
+            @touchend="bindtouchend"
             class="picslist"
             v-if="!kshow"
             :style="
@@ -789,6 +790,7 @@ export default {
         },
 
         bindtouchstart: function (t) {
+            console.log("开始",t)
             s = this.pk.types;
             c = this.pk.index;
             var a = this.pics;
@@ -1301,16 +1303,13 @@ export default {
                 textwidth: 0,
                 textheight: 0,
                 inputval: '',
-                fx: [
-                    {
-                        name: '横向',
-                        active: 'active'
-                    },
-                    {
-                        name: '纵向',
-                        active: ''
-                    }
-                ],
+                fx: [{
+                    name: '横向',
+                    active: 'active'
+                }, {
+                    name: '纵向',
+                    active: ''
+                }],
                 falimys: [
                     {
                         val: '/static/img/font1.jpg',
