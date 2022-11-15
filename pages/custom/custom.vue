@@ -1106,10 +1106,15 @@ export default {
         uni.request({
           url: app.globalData.host + "/api/index/textToImage",
           data: {
+            // 这个字段无视
             shop_id: 1,
+            // 文字颜色
             selectcolor: n,
+            // 字体类别
             selectfamily: h,
+            // 横纵
             fx: c,
+            // 文字
             val: a,
           },
           success: function (t) {
