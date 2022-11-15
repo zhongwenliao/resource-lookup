@@ -20,11 +20,15 @@
         <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
       </view>
       <!-- 背景图 -->
-      <view
+      <!-- <view
         class="mask"
         :style="
           'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'
         "
+      ></view> -->
+      <view
+        class="mask"
+        style="background-image: url(/static/img/tuoxie-removebg-preview.png); width: 254px; height: 504px; top: 10 px"
       ></view>
 
       <!-- 图片列 -->
