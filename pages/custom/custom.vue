@@ -154,7 +154,7 @@
           </view>
         </scroll-view>
         <input
-          @tap.stop.prevent="inptch"
+          @tap.stop.prevent="handleCancelDefaultEvent"
           maxlength="12"
           placeholder="最多输入12个字符"
           placeholderStyle="font-size:14px;"
@@ -194,9 +194,10 @@
       <image @tap="handleDelImg(pk.types, pk.index)" class="del" src="/static/img/del.png"></image>
       <!-- 缩放 -->
       <image
-        @touchend.stop.prevent="kdtouchend"
-        @touchmove.stop.prevent="kdtouchmove"
-        @touchstart.stop.prevent="kdtouchstart"
+        @tap.stop.prevent="handleCancelDefaultEvent"
+        @touchstart.stop.prevent="handleTouchZoomStart"
+        @touchmove.stop.prevent="handleTouchZoomMove"
+        @touchend.stop.prevent="handleTouchZoomEnd"
         class="kd"
         :data-idx="pk.index"
         data-kn="kd"
@@ -206,9 +207,10 @@
       ></image>
       <!-- 旋转 -->
       <image
-        @touchend.stop.prevent="kdtouchend"
-        @touchmove.stop.prevent="kdtouchmove"
-        @touchstart.stop.prevent="kdtouchstart"
+        @tap.stop.prevent="handleCancelDefaultEvent"
+        @touchstart.stop.prevent="handleTouchZoomStart"
+        @touchmove.stop.prevent="handleTouchZoomMove"
+        @touchend.stop.prevent="handleTouchZoomEnd"
         class="xz"
         :data-idx="pk.index"
         data-kn="xz"
@@ -244,6 +246,8 @@ var i = false
 var s = ""
 var c = ""
 var h = "SimHei"
+var n = "rgb(0,0,0)"
+var g = true
 var o = ""
 var d = false
 var l = 0
@@ -575,10 +579,9 @@ export default {
     },
 
     // 删除框中图片
-    handleDelImg: function (types, index) {
+    handleDelImg(types, index) {
       var a = this.pk
       var e = this[types]
-      debugger
       e.splice(index, 1)
       if ("pics" == a.types) {
         this.setData({
@@ -612,7 +615,7 @@ export default {
     },
 
     // 删除已添加的文字图片
-    handleDelTextImg: function (t) {
+    handleDelTextImg(t) {
       this.textimgs = this.textimgs.splice(t, 1)
       this.kshow = true
     },
@@ -784,7 +787,7 @@ export default {
     },
 
     bindtouchstart: function (t) {
-      console.log("开始", t)
+      console.log("开始拖动", t)
       s = this.pk.types
       c = this.pk.index
       var a = this.pics
@@ -920,8 +923,7 @@ export default {
       e = false
     },
     // 开始缩放
-    kdtouchstart: function (t) {
-      console.log("开始缩放", t)
+    handleTouchZoomStart: function (t) {
       t.preventDefault()
       i = true
       p.x = t.touches[0].pageX
@@ -933,7 +935,8 @@ export default {
       }
     },
 
-    kdtouchmove: function (t) {
+    // 缩放过程
+    handleTouchZoomMove: function (t) {
       if (i) {
         var that = this
         var e = this[t.target.dataset.types]
@@ -999,7 +1002,8 @@ export default {
       }
     },
 
-    kdtouchend: function (t) {
+    // 缩放结束
+    handleTouchZoomEnd: function (t) {
       i = false
       m.x = 0
       m.y = 0
@@ -1425,9 +1429,8 @@ export default {
       })
     },
 
-    inptch: function () {
-      // 这里是为了取消默认事件
-    },
+    // 这里是为了取消默认事件
+    handleCancelDefaultEvent() {},
 
     leftbtn: function () {
       d = false
