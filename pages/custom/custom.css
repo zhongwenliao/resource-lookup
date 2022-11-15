@@ -207,13 +207,12 @@
 }
 
 .wenzi image {
-  width: 15px;
-  height: 15px;
+  width: 35px;
+  height: 35px;
   background: #f8441f;
   padding: 10px;
   border-radius: 100%;
 }
-
 .add {
   position: absolute;
   top: 77%;
@@ -492,8 +491,8 @@
   width: 100%;
 }
 
-.textedit .textdiv .scroll-view_H{
-    width: 100%
+.textedit .textdiv .scroll-view_H {
+  width: 100%;
 }
 
 .familylist {
