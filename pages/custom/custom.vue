@@ -231,10 +231,6 @@
 // var app = getApp();
 var app = {
   globalData: {
-    shop: {
-      nickname: "随意写的用户名",
-    },
-    shop_id: 1,
     host: "https://30diy.cn",
     types: "0",
     openid: "0932wF100b3gTO1N8J000iCaOS32wF1Y",
@@ -457,12 +453,6 @@ export default {
     })
     a = uni.createCanvasContext("mycanvas")
     var that = this
-    if (t.scene) {
-      var e = decodeURIComponent(t.scene)
-      that.getShopNews(e)
-    } else {
-      that.getShopNews("undefined")
-    }
     uni.getSystemInfo({
       success: function (t) {
         var e = t.windowWidth
@@ -519,36 +509,6 @@ export default {
         },
       })
       uni.hideLoading()
-    },
-
-    getShopNews: function (a) {
-      var that = this
-      uni.showLoading({
-        title: "加载中...",
-        mask: true,
-      })
-      if ("" != app.globalData.openid) {
-        uni.request({
-          url: app.globalData.host + "/api/User/getShopnews",
-          data: {
-            shop_id: 1,
-            openid: app.globalData.openid,
-          },
-          success: function (a) {
-            app.globalData.shop_id = a.data.data.id
-            app.globalData.shop = a.data.data
-            uni.setStorage({
-              key: "shop_id",
-              data: "1",
-            })
-            uni.hideLoading()
-          },
-        })
-      } else {
-        setTimeout(function () {
-          that.getShopNews(a)
-        }, 1000)
-      }
     },
 
     // 更换类型
@@ -1142,6 +1102,7 @@ export default {
           d = false
         }
         var that = this
+        // 这个接口文字生成图片的，需后台生成
         uni.request({
           url: app.globalData.host + "/api/index/textToImage",
           data: {
