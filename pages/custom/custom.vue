@@ -31,7 +31,7 @@
       <template v-for="(item, index) in pics">
         <image
           v-if="item.url"
-          :key="`picImg${index}`"
+          :key="'picImg' + index"
           @tap="bindqie"
           :data-idx="index"
           data-types="pics"
@@ -60,7 +60,7 @@
       <template v-for="(item, index) in textimgs">
         <image
           v-if="item.url"
-          :key="`txtImg${index}`"
+          :key="'txtImg' + index"
           @tap="bindqie"
           :data-idx="index"
           data-types="textimgs"
@@ -110,7 +110,7 @@
           class="li"
           v-if="pics.length"
           v-for="(item, index) in pics"
-          :key="`addPicImg${index}`"
+          :key="'addPicImg' + index"
         >
           <view @tap="handleDelPicImg(index)" class="close">X</view>
           <image class="imgcl" :src="item.url"></image>
@@ -120,7 +120,7 @@
           class="li"
           v-if="textimgs.length"
           v-for="(item, index) in textimgs"
-          :key="`addTxtImg${index}`"
+          :key="'addTxtImg' + index"
         >
           <view @tap="handleDelTextImg(index)" class="close">X</view>
           <image class="imgcl" :src="item.url"></image>
@@ -244,11 +244,9 @@ var i = false
 var s = ""
 var c = ""
 var h = "SimHei"
-var n = "rgb(0,0,0)"
 var o = ""
 var d = false
 var l = 0
-var g = true
 var p = {
   x: 0,
   y: 0,
@@ -270,7 +268,6 @@ var m = {
 export default {
   data() {
     return {
-      canIUse: uni.canIUse("button.open-type.getUserInfo"),
       fillw: 0,
       fillh: 0,
       masktop: 10,
@@ -1440,7 +1437,6 @@ export default {
     },
 
     selcttext: function (types, ind) {
-      console.log(types, ind)
       w = this.pk
       s = types
       c = ind
