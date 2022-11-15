@@ -248,7 +248,7 @@
 				} else {
 					if (classifyID == 6) {
 						uni.navigateTo({
-							url: '/pages/dingzhi/dingzhi'
+							url: '/pages/custom/custom'
 						})
 					} else {
 						uni.navigateTo({

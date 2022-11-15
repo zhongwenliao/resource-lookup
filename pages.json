@@ -9,7 +9,6 @@
 				}
 			}
 		},
-		
 		{
 			"path": "pages/product/product",
 			"style": {
@@ -20,7 +19,8 @@
 					}
 				}
 			}
-		}, {
+		},
+		{
 			"path": "pages/set/set",
 			"style": {
 				"navigationBarTitleText": "设置"
@@ -96,10 +96,9 @@
 				// #endif
 				"app-plus": {
 					"bounce": "none"
-
 				}
 			}
-		}, 
+		},
 		{
 			"path": "pages/order/order",
 			"style": {
@@ -108,7 +107,7 @@
 					"bounce": "none"
 				}
 			}
-		}, 
+		},
 		{
 			"path": "pages/order/ddmx",
 			"style": {
@@ -117,7 +116,7 @@
 					"bounce": "none"
 				}
 			}
-		}, 
+		},
 		{
 			"path": "pages/order/orderjs",
 			"style": {
@@ -141,46 +140,44 @@
 			"style": {
 				"navigationBarTitleText": "创建订单"
 			}
-		}, 
+		},
 		{
 			"path": "pages/address/address",
 			"style": {
 				"navigationBarTitleText": "收货地址"
 			}
-		}, 
+		},
 		{
 			"path": "pages/address/addressManage",
 			"style": {
 				"navigationBarTitleText": "新增地址"
 			}
-			
-		}, 
+		},
 		{
 			"path": "pages/address/addressedit",
 			"style": {
 				"navigationBarTitleText": "修改地址"
 			}
-			
 		},
-	    {
-            "path" : "pages/notice/notice",
-            "style" : {
+		{
+			"path": "pages/notice/notice",
+			"style": {
 				"navigationBarTitleText": "通知"
 			}
-        },
-        {
-            "path" : "pages/category/category",
-            "style" : {
+		},
+		{
+			"path": "pages/category/category",
+			"style": {
 				"navigationBarTitleText": ""
 			}
-        },
-        {
-            "path" : "pages/product/list",
-            "style" : {
+		},
+		{
+			"path": "pages/product/list",
+			"style": {
 				"enablePullDownRefresh": true,
 				"navigationBarTitleText": "商品列表"
 			}
-        },
+		},
 		{
 			"path": "pages/user/myTeam",
 			"style": {
@@ -227,8 +224,8 @@
 				"app-plus": {
 					"bounce": "none"
 				},
-				"enablePullDownRefresh":true
-			}			
+				"enablePullDownRefresh": true
+			}
 		},
 		{
 			"path": "pages/spread/qrcode",
@@ -272,110 +269,97 @@
 				"navigationBarTitleText": "充值"
 			}
 		},
-		 {
+		{
 			"path": "pages/finance/transactionPassword",
 			"style": {
 				"navigationBarTitleText": "设置交易密码"
 			}
-		 },
-		 {
+		},
+		{
 			"path": "pages/user/given",
 			"style": {
 				"navigationBarTitleText": "优惠券转赠"
 			}
-		 },
-		 {
+		},
+		{
 			"path": "pages/spread/web",
 			"style": {
 				"navigationBarTitleText": "" //H5页面
 			}
-		 },
-		 {
+		},
+		{
 			"path": "pages/category/activity",
 			"style": {
 				"navigationBarTitleText": "热门活动"
 			}
-		 },
-		 {
-		 	"path": "pages/category/shangPinListClient",
-		 	"style": {
-		 		"navigationBarTitleText": ""
-		 	}
-		 },
-		 {
-		 	"path": "pages/user/aboutUs",
-		 	"style": {
-		 		"navigationBarTitleText": "联系我们"
-		 	}
-		 },
-		 {
-		 	"path": "pages/user/myGroup",
-		 	"style": {
-		 		"navigationBarTitleText": "我的团餐"
-		 	}
-		 },
-		 {
-		 	"path": "pages/user/addGroup",
-		 	"style": {
-		 		"navigationBarTitleText": "我要开团"
-		 	}
-		 },
-		 {
-		 	"path": "pages/user/joinGroup",
-		 	"style": {
-		 		"navigationBarTitleText": "加入拼团"
-		 	}
 		},
-        {
-            "path" : "pages/adoption/adoption",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
+		{
+			"path": "pages/category/shangPinListClient",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/user/aboutUs",
+			"style": {
+				"navigationBarTitleText": "联系我们"
+			}
+		},
+		{
+			"path": "pages/user/myGroup",
+			"style": {
+				"navigationBarTitleText": "我的团餐"
+			}
+		},
+		{
+			"path": "pages/user/addGroup",
+			"style": {
+				"navigationBarTitleText": "我要开团"
+			}
+		},
+		{
+			"path": "pages/user/joinGroup",
+			"style": {
+				"navigationBarTitleText": "加入拼团"
+			}
+		},
+		{
+			"path": "pages/adoption/adoption",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
 				"onReachBottomDistance": 300
-            }
-        },
-		{
-		    "path" : "pages/userName/userName",
-		    "style" :
-		    {
-		        "navigationBarTitleText": "昵称",
-		        "enablePullDownRefresh": false
-		    }
+			}
 		},
-        {
-            "path" : "pages/userinfo/userinfo",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "个人信息",
-                "enablePullDownRefresh": false
-            }
-        },
-        {
-            "path" : "pages/finance/userpoint",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "积分明细",
-                "enablePullDownRefresh": false
-            }
-        },
 		{
-            "path" : "pages/dingzhi/dingzhi",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "个性私人定制哇咔咔",
-                "enablePullDownRefresh": false
-            }
-        },
+			"path": "pages/userName/userName",
+			"style": {
+				"navigationBarTitleText": "昵称",
+				"enablePullDownRefresh": false
+			}
+		},
 		{
-            "path" : "pages/custom/custom",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "定制",
-                "enablePullDownRefresh": false
-            }
-        }
-    ],
+			"path": "pages/userinfo/userinfo",
+			"style": {
+				"navigationBarTitleText": "个人信息",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/finance/userpoint",
+			"style": {
+				"navigationBarTitleText": "积分明细",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/custom/custom",
+			"style": {
+				"navigationBarTitleText": "定制",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
 	"easycom": {
 		"^w-(.*)": "@/uni_modules/wmf-code/components/w-$1/w-$1.vue"
 	},
@@ -390,7 +374,8 @@
 		"selectedColor": "#FD7031",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
-		"list": [{
+		"list": [
+			{
 				"pagePath": "pages/index/index",
 				"iconPath": "static/tab-home.png",
 				"selectedIconPath": "static/tab-home-current.png",
