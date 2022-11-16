@@ -28,18 +28,15 @@
       ></view> -->
       <view
         class="mask"
-        style="background-image: url(/static/img/tuoxie-removebg-preview.png); width: 254px; height: 504px; top: 10 px"
+        style="background-image: url(/static/img/tuoxie.jpg); width: 254px; height: 504px;"
       ></view>
 
-      <!-- 图片列 -->
+      <!-- 普通图片列 -->
       <template v-for="(item, index) in pics">
         <image
           v-if="item.url"
           :key="'picImg' + index"
-          @tap="bindqie"
-          :data-idx="index"
-          data-types="pics"
-          :id="'pics' + index"
+          @tap="bindqie(index, 'pics')"
           :src="item.url"
           :style="
             'position:absolute;width: ' +
@@ -65,9 +62,7 @@
         <image
           v-if="item.url"
           :key="'txtImg' + index"
-          @tap="bindqie"
-          :data-idx="index"
-          data-types="textimgs"
+          @tap="bindqie(index, 'textimgs')"
           :src="item.url"
           :style="
             'position:absolute;width: ' +
@@ -722,14 +717,17 @@ export default {
       t.detail.height
     },
 
-    bindqie: function (t) {
-      c = t.target.dataset.idx
-      s = t.target.dataset.types
+    bindqie(idx, types) {
+      // console.log("看看这个T是什么东西", t)
+      // c = t.target.dataset.idx
+      // s = t.target.dataset.types
+      c = idx
+      s = types
       var a = this.pics
       var h = this.textimgs
       var n = []
       var d = []
-      if ("pics" == s) {
+      if (s == "pics") {
         for (l = 0; l < a.length; l++) {
           if (l != c) {
             a[l].zindex = 3
@@ -753,7 +751,7 @@ export default {
           pk: g,
           kshow: false,
         })
-      } else if ("textimgs" == s) {
+      } else if (s == "textimgs") {
         for (var l = 0; l < h.length; l++) {
           if (l != c) {
             h[l].zindex = 5
@@ -777,16 +775,6 @@ export default {
           pk: g,
           kshow: false,
         })
-      }
-      if (t.touches.length < 2) {
-        e = true
-        p.x = t.touches[0].pageX
-        p.y = t.touches[0].pageY
-      } else {
-        w.x1 = t.touches[0].pageX
-        w.y1 = t.touches[0].pageY
-        w.x2 = t.touches[1].pageX
-        w.y2 = t.touches[1].pageY
       }
     },
 
