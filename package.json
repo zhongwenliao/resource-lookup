@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "image-tools": "^1.4.0",
     "jweixin-module": "^1.6.0",
     "style-loader": "^2.0.0",
     "vue": "^2.6.10"

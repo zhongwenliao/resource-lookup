@@ -143,13 +143,9 @@
 
 .mask {
   z-index: 1;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  background-size: 100% 100%;
-  pointer-events: none;
 }
 
+.mask,
 .mbimg {
   position: absolute;
   top: 10px;

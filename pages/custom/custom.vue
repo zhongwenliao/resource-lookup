@@ -20,23 +20,26 @@
         <view class="types" v-if="!addshow">可用单指拖动 双指缩放</view>
       </view>
       <!-- 背景图 -->
-      <!-- <view
+      <view
         class="mask"
         :style="
           'background-image:url(' + bg + ');width:' + mwidth + 'px;height: ' + mheight + 'px;top:' + masktop + 'px'
         "
-      ></view> -->
-      <view
-        class="mask"
-        style="background-image: url(/static/img/tuoxie.jpg); width: 254px; height: 504px;"
       ></view>
+      <!-- 	  <view
+	          class="mask"
+	          style="background-image: url(/static/01.jpg); width: 254px; height: 504px; top: 10 px"
+	        ></view> -->
 
-      <!-- 普通图片列 -->
+      <!-- 图片列 -->
       <template v-for="(item, index) in pics">
         <image
           v-if="item.url"
           :key="'picImg' + index"
-          @tap="bindqie(index, 'pics')"
+          @tap="bindqie"
+          :data-idx="index"
+          data-types="pics"
+          :id="'pics' + index"
           :src="item.url"
           :style="
             'position:absolute;width: ' +
@@ -62,7 +65,9 @@
         <image
           v-if="item.url"
           :key="'txtImg' + index"
-          @tap="bindqie(index, 'textimgs')"
+          @tap="bindqie"
+          :data-idx="index"
+          data-types="textimgs"
           :src="item.url"
           :style="
             'position:absolute;width: ' +
@@ -229,6 +234,8 @@
 </template>
 
 <script>
+import { baseUrl } from "../../utils/api.js"
+import { pathToBase64, base64ToPath } from 'image-tools'
 // var app = getApp();
 var app = {
   globalData: {
@@ -283,7 +290,7 @@ export default {
       left: 0,
       cshow: true,
       // 默认图片
-      bg: "https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr",
+      bg: "https://zddimages.abillchen.top/01.jpg",
       pics: [],
       inputval: "",
       addimgshow: false,
@@ -473,8 +480,10 @@ export default {
       })
 
       uni.getImageInfo({
-        src: "https://7n.30diy.cn/FioJwgE2AQOxNuPTmt2gQ8wOFlAr",
+        src: "https://zddimages.abillchen.top/01.jpg",
+        //src : "https://30diy.cn/public/llimg/1668700776_462.png",
         success: function (t) {
+          console.log("getImageInfo==" + t)
           c = t.width
           h = t.height
           if (c < h) {
@@ -570,7 +579,63 @@ export default {
         },
       })
     },
-
+    /**
+     * setData polyfill 勿删!!!
+     * 用于转换后的uniapp的项目能直接使用this.setData()函数
+     * @param {*} obj
+     * @param {*} callback
+     */
+    setData: function (obj, callback) {
+      let that = this
+      const handleData = (tepData, tepKey, afterKey) => {
+        var tepData2 = tepData
+        tepKey = tepKey.split(".")
+        tepKey.forEach((item) => {
+          if (tepData[item] === null || tepData[item] === undefined) {
+            let reg = /^[0-9]+$/
+            tepData[item] = reg.test(afterKey) ? [] : {}
+            tepData2 = tepData[item]
+          } else {
+            tepData2 = tepData[item]
+          }
+        })
+        return tepData2
+      }
+      const isFn = function (value) {
+        return typeof value == "function" || false
+      }
+      Object.keys(obj).forEach(function (key) {
+        let val = obj[key]
+        key = key.replace(/\]/g, "").replace(/\[/g, ".")
+        let front, after
+        let index_after = key.lastIndexOf(".")
+        if (index_after != -1) {
+          after = key.slice(index_after + 1)
+          front = handleData(that, key.slice(0, index_after), after)
+        } else {
+          after = key
+          front = that
+        }
+        if (front.$data && front.$data[after] === undefined) {
+          Object.defineProperty(front, after, {
+            get() {
+              return front.$data[after]
+            },
+            set(newValue) {
+              front.$data[after] = newValue
+              that.hasOwnProperty("$forceUpdate") && that.$forceUpdate()
+            },
+            enumerable: true,
+            configurable: true,
+          })
+          front[after] = val
+        } else {
+          that.$set(front, after, val)
+        }
+      })
+      // this.$forceUpdate();
+      isFn(callback) && this.$nextTick(callback)
+    },
     // 删除我选中那个图片
     handleDelPicImg(t) {
       this.pics = this.pics.splice(t, 1)
@@ -581,9 +646,10 @@ export default {
     handleDelImg(types, index) {
       var a = this.pk
       var e = this[types]
+      var that = this
       e.splice(index, 1)
       if ("pics" == a.types) {
-        this.setData({
+        that.setData({
           pics: e,
           pk: {
             x: 0,
@@ -597,7 +663,7 @@ export default {
         })
       } else {
         if ("textimgs" == a.types) {
-          this.setData({
+          that.setData({
             textimgs: e,
             pk: {
               x: 0,
@@ -612,7 +678,6 @@ export default {
         }
       }
     },
-
     // 删除已添加的文字图片
     handleDelTextImg(t) {
       this.textimgs = this.textimgs.splice(t, 1)
@@ -702,7 +767,43 @@ export default {
             fileType: "jpg",
             quality: 1,
             success: function (a) {
-              console.log("完成，最后的图片数据，剩下我就不管了", a.tempFilePath)
+              console.log("完成，最后的图片数据，剩下我就不管了", JSON.stringify(a))
+
+              that
+                .$http(
+                  "qiNiuToken",
+                  JSON.stringify({
+                    token: uni.getStorageSync("token"),
+                  })
+                )
+                .then((res) => {
+                  base64ToPath(a.tempFilePath)
+                    .then((path) => {
+                      console.log(`base64ToPath path:${path}`)
+                      uni.uploadFile({
+                        url: "https://upload.qiniup.com",
+                        filePath: path,
+                        name: "file",
+                        formData: {
+                          token: res.data.para.upToken,
+                        },
+                        success: (uploadFileRes) => {
+                          var jsondata = JSON.parse(uploadFileRes.data)
+                          console.log("https://zddimages.abillchen.top/" + JSON.stringify(jsondata))
+                          // that.eggUserList.forEach(item => {
+                          // 	if (item.marketID == marketID) {
+                          // 		item.payImgUrl = 'https://zddimages.abillchen.top/' + jsondata.hash
+                          // 		console.log("alter upload0="+item.payImgUrl);
+                          // 	}
+                          // });
+                        },
+                      })
+                    })
+                    .catch((error) => {
+                      console.error(`base64ToPath error:${error}`)
+                    })
+                })
+
               uni.hideLoading()
             },
           })
@@ -717,17 +818,16 @@ export default {
       t.detail.height
     },
 
-    bindqie(idx, types) {
-      // console.log("看看这个T是什么东西", t)
-      // c = t.target.dataset.idx
-      // s = t.target.dataset.types
-      c = idx
-      s = types
+    bindqie: function (t) {
+      c = t.target.dataset.idx
+      s = t.target.dataset.types
       var a = this.pics
       var h = this.textimgs
       var n = []
       var d = []
-      if (s == "pics") {
+      var that = this
+
+      if ("pics" == s) {
         for (l = 0; l < a.length; l++) {
           if (l != c) {
             a[l].zindex = 3
@@ -745,13 +845,13 @@ export default {
           types: "pics",
           index: n.length - 1,
         }
-        this.setData({
+        that.setData({
           pics: n,
           textimgs: h,
           pk: g,
           kshow: false,
         })
-      } else if (s == "textimgs") {
+      } else if ("textimgs" == s) {
         for (var l = 0; l < h.length; l++) {
           if (l != c) {
             h[l].zindex = 5
@@ -769,12 +869,22 @@ export default {
           types: "textimgs",
           index: d.length - 1,
         }
-        this.setData({
+        that.setData({
           pics: a,
           textimgs: d,
           pk: g,
           kshow: false,
         })
+      }
+      if (t.touches.length < 2) {
+        e = true
+        p.x = t.touches[0].pageX
+        p.y = t.touches[0].pageY
+      } else {
+        w.x1 = t.touches[0].pageX
+        w.y1 = t.touches[0].pageY
+        w.x2 = t.touches[1].pageX
+        w.y2 = t.touches[1].pageY
       }
     },
 
@@ -783,6 +893,7 @@ export default {
       c = this.pk.index
       var a = this.pics
       var h = this.textimgs
+      var that = this
       if ("pics" == s) {
         if (a.length > 0) {
           for (d = 0; d < a.length; d++) {
@@ -799,7 +910,7 @@ export default {
           types: "pics",
           index: c,
         }
-        this.setData({
+        that.setData({
           pics: a,
           textimgs: h,
           pk: l,
@@ -820,7 +931,7 @@ export default {
           types: "textimgs",
           index: c,
         }
-        this.setData({
+        that.setData({
           pics: a,
           textimgs: h,
           pk: l,
@@ -1002,12 +1113,13 @@ export default {
     },
 
     wenzibtn: function () {
+      var that = this
       if (this.addshow) {
         this.setData({
           addshow: false,
         })
       } else {
-        this.setData({
+        that.setData({
           addshow: true,
         })
       }
@@ -1015,22 +1127,24 @@ export default {
     },
 
     selectfamily: function (t) {
+      var that = this
       for (var a = this.falimys, e = 0; e < a.length; e++) {
         a[e].active = ""
       }
       a[t.target.dataset.idx].active = "active"
-      this.setData({
+      that.setData({
         falimys: a,
       })
       h = a[t.target.dataset.idx].val
     },
 
     selectcolor: function (t) {
+      var that = this
       for (var a = this.colors, e = 0; e < a.length; e++) {
         a[e].active = ""
       }
       a[t.currentTarget.dataset.idx].active = "active"
-      this.setData({
+      that.setData({
         colors: a,
       })
       n = a[t.currentTarget.dataset.idx].val
@@ -1039,11 +1153,12 @@ export default {
     fxbtn: function (t) {
       var a = this.fx
       a[0].active = ""
+      var that = this
       a[1].active = ""
       a[t.target.dataset.idx].active = "active"
       if ("active" == a[0].active) {
         if ("" == o) {
-          this.setData({
+          that.setData({
             textwidth: 600,
             textheight: 80,
             fx: a,
@@ -1052,14 +1167,14 @@ export default {
           var e = uni.createCanvasContext("textcanvas")
           e.font = "50px " + h
           var i = e.measureText(o)
-          this.setData({
+          that.setData({
             textwidth: i.width,
             textheight: 80,
             fx: a,
           })
         }
       } else {
-        this.setData({
+        that.setData({
           textwidth: 80,
           textheight: 600,
           fx: a,
@@ -1093,7 +1208,9 @@ export default {
         var that = this
         // 这个接口文字生成图片的，需后台生成
         uni.request({
-          url: app.globalData.host + "/api/index/textToImage",
+          method: "POST",
+          //url: app.globalData.host + "/api/index/textToImage",
+          url: "https://shoe.abillchen.top/textToImage",
           data: {
             // 这个字段无视
             shop_id: 1,
@@ -1108,16 +1225,23 @@ export default {
           },
           success: function (t) {
             var a = t.data.data
-            uni.getImageInfo({
-              src: a,
+            console.log("a===" + a)
+            uni.request({
+              method: "POST",
+              url: "https://shoe.abillchen.top/imgInfoByUrl",
+              data: {
+                url: a,
+              },
+
               success: function (t) {
-                var a = t.path
-                var i = 0.5 * t.width
-                var s = 0.5 * t.height
+                var a = t.data.imgInfo
+                console.log("tttt=" + JSON.stringify(a))
+                var i = 0.5 * a.width
+                var s = 0.5 * a.height
                 var c = (0.6 * that.windowWidth - i) / 2
                 var h = that.masktop + (that.mheight - s) / 2
                 var n = {
-                  url: a,
+                  url: a.url,
                   picw: i,
                   pich: s,
                   x: c,
@@ -1125,7 +1249,7 @@ export default {
                   scale: 1,
                   rotate: 0,
                   active: "active",
-                  zindex: 6,
+                  zindex: 4,
                   falimys: that.falimys,
                   fx: that.fx,
                   colors: that.colors,
@@ -1428,12 +1552,14 @@ export default {
     },
 
     selcttext: function (types, ind) {
+      var that = this
       w = this.pk
       s = types
       c = ind
+
       if (1 == d && "textimgs" == s && w.index == c) {
         i = this.textimgs
-        this.setData({
+        that.setData({
           addshow: true,
           falimys: i[c].falimys,
           fx: i[c].fx,
@@ -1472,7 +1598,7 @@ export default {
             types: "pics",
             index: o.length - 1,
           }
-          this.setData({
+          that.setData({
             pics: o,
             textimgs: i,
             pk: w,
@@ -1491,7 +1617,7 @@ export default {
             index: g.length - 1,
           }
           d = true
-          this.setData({
+          that.setData({
             pics: a,
             textimgs: g,
             pk: w,
