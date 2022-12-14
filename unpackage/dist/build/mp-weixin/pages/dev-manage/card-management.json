@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "卡管理",
+  "usingComponents": {
+    "uni-base-page": "/components/uni-base-page/uni-base-page"
+  }
+}

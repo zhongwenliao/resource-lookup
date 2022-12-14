@@ -170,19 +170,20 @@
 			}
 
 		},
+		// {
+		//     "path" : "pages/home/operationList/index",
+		//     "style" :                                                                                    
+		//     {
+		// 		"navigationStyle": "custom",
+		//         "navigationBarTitleText": "操作列表",
+		//         "enablePullDownRefresh": false
+		//     },
+		// 	"meta": {
+		// 		"auth": true,
+		// 		"zoneId": true
+		// 	}  
+		// },
 		{
-		    "path" : "pages/home/operationList/index",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "操作列表",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}  
-		},{
 			"path": "pages/user/propertyPass",
 			"style": {
 				"navigationStyle": "custom",

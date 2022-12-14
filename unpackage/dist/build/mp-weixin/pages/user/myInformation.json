@@ -1,0 +1,9 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "我的消息",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "z-paging": "/uni_modules/z-paging/components/z-paging/z-paging",
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar"
+  }
+}

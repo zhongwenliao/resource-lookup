@@ -1,0 +1,1 @@
+<view class="search-view"><view class="{{['search-input-view',centerd?'center':'']}}"><uni-icons class="search-icon" vue-id="07d71fe8-1" type="search" size="30" bind:__l="__l"></uni-icons><input class="search-input" type="text" placeholder="{{common['input']}}" data-event-opts="{{[['input',[['_onInput',['$event']]]]]}}" bindinput="__e"/></view></view>

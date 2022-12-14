@@ -4,7 +4,7 @@ var mpBluetoothSDK = null;
 // 就目前而言，小程序平台只考虑微信小程序和支付宝小程序开发，其他小程序暂不考虑
 // 微信小程序
 // #ifdef MP-WEIXIN
-mpBluetoothSDK = require("./doormaster-weixin-bluetooth-sdk-v1.7.js");
+mpBluetoothSDK = require("./doormaster-weixin-bluetooth-sdk-v1.5.js");
 // #endif
 
 // 支付宝小程序
@@ -666,8 +666,10 @@ class BluetoothSDKUtil {
 			
 			bluetoothPlugin.setAPNSetting(devObj, configParam, result => {
 				var errorCode = result.errorCode;
-				if (callback && typeof callback == "function") {					callback(errorCode);
-					return				}
+				if (callback && typeof callback == "function") {
+					callback(errorCode);
+					return
+				}
 				
 				if (errorCode === 0) {
 					// errorMsg = "蓝牙配置APN成功";

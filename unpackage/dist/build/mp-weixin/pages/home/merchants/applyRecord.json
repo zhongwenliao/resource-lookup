@@ -1,0 +1,12 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "申请记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "z-paging": "/uni_modules/z-paging/components/z-paging/z-paging",
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
+    "u-gap": "/uview-ui/components/u-gap/u-gap",
+    "u-checkbox": "/uview-ui/components/u-checkbox/u-checkbox",
+    "u-image": "/uview-ui/components/u-image/u-image"
+  }
+}
