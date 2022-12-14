@@ -1,0 +1,16 @@
+
+page {
+	background: #F9F9F9;
+}
+
+
+.bobo{
+	margin-top: 60rpx;
+	margin-left: 40rpx;
+}
+.bobo-a{
+	margin-top: 20rpx;
+	color: #333333;
+	font-family: PingFang SC;
+}
+

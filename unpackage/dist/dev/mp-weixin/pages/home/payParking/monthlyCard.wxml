@@ -1,0 +1,1 @@
+<page vue-id="1d248c41-1" bind:__l="__l" vue-slots="{{['default']}}"><u-navbar vue-id="{{('1d248c41-2')+','+('1d248c41-1')}}" title="月卡申请流程" bind:__l="__l"></u-navbar><view class="bobo"><view class="bobo-a">1、请提供月卡申请人身份证复印件;</view><view class="bobo-a">2、请提供办理车辆行驶证复印件;</view><view class="bobo-a">3、前往微谷A座155物业办公室申请办理;</view></view></page>

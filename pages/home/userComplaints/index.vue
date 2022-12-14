@@ -1,0 +1,235 @@
+<template>
+	<page class="body">
+		<!-- 有数据时 -->
+		<z-paging
+			:auto="false"
+			ref="paging"
+			v-model="dataList"
+			@query="getInfo"
+			:emptyViewText="'暂无信息,请先发布信息'"
+			:emptyViewImg="'/static/home/repairs/fabuxinxi.png'"
+			:emptyViewStyle="{ 'margin-top': '-200upx' }"
+			:emptyViewImgStyle="{ 'width': '641upx', 'height': '297upx' }">
+			<view slot="top" class="tops" :style="topBackground">
+				<u-navbar title="" :border-bottom="false" back-icon-color="#ffffff" :background="navbarBackground"></u-navbar>
+			</view>
+			<view class="content">
+				<view class="boxs" v-for="(item, index) in dataList" @click="goRepairProgress(item)">
+					<view class="boxs-top">
+						<view class="boxs-top-image" >
+							<u-image width="30upx" height="30upx" src="/static/userComplaints/weixiu.png"></u-image>
+						</view>
+						<span class="u-font-32 boxs-top-text">{{ item.classificationName }}</span>
+					</view>
+					<view class="boxs-center">
+						<view class="boxs-center-left">
+							<view class="u-m-t-10">投诉地址：{{ item.roomName }}</view>
+							<view class="u-m-t-10">提交时间：{{ item.createTime}}</view>
+						</view>
+						<view class="boxs-center-right" :class="item.processingStatus !== 4 ? 'bules' : 'grays'">
+							{{ item.processingStatus === 0 || item.processingStatus === 1 ? '待处理' :
+								(item.processingStatus === 4 ? '已完成' : '处理中') }}
+						</view>
+					</view>
+				</view>
+			</view>
+			<u-toast ref="uToast" />
+			<!-- 没有数据时 -->
+		</z-paging>
+		<!-- 投诉按钮 -->
+		<view class="fixed" @click="goRepairApplication" v-if="$permission(['zoneComplaint:addZoneComplaint'])">
+			<u-image width="158upx" height="164upx" src="/static/userComplaints/tousujianyi.png"></u-image>
+		</view>
+		<!-- <view class="dianhua">
+			<u-image width="28upx" height="28upx" src="../../../static/userComplaints/dianhua.png"></u-image>
+		</view>
+		<view class="zaixian">
+			<u-image width="130upx" height="42upx" src="../../../static/userComplaints/24xiaoshizaixian.png"></u-image>
+		</view>
+		<view class="shoujitubiao">
+			<u-image width="28upx" height="28upx" src="../../../static/userComplaints/shoujitubiao.png"></u-image>
+		</view>
+		<view class="jinjitousu">
+			<u-image width="196upx" height="35upx" src="../../../static/userComplaints/jinjitousudianhua.png"></u-image>
+		</view> -->
+	</page>
+	
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				// 当前租户id
+				enterpriseId: uni.getStorageSync("userInfo").enterpriseId,
+				// 列表
+				dataList: [],
+				// 导航栏的背景图
+				topBackground: {
+					backgroundImage: 'url(' + '../../../static/userComplaints/toushuxinxi1.png' + ')',
+					backgroundSize: '100% 100%',
+					backgroundRepeat: 'no-repeat'
+				},
+				// 导航栏的背景颜色不赋予颜色
+				navbarBackground: {
+					backgroundColor: ''
+				},
+				// 处理状态
+				processingStatus: '',
+			}
+		},
+		onShow() {
+			this.$nextTick(() => {
+				this.$refs.paging.reload();
+			})
+		},
+		onLoad() {
+			
+		},
+		onReady() {
+			if (uni.getStorageSync('zoneInfo').id) {
+				console.log('I have got')
+			}else{
+				this.$refs.uToast.show({
+					title: '请先选择园区',
+					type: 'error'
+				})
+			}
+		},
+		methods: {
+			goRepairProgress(item) {
+				console.log(item.processingStatus);
+				
+				if(item.processingStatus === 0 || item.processingStatus === 1 || item.processingStatus === 2 || item.processingStatus === 4 || item.processingStatus === 5) {
+					this.$Router.push({
+						path: '/pages/home/userComplaints/complaintProgress',
+						query: { id: item.id }
+					});
+				}
+			},
+			getInfo(pageNo, pageSize) {
+				let that = this
+				const params = {
+					currPage: pageNo,
+					pageSize: pageSize,
+					enterpriseId: that.enterpriseId
+				}
+				that.$api('userComplaints.getComplaintsList', params).then(res => {
+					if (res.code == 200) {
+						that.$refs.paging.complete(res.data.list)
+					} else {
+						that.$refs.paging.complete(false);
+					}
+				}).catch((e) => {
+					that.$refs.paging.complete(false);
+				});
+			},
+			goRepairApplication() {
+				this.$Router.push({
+					path: '/pages/home/userComplaints/sugGestions'
+				});
+			},
+			// 跳转到报修进度页
+		}
+	}
+</script>
+
+<style>
+	page {
+		background: #F9F9F9;
+	}
+</style>
+<style lang="scss" scoped>
+	.body {
+		.tops {
+			height: 340upx;
+		}
+		.content {
+			padding: 20upx;
+			.boxs {
+				height: 214upx;
+				background: #FFFFFF;
+				border-radius: 15upx;
+				margin-bottom: 20upx;
+				padding: 30upx 20upx 30upx 10upx;
+				position: relative;
+				.boxs-top {
+					height: 50upx;
+					line-height: 50upx;
+					.boxs-top-image {
+						height: 50upx;
+						display: inline-block;
+						vertical-align: middle;
+						margin-right: 10upx;
+					}
+					.boxs-top-text {
+						font-weight: bold;
+					}
+				}
+				.boxs-center {
+					.boxs-center-left {
+						display: inline-block;
+						width: 82%;
+					}
+					.boxs-center-right {
+						color: white;
+						width: 120upx;
+						height: 60upx;
+						text-align: center;
+						line-height: 60upx;
+						border-radius: 6upx;
+						position: absolute;
+						right: 20upx;
+						top: 50%;
+						transform: translateY(-50%);
+					}
+				}
+			}
+		}
+		.fixed {
+			position: fixed;
+			right: 44upx;
+			bottom: 172upx;
+		}
+		.bules {
+			background-color: #3E76F4;
+		}
+		.grays {
+			background-color: #CCCCCC;
+		}
+		.jinjitousu{
+			position: absolute;
+			margin-left: 58rpx;
+			margin-top: 175rpx;
+		}
+		.dianhua{
+			position: absolute;
+			margin-left: 80rpx;
+			margin-top: 271rpx;
+		}
+		.zaixian{
+			position: absolute;
+			margin-left: 261rpx;
+			margin-top: 174rpx;
+		}
+		.shoujitubiao{
+			position: absolute;
+			margin-left: 80rpx;
+			margin-top: 236rpx;
+		}
+		.tel{
+			position: absolute;
+			margin-left: 118rpx;
+			margin-top: 236rpx;
+			font-size: 28upx;
+			color: #FFFFFF;
+		}
+		.tel1{
+			position: absolute;
+			margin-left: 119rpx;
+			margin-top: 271rpx;
+			font-size: 28upx;
+			color: #FFFFFF;
+		}
+	}
+</style>

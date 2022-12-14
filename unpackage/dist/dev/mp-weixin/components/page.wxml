@@ -1,0 +1,1 @@
+<view class="{{['cpage','data-v-98c87e6c',isWaterMark?'water-mark':'']}}"><slot></slot><u-no-network vue-id="80464d08-1" image="/static/error/wuwangluo.png" class="data-v-98c87e6c" bind:__l="__l"></u-no-network></view>

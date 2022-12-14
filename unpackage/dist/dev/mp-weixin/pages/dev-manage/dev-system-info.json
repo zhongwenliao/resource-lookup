@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "获取系统信息",
+  "usingComponents": {
+    "uni-base-page": "/components/uni-base-page/uni-base-page"
+  }
+}

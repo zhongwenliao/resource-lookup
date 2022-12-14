@@ -1,0 +1,25 @@
+{
+	"name": "YangChuan-YCiOSFileSelect",
+	"id": "YangChuan-YCiOSFileSelect",
+	"version": "1.3",
+	"description": "iOS打开文件app选取word,pdf,text,xls文件",
+	"_dp_type": "nativeplugin",
+	"_dp_nativeplugin": {
+		"ios": {
+			"plugins": [
+				{
+					"type": "module",
+					"name": "YangChuan-YCiOSFileSelect",
+					"class": "YCiOSFileSelectModule"
+				}
+			],
+			"hooksClass": "YCiOSFileSelectProxy",
+			"integrateType": "library",
+			"deploymentTarget": "9.0",
+			"frameworks": [],
+			"privacies": [
+				
+			]
+		}
+	}
+}

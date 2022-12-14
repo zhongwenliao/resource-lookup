@@ -1,0 +1,21 @@
+
+.pages-container {
+	padding: 40rpx 20rpx;
+}
+.card-input-view {
+	margin: 15% 0 0;
+}
+.card-input-view input {
+	padding: 20rpx;
+	border: 1rpx solid #0FAEFF;
+	border-radius: 10rpx;
+}
+.btn-view {
+	width: 60%;
+	background-color: #1E90FF;
+	color: #FFFFFF;
+	border-radius: 20rpx;
+	margin-top: 60rpx;
+}
+
+

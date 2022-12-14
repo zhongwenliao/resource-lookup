@@ -1,0 +1,29 @@
+
+.content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	background-color: #efeff4;
+	padding: 20rpx 0;
+	width: 100%;
+}
+.input-field {
+	padding: 20rpx 30rpx;
+}
+.input-title {
+	padding: 10rpx 0;
+}
+.input-box {
+	background: #FFFFFF;
+	border-radius: 10rpx;
+}
+.input-box input {
+	padding: 15rpx;
+}
+.setting-button {
+	margin: 40rpx auto;
+	color: #FFFFFF;
+	background-color: #0081ff;
+}
+
+

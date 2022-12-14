@@ -1,0 +1,37 @@
+
+.pages-container {
+	background-color: #FFFFFF;
+	margin: 0 40rpx;
+	width: auto;
+	height: 100%;
+}
+.card-box-view {
+	margin: 40rpx 0;
+}
+.card-view {
+	text-align: center;
+	background-color: #1E90FF;
+	color: #FFFFFF;
+	padding: 0 40rpx;
+	border-radius: 25rpx;
+}
+.exit-btn {
+	text-align: center;
+	background-color: #ff4040;
+	color: #FFFFFF;
+	margin: 10rpx auto;
+	border-radius: 25rpx;
+}
+.card-view-border-bottom {
+	border-bottom: 1rpx solid #1E90FF;
+}
+.operation-title {
+	font-size: 32rpx;
+	color: #FFFFFF;
+}
+.operation-instruction {
+	font-size: 24rpx;
+	color: #AAAAAA;
+	padding: 8rpx;
+}
+

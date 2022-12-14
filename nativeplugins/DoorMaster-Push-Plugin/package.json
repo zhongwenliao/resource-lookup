@@ -1,0 +1,100 @@
+{
+	"id": "DoorMaster-Push-Plugin",
+	"version": "1.0.0",
+	"description": "推送",
+	"_dp_type": "nativeplugin",
+	"_dp_nativeplugin": {
+		"android": {
+			"plugins": [{
+				"type": "module",
+				"name": "DoorMaster-Push-Plugin",
+				"class": "com.example.doormaster_push_uniapp_plug_in.Doormaster_Push_Uniapp_Plug_in"
+			}],
+			"integrateType": "aar",
+			"dependencies": [
+				"com.google.code.gson:gson:2.4", 
+				"com.meizu.flyme.internet:push-internal:3.4.2@aar",
+				"com.getui:sdk:2.13.0.0",
+				"com.google.code.gson:gson:2.4"
+			],
+			"useAndroidX": true,
+			"parameters": {
+				"华为appid": {
+					"des": "华为appid",
+
+					"placeholder": "HUAWEI_APPID"
+
+				},
+				"魅族appid": {
+					"des": "魅族appid",
+
+					"placeholder": "MEIZU_APP_ID"
+
+				},
+				"魅族appkey": {
+					"des": "魅族appkey",
+
+					"placeholder": "MEIZU_APP_KEY"
+
+				},
+				"小米appid": {
+					"des": "小米appid",
+
+					"placeholder": "MIPUSH_APP_ID"
+
+				},
+				"小米appkey": {
+					"des": "小米appkey",
+
+					"placeholder": "MIPUSH_APP_KEY"
+
+				},
+				"OPPOappkey": {
+					"des": "OPPOappkey",
+
+					"placeholder": "OPPO_APP_KEY"
+
+				},
+				"OPPOAPPSECRET": {
+					"des": "OPPO_APP_SECRET",
+
+					"placeholder": "OPPO_APP_SECRET"
+
+				},
+				"Vivoappid": {
+					"des": "vivoappid",
+
+					"placeholder": "VIVO_APP_ID"
+
+				},
+				"Vivoappkey": {
+					"des": "Vivoappkey",
+
+					"placeholder": "VIVO_APP_KEY"
+
+				},
+				"PACKAGE_NAME": {
+					"des": "PACKAGE_NAME",
+					"placeholder": "PACKAGE_NAME"
+
+
+				},
+				"GETUI_APP_ID": {
+					"des": "个推appid",
+					"placeholder": "GETUI_APP_ID"
+
+				},
+				"GETUI_APP_KEY": {
+					"des": "个推appkey",
+					"placeholder": "GETUI_APP_KEY"
+
+				},
+				"GETUI_APP_SECRET": {
+					"des": "个推appsecret",
+					"placeholder": "GETUI_APP_SECRET"
+
+				}
+			}
+		}
+	}
+}
