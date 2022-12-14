@@ -92,6 +92,17 @@ const routeConfig = [
           module: 'resourceVideo',
           hideAslide: false
         }
+      },
+      {
+        path: 'QrCode',
+        name: 'QRCode',
+        component: loadingLazy('Resources/QRCode'),
+        meta: {
+          name: '生成二维码测试',
+          title: '二维码测试',
+          module: 'resourceVideo',
+          hideAslide: false
+        }
       }
     ]
   },
