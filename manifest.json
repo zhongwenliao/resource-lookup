@@ -1,6 +1,6 @@
 {
     "name" : "园区π",
-    "appid" : "__UNI__D8B030B",
+    "appid" : "__UNI__8281B00",
     "description" : "智慧园区数字管理化系统",
     "versionName" : "1.1.1850",
     "versionCode" : 111850,
@@ -209,7 +209,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wx53496bd107ac49f9",
         "setting" : {
             "urlCheck" : false
         },

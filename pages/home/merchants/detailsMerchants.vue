@@ -137,7 +137,7 @@
 									<text class="">
 										类型：
 									</text>
-									<u-tag v-for="(data,index) in typeList" class="u-m-l-4" shape="circle" :key="index"
+									<u-tag v-for="(data,subIndex) in typeList" class="u-m-l-4" shape="circle" :key="subIndex"
 										:color="item.roomType==data.value?'#e35d5d':'#999999'" bg-color="#ffffff"
 										:border-color="item.roomType==data.value?'#e35d5d':'#999999'" size="mini"
 										:text="data.label" type="info" />

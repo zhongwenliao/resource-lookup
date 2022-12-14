@@ -180,7 +180,7 @@
 								<text class="">
 									类型：
 								</text>
-								<u-tag v-for="(data,index) in typeList" class="u-m-l-4" shape="circle" :key="index"
+								<u-tag v-for="(data,subIndex) in typeList" class="u-m-l-4" shape="circle" :key="subIndex"
 									:color="item.roomType==data.value?'#e35d5d':'#999999'" bg-color="#ffffff"
 									:border-color="item.roomType==data.value?'#e35d5d':'#999999'" size="mini"
 									:text="data.label" type="info" />
@@ -194,10 +194,8 @@
 			</view>
 			<view slot="bottom" class="bottoms">
 				<view class="bottoms-button" @click="applyRecord(1)">我的收藏</view>
-				</u-col>
 				<view class="bottoms-text"></view>
 				<view class="bottoms-button" @click="applyRecord(0)">申请记录</view>
-				</u-row>
 			</view>
 		</z-paging>
 		<u-select v-model="showAddress" mode="mutil-column-auto" :list="addressCityList" @confirm="confirmAddress">
