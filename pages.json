@@ -948,10 +948,10 @@
             
         }
     ],
-	"subPackages": [{
+	"subPackages": [
+		{
 			"root": "sub-package",
 			"pages": [
-
 				// 设备卡数据
 				{
 					"path": "pages/dev-manage/card-list",

@@ -14,7 +14,6 @@
     "pages/user/myInformation",
     "pages/user/aboutUs",
     "pages/user/account",
-    "pages/home/operationList/index",
     "pages/user/propertyPass",
     "pages/user/releaseDetails",
     "pages/home/employeeManagement/index",
@@ -81,7 +80,8 @@
     "pages/home/userComplaints/complaintProgress",
     "pages/home/userComplaints/evaLuation",
     "pages/home/userComplaints/evaluationSuccess",
-    "pages/home/contactProperty/index"
+    "pages/home/contactProperty/index",
+    "pages/home/operationList/index"
   ],
   "subPackages": [
     {
