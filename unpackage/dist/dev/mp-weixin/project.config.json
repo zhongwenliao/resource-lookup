@@ -6,16 +6,17 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": false,
-    "postcss": false,
-    "minified": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
     "newFeature": true,
     "bigPackageSizeSupport": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "enhance": true
   },
   "compileType": "miniprogram",
   "libVersion": "2.29.0",
