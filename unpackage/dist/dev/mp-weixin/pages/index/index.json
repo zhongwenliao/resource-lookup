@@ -1,6 +1,7 @@
 {
   "navigationBarTextStyle": "white",
   "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
   "navigationBarTitleText": "首页",
   "usingComponents": {
     "u-navbar": "/uview-ui/components/u-navbar/u-navbar",

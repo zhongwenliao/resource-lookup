@@ -11,12 +11,6 @@
  *
  * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
  */
-@font-face {
-  font-family: 'PingFang SC';
-  /*字体名称*/
-  src: url(/static/footPingFang/PingFangSC.ttf);
-  /*字体源文件*/
-}
 /* 颜色变量 */
 /* 行为相关颜色 */
 /* 文字基本颜色 */
@@ -564,5 +558,16 @@ view.green-fg-color.data-v-180fb800, text.green-fg-color.data-v-180fb800, button
   z-index: 1500;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
+}
+.liebiao.data-v-180fb800 {
+  text-align: center;
+  margin: 20rpx auto;
+  width: 90%;
+  padding: 0rpx 0rpx 20rpx 10rpx;
+  border: 1rpx solid #CCCCCC;
+  border-radius: 23rpx;
+}
+.slot-content.data-v-180fb800 {
+  max-height: 800rpx;
 }
 

@@ -1,16 +1,52 @@
 
 page {
-	background: #F9F9F9;
+	background: #F2F2F2;
 }
 
 
-.bobo{
-	margin-top: 60rpx;
-	margin-left: 40rpx;
+.bobo {
+		width: 100%;
 }
-.bobo-a{
+.bobo-a {
 	margin-top: 20rpx;
 	color: #333333;
 	font-family: PingFang SC;
+}
+.monthly-management {
+	background-color: #fff;
+	width: 96%;
+	margin: 20rpx auto;
+	display: flex;
+	justify-content: space-between;
+	height: 140rpx;
+}
+.postpone {
+	margin-top: 15rpx;
+	width: 30%;
+	margin-right: 20rpx;
+}
+.car-information {
+	margin-top: 20rpx;
+	margin-left: 20rpx;
+	line-height: 50rpx;
+	font-size: 28rpx;
+}
+.car-status {
+	color: #FD8804;
+	font-size: 26rpx;
+	width: 100%;
+	text-align: right;
+	margin-bottom: 10rpx;
+}
+.apply-for {
+	position: fixed;
+	bottom: 5%;
+	width: 90%;
+	margin: 0 5%;
+}
+.no-data-view{
+	margin-top: 200rpx;
+	width: 100%;
+	text-align: center;
 }
 

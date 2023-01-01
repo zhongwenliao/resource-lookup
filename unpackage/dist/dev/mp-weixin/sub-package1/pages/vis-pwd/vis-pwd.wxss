@@ -24,7 +24,7 @@ text {
 	/* position: absolute; */
 	background-color: #FFFFFF;
 	width: 100%;
-	height: 500rpx;
+	height:580rpx;
 	text-align: center;
 	vertical-align: center;
 	margin: 0 auto;
@@ -84,5 +84,9 @@ text {
 }
 .btn button:after {
 	border: none;
+}
+.time_color{
+	font-size: 36rpx;
+	color: red;
 }
 

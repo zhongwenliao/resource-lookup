@@ -28,6 +28,11 @@
     "pages/home/meetingRoom/meetingDetails",
     "pages/home/payParking/index",
     "pages/home/payParking/monthlyCard",
+    "pages/home/payParking/monthlyCardRecord",
+    "pages/home/payParking/monthlyCardProcessing",
+    "pages/home/payParking/monthlyCardDetail",
+    "pages/home/payParking/successfulApproval",
+    "pages/home/payParking/progressTrial",
     "pages/home/payParking/suspendedPayment",
     "pages/home/entranceGuard/index",
     "pages/home/entranceGuard/openDoor",
@@ -75,7 +80,8 @@
     "pages/home/userComplaints/complaintProgress",
     "pages/home/userComplaints/evaLuation",
     "pages/home/userComplaints/evaluationSuccess",
-    "pages/home/contactProperty/index"
+    "pages/home/contactProperty/index",
+    "pages/home/operationList/index"
   ],
   "subPackages": [
     {
@@ -122,6 +128,9 @@
         "pagePath": "pages/user/user"
       }
     ]
+  },
+  "unipush": {
+    "enable": true
   },
   "usingComponents": {
     "uni-base-page": "/components/uni-base-page/uni-base-page",
