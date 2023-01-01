@@ -211,12 +211,16 @@
     "mp-weixin" : {
         "appid" : "wx53496bd107ac49f9",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : true,
+            "postcss" : true,
+            "minified" : true
         },
         "usingComponents" : true,
         "unipush" : {
             "enable" : true
-        }
+        },
+        "lazyCodeLoading" : "requiredComponents"
     },
     "mp-alipay" : {
         "usingComponents" : true

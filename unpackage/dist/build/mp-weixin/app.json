@@ -132,6 +132,7 @@
   "unipush": {
     "enable": true
   },
+  "lazyCodeLoading": "requiredComponents",
   "usingComponents": {
     "uni-base-page": "/components/uni-base-page/uni-base-page",
     "page": "/components/page"

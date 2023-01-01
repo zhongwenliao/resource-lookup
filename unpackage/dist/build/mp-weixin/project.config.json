@@ -6,9 +6,9 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": false,
-    "postcss": false,
-    "minified": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
     "newFeature": true,
     "bigPackageSizeSupport": true,
     "babelSetting": {
@@ -18,7 +18,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "2.28.1",
+  "libVersion": "2.29.0",
   "appid": "wx53496bd107ac49f9",
   "projectname": "园区π",
   "condition": {},
