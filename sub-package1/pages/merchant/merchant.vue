@@ -3,11 +3,11 @@
 		<view class="merchant">
 			<ul class="clear">
 				<li class="fl" @click="disTemplate">
-					<image src="../../static/img/moban.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/moban.png"></image>
 					<text>{{ coupon["dis-coupon-template"] || "优惠券模板" }}</text>
 				</li>
 				<li class="fl" @click="discount">
-					<image src="../../static/img/yhq.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yhq.png"></image>
 					<text>{{ coupon["dis-coupon"] || "优惠券" }}</text>
 				</li>
 			</ul>

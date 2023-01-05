@@ -1,1 +1,1 @@
-<view class="uni-empty-page"><view class="uni-empty-content"><image src="../../static/no-data.png" alt></image><view class="_br"></view><text>{{common["no-data"]||"暂无数据"}}</text></view></view>
+<view class="uni-empty-page"><view class="uni-empty-content"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/no-data.png" alt></image><view class="_br"></view><text>{{common["no-data"]||"暂无数据"}}</text></view></view>

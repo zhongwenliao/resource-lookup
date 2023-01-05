@@ -1,7 +1,7 @@
 <template>
 	<uni-base-page class="content">
 		<view class="no-data-view">
-			<image src="../../static/img/no-data.png" alt=""><br>
+			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" alt=""/><br>
 			<!-- {{ payment["unauthorize"] || "您的车辆还未授权" }}<br>
 			{{ payment["register-car"] || "请到云平台登记，物业审核认证" }} -->
 			{{ payment["no-bill"] || "暂无账单" }}

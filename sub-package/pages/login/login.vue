@@ -41,7 +41,7 @@
 					<!-- 微信一键登录 start -->
 					<view v-if="ifAddWxLogin" class="other-login">
 						<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" @click="wxLogin">
-							<image style="display: inline-block;" src="../../static/img/weixin.png" />
+							<image style="display: inline-block;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/weixin.png" />
 							<text class="weixin-login-text">微信一键登录</text>
 						</button>
 					</view>
@@ -128,7 +128,7 @@ export default {
 			// 1. 在安卓操作系统以及中文简体语言下显示隐私政策，那么隐私政策选中状态的值就从缓存中获取，没有就默认为false
 			// 2. 在非安卓操作系统或者非中文简体语言下不显示隐私政策，那么隐私政策选中状态的值一定只为true
 			checked: this.$getLanguageLowerCase().indexOf('cn') > -1 ?
-					 (uni.getStorageSync("loginAgreePrivacyPolicy") || false) : true
+					 (uni.getStorageSync("loginAgreePrivacyPolicy") || false) : true,
 			// #endif
 
 			// #ifdef MP-WEIXIN || MP-ALIPAY

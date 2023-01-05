@@ -75,7 +75,7 @@
 			return {
 				phone: '', //用户手机号(接口获取)
 				userList: '', //
-				imgSrc: "../../static/img/house/take-photo.jpg",
+				imgSrc: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg",
 				status_bar: true,
 				goods: [],
 				cardInfo: {},

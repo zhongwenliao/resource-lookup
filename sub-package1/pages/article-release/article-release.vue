@@ -6,7 +6,7 @@
 			:title="articleRelease['Articlerelease']||'物品放行'" @clickLeft="clickNavLeft()" @clickRight="clickNavRight()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="../../static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 			<!-- 右侧插槽 -->
 			<view slot="right" class="right">{{articleRelease['record']||'记录'}}</view>
@@ -34,7 +34,7 @@
 				style="width: 70%;">
 				<view class="datetime-box">
 					<view class="uni-input">{{date}}</view>
-					<image src="../../static/img/data.png" mode="" style="width: 20px;height: 20px;padding: 14upx 0;">
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/data.png" mode="" style="width: 20px;height: 20px;padding: 14upx 0;">
 					</image>
 				</view>
 			</picker>
@@ -51,9 +51,9 @@
 				<span class="goods-border"></span>
 				<u-input v-model="item.number" :placeholder="articleRelease['Numberofitems']||'请输入物品数量'"
 					type="number" />
-				<image src="../../static/img/add.png" mode="" style="width: 20px;height: 20px;margin: auto;" v-if="i==0"
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/add.png" mode="" style="width: 20px;height: 20px;margin: auto;" v-if="i==0"
 					@click="addGoods">
-					<image src="../../static/img/del.png" mode="" style="width: 20px;height: 20px;margin: auto;"
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/del.png" mode="" style="width: 20px;height: 20px;margin: auto;"
 						v-if="i!=0" @click="delGoods(item,i)">
 			</view>
 		</view>
@@ -74,7 +74,7 @@
 					</view>
 				</view>
 				<view @click="photo" class="photo" v-if="imageList.length<6">
-					<image src="../../static/img/adds.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/adds.png"></image>
 				</view>
 			</p>
 		</view>
@@ -99,7 +99,7 @@
 				repairType: [], //所有房间的列表
 				imageList: [], //展示出来的图片列表(自己上传的)
 				userList: '', //
-				imgSrc: "../../static/img/house/take-photo.jpg",
+				imgSrc: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg",
 				status_bar: true,
 				roomName: '', //房间号
 				roomid: '', //房间id

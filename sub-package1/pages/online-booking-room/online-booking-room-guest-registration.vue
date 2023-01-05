@@ -6,7 +6,7 @@
 		<view style="background: #FFFFFF;" class="form-view">
 			<view class="wx-login">
 				<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
-					<image style="display: inline-block;" src="../../static/img/weixin.png" />
+					<image style="display: inline-block;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/weixin.png" />
 					<text class="weixin-login-text">微信授权登录</text>
 				</button>
 			</view>

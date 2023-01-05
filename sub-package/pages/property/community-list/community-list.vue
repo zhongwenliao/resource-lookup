@@ -6,7 +6,7 @@
 				<view class="filter-view">
 					<picker class="filter-picker" mode="selector" @change="communityChange" :range="communityList">
 						<text class="input-text">{{ communityList.length > 0 ? communityList[index] : "" }}</text>
-						<image class="filter-view-down-image" src="../../static/img/common/down.png"></image>
+						<image class="filter-view-down-image" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/common/down.png"></image>
 					</picker>
 				</view>
 			</form>
@@ -33,7 +33,7 @@
 					<!-- <view class="list-item-look-over-tenant-view">
 						<navigator :url="'../look-over-tenant/look-over-tenant?house=' + JSON.stringify(community)" v-if="house.identityType === 1">
 							<button class="list-item-button list-item-look-over-button" hover-class="list-item-hover-button">
-								<image class="list-item-img list-item-look-over-tenant-img" src="../../static/img/my-house/check-household.png"></image>
+								<image class="list-item-img list-item-look-over-tenant-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/my-house/check-household.png"></image>
 								<text class="list-item-text list-item-look-over-tenant-text">
 									{{ myhouse["household"] || "查看住户" }}
 								</text>

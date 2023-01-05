@@ -33,11 +33,11 @@
 											<view :class="[(item.activityImgSrcList.length !== 0) ? 'address56' : 'address65']"><text style="color: #000;">{{ main["address"] || "地点" }}：</text>{{item.address}}</view>
 											<view class="fr">
 												<i class="pinglun">
-													<image src="../../static/img/talkpinglun.png"></image>
+													<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkpinglun.png"></image>
 												</i>
 												<i class="num" style="margin-right: 20upx;">{{item.comments ? item.comments : '0'}}</i>
 												<i class="look">
-													<image src="../../static/img/talklook.png"></image>
+													<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talklook.png"></image>
 												</i>
 												<i class="num">{{item.views ? item.views : '0'}}</i>
 											</view>
@@ -46,12 +46,12 @@
 								</view>
 							</li>
 							<view v-if="activitylist.length == 0" class="text-view1">
-								<image style="width: 100upx;height: 100upx;" src="../../static/img/no-data.png" />
+								<image style="width: 100upx;height: 100upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" />
 								<view style="color: #808080;">{{ main["no-data"] || "发点什么吧~" }}</view>
 							</view>
 						</ul>
 						<movable-view :x="x" :y="y" direction="all" @change="onChange">
-							<image @click="goToact" class="send" src="../../static/img/sendicon.png"></image>
+							<image @click="goToact" class="send" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/sendicon.png"></image>
 						</movable-view>
 					</movable-area>
 				</scroll-view>
@@ -75,11 +75,11 @@
 										<view :class="[(item.applyImgSrcList.length !== 0) ? 'address56' : 'address65']"><text style="color: #000;">{{ main["address"] || "地点" }}：</text>{{item.address}}</view>
 										<view class="fr">
 											<i class="pinglun">
-												<image src="../../static/img/talkpinglun.png"></image>
+												<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkpinglun.png"></image>
 											</i>
 											<i class="num" style="margin-right: 20upx;">{{item.comments ? item.comments : '0'}}</i>
 											<i class="look">
-												<image src="../../static/img/talklook.png"></image>
+												<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talklook.png"></image>
 											</i>
 											<i class="num">{{item.views ? item.views : '0'}}</i>
 										</view>
@@ -88,7 +88,7 @@
 							</view>
 						</li>
 						<view v-if="applylist.length == 0" class="text-view1">
-							<image style="width: 100upx;height: 100upx;" src="../../static/img/no-data.png" />
+							<image style="width: 100upx;height: 100upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" />
 							<view style="color: #808080;">{{ main["no-data"] || "暂无数据" }}</view>
 						</view>
 					</ul>
@@ -232,18 +232,18 @@
 			// 跳转到我发布的活动详情
 			releaseDetail(id){
 				uni.navigateTo({
-					url:"../../../sub-package1/pages/activitydetail/activitydetail?id=" + id + "&type=release"
+					url:"http://yuanzhoulvwego.com/wp-content/uploads/static/pages/activitydetail/activitydetail?id=" + id + "&type=release"
 				});
 			},
 			// 跳转到我报名的活动详情
 			applyDetail(id){
 				uni.navigateTo({
-					url:"../../../sub-package1/pages/activitydetail/activitydetail?id=" + id + "&type=apply"
+					url:"http://yuanzhoulvwego.com/wp-content/uploads/static/pages/activitydetail/activitydetail?id=" + id + "&type=apply"
 				});
 			},
 			goToact(){
 				uni.navigateTo({
-					url:"../../../sub-package1/pages/activity/activity?originatePage=1"
+					url:"http://yuanzhoulvwego.com/wp-content/uploads/static/pages/activity/activity?originatePage=1"
 				});
 			},
 		},

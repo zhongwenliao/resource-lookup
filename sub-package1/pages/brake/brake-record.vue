@@ -5,7 +5,7 @@
 				2021-12-02 16:52:36 进场
 			</view>
 			<view class="" style="position: relative; width: 92%; margin: 0 4%;">
-				<image src="../../static/img/parking-assistant/che.png" mode="aspectFill" style="width: 100%; border-radius: 15upx;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png" mode="aspectFill" style="width: 100%; border-radius: 15upx;"></image>
 				<view style="color: #FFFFFF; position: absolute; top: 0; padding: 15upx 30upx; border-radius: 15upx 0 15upx 0; background-color: rgba(255, 255, 255, 0.3);">湘A6TK02</view>
 			</view>
 		</view>

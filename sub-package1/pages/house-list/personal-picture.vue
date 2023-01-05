@@ -48,7 +48,7 @@
 		data() {
 			return {
 				imgList: [],
-				imgSrc: "../../../sub-package1/static/img/house/take-photo.jpg",
+				imgSrc: "http://yuanzhoulvwego.com/wp-content/uploads/static/static/img/house/take-photo.jpg",
 				hasImg: null,
 				communityId: "",
 				roomId: null,
@@ -108,7 +108,7 @@
 						this.imgList = res.data;
 						if (this.imgList.length > 0) {
 							var faceImage = this.imgList[0].faceImage;
-							this.imgSrc = faceImage === undefined ? "../../../sub-package1/static/img/house/take-photo.jpg" : faceImage;
+							this.imgSrc = faceImage === undefined ? "http://yuanzhoulvwego.com/wp-content/uploads/static/static/img/house/take-photo.jpg" : faceImage;
 							
 						}
 					}

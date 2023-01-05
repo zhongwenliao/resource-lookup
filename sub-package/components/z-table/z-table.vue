@@ -57,7 +57,7 @@
 				</view>
 			</view>
 			<view v-if="tableData && tableData.length == 0 && !tableLoaded" class="table-empty">
-				<!-- image v-if="!showLoading" class="empty-img" src="../static/empty.png"></image -->
+				<!-- image v-if="!showLoading" class="empty-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/empty.png"></image -->
 				<view v-html="showLoading ? '' : emptyText"></view>
 			</view>
 		</view>

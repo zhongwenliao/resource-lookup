@@ -6,7 +6,7 @@
 			@clickLeft="clickNavLeft()" @clickRight="clickNavRight()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="../../static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 			<!-- 右侧插槽 -->
 			<view slot="right" class="right">{{articleRelease['record']||'记录'}}</view>
@@ -46,7 +46,7 @@
 				
 				<!--点击上传图片-->
 				<view @click="photo" class="photo" v-if="imageList.length<6">
-					<image src="../../static/img/adds.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/adds.png"></image>
 				</view>
 			</p>
 		</view>

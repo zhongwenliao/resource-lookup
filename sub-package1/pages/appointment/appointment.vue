@@ -35,7 +35,7 @@
 						</picker>
 					</view>
 					<view class="right">
-						<image src="../../static/img/more.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
 					</view>
 				</li>
 				<li class="clear">
@@ -54,7 +54,7 @@
 						{{communityName}}
 					</view>
 					<view class="right">
-						<image src="../../static/img/more.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
 					</view>
 				</li>
 				<li class="clear">
@@ -75,7 +75,7 @@
 						</picker>
 					</view>
 					<view class="right">
-						<image src="../../static/img/more.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
 					</view>
 				</li>
 			</ul>
@@ -104,7 +104,7 @@
 						</picker>
 					</view>
 					<view class="right" v-if="communityId != 39000">
-						<image src="../../static/img/more.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
 					</view>
 				</li>
 				<li>
@@ -118,7 +118,7 @@
 						</picker>
 					</view>
 					<view class="right" v-if="communityId != 39000">
-						<image src="../../static/img/more.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
 					</view>
 				</li>
 			</ul>

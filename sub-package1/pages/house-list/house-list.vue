@@ -57,7 +57,7 @@
 							v-if="house.identityType === 1 || (house.industryType === 3 && house.identityType === 3)"
 						>
 							<button class="list-item-button list-item-look-over-button" hover-class="list-item-hover-button">
-								<image class="list-item-img list-item-look-over-tenant-img" src="../../static/img/my-house/check-household.png"></image>
+								<image class="list-item-img list-item-look-over-tenant-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/my-house/check-household.png"></image>
 								<text class="list-item-text list-item-look-over-tenant-text green-fg-color">{{ myhouse['household'] || '房屋成员' }}</text>
 							</button>
 						</navigator>
@@ -76,7 +76,7 @@
 							v-if="house.identityType === 1 || (house.industryType === 3 && house.identityType === 3)"
 						>
 							<button class="list-item-button list-item-look-over-button" hover-class="list-item-hover-button">
-								<image class="list-item-img list-item-look-over-tenant-img" src="../../static/img/my-house/check-household.png"></image>
+								<image class="list-item-img list-item-look-over-tenant-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/my-house/check-household.png"></image>
 								<text class="list-item-text list-item-look-over-tenant-text green-fg-color">{{ myhouse['household'] || '房屋成员' }}</text>
 							</button>
 						</navigator>
@@ -99,12 +99,12 @@
 				<view class="list-item-tenant-operation" style="border-top: 1upx dashed #EEEEEE;" v-else>
 					<view class="left" style="color: #AAAAAA;">{{ i18nLookOverTenant['rest-battery'] || '剩余电量' }}</view>
 					<view class="list-item-look-over-tenant-view">
-						<image src="../../../sub-package1/static/img/battery/battery-green.png" v-if="house.lockRemainingBattery > 50"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/static/img/battery/battery-green.png" v-if="house.lockRemainingBattery > 50"></image>
 						<image
-							src="../../../sub-package1/static/img/battery/battery-yellow.png"
+							src="http://yuanzhoulvwego.com/wp-content/uploads/static/static/img/battery/battery-yellow.png"
 							v-else-if="house.lockRemainingBattery > 20 && house.lockRemainingBattery <= 50"
 						></image>
-						<image src="../../../sub-package1/static/img/battery/battery-red.png" v-else-if="house.lockRemainingBattery <= 20"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/static/img/battery/battery-red.png" v-else-if="house.lockRemainingBattery <= 20"></image>
 						{{ house.lockRemainingBattery === undefined ? i18nLookOverTenant['unknown'] || '未知' : house.lockRemainingBattery + '%' }}
 					</view>
 				</view>

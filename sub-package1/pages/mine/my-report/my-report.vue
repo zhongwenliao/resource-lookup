@@ -17,7 +17,7 @@
 				<scroll-view  @scrolltolower ="onRestore" lower-threshold="400" scroll-y style="height: 100%;width: 100%;" >
 					<!-- 我的爆料A -->
 					<view v-if="i === 0" class="my-repotr-box pad20 borderBottom1 marTop20">
-						<image class="my-repotr-box-left" src="../../../static/img/house/take-photo.jpg" mode=""></image>
+						<image class="my-repotr-box-left" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg" mode=""></image>
 						<view class="my-repotr-box-right">
 							<view class="my-repotr-box-right-content">北欧惭怍小户型北欧惭怍小户型北欧惭怍小户型北欧惭怍小户型北欧惭怍小户型北欧惭怍小户型</view>
 							<view class="my-repotr-box-right-num">108.00元包邮</view>

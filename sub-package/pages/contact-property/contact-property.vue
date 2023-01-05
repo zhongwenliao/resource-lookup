@@ -4,7 +4,7 @@
 			<view class="list-item-view" v-for="(propertyObj, index) in propertyList" :key="index">
 				<button class="list-item-button" @click="callPhone(propertyObj.contactNumber)">
 					<view class="tel-view left">
-						<image class="tel-image" src="../../static/img/tel.png"></image>
+						<image class="tel-image" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/tel.png"></image>
 					</view>
 					<view class="tel-view left">{{ propertyObj.contactNumber }}<text style="margin-left: 12px;">{{ propertyObj.name }}</text></view>
 					<view class="operation-view right">{{ property.call }}</view>
@@ -13,7 +13,7 @@
 			<view class="list-item-view" v-for="(devObj, index) in manageDevList" :key="index">
 				<button class="list-item-button" @click="callDevice(devObj.name,devObj.devSn)">
 					<view class="tel-view left">
-						<image class="tel-image" src="../../static/img/tel.png"></image>
+						<image class="tel-image" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/tel.png"></image>
 					</view>
 					<view class="tel-view left">{{ devObj.name }}<text style="margin-left: 12px;">{{ property["manage-dev"] || "管理机" }}</text></view>
 					<view class="operation-view right">{{ property["call-dev"] || "呼叫" }}</view>

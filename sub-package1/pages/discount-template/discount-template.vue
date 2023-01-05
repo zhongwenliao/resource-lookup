@@ -8,7 +8,7 @@
 						<view class="money" v-else-if="item.disType == 2">{{item.disRate}}折</view>
 						<view class="money" v-else-if="item.disType == 3">{{item.disTimeSec/60/60}}{{ coupon["hours"] || "小时" }}</view>
 						<!-- <view class="money" v-else="item.disType == 4">￥{{item.disAmontLimit}}</view> -->
-						<view class="money" v-else><image src="../../static/img/free.png"></image></view>
+						<view class="money" v-else><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/free.png"></image></view>
 						<view class="all">{{ coupon["residue"] || "剩余" }}/{{ coupon["total-number"] || "总次数" }}</view>
 						<view class="num">{{item.grantCount}}/{{item.totalGrantCount}}</view>
 					</view>

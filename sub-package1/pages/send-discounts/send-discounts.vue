@@ -23,7 +23,7 @@
 		<view style="width: 100%;background: #fff;padding: 4%;">
 			<view class="upload" @tap="chooseImage()">
 				<view class="tu">
-					<image src="../../static/img/talkupload.png" />
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkupload.png" />
 				</view>
 			</view>
 		</view>

@@ -19,9 +19,9 @@
 			<!-- 抓拍照片 start -->
 			<view class="form-item" style="">
 				<text style="margin-right: 10upx;">{{ "抓拍照片: " }}</text>
-				<!-- <image src="../../../static/img/1.jpg" mode="aspectFit" style="width: 300upx;"></image> -->
+				<!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/1.jpg" mode="aspectFit" style="width: 300upx;"></image> -->
 				<view style="display: flex; justify-content: flex-start;">
-					<image src="../../../static/img/1.jpg" mode="widthFix" style="width: 200upx;"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/1.jpg" mode="widthFix" style="width: 200upx;"></image>
 				</view>
 			</view>
 			<!-- 小区地址 end -->
@@ -91,11 +91,11 @@
 							</view>
 						</view>
 						<view @click="photo" class="photo" v-if="imageList.length < 6 && status == 1">
-							<image src="../../../../sub-package1/static/img/adds.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/adds.png"></image>
 						</view>
 					</p>
 					<view v-else="status">
-						<image src="../../../static/img/1.jpg" mode="widthFix" style="width: 200upx;"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/1.jpg" mode="widthFix" style="width: 200upx;"></image>
 					</view>
 				</view>
 				<!-- 上传图片 end-->

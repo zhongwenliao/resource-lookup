@@ -30,7 +30,7 @@
 					<view class="search-box" @tap.stop>
 						<u-icon name="search"></u-icon>
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" :placeholder="`${coupon['coupon-placeholder']}` || '请输入车牌号'"/>
-						<image v-show="searchVal" @tap="clearSearch" src="../../../static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 					<scroll-view scroll-y class="discount-scroll" @scrolltolower="scroll">
 						<ul>
@@ -40,7 +40,7 @@
 									<view class="money" v-else-if="item.disType == 2">{{ item.disRate *10 }}折</view>
 									<view class="money" v-else-if="item.disType == 3">{{item.disTimeSec/60/60}}{{ coupon["hours"] || "小时" }}</view>
 									<!-- <view class="money" v-else="item.disType == 4">￥{{item.disAmontLimit}}</view> -->
-									<view class="money" v-else><image class="opacity" src="../../static/img/free.png"></image></view>
+									<view class="money" v-else><image class="opacity" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/free.png"></image></view>
 									<view class="template-id">{{ coupon["template-id"] || "模板ID" }}:{{ item.templateId }}</view>
 								</view>
 								<view class="dis-right fl">
@@ -54,8 +54,8 @@
 								</view>
 								<view class="use-type" v-if="item.useType == 1">{{ coupon["once"] || "仅限一次使用" }}</view>
 								<view class="use-type" v-else-if="item.useType == 2">{{ coupon["more"] || "可多次使用" }}</view>
-								<image v-if="item.isInvaild == 1" class="lose-img" src="../../static/img/lose.png"></image>
-								<image v-if="item.isUse == 1" class="used-img" src="../../static/img/uesd.png"></image>
+								<image v-if="item.isInvaild == 1" class="lose-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/lose.png"></image>
+								<image v-if="item.isUse == 1" class="used-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/uesd.png"></image>
 							</li>
 						</ul>
 					</scroll-view>
@@ -65,7 +65,7 @@
 					<view class="search-box" @tap.stop>
 						<u-icon name="search"></u-icon>
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" :placeholder="`${coupon['coupon-placeholder']}` || '请输入车牌号'"/>
-						<image v-show="searchVal" @tap="clearSearch" src="../../../static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 					<scroll-view scroll-y class="discount-scroll" @scrolltolower="scroll">
 						<ul>
@@ -75,7 +75,7 @@
 									<view class="money" v-else-if="item.disType == 2">{{ item.disRate }}折</view>
 									<view class="money" v-else-if="item.disType == 3">{{item.disTimeSec/60/60}}{{ coupon["hours"] || "小时" }}</view>
 									<!-- <view class="money" v-else="item.disType == 4">￥{{item.disAmontLimit}}</view> -->
-									<view class="money" v-else><image class="opacity" src="../../static/img/free.png"></image></view>
+									<view class="money" v-else><image class="opacity" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/free.png"></image></view>
 									<view class="template-id">{{ coupon["template-id"] || "模板ID" }}:{{ item.templateId }}</view>
 								</view>
 								<view class="dis-right fl">
@@ -89,8 +89,8 @@
 								</view>
 								<view class="use-type" v-if="item.useType == 1">{{ coupon["once"] || "仅限一次使用" }}</view>
 								<view class="use-type" v-else-if="item.useType == 2">{{ coupon["more"] || "可多次使用" }}</view>
-								<image v-if="item.isInvaild == 1" class="lose-img" src="../../static/img/lose.png"></image>
-								<image v-if="item.isUse == 1" class="used-img" src="../../static/img/uesd.png"></image>
+								<image v-if="item.isInvaild == 1" class="lose-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/lose.png"></image>
+								<image v-if="item.isUse == 1" class="used-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/uesd.png"></image>
 							</li>
 						</ul>
 					</scroll-view>
@@ -100,7 +100,7 @@
 					<view class="search-box" @tap.stop>
 						<u-icon name="search"></u-icon>
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" :placeholder="`${coupon['coupon-placeholder']}` || '请输入车牌号'"/>
-						<image v-show="searchVal" @tap="clearSearch" src="../../../static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 					<scroll-view scroll-y class="discount-scroll" @scrolltolower="scroll">
 						<ul>
@@ -110,7 +110,7 @@
 									<view class="money" v-else-if="item.disType == 2">{{ item.disRate }}折</view>
 									<view class="money" v-else-if="item.disType == 3">{{item.disTimeSec/60/60}}{{ coupon["hours"] || "小时" }}</view>
 									<!-- <view class="money" v-else="item.disType == 4">￥{{item.disAmontLimit}}</view> -->
-									<view class="money" v-else><image class="opacity" src="../../static/img/free.png"></image></view>
+									<view class="money" v-else><image class="opacity" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/free.png"></image></view>
 									<view class="template-id">{{ coupon["template-id"] || "模板ID" }}:{{ item.templateId }}</view>
 								</view>
 								<view class="dis-right fl">
@@ -124,8 +124,8 @@
 								</view>
 								<view class="use-type" v-if="item.useType == 1">{{ coupon["once"] || "仅限一次使用" }}</view>
 								<view class="use-type" v-else-if="item.useType == 2">{{ coupon["more"] || "可多次使用" }}</view>
-								<image v-if="item.isInvaild == 1" class="lose-img" src="../../static/img/lose.png"></image>
-								<image v-if="item.isUse == 1" class="used-img" src="../../static/img/uesd.png"></image>
+								<image v-if="item.isInvaild == 1" class="lose-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/lose.png"></image>
+								<image v-if="item.isUse == 1" class="used-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/uesd.png"></image>
 							</li>
 						</ul>
 					</scroll-view>
@@ -135,7 +135,7 @@
 					<view class="search-box" @tap.stop>
 						<u-icon name="search"></u-icon>
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" :placeholder="`${coupon['coupon-placeholder']}` || '请输入车牌号'"/>
-						<image v-show="searchVal" @tap="clearSearch" src="../../../static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 					<scroll-view scroll-y class="discount-scroll" @scrolltolower="scroll">
 						<ul>
@@ -145,7 +145,7 @@
 									<view class="money" v-else-if="item.disType == 2">{{ item.disRate }}折</view>
 									<view class="money" v-else-if="item.disType == 3">{{item.disTimeSec/60/60}}{{ coupon["hours"] || "小时" }}</view>
 									<!-- <view class="money" v-else="item.disType == 4">￥{{item.disAmontLimit}}</view> -->
-									<view class="money" v-else><image class="opacity" src="../../static/img/free.png"></image></view>
+									<view class="money" v-else><image class="opacity" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/free.png"></image></view>
 									<view class="template-id">{{ coupon["template-id"] || "模板ID" }}:{{ item.templateId }}</view>
 								</view>
 								<view class="dis-right fl">
@@ -159,8 +159,8 @@
 								</view>
 								<view class="use-type" v-if="item.useType == 1">{{ coupon["once"] || "仅限一次使用" }}</view>
 								<view class="use-type" v-else-if="item.useType == 2">{{ coupon["more"] || "可多次使用" }}</view>
-								<image v-if="item.isInvaild == 1" class="lose-img" src="../../static/img/lose.png"></image>
-								<image v-if="item.isUse == 1" class="used-img" src="../../static/img/uesd.png"></image>
+								<image v-if="item.isInvaild == 1" class="lose-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/lose.png"></image>
+								<image v-if="item.isUse == 1" class="used-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/uesd.png"></image>
 							</li>
 						</ul>
 					</scroll-view>

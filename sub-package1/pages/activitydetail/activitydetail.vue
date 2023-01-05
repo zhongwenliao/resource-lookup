@@ -14,11 +14,11 @@
 			<view class="wen" v-html="content"></view>
 			<view class="fr">
 				<i class="pinglun">
-					<image src="../../static/img/talkpinglun.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkpinglun.png"></image>
 				</i>
 				<i class="num" style="margin-right: 20upx;">{{detail.comments ? detail.comments : '0'}}</i>
 				<i class="look">
-					<image src="../../static/img/talklook.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talklook.png"></image>
 				</i>
 				<i class="num">{{detail.views ? detail.views : '0'}}</i>
 			</view>
@@ -31,12 +31,12 @@
 			<button class="apply fl" @click="signIn">
 				{{ manypage['sign-up'] || '我要报名' }}
 			</button>
-			<!-- <button v-if="isAndroid" @click="shareNews"><image src="../../static/img/share-line.png"></image>{{ " 分享" }}</button> -->
+			<!-- <button v-if="isAndroid" @click="shareNews"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/share-line.png"></image>{{ " 分享" }}</button> -->
 		</view>
 		<!-- 从我的活动跳转过来的 -->
 		<view class="myacivity-btn" v-if="this.type === 'release' || this.type === 'apply'">
 			<button class="comt-btn" v-if="showbtn" @click="clickComment">{{ manypage['comment'] || '评论' }}</button>
-			<!-- <button v-if="isAndroid" @click="shareNews"><image src="../../static/img/share-line.png"></image>{{ " 分享" }}</button> -->
+			<!-- <button v-if="isAndroid" @click="shareNews"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/share-line.png"></image>{{ " 分享" }}</button> -->
 		</view>
 		
 		<view class="list-tab" v-if="this.type === 'release' || this.type === 'apply'">
@@ -67,7 +67,7 @@
 					<view class="clear">
 						<view class="photo fl">
 							<image v-if="item.appUserAvatar" :src="item.appUserAvatar"></image>
-							<image v-else src="../../static/img/user-avatar.png"></image>
+							<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
 						</view>
 						<p class="name fl" v-if="item.appUserNickname">
 						{{ item.appUserNickname }}
@@ -80,7 +80,7 @@
 					<view class="mess">{{ manypage['phone'] || '电话号码' }}：{{item.phone}}</view>
 				</li>
 				<view v-if="applylist.length == 0" style="text-align: center;padding-top: 4%;" >
-					<image style="width: 100upx;height: 100upx;" src="../../static/img/no-data.png" />
+					<image style="width: 100upx;height: 100upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" />
 					<view style="color: #808080;">{{ main["no-data"] || "暂无数据" }}</view>
 				</view>	
 			</ul>
@@ -92,7 +92,7 @@
 		<view class="cont" v-if="isShowMask">
 			<view class="maskTitle">
 				<text>{{ manypage['write'] || '填写资料' }}</text>
-				<image @click="closeMask" src="../../static/img/close.png" />
+				<image @click="closeMask" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/close.png" />
 			</view>
 			<view>
 				<ul>
@@ -654,7 +654,8 @@
 				width: 350upx;
 				height: 60upx;
 				line-height: 60upx;
-				background: linear-gradient(118deg, #01dca3 0%, #088b68 100%);				color: #fff;
+				background: linear-gradient(118deg, #01dca3 0%, #088b68 100%);
+				color: #fff;
 				margin: auto;
 				margin-top: 60upx;
 			}

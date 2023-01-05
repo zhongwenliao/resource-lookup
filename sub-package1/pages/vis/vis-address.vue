@@ -12,7 +12,7 @@
 			<!-- 按房屋地址 -->
 			<swiper-item>
 				<!-- <view class="search-input">
-					<image src="../../static/img/search.png" alt=""> -->
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png" alt=""> -->
 					<!-- <input type="text" :placeholder="`${vis['dev-search']}` || '请输入设备名称'" :value="doorName" @input="filterDevice"> -->
 					<!-- <input type="text" :placeholder="'请输入房间名称'" :value="doorName" @input="filterDevice">
 				</view> -->
@@ -36,7 +36,7 @@
 			<!-- 按门禁 -->
 			<swiper-item>
 				<!-- <view class="search-input">
-					<image src="../../static/img/search.png" alt=""> -->
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png" alt=""> -->
 					<!-- <input type="text" :placeholder="`${vis['dev-search']}` || '请输入设备名称'" :value="doorName" @input="filterDevice"> -->
 					<!-- <input type="text" :placeholder="`${vis['door-search']}` || '请输入门名称'" :value="doorName" @input="filterDevice">
 				</view> -->

@@ -1,6 +1,6 @@
 <template>
 	<view class="open-door">
-		<image src="../../static/img/yes.png" mode=""></image>
+		<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yes.png" mode=""></image>
 		<view class="open">{{ appointment["open-door"] || "开门成功" }}</view>
 		<view class="dev-name">{{doorName}}</view>
 		<button type="default" class="back" @click="back">{{ appointment["back"] || "返回" }}</button>

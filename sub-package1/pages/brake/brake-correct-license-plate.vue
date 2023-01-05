@@ -47,7 +47,7 @@
 							<view class="park-record__title__car-no-similarity">
 								<text style="font-size: 36upx;">{{ parkRecord.carNo }}</text>
 								<view class="park-record__title__car-no-similarity__container">
-									<image src="../../static/img/parking-assistant/shi.png" mode="aspectFit" />
+									<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/shi.png" mode="aspectFit" />
 									<!-- <text style="background-color: rgb(58, 169, 240); color: #FFFFFF; font-size: 26upx; padding: 0 10upx; border-radius: 10upx;">似</text> -->
 									<text>{{ parkRecord.similarity }}</text>
 								</view>
@@ -189,7 +189,7 @@
 							:value="correctLicensePlateForm.inTime"
 						></rattenking-dtpicker>
 					</view>
-					<image src="../../static/img/right.png" mode="aspectFit" />
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/right.png" mode="aspectFit" />
 				</view>
 				<!-- 入场时间展示区 end -->
 		    </view>
@@ -332,11 +332,11 @@
 			loadParkRecordImgError(type, parkRecord) {
 				// 进场图片
 				if (type == 1) {
-					parkRecord.inImg = "../../static/img/parking-assistant/che.png";
+					parkRecord.inImg = "http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png";
 				}
 				// 出场图片
 				else {
-					parkRecord.outImg = "../../static/img/parking-assistant/che.png";
+					parkRecord.outImg = "http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png";
 				}
 			},
 			

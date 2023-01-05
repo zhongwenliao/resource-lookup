@@ -5,7 +5,7 @@
 			<view v-if="lang" class="search-box">
 				<view class="city-area" @click="selectCity">
 					{{ cityName }}
-					<image src="../../static/img/xiala.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/xiala.png"></image>
 				</view>
 				<view class="searh-area"><input type="text" :placeholder="`${common['input']}` || '请输入'" @input="filterCommunity" /></view>
 			</view>

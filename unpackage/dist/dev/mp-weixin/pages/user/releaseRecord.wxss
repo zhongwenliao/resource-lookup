@@ -1,6 +1,6 @@
 
-page{
-	background: #F9F9F9;
+page {
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -453,10 +453,10 @@ view.green-fg-color.data-v-c26c03a6, text.green-fg-color.data-v-c26c03a6, button
   padding: 30rpx 20rpx 0;
 }
 .rcolor.data-v-c26c03a6 {
-  color: #E64340;
+  color: #e64340;
 }
 .bcolor.data-v-c26c03a6 {
-  color: #3E76F4;
+  color: #3e76f4;
 }
 .chakan.data-v-c26c03a6 {
   position: relative;
@@ -470,7 +470,7 @@ view.green-fg-color.data-v-c26c03a6, text.green-fg-color.data-v-c26c03a6, button
   float: right;
 }
 .boxs.data-v-c26c03a6 {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 15px;
 }
 .boxs-top.data-v-c26c03a6 {

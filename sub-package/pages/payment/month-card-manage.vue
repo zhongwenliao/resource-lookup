@@ -12,7 +12,7 @@
 					</view>
 				</view>
 				<view class="right fr">
-					<image src="../../../sub-package/static/img/payment/yk.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/yk.png"></image>
 				</view>
 			</view>
 			<view class="time">

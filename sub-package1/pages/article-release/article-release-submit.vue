@@ -5,7 +5,7 @@
 			@clickLeft="clickNavLeft()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="../../static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 
 		</uni-nav-bar>
@@ -13,7 +13,7 @@
 		<view class="top_box">
 			<!--提示部分-->
 			<view class="title-box">
-				<image src="../../static/img/yes.png" mode="" style="width: 260upx;height: 250upx;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yes.png" mode="" style="width: 260upx;height: 250upx;"></image>
 				<p>{{repair['submit-success']||'提交成功'}}</p>
 			</view>
 			<!--提示部分end-->

@@ -44,13 +44,13 @@
 					<view class="fl" v-for="(item,index) in supportPayList" :key="index">
 						<view class="" v-if="item == 1" @click="selectPay(item)">
 							<view class="img-box">
-								<image src="../../static/img/wxzf.png" mode=""></image>
+								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/wxzf.png" mode=""></image>
 							</view>
 							<text>微信支付</text>
 						</view>
 						<!-- <view class="" v-if="item == 2" @click="selectPay(item)">
 							<view class="img-box">
-								<image src="../../static/img/zfbzf.png" mode=""></image>
+								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/zfbzf.png" mode=""></image>
 							</view>
 							<text>支付宝支付</text>
 						</view> -->

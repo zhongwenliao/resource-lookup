@@ -563,7 +563,7 @@ view.green-fg-color.data-v-5e19819b, text.green-fg-color.data-v-5e19819b, button
   padding: 10rpx;
   margin: 0 auto;
   height: 540rpx;
-  background: url(/static/entranceGuard/beijinyuansu.png);
+  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/beijinyuansu.png");
   background-size: 100% 100%;
   position: relative;
 }

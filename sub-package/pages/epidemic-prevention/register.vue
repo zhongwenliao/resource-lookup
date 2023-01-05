@@ -16,7 +16,7 @@
 					<picker mode="selector" range-key="label" :range="idTypeList" @change="idTypeChange">
 						<view class="xiala">
 							<text>{{idTypeList[id_type].label}}</text>
-							<image src="../../static/img/xiala.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/xiala.png"></image>
 						</view>
 					</picker>
 				</view>

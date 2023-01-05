@@ -448,7 +448,7 @@ view.green-fg-color, text.green-fg-color, button.green-fg-color {
   padding: 30rpx 20rpx 0;
 }
 .uni-empty-page {
-  color: #CCCCCC;
+  color: #cccccc;
   position: absolute;
   width: 100%;
   height: 100%;

@@ -25,10 +25,10 @@
 				v-if="parkEvent.carResult.img" 
 			/>
 			<image 
-				src="../../static/img/parking-assistant/che.png" 
+				src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png" 
 				mode="widthFix" 
 				style="width: 100%;"
-				@click="previewImage('../../static/img/parking-assistant/che.png')"
+				@click="previewImage('http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png')"
 				v-else 
 			/>
 			<view class="brake-record-detail-mode__in-out-type">

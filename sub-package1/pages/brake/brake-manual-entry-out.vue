@@ -22,7 +22,7 @@
 						<view class="field__value__picker-view">{{ licensePlateTypeIndex > -1 ? licensePlateTypeArray[licensePlateTypeIndex] : "请选择车牌类型" }}</view>
 					</picker>
 				</view>
-				<image src="../../static/img/right.png" mode="aspectFit" />
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/right.png" mode="aspectFit" />
 			</view>
 			<!-- 车牌类型展示区 end -->
 			
@@ -36,7 +36,7 @@
 						<view  class="field__value__picker-view">{{ devIndex > -1 ? devArray[devIndex]["name"] : "请选择设备" }}</view>
 					</picker>
 				</view>
-				<image src="../../static/img/right.png" mode="aspectFit"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/right.png" mode="aspectFit"></image>
 			</view>
 			<!-- 进场、出场设备展示区 end -->
 			
@@ -56,7 +56,7 @@
 						<view>{{ form.time }}</view>
 					</picker> -->
 				</view>
-				<image src="../../static/img/right.png" mode="aspectFit"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/right.png" mode="aspectFit"></image>
 			</view>
 			<!-- 入场、出场时间展示区 end -->
 			
@@ -82,7 +82,7 @@
 					
 					<!-- 点击上传图片 start -->
 					<view class="photo" @click="photo" v-if="form.imageList.length < 1">
-						<image src="../../static/img/adds.png"></image>
+						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/adds.png"></image>
 					</view>
 					<!-- 点击上传图片 end -->
 				</view>

@@ -4,19 +4,19 @@
 			<view class="test-btn-cell">
 				<button type="primary" @click="openDoor">{{ manage["open-door-test"] || "开门测试" }}</button>
 				<view class="img-view" v-if="openDoorPass">
-					<image src="../../static/img/test-success.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/test-success.png"></image>
 				</view>
 			</view>
 			<view class="test-btn-cell">
 				<button type="primary" @click="sycLockInfo">{{ manage["sync-door-param"] || "同步门锁设备参数"}}</button>
 				<view class="img-view" v-if="sycLockInfoPass">
-					<image src="../../static/img/test-success.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/test-success.png"></image>
 				</view>
 			</view>
 			<view class="test-btn-cell">
 				<button type="primary" @click="readCard">{{ manage["write-card-test"] || "开卡测试" }}</button>
 				<view class="img-view" v-if="readCardPass">
-					<image src="../../static/img/test-success.png"></image>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/test-success.png"></image>
 				</view>
 			</view>
 			<view class="test-btn-cell">

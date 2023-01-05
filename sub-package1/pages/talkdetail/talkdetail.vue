@@ -5,7 +5,7 @@
 			<view class="clear">
 				<view class="photo fl">
 					<image v-if="detail.appUserAvatar" :src="detail.appUserAvatar"></image>
-					<image v-else src="../../static/img/user-avatar.png"></image>
+					<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
 				</view>
 				<p class="name fl" v-if="detail.appUserName">{{ detail.appUserName }}</p>
 				<p class="name fl" v-if="!detail.appUserName && detail.appUserPhone">{{ detail.appUserPhone.substr(0, 3) + '****' + detail.appUserPhone.substr(7, 4) }}</p>
@@ -20,22 +20,22 @@
 				<dl class="clear">
 					<dd>
 						<i class="look">
-							<image src="../../static/img/talklook.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talklook.png"></image>
 						</i>
 						<i class="num">{{detail.views ? detail.views : '0'}}</i>
 					</dd>
 					<dd>
 						<i class="pinglun">
-							<image src="../../static/img/talkpinglun.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkpinglun.png"></image>
 						</i>
 						<i class="num" style="margin-right: 20upx;">{{detail.comments ? detail.comments : '0'}}</i>
 					</dd>
 					<dd>
 						<i class="like" v-if="detail.IS_PRAISE == 1" @click.stop="talkLike(detail.id,detail)">
-							<image src="../../../static/img/like.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/like.png"></image>
 						</i>
 						<i class="like" v-else @click.stop="talkLike(detail.id,detail)">
-							<image src="../../../static/img/nolike.png"></image>
+							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/nolike.png"></image>
 						</i>
 						<i class="num">{{detail.likes ? detail.likes : '0'}}</i>
 					</dd>
@@ -45,7 +45,7 @@
 		<!-- 从我的说说跳转过来的 -->
 		<view class="myacivity-btn" v-show="isShowBtn">
 			<button class="comt-btn" v-if="showbtn" @click="clickComment">{{ manypage['comment'] || '评论' }}</button>
-			<!-- <button v-if="isAndroid" @click="shareNews"><image src="../../static/img/share-line.png"></image>{{ " 分享" }}</button> -->
+			<!-- <button v-if="isAndroid" @click="shareNews"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/share-line.png"></image>{{ " 分享" }}</button> -->
 		</view>
 		
 		<view class="list-tab" v-if="this.type === 'my'">
@@ -74,7 +74,7 @@
 					<view class="clear">
 						<view class="photo fl">
 							<image v-if="item.likeUserAvatar" :src="item.likeUserAvatar"></image>
-							<image v-else src="../../static/img/user-avatar.png"></image>
+							<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
 						</view>
 						<view class="fl">
 							<p class="name">
@@ -88,7 +88,7 @@
 					</view>
 				</li>
 				<view v-if="likelist.length == 0" style="text-align: center;padding-top: 10%;" >
-					<image style="width: 100upx;height: 100upx;" src="../../static/img/no-data.png" />
+					<image style="width: 100upx;height: 100upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" />
 					<view style="color: #808080;">{{ main["like"] || "点个赞吧~" }}</view>
 				</view>	
 			</ul>

@@ -5,7 +5,7 @@
 			:title="complaintProposa['Suggestion']||'投诉建议'" @clickRight="clickNavRight()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="../../static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 		</uni-nav-bar>
 		<!--自定义导航栏end-->

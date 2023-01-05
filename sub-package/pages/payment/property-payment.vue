@@ -11,14 +11,14 @@
 			<!-- 全部 -->
 			<swiper-item class="swiper">
 				<view class="no-data-view">
-					<image src="../../static/img/no-data.png" alt=""><br>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" alt=""/><br>
 					{{ payment["no-bill"] || "暂无账单" }}
 				</view>
 			</swiper-item>
 			<!-- 未缴 -->
 			<swiper-item class="swiper">
 				<view class="no-data-view">
-					<image src="../../static/img/no-data.png" alt=""><br>
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" alt=""/><br>
 					{{ payment["has-payed"] || "您的账单已缴清~" }}
 				</view>
 			</swiper-item>

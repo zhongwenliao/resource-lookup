@@ -1,6 +1,6 @@
 <template>
 <view class="pay">
-	<image src="../../static/img/yes.png" mode=""></image>
+	<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yes.png" mode=""></image>
 	<view class="status">{{ appointment["appoint-success"] || "预约成功" }}</view>
 	<view class="tip" style="color: #666;font-size: 15px;margin-top: 20px;">
 		{{ appointment["service-notifications"] || "请留意微信里的服务通知！" }}

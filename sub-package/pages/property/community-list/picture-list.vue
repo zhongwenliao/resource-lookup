@@ -6,8 +6,8 @@
 					<text>{{ myhouse["click-tips"] || "点击图片即可放大图片并进行删除操作" }}</text>
 				</view>
 				<view class="no-picture" v-if="imgList && imgList.length === 0">
-					<!-- <image src="../../../static/img/house/take-photo.jpg"></image><br/> -->
-					<image src="../../../../sub-package1/static/img/house/take-photo.jpg"></image><br/>
+					<!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg"></image><br/> -->
+					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg"></image><br/>
 					<text>{{ myhouse["no-img"] || "暂无图片" }}</text>
 				</view>
 				<ul v-else :class="imgList && imgList.length === 1 ? 'one-picture' : 'multi-picture'">

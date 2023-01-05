@@ -2,7 +2,7 @@
 	<view class="search-warp">
 		<view class="search-box">
 			<input type="text" confirm-type="search" class="search" v-model="keywordSearch" :placeholder="`${manypage['search-placeholder']}` || '搜索'"/>
-			<image class="search-img" src="../../../static/img/search.png"></image>
+			<image class="search-img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png"></image>
 		</view>
 		<view class="title clear">
 			<view class="fl">我的住户</view>
