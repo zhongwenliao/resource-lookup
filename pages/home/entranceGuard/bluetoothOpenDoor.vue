@@ -37,7 +37,7 @@
 			<view class="box u-p-20">
 				<view class="card-box u-flex u-row-between u-m-b-10" v-for="(item, index) in dataList" :key="item.id">
 						<u-icon class="head_left_icon" :label="item.deviceInstallAddress" margin-left="10" label-size="30"
-							label-color="#333333" name="/static/home/entranceGuard/shebei-lan.png" size="60"></u-icon>
+							label-color="#333333" name="http://yuanzhoulvwego.com/wp-content/uploads/static/home/entranceGuard/shebei-lan.png" size="60"></u-icon>
 					<view @click="clickKey(item,index)" class="u-font-md">
 						点击开门
 					</view>

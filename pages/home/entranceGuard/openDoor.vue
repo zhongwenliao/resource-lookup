@@ -2,7 +2,7 @@
 	<view>
 		<u-navbar :title="'开门成功'"></u-navbar>
 		<view class="open">
-			<u-image class="opendoor" width="195rpx" height="189rpx" src="../../../static/entranceGuard/kaimenchenggong.png"></u-image>
+			<u-image class="opendoor" width="195rpx" height="189rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/kaimenchenggong.png"></u-image>
 		</view>
 		<view class="open1">开门成功</view>
 		<view class="btn_box">

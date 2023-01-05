@@ -10,11 +10,11 @@
 			<!-- <u-action-sheet :list="list" v-model="show"></u-action-sheet> -->
 			<u-mask :show="show" @click="show = false" :mask-click-able='false'>
 				<view class="warp">
-					<!-- <u-image src="../../../static/hujiao.png"></u-image> -->
+					<!-- <u-image src="http://yuanzhoulvwego.com/wp-content/uploads/static/hujiao.png"></u-image> -->
 					
 					<view class="rect" @click="call">
 						<view class="rect-t">
-							<u-image class="rect2" style="margin-right: 20upx;" width="44rpx" height="44rpx" src="../../../static/hujiao.png"></u-image>
+							<u-image class="rect2" style="margin-right: 20upx;" width="44rpx" height="44rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/hujiao.png"></u-image>
 							<text style="vertical-align: -webkit-baseline-middle;">呼叫{{this.text}}</text>
 						</view>
 					</view>

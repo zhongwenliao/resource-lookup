@@ -1,11 +1,11 @@
 import Vue from "vue"
 import App from "./App"
-// import router from "@/common/router"
+import router from "@/common/router"
 import store from "@/common/store"
-// import common from "./common/dev-manage/index.js"
 import tools from "@/common/utils/tools"
 import uView from "uview-ui"
 import $enum from "@/common/utils/enum"
+import common from "./common/dev-manage/index.js"
 import i18n from "./lang/index.js"
 // import dayjs from 'dayjs';
 // import 'dayjs/locale/zh-cn'

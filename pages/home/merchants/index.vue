@@ -8,7 +8,7 @@
 						<view class="u-font-lg u-text-color-fff">
 							{{location.city}}
 						</view>
-						<u-icon class="u-m-l-14" name="/static/xialaxuanzeanniu.png" size="18">
+						<u-icon class="u-m-l-14" name="http://yuanzhoulvwego.com/wp-content/uploads/static/xialaxuanzeanniu.png" size="18">
 						</u-icon>
 					</view>
 

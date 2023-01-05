@@ -113,7 +113,7 @@
 </style>
 <style lang="scss">
 	.bg1 {
-		background: url('/static/home/billPay/zhangdandi-lan.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhangdandi-lan.png') no-repeat;
 		background-size: 100% 100%;
 		position: relative;
 	}
@@ -125,7 +125,7 @@
 		right: 35upx;
 		bottom: -27.5upx;
 		height: 55upx;
-		background: url('/static/home/billPay/yinying-lan.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-lan.png') no-repeat;
 		background-size: 100% 100%;
 		z-index: -1;
 		opacity: 0.4;
@@ -133,7 +133,7 @@
 	}
 
 	.bg2 {
-		background: url('/static/home/billPay/di-hong.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/di-hong.png') no-repeat;
 		background-size: 100% 100%;
 		position: relative;
 	}
@@ -145,7 +145,7 @@
 		right: 35upx;
 		bottom: -27.5upx;
 		height: 55upx;
-		background: url('/static/home/billPay/yinying-hong.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-hong.png') no-repeat;
 		background-size: 100% 100%;
 		z-index: -1;
 		opacity: 0.4;
@@ -153,7 +153,7 @@
 	}
 
 	.bg3 {
-		background: url('/static/home/billPay/di-cheng.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/di-cheng.png') no-repeat;
 		background-size: 100% 100%;
 		position: relative;
 	}
@@ -165,7 +165,7 @@
 		right: 35upx;
 		bottom: -27.5upx;
 		height: 55upx;
-		background: url('/static/home/billPay/yinying-cheng.png') no-repeat;
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-cheng.png') no-repeat;
 		background-size: 100% 100%;
 		z-index: 1;
 		opacity: 0.4;

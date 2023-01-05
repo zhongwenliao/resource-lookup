@@ -10,7 +10,7 @@
 					<view v-for="(item,index) in contractList" class="card" @click="goContractInfo(item)">
 						<view class="head">
 							<view class="head-left">
-								<u-icon class="u-m-r-10" name="/static/home/contract/hetong.png" size="30"></u-icon>
+								<u-icon class="u-m-r-10" name="http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/hetong.png" size="30"></u-icon>
 								合同编号{{item.contractCode}}
 							</view>
 							<view v-if="item.contractStatus<2" class="head-right" style="color: #3E76F4;">
@@ -47,7 +47,7 @@
 					</view>
 				</block>
 				<view v-else class="u-m-t-150 u-text-center u-font-sm">
-					<u-image width="100%" height="300rpx" src="/static/home/contract/zanwuhetong.png"></u-image>
+					<u-image width="100%" height="300rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/zanwuhetong.png"></u-image>
 					<text class="u-m-t-20" style="color: #999999;">暂无合同</text>
 				</view>
 			</view>
@@ -61,7 +61,7 @@
 			return {
 				contractList: [],
 				topBackground: {
-					backgroundImage: 'url(' + '../../../static/home/contract/chahua.png' + ')',
+					backgroundImage: 'url(' + 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/chahua.png' + ')',
 					backgroundSize: '100% 100%',
 					backgroundRepeat: 'no-repeat'
 				},

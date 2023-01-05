@@ -2,7 +2,7 @@
 	<view>
 		<u-navbar title="关于我们"></u-navbar>
 		<view class="logo-box">
-			<u-avatar class="avatar" size="180" mode="square" src="/static/logo.png"></u-avatar>
+			<u-avatar class="avatar" size="180" mode="square" src="http://yuanzhoulvwego.com/wp-content/uploads/static/logo.png"></u-avatar>
 			<text class="version">园区π {{version}}</text>
 		</view>
 		<u-cell-group class="cell-group" :border="false">

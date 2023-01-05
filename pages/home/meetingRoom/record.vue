@@ -118,12 +118,12 @@
 				// 底部按钮列表
 				meetingRoomTabbar: [{
 						pagePath: "/pages/home/meetingRoom/index",
-						iconPath: "/static/home/meetingRoom/huiyishiyuyue2.png",
+						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/huiyishiyuyue2.png",
 						text: "会议室预约",
 					},
 					{
 						pagePath: "/pages/home/meetingRoom/record",
-						iconPath: "/static/home/meetingRoom/yuyuejilu.png",
+						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yuyuejilu.png",
 						text: "预约记录",
 					}
 				],

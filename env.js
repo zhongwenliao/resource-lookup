@@ -42,7 +42,7 @@ const dev_Config = {
 	"?appSecret": "服务器接口请求所需的appSecret",
 	"appSecret": "1d559bc993d550af5d6b6291ed2ae296",
 	"?logo": "APP的logo",
-	"logo": "/static/img/logo.png",
+	"logo": "http://yuanzhoulvwego.com/wp-content/uploads/static/logo.png",
 	"?email": "制作APP的公司邮箱",
 	"email": "admin@intelligoo.com",
 	"?company": "制作APP的公司名称",

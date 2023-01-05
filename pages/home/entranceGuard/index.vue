@@ -24,7 +24,7 @@
 				<view class="lanya"
 					:style="{ 'display': 'flex', 'alignItems': 'center', 'background': isOpenBluetooth ? '#618FFC' : '#FFFFFF' }">
 					<u-image style="margin-left: 10upx;" width="24upx" height="30upx"
-						:src="isOpenBluetooth ? '../../../static/entranceGuard/lanya.png' : '../../../static/entranceGuard/bluetooth.png'" />
+						:src="isOpenBluetooth ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/lanya.png' : 'http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/bluetooth.png'" />
 					<text class="lanyadoor" :style="{ 'color': isOpenBluetooth ? '#FFFFFF' : '#E64340' }">
 						{{ isOpenBluetooth ? "蓝牙已开启" : "蓝牙未开启" }}</text>
 					<view class="anniu1"
@@ -47,7 +47,7 @@
 								<u-col span="1">
 									<text>
 										<u-image width="60upx" height="60upx"
-											src="../../../static/entranceGuard/shebei-tubiao.png"></u-image>
+											src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/shebei-tubiao.png"></u-image>
 									</text>
 								</u-col>
 								<u-col span="6">
@@ -55,7 +55,7 @@
 									<span v-if="item.RSSI && item.RSSI !== -100000"
 										style="width: 40upx;height: 40upx; display: inline-block;margin-left: 20upx;">
 										<!--  -->
-										<image src="../../../static/entranceGuard/bluetooth.png"
+										<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/bluetooth.png"
 											style="width: 40upx;height: 40upx; vertical-align: middle;"></image>
 									</span>
 								</u-col>
@@ -64,13 +64,13 @@
 										@click="remoteOpenDoor(item)">
 										<!--  -->
 										<u-image width="60upx" height="60upx"
-											src="../../../static/entranceGuard/yckm.png"></u-image>
+											src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/yckm.png"></u-image>
 									</text>
 								</u-col>
 								<u-col span="1" style="margin-left: 20upx;">
 									<text v-if="item.type==='bluetooth'" @click="temporaryPassword(item);">
 										<u-image width="60upx" height="60upx"
-											src="../../../static/entranceGuard/lsmm.png"></u-image>
+											src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/lsmm.png"></u-image>
 									</text>
 								</u-col>
 								<u-col span="1" style="margin-left: 20upx;">
@@ -83,7 +83,7 @@
 								<u-col v-if="item.type=='remote'" span="1" style="margin-left: 20upx;">
 									<text @click="remoteOpenDoor(item)">
 										<u-image width="60upx" height="60upx"
-											src="../../../static/entranceGuard/yckm.png"></u-image>
+											src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/yckm.png"></u-image>
 									</text>
 								</u-col>
 							</u-row>
@@ -567,7 +567,7 @@
 		padding: 10upx;
 		margin: 0 auto;
 		height: 540upx;
-		background: url('../../../static/entranceGuard/beijinyuansu.png');
+		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/beijinyuansu.png');
 		background-size: 100% 100%;
 		position: relative;
 

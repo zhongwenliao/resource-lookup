@@ -44,7 +44,7 @@
 			@confirm="knowConfirm">
 			<view class="u-flex-col u-col-center">
 				<u-image width="125upx" height="125upx" shape="circle"
-					:src="'../../../static/home/employeeManagement/tijiao.png'">
+					:src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png'">
 					<u-loading slot="loading"></u-loading>
 					<view slot="error" style="font-size: 24upx;">加载失败</view>
 				</u-image>

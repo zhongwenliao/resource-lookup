@@ -50,7 +50,7 @@
 
 <style lang="scss">
 	@import './style/uni.css';
-    @import "./static/iconfont.css";
+    @import "http://yuanzhoulvwego.com/wp-content/uploads/static/iconfont.css";
     /* 注意要写在第一行，同时给style标签加入lang="scss"属性 */
     @import "uview-ui/index.scss";
     

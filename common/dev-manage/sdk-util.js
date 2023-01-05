@@ -102,12 +102,12 @@ class BluetoothSDKUtil {
 		this.btCode = _this.$t("bt-error-code");
 		this.openDoorResult = {
 			title: this.commonI18n["open-fail"] || "开门失败",
-			image: "/static/img/failed.png",
+			image: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/failed.png",
 			icon: "none"
 		};
 		this.scanResult = {
 			title: this.sdkI18n["scan-fail"] || "扫描失败",
-			image: "/static/img/failed.png"
+			image: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/failed.png"
 		};
 		this.errMsgObj = {
 			"1": this.sdkI18n["no-device-detected"] || "没有扫描到任何设备，请靠近设备再重试"
@@ -375,7 +375,7 @@ class BluetoothSDKUtil {
 			if (code !== 0) {
 				uni.showToast({
 					title: __this.commonI18n["open-fail"] || "开门失败" + "，" + this.btCode[code],
-					image: "/static/img/failed.png"
+					image: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/failed.png"
 				});
 			} else {
 				sdkUtil.openDoorAduioPlay();

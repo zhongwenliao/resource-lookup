@@ -150,12 +150,12 @@
                 "iosStyle" : "common",
                 "androidStyle" : "default",
                 "ios" : {
-                    "storyboard" : "static/CustomStoryboard.zip"
+                    "storyboard" : "http://yuanzhoulvwego.com/wp-content/uploads/static/CustomStoryboard.zip"
                 },
                 "android" : {
-                    "xxhdpi" : "static/qidongye_slices/mipmap-xxhdpi/qidongye.png",
-                    "xhdpi" : "static/qidongye_slices/mipmap-xhdpi/qidongye.png",
-                    "hdpi" : "static/qidongye_slices/mipmap-hdpi/qidongye.png"
+                    "xxhdpi" : "http://yuanzhoulvwego.com/wp-content/uploads/static/qidongye_slices/mipmap-xxhdpi/qidongye.png",
+                    "xhdpi" : "http://yuanzhoulvwego.com/wp-content/uploads/static/qidongye_slices/mipmap-xhdpi/qidongye.png",
+                    "hdpi" : "http://yuanzhoulvwego.com/wp-content/uploads/static/qidongye_slices/mipmap-hdpi/qidongye.png"
                 },
                 "useOriginalMsgbox" : true
             }

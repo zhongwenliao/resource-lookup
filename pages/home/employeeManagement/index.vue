@@ -21,7 +21,7 @@
 					<view v-for="(item, index) in dataList" :key="index">
 						<u-cell-item :arrow="true" @click="toStaffList(item)">
 							<u-image slot="icon" width="88upx" height="88upx" shape="circle"
-								:src="item.avaer?item.avaer:'../../../static/home/employeeManagement/bumen.png'">
+								:src="item.avaer?item.avaer:'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/bumen.png'">
 								<u-loading slot="loading"></u-loading>
 								<view slot="error" style="font-size: 24upx;">加载失败</view>
 							</u-image>
@@ -33,10 +33,10 @@
 			</view>
 			<view slot="bottom" class="bottoms">
 				<view class="bottoms-button" @click="addDepartment">添加部门</view>
-				</u-col>
+				<!-- </u-col> -->
 				<view class="bottoms-text"></view>
 				<view class="bottoms-button" @click="addStaff">添加人员</view>
-				</u-row>
+				<!-- </u-row> -->
 			</view>
 		</z-paging>
 	</page>
@@ -58,7 +58,7 @@
 				corporateLogo: '',
 				// 导航栏的背景图
 				topBackground: {
-					backgroundImage: 'url(' + '../../../static/home/employeeManagement/beijintu.png' + ')',
+					backgroundImage: 'url(' + 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/beijintu.png' + ')',
 					backgroundSize: '100% 100%',
 					backgroundRepeat: 'no-repeat'
 				},
@@ -116,10 +116,10 @@
 				that.$api('employeeManagement.departmentList', params).then(res => {
 					if (res.code == 200) {
 						if (pageNo == 1 && res.data.list.length>0) {
-							res.data.list[0].avaer = '../../../static/home/employeeManagement/woren.png'
-							res.data.list[1].avaer = '../../../static/home/employeeManagement/woren.png'
+							res.data.list[0].avaer = 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/woren.png'
+							res.data.list[1].avaer = 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/woren.png'
 						}
-						// res.data.list.unshift({ avaer: '../../../static/home/employeeManagement/woren.png', roleName: '默认' })
+						// res.data.list.unshift({ avaer: 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/woren.png', roleName: '默认' })
 						that.$refs.paging.complete(res.data.list)
 					} else {
 						that.$refs.paging.complete(false);

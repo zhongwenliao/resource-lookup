@@ -7,7 +7,7 @@
 			v-model="dataList"
 			@query="getInfo"
 			:emptyViewText="'暂无信息,请先发布信息'"
-			:emptyViewImg="'/static/home/repairs/fabuxinxi.png'"
+			:emptyViewImg="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/fabuxinxi.png'"
 			:emptyViewStyle="{ 'margin-top': '-200upx' }"
 			:emptyViewImgStyle="{ 'width': '641upx', 'height': '297upx' }">
 			<view slot="top" class="tops" :style="topBackground">
@@ -17,7 +17,7 @@
 				<view class="boxs" v-for="(item, index) in dataList" @click="goRepairProgress(item.id)">
 					<view class="boxs-top">
 						<view class="boxs-top-image" >
-							<u-image width="30upx" height="30upx" src="/static/home/repairs/weixiu.png"></u-image>
+							<u-image width="30upx" height="30upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/weixiu.png"></u-image>
 						</view>
 						<span class="u-font-32 boxs-top-text">{{ item.classificationName }}</span>
 					</view>
@@ -38,7 +38,7 @@
 		</z-paging>
 		<!-- 报修按钮 -->
 		<view class="fixed" @click="goRepairApplication" v-if="$permission(['zoneRepair:addZoneRepair'])">
-			<u-image width="158upx" height="164upx" src="/static/home/repairs/baoxiu.png"></u-image>
+			<u-image width="158upx" height="164upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/baoxiu.png"></u-image>
 		</view>
 	</page>
 </template>
@@ -53,7 +53,7 @@
 				dataList: [],
 				// 导航栏的背景图
 				topBackground: {
-					backgroundImage: 'url(' + '../../../static/home/repairs/chahua.png' + ')',
+					backgroundImage: 'url(' + 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/chahua.png' + ')',
 					backgroundSize: '100% 100%',
 					backgroundRepeat: 'no-repeat'
 				},

@@ -2,18 +2,18 @@
 	<view>
 		<u-navbar :title="'评价'"></u-navbar>
 		<view class="pingjiachenggong">
-			<u-image width="54rpx" height="54rpx" src="../../../static/userComplaints/pingjiachenggong.png"></u-image>
+			<u-image width="54rpx" height="54rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/pingjiachenggong.png"></u-image>
 		</view>
 		<view class="pingjia">评价成功</view>
 		<view class="evaluation">
 			感谢您的评价！
 		</view>
 		<view class="xingxing">
-			<u-image width="481rpx" height="185rpx" src="../../../static/userComplaints/xingxing.png"></u-image>
+			<u-image width="481rpx" height="185rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/xingxing.png"></u-image>
 		</view>
 		
 		<view  class="weixiao">
-			<u-image width="195rpx" height="189rpx" src="../../../static/userComplaints/weixiao.png"></u-image>
+			<u-image width="195rpx" height="189rpx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/weixiao.png"></u-image>
 		</view>
 		<view class="btn_box">
 			<u-button @click="btn" class="btn_box_button" type="primary" shape="circle">

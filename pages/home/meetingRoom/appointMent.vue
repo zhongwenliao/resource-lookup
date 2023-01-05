@@ -4,8 +4,8 @@
 		<view class="appoint-center u-m-l-20 u-m-r-20 u-m-b-30 u-p-b-30">
 			<view class="wenben">
 				<u-image width="74upx" height="74upx" class="wenben-image"
-				:src="ruleForm.approvalStatus === 0 ? '/static/home/meetingRoom/daishenpi.png' :
-					ruleForm.approvalStatus === 1 ? '/static/home/meetingRoom/shenpitongguo.png' : '/static/home/meetingRoom/yibohui.png'"></u-image>
+				:src="ruleForm.approvalStatus === 0 ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/daishenpi.png' :
+					ruleForm.approvalStatus === 1 ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/shenpitongguo.png' : 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yibohui.png'"></u-image>
 				<view class="u-m-l-90 u-m-r-20">
 					<text class="u-font-42">
 						{{ ruleForm.approvalStatus === 0 ? '预约申请待待审批...' : ruleForm.approvalStatus === 1 ? '审批通过' : '预约申请待已驳回' }}
@@ -56,14 +56,14 @@
 				<view class='share-btn'>
 					<view class='btn' hover-class="btn-hover" @click="shareSystem('WXSceneSession')">
 						<button>
-							<u-image width="76upx" height="76upx" mode="aspectFill" src='/static/home/meetingRoom/zhuangfa.png'></u-image>
+							<u-image width="76upx" height="76upx" mode="aspectFill" src='http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/zhuangfa.png'></u-image>
 						</button>
 						<text class="u-font-28">转发</text>
 					</view>
 					<u-line color="#DDDDDD" direction="col" margin="0 140upx 0 140upx" length="0s" />
 					<view class='btn' hover-class="btn-hover" @click="copy()">
 						<button>
-							<u-image width="76upx" height="76upx" mode="aspectFill" src='/static/home/meetingRoom/fuzhi.png'></u-image>
+							<u-image width="76upx" height="76upx" mode="aspectFill" src='http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/fuzhi.png'></u-image>
 						</button>
 						<text class="u-font-28">复制</text>
 					</view>
@@ -72,12 +72,12 @@
 					<u-row gutter="16">
 						<u-col span="6" style="position: relative;" >
 							<view @click="Share('WXSceneSession')">
-								<u-image style="position: absolute;left: 40%;" width="76upx" height="76upx" src="/static/home/meetingRoom/zhuangfa.png" ></u-image>
+								<u-image style="position: absolute;left: 40%;" width="76upx" height="76upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/zhuangfa.png" ></u-image>
 								<text style="position: absolute;left: 44%; top: 90upx; font-size: 26upx;">转发</text>
 							</view>
 						</u-col>
 						<u-col span="6" style="position: relative;">
-							<u-image  style="position: absolute;left: 40%;" width="76upx" height="76upx" src="/static/home/meetingRoom/fuzhi.png"></u-image>
+							<u-image  style="position: absolute;left: 40%;" width="76upx" height="76upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/fuzhi.png"></u-image>
 							<text style="position: absolute;left: 44%; top: 90upx;font-size: 26upx;">复制</text>
 						</u-col>
 					</u-row>

@@ -560,7 +560,7 @@ export default {
 </script>
 
 <style lang="less">
-@import (less) '../../static/lx-calendar/fonts/iconfont.css';
+@import (less) 'http://yuanzhoulvwego.com/wp-content/uploads/static/lx-calendar/fonts/iconfont.css';
 
 @color:#007aff;
 @color_disabled:#f1f1f1;

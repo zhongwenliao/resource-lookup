@@ -156,7 +156,7 @@
 					<u-icon @click="$u.throttle(collection, 1000)" label="收藏" label-color="#333333" label-size="22" label-pos="bottom" width="44" height="42"
 						:name="merchantsInfo.collectStatus?yishoucang:shoucang"></u-icon>
 					<u-icon @click="share" label="转发" class="u-p-l-50" label-color="#333333"  label-size="22" label-pos="bottom"
-						width="44" height="39" name="/static/home/merchants/zhuangfa.png"></u-icon>
+						width="44" height="39" name="http://yuanzhoulvwego.com/wp-content/uploads/static/home/merchants/zhuangfa.png"></u-icon>
 				</view>
 				<view class="right-but_box" @click="intentionApply">
 					意向申请
@@ -171,8 +171,8 @@
 		data() {
 			return {
 				zoneId: '',
-				shoucang: '/static/home/merchants/shoucang.png',
-				yishoucang: '/static/home/merchants/yishoucang.png',
+				shoucang: 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/merchants/shoucang.png',
+				yishoucang: 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/merchants/yishoucang.png',
 				title: '招商详情',
 				merchantsInfo: {
 					collection:0,//收藏状态

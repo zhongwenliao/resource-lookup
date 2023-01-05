@@ -3,7 +3,7 @@
 		<u-navbar style="background:#02A7F0;color: #fff;" :title="id>0?'申请成功':'延期成功'"></u-navbar>
 		<view class="head">
 			<span>审批成功</span> 
-			<image class="img" src="@/static/home/employeeManagement/tijiao.png" mode=""></image>
+			<image class="img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png" mode=""></image>
 		</view>
 		<view class="month-card-info">
 			<view class="title">
@@ -15,7 +15,7 @@
 				<view>手机号：<span>{{dataInfo.phone}}</span>	</view>
 				<view>车牌号：<span  style="color: #4FA7F0;">{{dataInfo.licensePlateNumber}}</span></view>
 				<view>月卡开始时间：<span>{{dataInfo.startDate}}</span>	</view>
-				<view  v-if="dataInfo.type==0">月卡结束时间：<span>{{dataInfo.endDate}}</span>	</view>
+				<view v-if="dataInfo.type==0">月卡结束时间：<span>{{dataInfo.endDate}}</span>	</view>
 				<view v-if="dataInfo.type==1">延长时长：<span>{{dataInfo.parkingSpaceNumber}}</span></view>
 				<view v-if="dataInfo.type==1">有效期至：<span>{{dataInfo.parkingSpaceNumber}}</span> <span style="color: #FA9504;">有效</span>	</view>
 				<view v-if="dataInfo.type==1">本次延期：<span>{{dataInfo.parkingSpaceNumber}} -- {{dataInfo.parkingSpaceNumber}}</span>	</view>

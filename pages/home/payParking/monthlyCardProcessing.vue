@@ -56,7 +56,7 @@
 								:action="action" @on-list-change="idPhotolistChange" @on-success="idPhotoUploadSuccess"
 								:auto-upload="true">
 								<view slot="addBtn">
-									<u-image src="/static/home/repair/shangchuangtupian.png" width="181" height="181">
+									<u-image src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repair/shangchuangtupian.png" width="181" height="181">
 									</u-image>
 								</view>
 							</u-upload>
@@ -81,7 +81,7 @@
 								:action="action" @on-list-change="driverPhotolistChange"
 								@on-success="driverPhotoUploadSuccess" :auto-upload="true">
 								<view slot="addBtn">
-									<u-image src="/static/home/repair/shangchuangtupian.png" width="181" height="181">
+									<u-image src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repair/shangchuangtupian.png" width="181" height="181">
 									</u-image>
 								</view>
 							</u-upload>
@@ -117,7 +117,7 @@
 			@confirm="knowConfirm">
 			<view class="slot-content">
 				<u-image class="model-image" width="125upx" height="125upx" shape="circle"
-					:src="'../../../static/home/employeeManagement/tijiao.png'">
+					:src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png'">
 					<u-loading slot="loading"></u-loading>
 					<view slot="error" style="font-size: 24upx;">加载失败</view>
 				</u-image>

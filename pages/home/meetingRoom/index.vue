@@ -10,7 +10,7 @@
 						<view class="u-font-lg u-text-color-fff">
 							{{location.city}}
 						</view>
-						<u-icon class="u-m-l-14" name="/static/xialaxuanzeanniu.png" size="18">
+						<u-icon class="u-m-l-14" name="http://yuanzhoulvwego.com/wp-content/uploads/static/xialaxuanzeanniu.png" size="18">
 						</u-icon>
 					</view>
 				</u-navbar>
@@ -193,12 +193,12 @@
 				meetingRoomTabbar: [
 					{
 						pagePath: "/pages/home/meetingRoom/index",
-						iconPath: "/static/home/meetingRoom/huiyishiyuyue.png",
+						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/huiyishiyuyue.png",
 						text: "会议室预约",
 					},
 					{
 						pagePath: "/pages/home/meetingRoom/record",
-						iconPath: "/static/home/meetingRoom/yuyuejilu2.png",
+						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yuyuejilu2.png",
 						text: "预约记录",
 					}
 				],

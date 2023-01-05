@@ -54,7 +54,7 @@
 								:custom-btn="true" :file-list="form.livePhoto" upload-text="" ref="uUpload" :action="action"
 								@on-list-change="listChange" @on-success="uploadSuccess" :auto-upload="true">
 								<view slot="addBtn">
-									<u-image src="/static/home/repairs/shangchuangtupian.png" width="181" height="181"></u-image>
+									<u-image src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/shangchuangtupian.png" width="181" height="181"></u-image>
 								</view>
 							</u-upload>
 						</u-form-item>
@@ -85,7 +85,7 @@
 					width="125upx"
 					height="125upx"
 					shape="circle"
-					:src="'../../../static/home/employeeManagement/tijiao.png'"
+					:src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png'"
 				>
 					<u-loading slot="loading"></u-loading>
 					<view slot="error" style="font-size: 24upx;">加载失败</view>

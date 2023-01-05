@@ -53,10 +53,10 @@
 			this.results = this.$Route.query.results
 			if(this.results){
 				this.title = '支付成功'
-				this.resultsImage = '/static/home/billPay/zhifuichenggong.png'
+				this.resultsImage = 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhifuichenggong.png'
 			}else{
 				this.title = '支付失败'
-				this.resultsImage = '/static/home/billPay/zhifuishibai.png'
+				this.resultsImage = 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhifuishibai.png'
 			}
 		}
 	}
