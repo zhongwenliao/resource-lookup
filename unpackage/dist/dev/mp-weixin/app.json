@@ -4,18 +4,6 @@
     "pages/login/login",
     "pages/login/forget",
     "pages/login/register",
-    "pages/user/user",
-    "pages/user/updatePassword",
-    "pages/user/updatePhone",
-    "pages/user/userInfo",
-    "pages/user/setting",
-    "pages/user/openDoorRecord",
-    "pages/user/releaseRecord",
-    "pages/user/myInformation",
-    "pages/user/aboutUs",
-    "pages/user/account",
-    "pages/user/propertyPass",
-    "pages/user/releaseDetails",
     "pages/home/employeeManagement/index",
     "pages/home/employeeManagement/departmentDetails",
     "pages/home/employeeManagement/newStaff",
@@ -102,7 +90,19 @@
         "pages/vis/vis",
         "pages/vis/vis-address",
         "pages/vis-pwd/vis-pwd",
-        "pages/vis-pwd/vis-pwd-web"
+        "pages/vis-pwd/vis-pwd-web",
+        "pages/user/user",
+        "pages/user/updatePassword",
+        "pages/user/updatePhone",
+        "pages/user/userInfo",
+        "pages/user/setting",
+        "pages/user/openDoorRecord",
+        "pages/user/releaseRecord",
+        "pages/user/myInformation",
+        "pages/user/aboutUs",
+        "pages/user/account",
+        "pages/user/propertyPass",
+        "pages/user/releaseDetails"
       ]
     }
   ],
@@ -125,7 +125,7 @@
         "pagePath": "pages/index/index"
       },
       {
-        "pagePath": "pages/user/user"
+        "pagePath": "sub-package1/pages/user/user"
       }
     ]
   },

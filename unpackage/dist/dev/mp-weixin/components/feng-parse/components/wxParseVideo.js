@@ -1,11 +1,1 @@
-(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/feng-parse/components/wxParseVideo"],{1458:function(n,e,t){"use strict";t.r(e);var r=t(1459),o=t(1461);for(var u in o)["default"].indexOf(u)<0&&function(n){t.d(e,n,(function(){return o[n]}))}(u);t(1463);var i,c=t(38),a=Object(c["default"])(o["default"],r["render"],r["staticRenderFns"],!1,null,null,null,!1,r["components"],i);a.options.__file="components/feng-parse/components/wxParseVideo.vue",e["default"]=a.exports},1459:function(n,e,t){"use strict";t.r(e);var r=t(1460);t.d(e,"render",(function(){return r["render"]})),t.d(e,"staticRenderFns",(function(){return r["staticRenderFns"]})),t.d(e,"recyclableRender",(function(){return r["recyclableRender"]})),t.d(e,"components",(function(){return r["components"]}))},1460:function(n,e,t){"use strict";var r;t.r(e),t.d(e,"render",(function(){return o})),t.d(e,"staticRenderFns",(function(){return i})),t.d(e,"recyclableRender",(function(){return u})),t.d(e,"components",(function(){return r}));var o=function(){var n=this,e=n.$createElement;n._self._c},u=!1,i=[];o._withStripped=!0},1461:function(n,e,t){"use strict";t.r(e);var r=t(1462),o=t.n(r);for(var u in r)["default"].indexOf(u)<0&&function(n){t.d(e,n,(function(){return r[n]}))}(u);e["default"]=o.a},1462:function(n,e,t){"use strict";(function(n){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var t={name:"wxParseVideo",props:{node:{}},data:function(){return{playState:!0,videoStyle:"width: 100%;"}},methods:{play:function(){console.log("点击了video 播放"),this.playState=!this.playState}},mounted:function(){var e=this;n.$on("slideMenuShow",(function(n){console.log("捕获事件："+n),"show"==n&&e.playState&&(e.playState=!1)}))}};e.default=t}).call(this,t(1)["default"])},1463:function(n,e,t){"use strict";t.r(e);var r=t(1464),o=t.n(r);for(var u in r)["default"].indexOf(u)<0&&function(n){t.d(e,n,(function(){return r[n]}))}(u);e["default"]=o.a},1464:function(n,e,t){}}]);
-//# sourceMappingURL=../../../../.sourcemap/mp-weixin/components/feng-parse/components/wxParseVideo.js.map
-;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
-    'components/feng-parse/components/wxParseVideo-create-component',
-    {
-        'components/feng-parse/components/wxParseVideo-create-component':(function(module, exports, __webpack_require__){
-            __webpack_require__('1')['createComponent'](__webpack_require__(1458))
-        })
-    },
-    [['components/feng-parse/components/wxParseVideo-create-component']]
-]);
+Component({})

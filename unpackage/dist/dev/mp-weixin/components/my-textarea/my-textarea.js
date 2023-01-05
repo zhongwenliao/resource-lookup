@@ -1,11 +1,1 @@
-(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/my-textarea/my-textarea"],{268:function(t,n,e){"use strict";e.r(n);var r=e(269),u=e(271);for(var c in u)["default"].indexOf(c)<0&&function(t){e.d(n,t,(function(){return u[t]}))}(c);e(273);var o,a=e(38),i=Object(a["default"])(u["default"],r["render"],r["staticRenderFns"],!1,null,null,null,!1,r["components"],o);i.options.__file="components/my-textarea/my-textarea.vue",n["default"]=i.exports},269:function(t,n,e){"use strict";e.r(n);var r=e(270);e.d(n,"render",(function(){return r["render"]})),e.d(n,"staticRenderFns",(function(){return r["staticRenderFns"]})),e.d(n,"recyclableRender",(function(){return r["recyclableRender"]})),e.d(n,"components",(function(){return r["components"]}))},270:function(t,n,e){"use strict";var r;e.r(n),e.d(n,"render",(function(){return u})),e.d(n,"staticRenderFns",(function(){return o})),e.d(n,"recyclableRender",(function(){return c})),e.d(n,"components",(function(){return r}));var u=function(){var t=this,n=t.$createElement;t._self._c},c=!1,o=[];u._withStripped=!0},271:function(t,n,e){"use strict";e.r(n);var r=e(272),u=e.n(r);for(var c in r)["default"].indexOf(c)<0&&function(t){e.d(n,t,(function(){return r[t]}))}(c);n["default"]=u.a},272:function(t,n,e){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var r={computed:{contentLength:function(){return this.content.length}},props:{value:{type:String,default:""},placeholder:{type:String,default:"请输入备注信息"},showLength:{type:Boolean,default:!0},maxlength:{type:Number,default:50}},data:function(){return{content:this.value}},watch:{value:function(t,n){this.content=t},content:function(t,n){this.$emit("update:value",t)}}};n.default=r},273:function(t,n,e){"use strict";e.r(n);var r=e(274),u=e.n(r);for(var c in r)["default"].indexOf(c)<0&&function(t){e.d(n,t,(function(){return r[t]}))}(c);n["default"]=u.a},274:function(t,n,e){}}]);
-//# sourceMappingURL=../../../.sourcemap/mp-weixin/components/my-textarea/my-textarea.js.map
-;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
-    'components/my-textarea/my-textarea-create-component',
-    {
-        'components/my-textarea/my-textarea-create-component':(function(module, exports, __webpack_require__){
-            __webpack_require__('1')['createComponent'](__webpack_require__(268))
-        })
-    },
-    [['components/my-textarea/my-textarea-create-component']]
-]);
+Component({})

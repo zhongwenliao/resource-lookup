@@ -1,11 +1,1 @@
-(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["uview-ui/components/u-cell-group/u-cell-group"],{1028:function(e,n,t){"use strict";t.r(n);var r=t(1029),u=t(1031);for(var o in u)["default"].indexOf(o)<0&&function(e){t.d(n,e,(function(){return u[e]}))}(o);t(1033);var c,i=t(38),l=Object(i["default"])(u["default"],r["render"],r["staticRenderFns"],!1,null,"5723aa40",null,!1,r["components"],c);l.options.__file="uview-ui/components/u-cell-group/u-cell-group.vue",n["default"]=l.exports},1029:function(e,n,t){"use strict";t.r(n);var r=t(1030);t.d(n,"render",(function(){return r["render"]})),t.d(n,"staticRenderFns",(function(){return r["staticRenderFns"]})),t.d(n,"recyclableRender",(function(){return r["recyclableRender"]})),t.d(n,"components",(function(){return r["components"]}))},1030:function(e,n,t){"use strict";var r;t.r(n),t.d(n,"render",(function(){return u})),t.d(n,"staticRenderFns",(function(){return c})),t.d(n,"recyclableRender",(function(){return o})),t.d(n,"components",(function(){return r}));var u=function(){var e=this,n=e.$createElement,t=(e._self._c,e.title?e.__get_style([e.titleStyle]):null);e.$mp.data=Object.assign({},{$root:{s0:t}})},o=!1,c=[];u._withStripped=!0},1031:function(e,n,t){"use strict";t.r(n);var r=t(1032),u=t.n(r);for(var o in r)["default"].indexOf(o)<0&&function(e){t.d(n,e,(function(){return r[e]}))}(o);n["default"]=u.a},1032:function(e,n,t){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var r={name:"u-cell-group",props:{title:{type:String,default:""},border:{type:Boolean,default:!0},titleStyle:{type:Object,default:function(){return{}}}},data:function(){return{index:0}}};n.default=r},1033:function(e,n,t){"use strict";t.r(n);var r=t(1034),u=t.n(r);for(var o in r)["default"].indexOf(o)<0&&function(e){t.d(n,e,(function(){return r[e]}))}(o);n["default"]=u.a},1034:function(e,n,t){}}]);
-//# sourceMappingURL=../../../../.sourcemap/mp-weixin/uview-ui/components/u-cell-group/u-cell-group.js.map
-;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
-    'uview-ui/components/u-cell-group/u-cell-group-create-component',
-    {
-        'uview-ui/components/u-cell-group/u-cell-group-create-component':(function(module, exports, __webpack_require__){
-            __webpack_require__('1')['createComponent'](__webpack_require__(1028))
-        })
-    },
-    [['uview-ui/components/u-cell-group/u-cell-group-create-component']]
-]);
+Component({})

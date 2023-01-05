@@ -170,19 +170,6 @@
 			}
 
 		},
-		// {
-		//     "path" : "pages/home/operationList/index",
-		//     "style" :                                                                                    
-		//     {
-		// 		"navigationStyle": "custom",
-		//         "navigationBarTitleText": "操作列表",
-		//         "enablePullDownRefresh": false
-		//     },
-		// 	"meta": {
-		// 		"auth": true,
-		// 		"zoneId": true
-		// 	}  
-		// },
 		{
 			"path": "pages/user/propertyPass",
 			"style": {
@@ -205,266 +192,7 @@
 				"auth": true,
 				"zoneId": false
 			}
-		}, {
-			"path": "pages/home/employeeManagement/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "员工管理",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/employeeManagement/departmentDetails",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "新增部门",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/employeeManagement/newStaff",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "新增人员",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/employeeManagement/personnelList",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "人员列表",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/employeeManagement/staffDetails",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "人员详情",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/employeeManagement/selectPermissions",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "选择权限",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},
-		{
-			"path": "pages/home/meetingRoom/index",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "会议室管理",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/meetingRoom/record",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "会议室预约记录",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},
-		{
-			"path": "pages/home/meetingRoom/appointMent",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "会议室预约待审核",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},
-		{
-			"path": "pages/home/meetingRoom/meetingDetails",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "会议室预约",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},
-		{
-			"path": "pages/home/payParking/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "停车缴费",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/monthlyCard",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "月卡管理",
-				"enablePullDownRefresh": true
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/monthlyCardRecord",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "月卡申请记录",
-				"enablePullDownRefresh": true
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-
-			"path": "pages/home/payParking/monthlyCardProcessing",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "月卡申办",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/monthlyCardDetail",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "月卡详情",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/successfulApproval",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "审批成功",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/progressTrial",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "审批进度",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/payParking/suspendedPayment",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "临停缴费",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/entranceGuard/index",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "门禁管理"
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},{
-			"path": "pages/home/entranceGuard/openDoor",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "开门成功"
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		},{
-			"path": "pages/home/entranceGuard/lunBoTu",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "循环"
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		}, {
-			"path": "pages/home/entranceGuard/bluetoothOpenDoor",
-			"style": {
-				// "navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "蓝牙or远程开门"
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		}, {
+		},  {
 			"path": "pages/dev-manage/dev-manage",
 			"style": {
 				"enablePullDownRefresh": true
@@ -586,98 +314,7 @@
 				"zoneId": true
 			}
 		},
-		{
-			"path": "pages/home/notice/noticeInfo",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "通知详情",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "pages/home/notice/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "园区通知",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-		{
-			"path": "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
-			"style": {
-				"navigationBarTitleText": "头像裁剪",
-				"navigationBarBackgroundColor": "#000000"
-			}
-		}, {
-			"path": "pages/home/billPay/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "账单缴费",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-
-		}, {
-			"path": "pages/home/billPay/billInfo",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "我的账单",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-
-		}, {
-			"path": "pages/home/billPay/pay",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "支付账单",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-
-		}, {
-			"path": "pages/home/billPay/payResults",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "支付结果",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-
-
-		}, {
-			"path": "pages/home/billPay/payRecord",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "缴费记录",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": false,
-				"zoneId": false
-			}
-
-		}, {
+		 {
 			"path": "pages/index/selectZone",
 			"style": {
 				"navigationStyle": "custom",
@@ -690,263 +327,6 @@
 			}
 
 		}
-	    ,{
-            "path" : "pages/home/billPay/billDetails",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "账单详情",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-            
-        }
-        ,{
-            "path" : "pages/home/contract/index",
-            "style" :                                                                                    
-            {
-				"navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "合同首页",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-            
-        }
-        ,{
-            "path" : "pages/home/contract/contractInfo",
-            "style" :                                                                                    
-            {
-				"navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "合同详情",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-            
-        },
-		{
-		    "path" : "pages/home/contract/customerInfo",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "更多",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		    
-		},
-		{
-		    "path" : "pages/home/contract/customerInfo2",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "更多2",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		    
-		},{
-		    "path" : "pages/home/repairs/index",
-		    "style" :                                                                                    
-		    {
-				"navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "园区报修",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},{
-		    "path" : "pages/home/repairs/repairApplication",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "报修申请",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},{
-		    "path" : "pages/home/repairs/repairProgress",
-		    "style" :
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "报修进度",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},{
-		    "path" : "pages/home/repairs/repairEvaluate",
-		    "style" :
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "报修评价",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		}
-        ,{
-            "path" : "pages/home/merchants/index",
-            "style" :                                                                                    
-            {
-				"navigationBarTextStyle": "white",
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "招商首页",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-            
-        }, {
-			"path": "pages/home/merchants/detailsMerchants",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "招商详情"
-
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-		}
-        ,{
-            "path" : "pages/home/merchants/intentionApply",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "意向申请",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}  
-        }
-        ,{
-            "path" : "pages/home/merchants/applyRecord",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "申请记录",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-            
-        },{
-            "path" : "pages/home/userComplaints/index",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "用户投诉",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-            
-        },{
-            "path" : "pages/home/userComplaints/sugGestions",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "用户投诉",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}
-            
-        },{
-            "path" : "pages/home/userComplaints/complaintProgress",
-            "style" :                                                                                    
-            {
-				"navigationStyle": "custom",
-                "navigationBarTitleText": "用户投诉",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}  
-        },{
-		    "path" : "pages/home/userComplaints/evaLuation",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "评价",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}  
-		},{
-		    "path" : "pages/home/userComplaints/evaluationSuccess",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "评价成功",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}  
-		},{
-		    "path" : "pages/home/contactProperty/index",
-		    "style" :                                                                                    
-		    {
-				"navigationStyle": "custom",
-		        "navigationBarTitleText": "联系物业",
-		        "enablePullDownRefresh": false
-		    },
-			"meta": {
-				"auth": true,
-				"zoneId": false
-			}  
-		}
-        ,{
-            "path" : "pages/home/operationList/index",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
     ],
 	"subPackages": [
 		{
@@ -1091,6 +471,616 @@
 					}
 				}
 			]
+		},
+		{
+			"root":"sub-package2",
+			"pages":[{
+				"path": "pages/home/employeeManagement/index",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "员工管理",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/employeeManagement/departmentDetails",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "新增部门",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/employeeManagement/newStaff",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "新增人员",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/employeeManagement/personnelList",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "人员列表",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/employeeManagement/staffDetails",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "人员详情",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/employeeManagement/selectPermissions",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "选择权限",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},
+			{
+				"path": "pages/home/meetingRoom/index",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "会议室管理",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/meetingRoom/record",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "会议室预约记录",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},
+			{
+				"path": "pages/home/meetingRoom/appointMent",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "会议室预约待审核",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},
+			{
+				"path": "pages/home/meetingRoom/meetingDetails",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "会议室预约",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},
+			{
+				"path": "pages/home/payParking/index",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "停车缴费",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/monthlyCard",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "月卡管理",
+					"enablePullDownRefresh": true
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/monthlyCardRecord",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "月卡申请记录",
+					"enablePullDownRefresh": true
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+	
+				"path": "pages/home/payParking/monthlyCardProcessing",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "月卡申办",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/monthlyCardDetail",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "月卡详情",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/successfulApproval",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "审批成功",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/progressTrial",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "审批进度",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/payParking/suspendedPayment",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "临停缴费",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/entranceGuard/index",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "门禁管理"
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},{
+				"path": "pages/home/entranceGuard/openDoor",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "开门成功"
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			},{
+				"path": "pages/home/entranceGuard/lunBoTu",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "循环"
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			}, {
+				"path": "pages/home/entranceGuard/bluetoothOpenDoor",
+				"style": {
+					// "navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "蓝牙or远程开门"
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},{
+				"path": "pages/home/notice/noticeInfo",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "通知详情",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "pages/home/notice/index",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "园区通知",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},
+			{
+				"path": "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+				"style": {
+					"navigationBarTitleText": "头像裁剪",
+					"navigationBarBackgroundColor": "#000000"
+				}
+			}, {
+				"path": "pages/home/billPay/index",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "账单缴费",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+	
+			}, {
+				"path": "pages/home/billPay/billInfo",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "我的账单",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+	
+			}, {
+				"path": "pages/home/billPay/pay",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "支付账单",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+	
+			}, {
+				"path": "pages/home/billPay/payResults",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "支付结果",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+	
+	
+			}, {
+				"path": "pages/home/billPay/payRecord",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "缴费记录",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": false,
+					"zoneId": false
+				}
+	
+			},{
+				"path" : "pages/home/billPay/billDetails",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "账单详情",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			}
+			,{
+				"path" : "pages/home/contract/index",
+				"style" :                                                                                    
+				{
+					"navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "合同首页",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			}
+			,{
+				"path" : "pages/home/contract/contractInfo",
+				"style" :                                                                                    
+				{
+					"navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "合同详情",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			},
+			{
+				"path" : "pages/home/contract/customerInfo",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "更多",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			},
+			{
+				"path" : "pages/home/contract/customerInfo2",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "更多2",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			},{
+				"path" : "pages/home/repairs/index",
+				"style" :                                                                                    
+				{
+					"navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "园区报修",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},{
+				"path" : "pages/home/repairs/repairApplication",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "报修申请",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},{
+				"path" : "pages/home/repairs/repairProgress",
+				"style" :
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "报修进度",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			},{
+				"path" : "pages/home/repairs/repairEvaluate",
+				"style" :
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "报修评价",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+			}
+			,{
+				"path" : "pages/home/merchants/index",
+				"style" :                                                                                    
+				{
+					"navigationBarTextStyle": "white",
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "招商首页",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": true
+				}
+				
+			}, {
+				"path": "pages/home/merchants/detailsMerchants",
+				"style": {
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "招商详情"
+	
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+			}
+			,{
+				"path" : "pages/home/merchants/intentionApply",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "意向申请",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}  
+			}
+			,{
+				"path" : "pages/home/merchants/applyRecord",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "申请记录",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+				
+			},{
+				"path" : "pages/home/userComplaints/index",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "用户投诉",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+				
+			},{
+				"path" : "pages/home/userComplaints/sugGestions",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "用户投诉",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}
+				
+			},{
+				"path" : "pages/home/userComplaints/complaintProgress",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "用户投诉",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}  
+			},{
+				"path" : "pages/home/userComplaints/evaLuation",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "评价",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}  
+			},{
+				"path" : "pages/home/userComplaints/evaluationSuccess",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "评价成功",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}  
+			},{
+				"path" : "pages/home/contactProperty/index",
+				"style" :                                                                                    
+				{
+					"navigationStyle": "custom",
+					"navigationBarTitleText": "联系物业",
+					"enablePullDownRefresh": false
+				},
+				"meta": {
+					"auth": true,
+					"zoneId": false
+				}  
+			}
+			,{
+				"path" : "pages/home/operationList/index",
+				"style" :                                                                                    
+				{
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+				
+			}]
 		}
 	],
 	"globalStyle": {
