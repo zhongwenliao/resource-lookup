@@ -35,13 +35,13 @@
 		methods:{
 			complete(){
 				// uni.reLaunch({
-				// 	url: '/pages/home/billPay/index'
+				// 	url: '/sub-package2/pages/home/billPay/index'
 				// });
 				this.$Router.back(3);
 			},
 			againPay(){
 				// uni.reLaunch({
-				// 	url: '/pages/home/billPay/pay'
+				// 	url: '/sub-package2/pages/home/billPay/pay'
 				// });
 				this.$Router.back(1);
 			},

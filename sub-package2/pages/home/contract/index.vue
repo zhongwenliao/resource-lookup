@@ -90,7 +90,7 @@
 			},
 			goContractInfo(data) {
 				this.$Router.push({
-					path: '/pages/home/contract/contractInfo',
+					path: '/sub-package2/pages/home/contract/contractInfo',
 					query:{
 						id:data.id
 					}

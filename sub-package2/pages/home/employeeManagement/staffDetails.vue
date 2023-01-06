@@ -141,7 +141,7 @@
 			confirm(e) {
 				if (e.value === 1) {
 					this.$Router.push({
-						path: '/pages/home/employeeManagement/newStaff',
+						path: '/sub-package2/pages/home/employeeManagement/newStaff',
 						query: this.forms
 					})
 				} else {
@@ -162,7 +162,7 @@
 					})
 				} else {
 					this.$Router.push({
-						path: '/pages/home/employeeManagement/personnelList',
+						path: '/sub-package2/pages/home/employeeManagement/personnelList',
 					})
 				}
 			}

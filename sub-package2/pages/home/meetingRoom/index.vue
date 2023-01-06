@@ -641,7 +641,7 @@
 			// 跳转到会议室详情
 			goMeetingDetails(item) {
 				this.$Router.push({
-					path: '/pages/home/meetingRoom/meetingDetails',
+					path: '/sub-package2/pages/home/meetingRoom/meetingDetails',
 					query: { dataTime: this.value, ...item }
 				})
 			},

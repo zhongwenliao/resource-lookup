@@ -203,14 +203,14 @@
 			// 跳转到人员详情
 			toStaffDetails(item) {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/staffDetails',
+					path: '/sub-package2/pages/home/employeeManagement/staffDetails',
 					query: { id: item.id }
 				})
 			},
 			// 跳转添加人员
 			onSubmit() {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/newStaff',
+					path: '/sub-package2/pages/home/employeeManagement/newStaff',
 				});
 			},
 			// 操作
@@ -221,7 +221,7 @@
 				} else {
 					// 跳转到部门详情
 					this.$Router.push({
-						path: '/pages/home/employeeManagement/departmentDetails',
+						path: '/sub-package2/pages/home/employeeManagement/departmentDetails',
 						query: this.$Route.query
 					})
 					this.operationSelect = false
@@ -247,7 +247,7 @@
 								mask: true
 							});
 							_this.$Router.push({
-								path: '/pages/home/employeeManagement/index',
+								path: '/sub-package2/pages/home/employeeManagement/index',
 							})
 						} else {
 							uni.showToast({

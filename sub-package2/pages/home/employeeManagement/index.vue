@@ -131,20 +131,20 @@
 			// 跳转到人员列表
 			toStaffList(item) {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/personnelList',
+					path: '/sub-package2/pages/home/employeeManagement/personnelList',
 					query: item
 				})
 			},
 			// 添加部门
 			addDepartment() {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/departmentDetails',
+					path: '/sub-package2/pages/home/employeeManagement/departmentDetails',
 				});
 			},
 			// 添加人员
 			addStaff() {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/newStaff',
+					path: '/sub-package2/pages/home/employeeManagement/newStaff',
 				});
 			}
 		}

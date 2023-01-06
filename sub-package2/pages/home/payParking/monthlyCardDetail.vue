@@ -84,7 +84,7 @@
 			},
 			goRouter(type,id) {
 				this.$Router.push({
-					path: '/pages/home/payParking/monthlyCardProcessing',
+					path: '/sub-package2/pages/home/payParking/monthlyCardProcessing',
 					query: {
 						type: type,
 						id:id,

@@ -140,7 +140,7 @@
 							this.$showToast(this.house["add-success"] || "添加成功");
 							setTimeout(() => {
 								uni.navigateTo({
-									url: "/pages/dev-manage/dev-manage"
+									url: "/sub-package2/pages/dev-manage/dev-manage"
 								})
 							}, 1000)
 						}

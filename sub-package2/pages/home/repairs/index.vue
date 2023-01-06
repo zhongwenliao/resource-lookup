@@ -99,13 +99,13 @@
 			// 跳转到报修申请页
 			goRepairApplication() {
 				this.$Router.push({
-					path: '/pages/home/repairs/repairApplication'
+					path: '/sub-package2/pages/home/repairs/repairApplication'
 				});
 			},
 			// 跳转到报修进度页
 			goRepairProgress(id) {
 				this.$Router.push({
-					path: '/pages/home/repairs/repairProgress',
+					path: '/sub-package2/pages/home/repairs/repairProgress',
 					query: { id: id }
 				});
 			}

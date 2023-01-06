@@ -115,7 +115,7 @@
 					results = 0
 				}
 				this.$Router.push({
-					path: '/pages/home/billPay/payResults',
+					path: '/sub-package2/pages/home/billPay/payResults',
 					query:{
 						results
 					}

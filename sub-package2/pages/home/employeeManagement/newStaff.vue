@@ -278,7 +278,7 @@
 			// 跳转到人员权限页面
 			toPersonnelAccess() {
 				this.$Router.push({
-					path: '/pages/home/employeeManagement/selectPermissions',
+					path: '/sub-package2/pages/home/employeeManagement/selectPermissions',
 					query: { cardList: this.cardList, checkList: this.checkList }
 				})
 			},

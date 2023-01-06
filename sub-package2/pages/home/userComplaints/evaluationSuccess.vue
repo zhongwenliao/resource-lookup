@@ -30,7 +30,7 @@
 		methods:{
 			btn(){
 				this.$Router.push({
-					path: '/pages/home/userComplaints/index'
+					path: '/sub-package2/pages/home/userComplaints/index'
 				});
 			}
 		}

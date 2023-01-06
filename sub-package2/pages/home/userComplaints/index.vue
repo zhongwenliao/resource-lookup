@@ -102,7 +102,7 @@
 				
 				if(item.processingStatus === 0 || item.processingStatus === 1 || item.processingStatus === 2 || item.processingStatus === 4 || item.processingStatus === 5) {
 					this.$Router.push({
-						path: '/pages/home/userComplaints/complaintProgress',
+						path: '/sub-package2/pages/home/userComplaints/complaintProgress',
 						query: { id: item.id }
 					});
 				}
@@ -126,7 +126,7 @@
 			},
 			goRepairApplication() {
 				this.$Router.push({
-					path: '/pages/home/userComplaints/sugGestions'
+					path: '/sub-package2/pages/home/userComplaints/sugGestions'
 				});
 			},
 			// 跳转到报修进度页

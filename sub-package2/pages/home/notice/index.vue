@@ -45,7 +45,7 @@
 		methods: {
 			goNotice(id) {
 				this.$Router.push({
-					path: '/pages/home/notice/noticeInfo',
+					path: '/sub-package2/pages/home/notice/noticeInfo',
 					query: {
 						id
 					}

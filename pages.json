@@ -198,127 +198,6 @@
 				"auth": true,
 				"zoneId": false
 			}
-		},  {
-			"path": "pages/dev-manage/dev-manage",
-			"style": {
-				"enablePullDownRefresh": true
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
-		},
-
-		{
-			"path": "pages/dev-manage/dev-info",
-			"style": {}
-		},
-
-		{
-			"path": "pages/dev-manage/wifi-list",
-			"style": {}
-		},
-
-		// 配置通讯参数
-		{
-			"path": "pages/dev-manage/setting-wifi-param",
-			"style": {
-				"navigationBarTitleText": "配置通讯参数"
-			}
-		},
-
-		// 配置APN
-		{
-			"path": "pages/dev-manage/set-APN",
-			"style": {
-				"navigationBarTitleText": "配置APN"
-			}
-		},
-
-		// 配置设备读卡扇区密钥
-		{
-			"path": "pages/dev-manage/sector-key",
-			"style": {
-				"navigationBarTitleText": "配置设备读卡扇区密钥"
-			}
-		},
-
-		// 配置设备IP
-		{
-			"path": "pages/dev-manage/set-dev-ip",
-			"style": {
-				"navigationBarTitleText": "配置设备IP"
-			}
-		},
-
-		// 设备紧急开门密码
-		{
-			"path": "pages/dev-manage/set-dev-pwd",
-			"style": {
-				"navigationBarTitleText": "设备紧急开门密码"
-			}
-		},
-		// 获取系统信息
-		{
-			"path": "pages/dev-manage/dev-system-info",
-			"style": {
-				"navigationBarTitleText": "获取系统信息"
-			}
-		},
-
-		// 卡管理
-		{
-			"path": "pages/dev-manage/card-management",
-			"style": {
-				"navigationBarTitleText": "卡管理"
-			}
-		},
-
-		// 输入卡号添卡
-		{
-			"path": "pages/dev-manage/input-card",
-			"style": {
-				"navigationBarTitleText": "输入卡号添卡"
-			}
-		},
-
-		{
-			"path": "pages/dev-manage/set-lock-open-time",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-
-		{
-			"path": "pages/dev-manage/sim-info",
-			"style": {
-				"navigationBarTitleText": "sim卡信息",
-				"enablePullDownRefresh": false
-			}
-
-		},
-
-		// 附近设备
-		{
-			"path": "pages/dev-manage/scan-dev-list",
-			"style": {
-				"navigationBarTitleText": "附近设备",
-				"enablePullDownRefresh": true
-			}
-		},
-
-		// 添加设备
-		{
-			"path": "pages/dev-manage/addEquipment",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "添加设备",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"auth": true,
-				"zoneId": true
-			}
 		},
 		 {
 			"path": "pages/index/selectZone",
@@ -1080,7 +959,128 @@
 					"enablePullDownRefresh": false
 				}
 				
-			}]
+			},  {
+			"path": "pages/dev-manage/dev-manage",
+			"style": {
+				"enablePullDownRefresh": true
+			},
+			"meta": {
+				"auth": true,
+				"zoneId": true
+			}
+		},
+
+		{
+			"path": "pages/dev-manage/dev-info",
+			"style": {}
+		},
+
+		{
+			"path": "pages/dev-manage/wifi-list",
+			"style": {}
+		},
+
+		// 配置通讯参数
+		{
+			"path": "pages/dev-manage/setting-wifi-param",
+			"style": {
+				"navigationBarTitleText": "配置通讯参数"
+			}
+		},
+
+		// 配置APN
+		{
+			"path": "pages/dev-manage/set-APN",
+			"style": {
+				"navigationBarTitleText": "配置APN"
+			}
+		},
+
+		// 配置设备读卡扇区密钥
+		{
+			"path": "pages/dev-manage/sector-key",
+			"style": {
+				"navigationBarTitleText": "配置设备读卡扇区密钥"
+			}
+		},
+
+		// 配置设备IP
+		{
+			"path": "pages/dev-manage/set-dev-ip",
+			"style": {
+				"navigationBarTitleText": "配置设备IP"
+			}
+		},
+
+		// 设备紧急开门密码
+		{
+			"path": "pages/dev-manage/set-dev-pwd",
+			"style": {
+				"navigationBarTitleText": "设备紧急开门密码"
+			}
+		},
+		// 获取系统信息
+		{
+			"path": "pages/dev-manage/dev-system-info",
+			"style": {
+				"navigationBarTitleText": "获取系统信息"
+			}
+		},
+
+		// 卡管理
+		{
+			"path": "pages/dev-manage/card-management",
+			"style": {
+				"navigationBarTitleText": "卡管理"
+			}
+		},
+
+		// 输入卡号添卡
+		{
+			"path": "pages/dev-manage/input-card",
+			"style": {
+				"navigationBarTitleText": "输入卡号添卡"
+			}
+		},
+
+		{
+			"path": "pages/dev-manage/set-lock-open-time",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+
+		{
+			"path": "pages/dev-manage/sim-info",
+			"style": {
+				"navigationBarTitleText": "sim卡信息",
+				"enablePullDownRefresh": false
+			}
+
+		},
+
+		// 附近设备
+		{
+			"path": "pages/dev-manage/scan-dev-list",
+			"style": {
+				"navigationBarTitleText": "附近设备",
+				"enablePullDownRefresh": true
+			}
+		},
+
+		// 添加设备
+		{
+			"path": "pages/dev-manage/addEquipment",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "添加设备",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"auth": true,
+				"zoneId": true
+			}
+		}]
 		}
 	],
 	"globalStyle": {

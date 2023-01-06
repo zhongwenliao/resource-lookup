@@ -255,7 +255,7 @@
 											title: res.msg,
 										})
 										_this.$Router.push({
-											path: '/pages/home/employeeManagement/index',
+											path: '/sub-package2/pages/home/employeeManagement/index',
 										})
 									}
 								}).catch((e) => {

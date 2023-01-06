@@ -232,7 +232,7 @@
 		methods: {
 			goDetails() {
 				this.$Router.push({
-					path: '/pages/home/billPay/billDetails',
+					path: '/sub-package2/pages/home/billPay/billDetails',
 					query:this.billInfo
 				});
 			},
@@ -274,7 +274,7 @@
 			},
 			goPay() {
 				this.$Router.push({
-					path: '/pages/home/billPay/pay',
+					path: '/sub-package2/pages/home/billPay/pay',
 				});
 			},
 		}

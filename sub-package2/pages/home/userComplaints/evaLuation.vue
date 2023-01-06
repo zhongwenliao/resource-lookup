@@ -50,7 +50,7 @@
 						if (res.code == 200) {
 							this.evaluationStatus = 1
 							this.$Router.push({
-								path: '/pages/home/userComplaints/evaluationSuccess',
+								path: '/sub-package2/pages/home/userComplaints/evaluationSuccess',
 							});
 						}
 						

@@ -175,7 +175,7 @@
 			goRepairEvaluate() {
 				if (!this.ruleForm.evaluationStatus) {
 					this.$Router.push({
-						path: '/pages/home/repairs/repairEvaluate',
+						path: '/sub-package2/pages/home/repairs/repairEvaluate',
 						query: {
 							id: this.$Route.query.id,
 							classificationId: this.ruleForm.classificationId,

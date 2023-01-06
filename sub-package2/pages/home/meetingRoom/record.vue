@@ -150,7 +150,7 @@
 			// 表单点击事件
 			review(item) {
 				this.$Router.push({
-					path: '/pages/home/meetingRoom/appointMent',
+					path: '/sub-package2/pages/home/meetingRoom/appointMent',
 					query: {
 						id:item.id ,
 						zoneId:item.zoneId
@@ -158,7 +158,7 @@
 				});
 				// if(item.approvalStatus === 0) {
 				// 	this.$Router.push({
-				// 		path: '/pages/home/meetingRoom/reservePass',
+				// 		path: '/sub-package2/pages/home/meetingRoom/reservePass',
 				// 		query: {
 				// 			id: item.id,
 				// 			zoneId: item.zoneId
@@ -166,7 +166,7 @@
 				// 	});
 				// }else if(item.approvalStatus === 1) {
 				// 	this.$Router.push({
-				// 		path: '/pages/home/meetingRoom/appointMent',
+				// 		path: '/sub-package2/pages/home/meetingRoom/appointMent',
 				// 		query: {
 				// 			id: item.id,
 				// 			zoneId: item.zoneId
@@ -174,7 +174,7 @@
 				// 	});
 				// }else {
 				// 	this.$Router.push({
-				// 		path: '/pages/home/meetingRoom/reserveFail',
+				// 		path: '/sub-package2/pages/home/meetingRoom/reserveFail',
 				// 		query: {
 				// 			id: item.id,
 				// 			zoneId: item.zoneId

@@ -82,7 +82,7 @@
 			},
 			gobillInfo(data) {
 				this.$Router.push({
-					path: '/pages/home/billPay/billInfo',
+					path: '/sub-package2/pages/home/billPay/billInfo',
 					query:{
 						id: data.id,
 						month: data.billStartTime.split('-')[1]

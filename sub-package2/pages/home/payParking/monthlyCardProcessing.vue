@@ -359,7 +359,7 @@
 							if (res.code === 200) {
 								// this.showModel = true
 								this.$Router.push({
-									path: '/pages/home/payParking/progressTrial',
+									path: '/sub-package2/pages/home/payParking/progressTrial',
 									query: {
 										id: res.data,
 									}

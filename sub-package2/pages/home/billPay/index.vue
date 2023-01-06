@@ -50,12 +50,12 @@
 		methods: {
 			payRecord() {
 				this.$Router.push({
-					path: '/pages/home/billPay/payRecord',
+					path: '/sub-package2/pages/home/billPay/payRecord',
 				});
 			},
 			gobillInfo(data) {
 				this.$Router.push({
-					path: '/pages/home/billPay/billInfo',
+					path: '/sub-package2/pages/home/billPay/billInfo',
 					query:{
 						id:data.id,
 						month:data.month

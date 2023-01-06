@@ -36,17 +36,17 @@
 			methods:{
 				payFees() {
 					this.$Router.push({
-						path: '/pages/home/payParking/suspendedPayment',
+						path: '/sub-package2/pages/home/payParking/suspendedPayment',
 					})
 				},
 				monthlyCard() {
 					this.$Router.push({
-						path: '/pages/home/payParking/monthlyCard',
+						path: '/sub-package2/pages/home/payParking/monthlyCard',
 					})
 				},
 				applicationRecord(){
 					this.$Router.push({
-						path: '/pages/home/payParking/monthlyCardRecord',
+						path: '/sub-package2/pages/home/payParking/monthlyCardRecord',
 					})
 				},
 			}

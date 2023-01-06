@@ -217,13 +217,13 @@
 			},
 			goCustomerInfo() {
 				this.$Router.push({
-					path: '/pages/home/contract/customerInfo',
+					path: '/sub-package2/pages/home/contract/customerInfo',
 					query:this.contractInfo
 				});
 			},
 			goCustomerInfo2() {
 				this.$Router.push({
-					path: '/pages/home/contract/customerInfo2',
+					path: '/sub-package2/pages/home/contract/customerInfo2',
 					query:this.contractInfo
 				});
 			}
