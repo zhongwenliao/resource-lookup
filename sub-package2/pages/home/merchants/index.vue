@@ -204,7 +204,7 @@
 </template>
 
 <script>
-	import axbCheckBox from '@/components/axb-checkbox/axb-checkbox.vue'
+	import axbCheckBox from '@/sub-package2/components/axb-checkbox/axb-checkbox.vue'
 	export default {
 		components: {
 			axbCheckBox
@@ -380,7 +380,7 @@
 			},
 			applyRecord(type) {
 				this.$Router.push({
-					path: "/pages/home/merchants/applyRecord",
+					path: "/sub-package2/pages/home/merchants/applyRecord",
 					query: {
 						pageType: type
 					}
@@ -389,7 +389,7 @@
 			// 去往详情页
 			goDetails(res) {
 				this.$Router.push({
-					path: "/pages/home/merchants/detailsMerchants",
+					path: "/sub-package2/pages/home/merchants/detailsMerchants",
 					query: res
 				});
 			},

@@ -28,7 +28,7 @@
 				// 	width: 68,
 				// 	height: 60,
 				// 	permission: 'aa',
-				// 	url: "/pages/home/zoneInfo/index",
+				// 	url: "/sub-package2/pages/home/zoneInfo/index",
 				// 	count: 0
 				// },
 				gridList: [{
@@ -38,14 +38,14 @@
 					width: 68,
 					height: 64,
 					permission: '', //investmentInfo:selectInvestmentInfo
-					url: "/pages/home/merchants/index",
+					url: "/sub-package2/pages/home/merchants/index",
 					count: 0
 				},
 				{
 					id: 14,
 					title: "停车缴费",
 					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchefufei.png",
-					url: "/pages/home/payParking/index",
+					url: "/sub-package2/pages/home/payParking/index",
 					permission: 'itemManagement:selectItemManagement',
 					width: 64,
 					height: 66,
@@ -58,7 +58,7 @@
 					width: 66,
 					height: 65,
 					permission: 'contractManagement:selectContractManagement',
-					url: "/pages/home/contract/index",
+					url: "/sub-package2/pages/home/contract/index",
 					count: 0
 				}, {
 					id: 4,
@@ -67,7 +67,7 @@
 					width: 58,
 					height: 66,
 					permission: 'billPay:selectBillPay',
-					url: "/pages/home/billPay/index",
+					url: "/sub-package2/pages/home/billPay/index",
 					count: 0
 				}, {
 					id: 5,
@@ -76,7 +76,7 @@
 					width: 58,
 					height: 65,
 					permission: 'employeeManagement:selectEmployee',
-					url: "/pages/home/employeeManagement/index",
+					url: "/sub-package2/pages/home/employeeManagement/index",
 					count: 0
 				},
 				{
@@ -86,7 +86,7 @@
 					width: 68,
 					height: 65,
 					permission: 'zoneRepair:selectZoneRepair',
-					url: "/pages/home/repairs/index",
+					url: "/sub-package2/pages/home/repairs/index",
 					count: 0
 				}, {
 					id: 7,
@@ -95,7 +95,7 @@
 					width: 68,
 					height: 60,
 					permission: 'meetingRoomReservation',
-					url: "/pages/home/meetingRoom/index",
+					url: "/sub-package2/pages/home/meetingRoom/index",
 					count: 0
 				}, {
 					id: 8,
@@ -104,7 +104,7 @@
 					width: 61,
 					height: 65,
 					permission: 'accessControl:selectAccessControl',
-					url: "/pages/home/entranceGuard/index",
+					url: "/sub-package2/pages/home/entranceGuard/index",
 					count: 0
 				}, {
 					id: 10,
@@ -113,7 +113,7 @@
 					width: 64,
 					height: 66,
 					permission: 'zoneComplaint:selectZoneComplaint',
-					url: "/pages/home/userComplaints/index",
+					url: "/sub-package2/pages/home/userComplaints/index",
 					count: 0
 				},
 				{
@@ -123,7 +123,7 @@
 					width: 64,
 					height: 66,
 					permission: '',
-					url: "/pages/home/contactProperty/index",
+					url: "/sub-package2/pages/home/contactProperty/index",
 					count: 0
 				},
 				{

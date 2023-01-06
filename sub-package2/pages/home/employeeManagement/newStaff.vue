@@ -89,7 +89,7 @@
 </template>
 
 <script>
-	import myTextarea from "@/components/my-textarea/my-textarea.vue"
+	import myTextarea from "@/sub-package2/components/my-textarea/my-textarea.vue"
 	export default {
 		data() {
 			return {

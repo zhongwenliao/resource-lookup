@@ -39,7 +39,7 @@
 					<view class="grid-text">{{item.title}}</view>
 				</u-grid-item>
 				<u-grid-item v-if="moreStates">
-					<view @click="goPage({url: '/pages/home/operationList/index'})"
+					<view @click="goPage({url: '/sub-package2/pages/home/operationList/index'})"
 						style="height:60upx;display: flex;align-items: center;font-size: 16px;color: #666666;">
 						更多<u-icon name="arrow-right"></u-icon>
 					</view>
@@ -50,7 +50,7 @@
 		<view v-if="zoneName" class="notice">
 			<u-card :foot-border-top="false" :head-border-bottom="false" :border="true">
 				<u-cell-group class="head_group" :border="false" slot="head">
-					<u-cell-item @click="goPage({url: '/pages/home/notice/index'})" hover-class="none"
+					<u-cell-item @click="goPage({url: '/sub-package2/pages/home/notice/index'})" hover-class="none"
 						:border-bottom="false" icon="volume-fill" title="园区通知" value="更多">
 					</u-cell-item>
 				</u-cell-group>
@@ -75,7 +75,7 @@
 		<view class="notice">
 			<u-card :foot-border-top="false" :head-border-bottom="false" :border="true">
 				<u-cell-group class="head_group" :border="false" slot="head">
-					<u-cell-item @click="goPage({url: '/pages/home/merchants/index'})" hover-class="none"
+					<u-cell-item @click="goPage({url: '/sub-package2/pages/home/merchants/index'})" hover-class="none"
 						:border-bottom="false" title="招商信息" value="更多">
 						<u-icon margin-left="10" label="  " size="30" slot="icon" name="http://yuanzhoulvwego.com/wp-content/uploads/static/zhaoshangxinxi.png">
 						</u-icon>
@@ -165,14 +165,14 @@
 						width: 68,
 						height: 64,
 						permission: '', //investmentInfo:selectInvestmentInfo
-						url: "/pages/home/merchants/index",
+						url: "/sub-package2/pages/home/merchants/index",
 						count: 0
 					},
 					{
 						id: 14,
 						title: "停车缴费",
 						imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchefufei.png",
-						url: "/pages/home/payParking/index",
+						url: "/sub-package2/pages/home/payParking/index",
 						permission: '',
 						// itemManagement:selectItemManagement
 						width: 64,
@@ -186,7 +186,7 @@
 						width: 66,
 						height: 65,
 						permission: 'contractManagement:selectContractManagement',
-						url: "/pages/home/contract/index",
+						url: "/sub-package2/pages/home/contract/index",
 						count: 0
 					}, {
 						id: 4,
@@ -195,7 +195,7 @@
 						width: 58,
 						height: 66,
 						permission: 'billPay:selectBillPay',
-						url: "/pages/home/billPay/index",
+						url: "/sub-package2/pages/home/billPay/index",
 						count: 0
 					}, {
 						id: 5,
@@ -204,7 +204,7 @@
 						width: 58,
 						height: 65,
 						permission: 'employeeManagement:selectEmployee',
-						url: "/pages/home/employeeManagement/index",
+						url: "/sub-package2/pages/home/employeeManagement/index",
 						count: 0
 					},
 					{
@@ -214,7 +214,7 @@
 						width: 68,
 						height: 65,
 						permission: 'zoneRepair:selectZoneRepair',
-						url: "/pages/home/repairs/index",
+						url: "/sub-package2/pages/home/repairs/index",
 						count: 0
 					}, {
 						id: 7,
@@ -223,7 +223,7 @@
 						width: 68,
 						height: 60,
 						permission: 'meetingRoomReservation',
-						url: "/pages/home/meetingRoom/index",
+						url: "/sub-package2/pages/home/meetingRoom/index",
 						count: 0
 					}, {
 						id: 8,
@@ -232,7 +232,7 @@
 						width: 61,
 						height: 65,
 						permission: 'accessControl:selectAccessControl',
-						url: "/pages/home/entranceGuard/index",
+						url: "/sub-package2/pages/home/entranceGuard/index",
 						count: 0
 					}, {
 						id: 10,
@@ -241,7 +241,7 @@
 						width: 64,
 						height: 66,
 						permission: 'zoneComplaint:selectZoneComplaint',
-						url: "/pages/home/userComplaints/index",
+						url: "/sub-package2/pages/home/userComplaints/index",
 						count: 0
 					},
 					{
@@ -251,7 +251,7 @@
 						width: 64,
 						height: 66,
 						permission: '',
-						url: "/pages/home/contactProperty/index",
+						url: "/sub-package2/pages/home/contactProperty/index",
 						count: 0
 					},
 					{
@@ -392,7 +392,7 @@
 			},
 			goMerchantsDetails(res) {
 				this.$Router.push({
-					path: "/pages/home/merchants/detailsMerchants",
+					path: "/sub-package2/pages/home/merchants/detailsMerchants",
 					query: res
 				});
 			},
@@ -443,7 +443,7 @@
 			},
 			goNoticeList(id) {
 				this.$Router.push({
-					path: '/pages/home/notice/noticeInfo',
+					path: '/sub-package2/pages/home/notice/noticeInfo',
 					query: {
 						id
 					}

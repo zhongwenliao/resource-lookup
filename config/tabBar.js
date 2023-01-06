@@ -20,13 +20,13 @@ export default {
 	],
 	// 会议室底部栏
 	meetingRoom: [{
-			pagePath: "/pages/home/meetingRoom/index",
+			pagePath: "/sub-package2/pages/home/meetingRoom/index",
 			iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/huiyishiyuyue2.png",
 			selectedIconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/huiyishiyuyue.png",
 			text: "会议室预约"
 		},
 		{
-			pagePath: "/pages/home/meetingRoom/record",
+			pagePath: "/sub-package2/pages/home/meetingRoom/record",
 			iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yuyuejilu2.png",
 			selectedIconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yuyuejilu.png",
 			text: "预约记录"

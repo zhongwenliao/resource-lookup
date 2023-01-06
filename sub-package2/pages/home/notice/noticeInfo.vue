@@ -27,7 +27,7 @@
 </template>
 
 <script>
-	import uParse from "@/components/feng-parse/parse.vue"
+	import uParse from "@/sub-package2/components/feng-parse/parse.vue"
 	export default {
 		components: {
 			uParse

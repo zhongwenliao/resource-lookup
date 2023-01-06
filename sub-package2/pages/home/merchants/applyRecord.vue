@@ -76,7 +76,7 @@
 			goDetails(res){
 				let item =  this.pageType == 0 ? res.investment : res.record
 				this.$Router.push({
-					path: "/pages/home/merchants/detailsMerchants",
+					path: "/sub-package2/pages/home/merchants/detailsMerchants",
 					query: item
 				});
 			},

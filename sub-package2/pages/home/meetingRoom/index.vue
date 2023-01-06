@@ -179,7 +179,7 @@
 <script>
 	let day = new Date();
 	let oldPrice = '1'
-	import axbCheckBox from '@/components/axb-checkbox/axb-checkbox.vue'
+	import axbCheckBox from '@/sub-package2/components/axb-checkbox/axb-checkbox.vue'
 	export default {
 		components: {
 			axbCheckBox
@@ -192,12 +192,12 @@
 				// 底部按钮
 				meetingRoomTabbar: [
 					{
-						pagePath: "/pages/home/meetingRoom/index",
+						pagePath: "/sub-package2/pages/home/meetingRoom/index",
 						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/huiyishiyuyue.png",
 						text: "会议室预约",
 					},
 					{
-						pagePath: "/pages/home/meetingRoom/record",
+						pagePath: "/sub-package2/pages/home/meetingRoom/record",
 						iconPath: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/yuyuejilu2.png",
 						text: "预约记录",
 					}

@@ -456,7 +456,7 @@ class BluetoothSDKUtil {
 				console.log("走了回调:", device);
 				callback();
 				uni.navigateTo({
-					url: "/pages/home/entranceGuard/openDoor"
+					url: "/sub-package2/pages/home/entranceGuard/openDoor"
 				})
 			}
 		});

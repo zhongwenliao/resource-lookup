@@ -192,7 +192,7 @@
 			intentionApply(){
 				let _this = this
 				this.$Router.push({
-					path: "/pages/home/merchants/intentionApply",
+					path: "/sub-package2/pages/home/merchants/intentionApply",
 					query: {
 						id: _this.merchantsInfo.id,
 						zoneId:_this.$Route.query.zoneId,
@@ -241,7 +241,7 @@
 			// 去往详情页
 			goDetails(res) {
 				this.$Router.push({
-					path: "/pages/home/merchants/detailsMerchants",
+					path: "/sub-package2/pages/home/merchants/detailsMerchants",
 					query: res
 				});
 			},

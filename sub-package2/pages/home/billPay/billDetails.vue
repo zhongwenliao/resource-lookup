@@ -105,7 +105,7 @@
 </template>
 
 <script>
-	import axbCheckBox from '@/components/axb-checkbox/axb-checkbox.vue'
+	import axbCheckBox from '@/sub-package2/components/axb-checkbox/axb-checkbox.vue'
 	export default {
 		components: {
 			axbCheckBox

@@ -111,7 +111,6 @@
 </template>
 
 <script>
-	import myTextarea from "@/components/my-textarea/my-textarea.vue"
 	export default {
 		data() {
 			return {
