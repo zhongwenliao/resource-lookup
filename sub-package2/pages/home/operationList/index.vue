@@ -24,7 +24,7 @@
 				// {
 				// 	id: 2,
 				// 	title: "停车付费",
-				// 	imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/tingche fufei.png",
+				// 	imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/tingche fufei.png",
 				// 	width: 68,
 				// 	height: 60,
 				// 	permission: 'aa',
@@ -34,7 +34,7 @@
 				gridList: [{
 					id: 1,
 					title: "招商信息",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/zhaoshang.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/zhaoshang.png",
 					width: 68,
 					height: 64,
 					permission: '', //investmentInfo:selectInvestmentInfo
@@ -44,7 +44,7 @@
 				{
 					id: 14,
 					title: "停车缴费",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchefufei.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/tingchefufei.png",
 					url: "/sub-package2/pages/home/payParking/index",
 					permission: 'itemManagement:selectItemManagement',
 					width: 64,
@@ -54,7 +54,7 @@
 				{
 					id: 3,
 					title: "我的合同",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/hetong.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/hetong.png",
 					width: 66,
 					height: 65,
 					permission: 'contractManagement:selectContractManagement',
@@ -63,7 +63,7 @@
 				}, {
 					id: 4,
 					title: "账单缴费",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/zhandan.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/zhandan.png",
 					width: 58,
 					height: 66,
 					permission: 'billPay:selectBillPay',
@@ -72,7 +72,7 @@
 				}, {
 					id: 5,
 					title: "人员登记",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/yuangongguanli.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/yuangongguanli.png",
 					width: 58,
 					height: 65,
 					permission: 'employeeManagement:selectEmployee',
@@ -82,7 +82,7 @@
 				{
 					id: 6,
 					title: "申请报修",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/baoxiu.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/baoxiu.png",
 					width: 68,
 					height: 65,
 					permission: 'zoneRepair:selectZoneRepair',
@@ -91,7 +91,7 @@
 				}, {
 					id: 7,
 					title: "会议室预约",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/huiyishiyuyue.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/huiyishiyuyue.png",
 					width: 68,
 					height: 60,
 					permission: 'meetingRoomReservation',
@@ -100,7 +100,7 @@
 				}, {
 					id: 8,
 					title: "手机开门",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/menjin.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/menjin.png",
 					width: 61,
 					height: 65,
 					permission: 'accessControl:selectAccessControl',
@@ -109,7 +109,7 @@
 				}, {
 					id: 10,
 					title: "投诉建议",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/lianxiwuye.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/lianxiwuye.png",
 					width: 64,
 					height: 66,
 					permission: 'zoneComplaint:selectZoneComplaint',
@@ -119,7 +119,7 @@
 				{
 					id: 11,
 					title: "联系物业",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/yonghutousu.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/yonghutousu.png",
 					width: 64,
 					height: 66,
 					permission: '',
@@ -129,7 +129,7 @@
 				{
 					id: 12,
 					title: "访客授权",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/home-grid/fangkeshouquan3.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home-grid/fangkeshouquan3.png",
 					width: 64,
 					height: 66,
 					url: "/sub-package1/pages/vis/vis",
@@ -139,7 +139,7 @@
 				{
 					id: 13,
 					title: "物品放行",
-					imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/wupingfangxing3.png",
+					imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/wupingfangxing3.png",
 					url: "/pages/user/propertyPass",
 					permission: 'itemManagement:selectItemManagement',
 					width: 64,

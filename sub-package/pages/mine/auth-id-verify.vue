@@ -107,13 +107,13 @@
 						<view v-if="faceCaptureImagePath" style="margin: 30upx 0;">
 							<image :src="faceCaptureImagePath" class="item-picture">
 								<button class="delete-btn" @click="deletePhoto">
-									<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/delete.png"/>
+									<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/delete.png"/>
 								</button>
 							</image>
 						</view>
 						<view v-else style="margin: 30upx 0;">
 							<button @click="takePhoto" class="take-photo-btn">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/camera.png"/>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/camera.png"/>
 							</button>
 						</view>
 					</view>
@@ -217,7 +217,7 @@
 		},
 		data() {
 			return {
-				faceCaptureImagePath: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/camera.png",
+				faceCaptureImagePath: "https://file.yuanzhoulvwego.com/prod/uploadFiles/img/camera.png",
 				genderList: ["男","女"],
 				genderIndex: -1,
 				nationIndex: -1,

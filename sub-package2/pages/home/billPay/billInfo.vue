@@ -319,7 +319,7 @@
 
 	.head {
 		position: relative;
-		background-image: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhangdan1.png');
+		background-image: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/zhangdan1.png');
 		background-size: 100% 100%;
 		background-repeat: no-repeat;
 		// margin: 0 15upx;
@@ -349,7 +349,7 @@
 		padding-top: 30upx;
 		color: #E64340;
 		height: 140upx;
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhangdan.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/zhangdan.png') no-repeat;
 		background-size: 100% 100%;
 
 		.time-bg-text {
@@ -416,7 +416,7 @@
 	}
 
 	.main-bottom .connector1 {
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/lianjiexian.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/lianjiexian.png') no-repeat;
 		background-size: 100% 100%;
 		position: absolute;
 		left: 25%;
@@ -426,7 +426,7 @@
 	}
 
 	.main-bottom .connector2 {
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/lianjiexian.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/lianjiexian.png') no-repeat;
 		background-size: 100% 100%;
 		position: absolute;
 		left: 75%;

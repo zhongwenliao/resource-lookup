@@ -75,33 +75,33 @@
 								@bgmcomplete="pusherBGMCompleteHandlerFun"
 							></live-pusher>
 							<view class="loading" v-if="streamList.length === 0">
-								<view class="loading-img"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/loading.png" class="rotate-img"></image></view>
+								<view class="loading-img"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/loading.png" class="rotate-img"></image></view>
 								<view class="loading-text">等待接听中...</view>
 							</view>
 						</view>
 						<view class="handle-btns">
 							<view class="btn-normal" @tap="toggleAudioFun">
 								<image
-									:src="pusher.enableMic ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/audio-true.png' : 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/audio-false.png'"
+									:src="pusher.enableMic ? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/audio-true.png' : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/audio-false.png'"
 								></image>
 							</view>
-							<view class="btn-normal" @tap="switchCamera"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/switch.png"></image></view>
+							<view class="btn-normal" @tap="switchCamera"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/switch.png"></image></view>
 							<!-- <view class="btn-normal" bindtap="toggleVideoFun">
-        <image src="{{pusher.enableCamera? 'http://yuanzhoulvwego.com/wp-content/uploads/static/components/trtc-room/static/camera-true.png': 'http://yuanzhoulvwego.com/wp-content/uploads/static/components/trtc-room/static/camera-false.png'}} "></image>
+        <image src="{{pusher.enableCamera? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/components/trtc-room/static/camera-true.png': 'https://file.yuanzhoulvwego.com/prod/uploadFiles/components/trtc-room/static/camera-false.png'}} "></image>
       </view> -->
 							<view class="btn-normal" @tap="toggleSoundModeFun">
 								<image
 									:src="
 										streamList[0].soundMode === 'ear'
-											? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/phone.png'
-											: 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/speaker-true.png'
+											? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/phone.png'
+											: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/speaker-true.png'
 									"
 								></image>
 							</view>
 						</view>
 						<view class="bottom-btns">
-							<view class="btn-hangup" @tap="hangUpFun"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/hangup.png"></image></view>
-							<!-- <view class="btn-normal" @tap="remoteDoorOpeningFun"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/door.png"></image></view> -->
+							<view class="btn-hangup" @tap="hangUpFun"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/hangup.png"></image></view>
+							<!-- <view class="btn-normal" @tap="remoteDoorOpeningFun"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/door.png"></image></view> -->
 						</view>
 					</view>
 				</view>
@@ -149,8 +149,8 @@
 									<image
 										:src="
 											item.muteAudio
-												? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/speaker-false.png'
-												: 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/speaker-true.png'
+												? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/speaker-false.png'
+												: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/speaker-true.png'
 										"
 									></image>
 								</view>
@@ -158,13 +158,13 @@
 									<image
 										:src="
 											item.muteVideo
-												? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/camera-false.png'
-												: 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/camera-true.png'
+												? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/camera-false.png'
+												: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/camera-true.png'
 										"
 									></image>
 								</view>
 								<view class="btn-normal" @tap="toggleFullscreenFun" :data-user-i-d="item.userID" :data-stream-type="item.streamType">
-									<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/fullscreen.png"></image>
+									<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/fullscreen.png"></image>
 								</view>
 							</view>
 							<progress class="volume-progress" :percent="item.volume" stroke-width="4"></progress>
@@ -207,9 +207,9 @@
 								@bgmcomplete="pusherBGMCompleteHandlerFun"
 							></live-pusher>
 							<view class="operation-bar">
-								<view class="btn-normal" @tap="switchMemberListPanelFun"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/list.png"></image></view>
-								<view class="btn-normal" @tap="switchSettingPanelFun"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/setting.png"></image></view>
-								<view class="btn-normal btn-hangup" @tap="hangUpFun"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/hangup.png"></image></view>
+								<view class="btn-normal" @tap="switchMemberListPanelFun"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/list.png"></image></view>
+								<view class="btn-normal" @tap="switchSettingPanelFun"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/setting.png"></image></view>
+								<view class="btn-normal btn-hangup" @tap="hangUpFun"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/hangup.png"></image></view>
 							</view>
 						</view>
 						<view :class="'panel memberlist-panel ' + (panelName === 'memberlist-panel' ? '' : 'none')">
@@ -272,8 +272,8 @@
 											<image
 												:src="
 													pusher.enableCamera
-														? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/camera-true.png'
-														: 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/camera-false.png'
+														? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/camera-true.png'
+														: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/camera-false.png'
 												"
 											></image>
 										</view>
@@ -284,15 +284,15 @@
 											<image
 												:src="
 													pusher.enableMic
-														? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/audio-true.png'
-														: 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/audio-false.png'
+														? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/audio-true.png'
+														: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/audio-false.png'
 												"
 											></image>
 										</view>
 									</view>
 									<view class="setting-option">
 										<view class="label">切换摄像头</view>
-										<view class="btn-normal" @tap="switchCamera"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/components/trtc-room/static/switch.png"></image></view>
+										<view class="btn-normal" @tap="switchCamera"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/components/trtc-room/static/switch.png"></image></view>
 									</view>
 									<view class="setting-option">
 										<view class="label">开启美颜</view>

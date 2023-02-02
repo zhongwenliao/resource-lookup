@@ -1,7 +1,7 @@
 <template>
   <view class="uni-empty-page">
     <view class="uni-empty-content" style="">
-      <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/no-data.png" alt="" /><br />
+      <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/no-data.png" alt="" /><br />
       <text>{{ common["no-data"] || "暂无数据" }}</text>
     </view>
   </view>

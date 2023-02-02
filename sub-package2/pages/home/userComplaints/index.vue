@@ -7,7 +7,7 @@
 			v-model="dataList"
 			@query="getInfo"
 			:emptyViewText="'暂无信息,请先发布信息'"
-			:emptyViewImg="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/fabuxinxi.png'"
+			:emptyViewImg="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/fabuxinxi.png'"
 			:emptyViewStyle="{ 'margin-top': '-200upx' }"
 			:emptyViewImgStyle="{ 'width': '641upx', 'height': '297upx' }">
 			<view slot="top" class="tops" :style="topBackground">
@@ -17,7 +17,7 @@
 				<view class="boxs" v-for="(item, index) in dataList" @click="goRepairProgress(item)">
 					<view class="boxs-top">
 						<view class="boxs-top-image" >
-							<u-image width="30upx" height="30upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/weixiu.png"></u-image>
+							<u-image width="30upx" height="30upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/weixiu.png"></u-image>
 						</view>
 						<span class="u-font-32 boxs-top-text">{{ item.classificationName }}</span>
 					</view>
@@ -38,19 +38,19 @@
 		</z-paging>
 		<!-- 投诉按钮 -->
 		<view class="fixed" @click="goRepairApplication" v-if="$permission(['zoneComplaint:addZoneComplaint'])">
-			<u-image width="158upx" height="164upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/tousujianyi.png"></u-image>
+			<u-image width="158upx" height="164upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/tousujianyi.png"></u-image>
 		</view>
 		<!-- <view class="dianhua">
-			<u-image width="28upx" height="28upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/dianhua.png"></u-image>
+			<u-image width="28upx" height="28upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/dianhua.png"></u-image>
 		</view>
 		<view class="zaixian">
-			<u-image width="130upx" height="42upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/24xiaoshizaixian.png"></u-image>
+			<u-image width="130upx" height="42upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/24xiaoshizaixian.png"></u-image>
 		</view>
 		<view class="shoujitubiao">
-			<u-image width="28upx" height="28upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/shoujitubiao.png"></u-image>
+			<u-image width="28upx" height="28upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/shoujitubiao.png"></u-image>
 		</view>
 		<view class="jinjitousu">
-			<u-image width="196upx" height="35upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/jinjitousudianhua.png"></u-image>
+			<u-image width="196upx" height="35upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/jinjitousudianhua.png"></u-image>
 		</view> -->
 	</page>
 	
@@ -66,7 +66,7 @@
 				dataList: [],
 				// 导航栏的背景图
 				topBackground: {
-					backgroundImage: 'url(' + 'http://yuanzhoulvwego.com/wp-content/uploads/static/userComplaints/toushuxinxi1.png' + ')',
+					backgroundImage: 'url(' + 'https://file.yuanzhoulvwego.com/prod/uploadFiles/userComplaints/toushuxinxi1.png' + ')',
 					backgroundSize: '100% 100%',
 					backgroundRepeat: 'no-repeat'
 				},

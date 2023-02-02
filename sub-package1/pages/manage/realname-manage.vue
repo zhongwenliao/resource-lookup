@@ -27,7 +27,7 @@
 		<!--提交按钮 end-->
 		
 		<!--图片-->
-		<p class="img" v-if="this.userList==''"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/wsj.png" mode=""></image></p>
+		<p class="img" v-if="this.userList==''"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/wsj.png" mode=""></image></p>
 	</view>
 </template>
 

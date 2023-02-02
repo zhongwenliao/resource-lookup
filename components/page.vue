@@ -2,7 +2,7 @@
 	<!-- 总组件 -->
 	<view class="cpage" :class="isWaterMark ? 'water-mark' : ''">
 		<slot></slot>
-		<u-no-network image="http://yuanzhoulvwego.com/wp-content/uploads/static/error/wuwangluo.png"></u-no-network>
+		<u-no-network image="https://file.yuanzhoulvwego.com/prod/uploadFiles/error/wuwangluo.png"></u-no-network>
 	</view>
 </template>
 
@@ -30,7 +30,7 @@ export default {
 
 <style scoped lang="scss">
 // .water-mark {
-// 	background-image: url(~@http://yuanzhoulvwego.com/wp-content/uploads/static/watermark.png);
+// 	background-image: url(~@https://file.yuanzhoulvwego.com/prod/uploadFiles/watermark.png);
 // }
 .cpage{
 	width: 100%;

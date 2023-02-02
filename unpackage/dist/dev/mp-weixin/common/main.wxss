@@ -28,7 +28,7 @@
 	font-family: uniicons;
 	font-weight: normal;
 	font-style: normal;
-	src: url('http://yuanzhoulvwego.com/wp-content/uploads/static/uni.ttf') format('truetype');
+	src: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/uni.ttf') format('truetype');
 }
 /*通用 */
 /* view{

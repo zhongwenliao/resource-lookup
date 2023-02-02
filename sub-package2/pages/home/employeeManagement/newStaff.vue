@@ -30,7 +30,7 @@
 						label="人员权限">
 						<u-input @click="toPersonnelAccess" placeholder="请选择人员权限"
 							v-model="form.personnelAccess" />
-						<u-icon name="http://yuanzhoulvwego.com/wp-content/uploads/static/xiala.png" size="11"></u-icon>
+						<u-icon name="https://file.yuanzhoulvwego.com/prod/uploadFiles/xiala.png" size="11"></u-icon>
 					</u-form-item>
 					<u-form-item required class="form-item" prop="accStartDateTime" :border-bottom="false"
 						label="权限时间">
@@ -76,7 +76,7 @@
 					width="125upx"
 					height="125upx"
 					shape="circle"
-					:src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png'"
+					:src="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/tijiao.png'"
 				>
 					<u-loading slot="loading"></u-loading>
 					<view slot="error" style="font-size: 24upx;">加载失败</view>

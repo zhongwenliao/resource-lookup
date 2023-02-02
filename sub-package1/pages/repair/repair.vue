@@ -97,14 +97,14 @@
 							<text>{{ repair["upload"] || "上传照片" }}</text>
 							<image :src='itemPicture' class='item-picture'>
 								<button class='delete-btn' @click='deletePhoto'>
-									<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/delete.png'></image>
+									<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/delete.png'></image>
 								</button>
 							</image>
 						</view>
 						<view class='upload-photo' v-else>
 							<text>{{ repair["upload"] || "上传照片" }}</text>
 							<button @click='takePhoto' class="take-photo-btn">
-								<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/camera.png'></image>
+								<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/camera.png'></image>
 							</button>
 						</view>
 					</view>

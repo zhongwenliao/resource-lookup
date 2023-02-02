@@ -6,7 +6,7 @@
         class="avatar"
         size="180"
         mode="square"
-        src="http://yuanzhoulvwego.com/wp-content/uploads/static/logo.jpg"
+        src="https://file.yuanzhoulvwego.com/prod/uploadFiles/logo.jpg"
       ></u-avatar>
       <text class="version">园区π {{ version }}</text>
     </view>

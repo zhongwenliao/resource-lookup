@@ -453,7 +453,7 @@ view.green-fg-color, text.green-fg-color, button.green-fg-color {
   padding: 30rpx 20rpx 0;
 }
 .bg1 {
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhangdandi-lan.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/zhangdandi-lan.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
@@ -464,14 +464,14 @@ view.green-fg-color, text.green-fg-color, button.green-fg-color {
   right: 35rpx;
   bottom: -27.5rpx;
   height: 55rpx;
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-lan.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/yinying-lan.png") no-repeat;
   background-size: 100% 100%;
   z-index: -1;
   opacity: 0.4;
   border-radius: 6rpx;
 }
 .bg2 {
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/di-hong.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/di-hong.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
@@ -482,14 +482,14 @@ view.green-fg-color, text.green-fg-color, button.green-fg-color {
   right: 35rpx;
   bottom: -27.5rpx;
   height: 55rpx;
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-hong.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/yinying-hong.png") no-repeat;
   background-size: 100% 100%;
   z-index: -1;
   opacity: 0.4;
   border-radius: 6rpx;
 }
 .bg3 {
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/di-cheng.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/di-cheng.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
@@ -500,7 +500,7 @@ view.green-fg-color, text.green-fg-color, button.green-fg-color {
   right: 35rpx;
   bottom: -27.5rpx;
   height: 55rpx;
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/yinying-cheng.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/yinying-cheng.png") no-repeat;
   background-size: 100% 100%;
   z-index: 1;
   opacity: 0.4;

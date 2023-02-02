@@ -10,7 +10,7 @@
 			</u-navbar>
 			<view class="user-top u-flex">
 				<view @click="goUserInfo" class="u-flex u-m-l-50" style="margin-top: -50rpx;">
-					<u-avatar :src="src ? src : 'http://yuanzhoulvwego.com/wp-content/uploads/static/morentouxiang.png'" size="110"></u-avatar>
+					<u-avatar :src="src ? src : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/morentouxiang.png'" size="110"></u-avatar>
 					<view class="u-m-l-10 u-flex-col u-row-around u-text-color-fff" style="height: 60px;">
 						<view class="u-font-xl">
 							{{ userName ? userName : userInfo.phone }}
@@ -52,7 +52,7 @@
 				<u-cell-group class="cell-group" :border="false">
 					<u-cell-item @click="goMyInformation" :title-style="cellTitle" v-if="userInfo.enterpriseId">>
 						<u-icon margin-left="10" label="  " size="30" slot="icon"
-							name="http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/wodexiaoxi.png">
+							name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/wodexiaoxi.png">
 						</u-icon>
 						<view slot="title" class="" style="position: relative;">
 							我的消息
@@ -62,7 +62,7 @@
 					
 					<u-cell-item @click="goAboutUs" :title-style="cellTitle">
 						<u-icon margin-left="10" label="  " size="30" slot="icon"
-							name="http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/guanyuwomen.png">
+							name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/guanyuwomen.png">
 						</u-icon>
 						<view slot="title" class="" style="position: relative;">
 							关于我们
@@ -88,7 +88,7 @@
 				tabbar,
 				userInfo: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo') : {},
 				userName: uni.getStorageSync('userInfo').userName,
-				src: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo').avatar : 'http://yuanzhoulvwego.com/wp-content/uploads/static/user/pic4.png',
+				src: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo').avatar : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/user/pic4.png',
 				cellTitle: {
 					color: '#333333',
 					fontSize: '32upx',
@@ -102,7 +102,7 @@
 					// { 
 					// 	id: 5,
 					// 	title: "开门记录",
-					// 	imgUrl: "http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/kaimenjilu.png",
+					// 	imgUrl: "https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/kaimenjilu.png",
 					// 	url: "/pages/user/openDoorRecord",
 					// 	permission: 'accessControl:selectOpenRecord',
 					// 	size: 50,
@@ -179,7 +179,7 @@
 	}
 
 	.head {
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/beijin.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/beijin.png') no-repeat;
 		background-size: 100% 100%;
 	}
 

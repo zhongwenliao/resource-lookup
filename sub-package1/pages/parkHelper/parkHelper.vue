@@ -3,11 +3,11 @@
 		<view class="pirkHelper">
 			<ul class="clear">
 				<li class="fl" @click="goToMonthCard" v-if="currentLanguage.indexOf('cn') > -1">
-					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yk.png"></image>
+					<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/yk.png"></image>
 					<text>{{ parkingAssistant["card-management"] || "月卡管理" }}</text>
 				</li>
 				<li class="fl" @click="disTemplate" v-if="brake && brake.permAppParkManage == 1">
-					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/cz.png"></image>
+					<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/cz.png"></image>
 					<text>{{ parkingAssistant["brake-assistant"] || "车闸助手" }}</text>
 				</li>
 				<!-- <li class="fl" @click="disTemplate" v-if="brake && brake.permAppParkManage == 1">

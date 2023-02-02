@@ -39,11 +39,11 @@
 				</u-grid>
 			</view>
 			<view class="top-reminder">
-			    <u-image width="29" height="29" :src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/wenxintishi.png'" class="top-reminder-image"></u-image>
+			    <u-image width="29" height="29" :src="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/meetingRoom/wenxintishi.png'" class="top-reminder-image"></u-image>
 			    <text>园区入驻企业可免费使用会议室{{ feeTime }}小时</text>
 			   </view>
 			   <view class="top-reminder">
-			    <u-image width="29" height="29" :src="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/meetingRoom/wenxintishi.png'" class="top-reminder-image"></u-image>
+			    <u-image width="29" height="29" :src="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/meetingRoom/wenxintishi.png'" class="top-reminder-image"></u-image>
 			    <text style="color: red;">会议室审核成功，支持首页一键开门</text>
 			   </view>
 		</view>

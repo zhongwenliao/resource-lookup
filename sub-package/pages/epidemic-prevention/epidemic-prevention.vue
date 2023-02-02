@@ -6,16 +6,16 @@
 		<view class='menu-button-list'>
 			<view class="menu-title">防疫登记</view>
 			<navigator url="./register">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/epidemic-prevention/register.png' class='menu-icon'></image><text>{{ "登记" }}</text>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/epidemic-prevention/register.png' class='menu-icon'></image><text>{{ "登记" }}</text>
 			</navigator>
 			<navigator url="./search">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/epidemic-prevention/list.png' class='menu-icon'></image><text>{{ "列表" }}</text>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/epidemic-prevention/list.png' class='menu-icon'></image><text>{{ "列表" }}</text>
 			</navigator>
 			<navigator url="./echart">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/epidemic-prevention/echart.png' class='menu-icon'></image><text>{{ "图表" }}</text>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/epidemic-prevention/echart.png' class='menu-icon'></image><text>{{ "图表" }}</text>
 			</navigator>
 			<!-- <navigator url="./search">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/epidemic-prevention/search.png' class='menu-icon'></image><text>{{ "搜索" }}</text>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/epidemic-prevention/search.png' class='menu-icon'></image><text>{{ "搜索" }}</text>
 			</navigator> -->
 		</view>
 		

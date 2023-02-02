@@ -462,7 +462,7 @@ view.green-fg-color.data-v-09c156f1, text.green-fg-color.data-v-09c156f1, button
   font-size: 32rpx;
   padding-right: 22rpx;
   margin-bottom: 10rpx;
-  background-image: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/ka.png");
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/ka.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   position: relative;

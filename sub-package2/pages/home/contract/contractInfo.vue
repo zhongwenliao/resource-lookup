@@ -6,7 +6,7 @@
 		<view class="u-m-20 u-m-t-70 u-p-b-50">
 			<view class="card card-img">
 				<view class="image">
-					<u-image width="110upx" height="110upx" :fade="false" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/hetong1.png">
+					<u-image width="110upx" height="110upx" :fade="false" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/hetong1.png">
 						<u-loading slot="loading"></u-loading>
 					</u-image>
 				</view>
@@ -233,13 +233,13 @@
 <style>
 	page {
 		/* background: red; */
-		background-image: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/beijn.png');
+		background-image: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/beijn.png');
 		overflow:auto !important;
 	}
 </style>
 <style scoped lang="scss">
 	.connector1 {
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/lianjiexian.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/lianjiexian.png') no-repeat;
 		background-size: 100% 100%;
 		z-index: 100;
 		position: absolute;
@@ -250,7 +250,7 @@
 	}
 
 	.connector2 {
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/lianjiexian.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/lianjiexian.png') no-repeat;
 		background-size: 100% 100%;
 		z-index: 100;
 		position: absolute;
@@ -269,7 +269,7 @@
 	}
 
 	.card-img {
-		// background-image: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/contract/di.png');
+		// background-image: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/di.png');
 		background-color: #FFFFFF;
 		background-size: 100% 100%;
 		background-repeat: no-repeat;

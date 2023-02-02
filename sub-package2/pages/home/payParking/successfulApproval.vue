@@ -3,7 +3,7 @@
 		<u-navbar style="background:#02A7F0;color: #fff;" :title="id>0?'申请成功':'延期成功'"></u-navbar>
 		<view class="head">
 			<span>审批成功</span> 
-			<image class="img" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/tijiao.png" mode=""></image>
+			<image class="img" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/tijiao.png" mode=""></image>
 		</view>
 		<view class="month-card-info">
 			<view class="title">

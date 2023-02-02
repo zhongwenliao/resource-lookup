@@ -1,8 +1,8 @@
 <template>
 	<view class="manage">
 		<view class="top">
-			<image v-if="cardInfo.status == 1" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/jxz.png" mode=""></image>
-			<image v-if="cardInfo.status == 3" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/bh.png" mode=""></image>
+			<image v-if="cardInfo.status == 1" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/payment/jxz.png" mode=""></image>
+			<image v-if="cardInfo.status == 3" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/payment/bh.png" mode=""></image>
 		</view>
 		<view class="auditStatus clear">
 			<view class="item fl">

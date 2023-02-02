@@ -49,7 +49,7 @@
 							<u-col span="1">
 								<text>
 									<u-image width="60upx" height="60upx"
-										src="http://yuanzhoulvwego.com/wp-content/uploads/static/entranceGuard/shebei-tubiao.png"></u-image>
+										src="https://file.yuanzhoulvwego.com/prod/uploadFiles/entranceGuard/shebei-tubiao.png"></u-image>
 								</text>
 							</u-col>
 							<u-col span="7">

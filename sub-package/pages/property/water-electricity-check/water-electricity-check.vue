@@ -51,7 +51,7 @@
 				</view>
 				<view class="upload fl" @click="photo" v-if="imageList.length < 9 || imageList.length == 0">
 					<view class="tu">
-						<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkupload.png"></image>
+						<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talkupload.png"></image>
 					</view>
 				</view>
 			</view>

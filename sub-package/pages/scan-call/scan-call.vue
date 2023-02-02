@@ -12,7 +12,7 @@
 							{{item.name}}
 						</view>
 						<view class="right fr">
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/more.png"></image>
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/more.png"></image>
 						</view>
 					</li>
 				</ul>
@@ -22,7 +22,7 @@
 		<view class="room" v-show="roomShow">
 			<view class="search-view-1">
 				<view class="search-input">
-					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png"></image>
+					<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/search.png"></image>
 					<input type="text" placeholder="搜索" style="font-size: 30upx;" @input="getInputValue">
 				</view>
 			</view>
@@ -36,7 +36,7 @@
 							{{item.name}}
 						</view>
 						<view class="right fr">
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/tel.png"></image>
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/tel.png"></image>
 						</view>
 					</li>
 				</ul>

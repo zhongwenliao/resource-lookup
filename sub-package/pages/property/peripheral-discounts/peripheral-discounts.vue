@@ -21,7 +21,7 @@
 						<u-icon name="search"></u-icon>
 						<!-- :placeholder="identityAuthentication['placeholder']" -->
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" placeholder="请输入标题,内容" />
-						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 				</view>
 				<!-- 按顺序对应第一个的内容 -->
@@ -34,7 +34,7 @@
 						<view class="personInfo clear">
 							<view class="appUserAvatar fl">
 								<image v-if="item.appUserAvatar" :src="item.appUserAvatar"></image>
-								<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
+								<image v-else src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/user-avatar.png"></image>
 							</view>
 							<view class="fl">
 								<view class="appUserName">
@@ -67,11 +67,11 @@
 					<view style="width: 92%;" class="search-box" @tap.stop>
 						<u-icon name="search"></u-icon>
 						<input type="text" confirm-type="search" @confirm="onSearch" class="search" v-model="searchVal" placeholder="请输入标题,内容" />
-						<image v-show="searchVal" @tap="clearSearch" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
+						<image v-show="searchVal" @tap="clearSearch" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/search-del.png" style="width: 30upx;height: 30upx;" mode=""></image>
 					</view>
 					<picker mode="multiSelector" :value="multiIndex" :range="multiArray" @change="dataBindPickerChange" @columnchange="bindColumnChange" id='0'>
 						<view class="" style="display: flex; align-items: center;">
-							<image style="width: 30upx; height: 35upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/rili.png" mode=""></image>
+							<image style="width: 30upx; height: 35upx;" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/rili.png" mode=""></image>
 						</view>
 					</picker>
 				</view>
@@ -86,7 +86,7 @@
 						<view class="personInfo clear">
 							<view class="appUserAvatar fl">
 								<image v-if="item.appUserAvatar" :src="item.appUserAvatar"></image>
-								<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
+								<image v-else src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/user-avatar.png"></image>
 							</view>
 							<view class="fl">
 								<view class="appUserName">

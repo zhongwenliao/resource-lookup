@@ -2,27 +2,27 @@
 	<view class="management">
 		<view class="management-list">
 			<navigator url="../household-management/household-management">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>住户管理</text>
 			</navigator>
 			<navigator>
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>员工信息</text>
 			</navigator>
 			<navigator>
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>楼栋</text>
 			</navigator>
 			<navigator>
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>楼层</text>
 			</navigator>
 			<navigator>
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>房间</text>
 			</navigator>
 			<navigator>
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>门管理</text>
 			</navigator>
 		</view>

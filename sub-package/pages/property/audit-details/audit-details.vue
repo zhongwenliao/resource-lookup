@@ -6,7 +6,7 @@
 		<view class="personInfo clear">
 			<view class="appUserAvatar fl">
 				<image v-if="details.appUserAvatar" :src="details.appUserAvatar"></image>
-				<image v-else src="/http://yuanzhoulvwego.com/wp-content/uploads/static/img/user-avatar.png"></image>
+				<image v-else src="/https://file.yuanzhoulvwego.com/prod/uploadFiles/img/user-avatar.png"></image>
 			</view>
 			<view class="fl">
 				<view class="appUserName">

@@ -1,7 +1,7 @@
 <template>
 	<uni-base-page class="content">
 		<view class="search-input">
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png" alt=""/>
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/search.png" alt=""/>
 			<input type="text" :placeholder="`${video['door-search']}` || '请输入门名称'" :value="doorName" @input="filterDevice">
 		</view>
 		<scroll-view class="door-list" v-if="videoDoorList !== null && videoDoorList.length > 0">
@@ -15,27 +15,27 @@
 					<view class="btn">
 						<!-- 呼叫设备展示区 start -->
 						<button @click="videoCall(doorObj)">
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/video/video.png" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/video/video.png" />
 						</button>
 						<!-- 呼叫设备展示区 end -->
 						
 						<!-- 微信小程序端呼叫设备展示区 start -->
 						<!-- #ifdef MP-WEIXIN -->
 							<!-- <button @click="enterRoom()">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/video/video.png"></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/video/video.png"></image>
 							</button> -->
 						<!-- #endif -->
 						<!-- 微信小程序端呼叫设备展示区 end -->
 						
 						<!-- 远程开门展示区 start -->
 						<button @click="openDoor(doorObj)">
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/video/door.png" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/video/door.png" />
 						</button>
 						<!-- 远程开门展示区 end -->
 						
 						<!-- 查看设备详情展示区 start -->
 						<button @click="checkInfo(doorObj)">
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/video/info.png" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/video/info.png" />
 						</button>
 						<!-- 查看设备详情展示区 end -->
 						

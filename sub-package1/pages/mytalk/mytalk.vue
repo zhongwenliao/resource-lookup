@@ -4,7 +4,7 @@
 		<ul>
 			<li class="clear" v-for="(item, index) in talkList" :key="index" @click="comment(item.id)">
 				<span class="time">{{ item.createTime }}</span>
-				<i class="delete" @click.stop="deltalk(item.id)"><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkdelete.png" /></i>
+				<i class="delete" @click.stop="deltalk(item.id)"><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talkdelete.png" /></i>
 				<view class="wen">{{ item.content }}</view>
 				<view class="clear" v-if="item.appNoteImageList.length > 0">
 					<view class="talkimg fl" v-for="(imglist, i) in item.appNoteImageList" :key="i">
@@ -17,22 +17,22 @@
 					<dl class="clear">
 						<dd>
 							<i class="look">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talklook.png"></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talklook.png"></image>
 							</i>
 							<i class="num">{{item.views ? item.views : '0'}}</i>
 						</dd>
 						<dd>
 							<i class="pinglun">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkpinglun.png"></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talkpinglun.png"></image>
 							</i>
 							<i class="num" style="margin-right: 20upx;">{{item.comments ? item.comments : '0'}}</i>
 						</dd>
 						<dd>
 							<i class="like" v-if="item.IS_PRAISE == 1" @click.stop="talkLike(item.id,item)">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/like.png"></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/like.png"></image>
 							</i>
 							<i class="like" v-else @click.stop="talkLike(item.id,item)">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/nolike.png"></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/nolike.png"></image>
 							</i>
 							<i class="num">{{item.likes ? item.likes : '0'}}</i>
 						</dd>
@@ -40,12 +40,12 @@
 				</view>
 			</li>
 			<view v-if="talkList.length == 0" class="text-view1">
-				<image style="width: 100upx;height: 100upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/no-data.png" />
+				<image style="width: 100upx;height: 100upx;" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/no-data.png" />
 				<view style="color: #808080;">{{ main["no-data"] || "发点什么吧~" }}</view>
 			</view>
 		</ul>
 			<movable-view :x="x" :y="y" direction="all" @change="onChange">
-				<image @click="goTotalk" class="send" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/sendicon.png"></image>
+				<image @click="goTotalk" class="send" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/sendicon.png"></image>
 			</movable-view>
 		</movable-area>
 	</uni-base-page>
@@ -104,7 +104,7 @@ export default {
 		},
 		goTotalk() {
 			uni.navigateTo({
-				url: "http://yuanzhoulvwego.com/wp-content/uploads/static/pages/talking/talking?originatePage=1"
+				url: "https://file.yuanzhoulvwego.com/prod/uploadFiles/pages/talking/talking?originatePage=1"
 			});
 		},
 		// 说说点赞

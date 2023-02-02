@@ -5,17 +5,17 @@
 			<textarea :placeholder="`${talking['record-placeholder']}` || '请填写你推荐好物的理由'"/>
 		</view>
 		<view class="upload" @click="photo">
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkupload.png"></image>
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talkupload.png"></image>
 		</view>
 		<!-- 发布成功提示 -->
 		<view class="success" v-if="sendsucc">
 			<p>发布成功</p>
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talksuccess.png"></image>
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talksuccess.png"></image>
 		</view>
 		<!-- 发布失败提示 -->
 		<view class="fail" v-if="sendfail">
 			<p>发布失败</p>
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/talkfail.png"></image>
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/talkfail.png"></image>
 		</view>
 	</view>
 </template>

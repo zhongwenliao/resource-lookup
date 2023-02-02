@@ -2,11 +2,11 @@
 	<view class="check">
 		<view class="check-list">
 			<navigator url="../water-electricity-check/water-electricity-check">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>水表查抄</text>
 			</navigator>
 			<navigator url="../water-electricity-check/water-electricity-check">
-				<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/shequ.png' class='menu-icon'></image>
+				<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/shequ.png' class='menu-icon'></image>
 				<text>电表查抄</text>
 			</navigator>
 		</view>

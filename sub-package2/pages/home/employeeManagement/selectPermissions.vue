@@ -27,7 +27,7 @@
 						<u-icon
 							class="card-permiss-center-view-clear"
 							:class="[isShow == index ? 'show' : 'hide']"
-							:name="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/quxiao.png'"
+							:name="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/quxiao.png'"
 							size="32"
 							@click="delCard(index)"
 						></u-icon>
@@ -42,7 +42,7 @@
 				</view>
 				<view class="access-authority-center u-m-t-50 u-m-l-10 u-m-r-10">
 					<view class="u-m-b-48">
-						<u-icon size="30" :name="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/yuanqu.png'"></u-icon>
+						<u-icon size="30" :name="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/yuanqu.png'"></u-icon>
 						<text class="u-m-l-10 u-font-32 u-font-weight">坂田高新技术工业园</text>
 					</view>
 					<u-checkbox-group>
@@ -73,8 +73,8 @@
 										class="u-m-r-12 u-m-b-20"
 										@click="checkRooms(citem, item)">
 										<u-icon
-											:name="citem.checked ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/suo-bai.png' : 
-											'http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/suo.png'"
+											:name="citem.checked ? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/suo-bai.png' : 
+											'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/suo.png'"
 											size="30"
 											class="u-m-r-10"
 											style="vertical-align: text-top;"
@@ -285,7 +285,7 @@
 				font-size: 32upx;
 				padding-right: 22upx;
 				margin-bottom: 10upx;
-				background-image: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/employeeManagement/ka.png');
+				background-image: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/ka.png');
 				background-size: 100% 100%;
 				background-repeat: no-repeat;
 				position: relative;

@@ -39,7 +39,7 @@
 			<view class="evaluate-title" :style="topBackground">
 				<view class="evaluate-title-top">
 					<view class="evaluate-title-top-left">
-						<u-image width="54upx" height="54upx" :fade="false" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/pingjiachenggong.png">
+						<u-image width="54upx" height="54upx" :fade="false" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/pingjiachenggong.png">
 							<u-loading slot="loading"></u-loading>
 						</u-image>
 					</view>
@@ -49,7 +49,7 @@
 			</view>
 			<view>
 				<u-image class="evaluate-image" width="195upx" height="189upx" :fade="false"
-					src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/weixiao.png">
+					src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/weixiao.png">
 					<u-loading slot="loading"></u-loading>
 				</u-image>
 			</view>
@@ -79,7 +79,7 @@
 				count: 5,
 				// 背景图
 				topBackground: {
-					backgroundImage: 'url(' + 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/xingxing.png' + ')',
+					backgroundImage: 'url(' + 'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/xingxing.png' + ')',
 					backgroundSize: '100% 100%',
 					backgroundRepeat: 'no-repeat'
 				}

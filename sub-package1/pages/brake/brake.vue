@@ -44,10 +44,10 @@
 				v-if="parkEventList && parkEventList[0] && parkEventList[0].carResult.img"
 			/>
 			<image 
-				src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png" 
+				src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/parking-assistant/che.png" 
 				mode="aspectFill" 
 				style="width: 100%;"
-				@click="previewImage('http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/che.png')" 
+				@click="previewImage('https://file.yuanzhoulvwego.com/prod/uploadFiles/img/parking-assistant/che.png')" 
 				v-else 
 			/>
 			<view class="brake-helper-mode-in-out-type">
@@ -173,9 +173,9 @@
 						<!-- 支付成功事件   -->
 						<!-- <view class="brake-helper-event-content-field payment" v-if="parkEvent.parkEventType === 23002">
 							
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/wxjs.png" mode="aspectFit" v-if="parkEvent.outCarResult.payType === 1" />
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/zfbjs.png" mode="aspectFit" v-else-if="parkEvent.outCarResult.payType === 2" />
-							<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/parking-assistant/xjjs.png" mode="aspectFit" v-else="parkEvent.outCarResult.payType === 3" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/parking-assistant/wxjs.png" mode="aspectFit" v-if="parkEvent.outCarResult.payType === 1" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/parking-assistant/zfbjs.png" mode="aspectFit" v-else-if="parkEvent.outCarResult.payType === 2" />
+							<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/parking-assistant/xjjs.png" mode="aspectFit" v-else="parkEvent.outCarResult.payType === 3" />
 						</view> -->
 						
 						<!-- 已缴费用、支付类型 start -->

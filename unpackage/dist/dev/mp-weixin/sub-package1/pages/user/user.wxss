@@ -458,7 +458,7 @@ view.green-fg-color.data-v-3d2a4c9b, text.green-fg-color.data-v-3d2a4c9b, button
   padding: 20rpx 6rpx 20rpx 12rpx;
 }
 .head.data-v-3d2a4c9b {
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/user-grid/beijin.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/beijin.png") no-repeat;
   background-size: 100% 100%;
 }
 .user-top.data-v-3d2a4c9b {

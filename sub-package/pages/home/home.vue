@@ -36,7 +36,7 @@
               <view>{{ home["applience"] || "AI智能设备，感受品质智能生活" }}</view>
             </view>
             <view class="right-icon">
-              <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/home-life/apply.png" alt=""
+              <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/home-life/apply.png" alt=""
             /></view>
           </view>
         </scroll-view>
@@ -45,7 +45,7 @@
       <swiper-item>
         <scroll-view scroll-y="true">
           <view class="no-data">
-            <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/home-life/no-smart.png" /><br />
+            <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/home-life/no-smart.png" /><br />
             {{ home["no-smart-home"] || "未创建智能家居" }}
           </view>
         </scroll-view>

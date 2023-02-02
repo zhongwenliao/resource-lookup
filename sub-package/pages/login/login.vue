@@ -41,7 +41,7 @@
 					<!-- 微信一键登录 start -->
 					<view v-if="ifAddWxLogin" class="other-login">
 						<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" @click="wxLogin">
-							<image style="display: inline-block;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/weixin.png" />
+							<image style="display: inline-block;" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/weixin.png" />
 							<text class="weixin-login-text">微信一键登录</text>
 						</button>
 					</view>

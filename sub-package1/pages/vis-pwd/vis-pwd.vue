@@ -31,14 +31,14 @@
 			<!-- <view class='btn' hover-class="btn-hover" @click="shareSystem"> -->
 			<view class='btn' hover-class="btn-hover" @click="shareSystem">
 				<button>
-					<image mode="aspectFill" src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/fenxiang.png'></image>
+					<image mode="aspectFill" src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/fenxiang.png'></image>
 				</button>
 				<!-- <text>{{ common["share"] || "分享" }}</text> -->
 			</view>
 			<u-line color="#DDDDDD" :direction="'col'" margin="0 140upx 0 140upx" />
 			<view class='btn' hover-class="btn-hover" @click="copy()">
 				<button>
-					<image mode="aspectFill" src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/fuzhi.png'></image>
+					<image mode="aspectFill" src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/fuzhi.png'></image>
 				</button>
 				<!-- <text>{{ vis["copy"] || "复制" }}</text> -->
 			</view>
@@ -50,13 +50,13 @@
 		<view class='share-btn'>
 			<view class='btn'>
 				<button open-type='share'>
-					<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/weixin.png'></image>
+					<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/weixin.png'></image>
 				</button>
 				<text>{{ vis["wechat"] || "微信" }}</text>
 			</view>
 			<view class='btn'>
 				<button @click='copy'>
-					<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/copy.png'></image>
+					<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/copy.png'></image>
 				</button>
 				<text>{{ vis["copy"] || "复制" }}</text>
 			</view>

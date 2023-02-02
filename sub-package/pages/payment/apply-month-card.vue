@@ -25,14 +25,14 @@
         <view class="goods-box" v-for="(item, i) in goods">
           <u-input v-model="item.carNo" :placeholder="'车牌号码'" />
           <image
-            src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/add.png"
+            src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/add.png"
             mode=""
             style="width: 20px; height: 20px; margin: auto"
             v-if="i == 0"
             @click="addGoods"
           />
           <image
-            src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/del.png"
+            src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/del.png"
             mode=""
             style="width: 20px; height: 20px; margin: auto"
             v-if="i != 0"

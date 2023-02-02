@@ -1,1 +1,1 @@
-@font-face{font-family:PingFang SC;src:url(http://yuanzhoulvwego.com/wp-content/uploads/static/PingFangSC.ttf)}.grid-box{border-radius:20rpx;font-size:26rpx;color:#333;overflow:hidden;background-color:#fff}.grid{width:100%;padding:0 20rpx}
+@font-face{font-family:PingFang SC;src:url(https://file.yuanzhoulvwego.com/prod/uploadFiles/PingFangSC.ttf)}.grid-box{border-radius:20rpx;font-size:26rpx;color:#333;overflow:hidden;background-color:#fff}.grid{width:100%;padding:0 20rpx}

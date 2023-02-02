@@ -7,7 +7,7 @@
 					<view v-if="picture.itemPicture">
 						<image :src='picture.itemPicture' class='item-picture'>
 							<button class='delete-btn' @click='deletePhoto(index)'>
-								<image src='http://yuanzhoulvwego.com/wp-content/uploads/static/img/delete.png' class="delete-icon"></image>
+								<image src='https://file.yuanzhoulvwego.com/prod/uploadFiles/img/delete.png' class="delete-icon"></image>
 							</button>
 						</image>
 					</view>

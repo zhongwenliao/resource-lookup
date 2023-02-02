@@ -1,7 +1,7 @@
 <template>
 	<view class="apply">
 		<view class="postpone_status">
-			<span>审批成功</span><image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yes.png" mode=""></image> 
+			<span>审批成功</span><image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/yes.png" mode=""></image> 
 		</view>
 		<!--月卡信息-->
 		<div>

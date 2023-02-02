@@ -38,17 +38,17 @@
 									</view>
 									<view class="stateBox">
 										<view>
-											<image v-if="j.reviewStatus==1" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/pass.png" mode=""
+											<image v-if="j.reviewStatus==1" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/pass.png" mode=""
 												class="icon">
 											</image>
 											<p v-if="j.reviewStatus==1"> {{articleRelease['Approved']||'已通过审批'}}</p>
 
-											<image v-if="j.reviewStatus==0" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/dd.png" mode=""
+											<image v-if="j.reviewStatus==0" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/dd.png" mode=""
 												class="icon">
 											</image>
 											<p v-if="j.reviewStatus==0">{{articleRelease['Pendingapproval']||'待审批'}}</p>
 
-											<image v-if="j.reviewStatus==2" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/nopass.png" mode=""
+											<image v-if="j.reviewStatus==2" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/nopass.png" mode=""
 												class="icon">
 											</image>
 											<p v-if="j.reviewStatus==2">{{articleRelease['Notapproved']||'未通过审批'}}</p>

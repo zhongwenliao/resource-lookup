@@ -1,7 +1,7 @@
 <template>
 	<page class="content">
 		<view class="search-view search">
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/search.png" />
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/search.png" />
 			<input type="text" :placeholder="`${manage['dev-search']}` || '请输入设备名称/安装位置/设备序列号' " @input="filterDev">
 		</view>
 		<view v-if="!isLoad" class="dev-list">
@@ -18,10 +18,10 @@
 						<!-- connectionStatus 设备在线状态【0离线,1 在线】-->
 						<!-- accRelayStatus 锁开闭状态（-1:未知 0:关闭 1:打开）-->
 						<image v-if=" dev.connectionStatus && dev.connectionStatus === 1 "
-							:src=" dev.accRelayStatus !== -1? onlineImgList[dev.accRelayStatus] : 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/dev-manage-green.png'" />
+							:src=" dev.accRelayStatus !== -1? onlineImgList[dev.accRelayStatus] : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/dev-manage-green.png'" />
 						<image v-else-if=" dev.connectionStatus && dev.connectionStatus === 0 "
-							:src=" dev.accRelayStatus !== -1? offlineImgList[dev.accRelayStatus] : 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/dev-manage.png'" />
-						<image v-else src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/dev-manage.png" />
+							:src=" dev.accRelayStatus !== -1? offlineImgList[dev.accRelayStatus] : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/dev-manage.png'" />
+						<image v-else src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/dev-manage.png" />
 						<view class="dev-name">
 							<view>
 								{{ dev.name }} <text style="color: #AAAAAA;"> ( {{ dev.devSn}} )</text>
@@ -76,11 +76,11 @@
 				copyDevList: [],
 				communityId: "",
 				accRelayStatusList: ["关", "开"],
-				onlineImgList: ["http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/close-online.png",
-					"http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/open-online.png"
+				onlineImgList: ["https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/close-online.png",
+					"https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/open-online.png"
 				],
-				offlineImgList: ["http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/close-offline.png",
-					"http://yuanzhoulvwego.com/wp-content/uploads/static/img/manage/open-offline.png"
+				offlineImgList: ["https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/close-offline.png",
+					"https://file.yuanzhoulvwego.com/prod/uploadFiles/img/manage/open-offline.png"
 				],
 			}
 		},

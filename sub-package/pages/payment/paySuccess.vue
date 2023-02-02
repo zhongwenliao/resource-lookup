@@ -2,8 +2,8 @@
 <view class="pay">
    <!-- <view class="wen">付款金额</view>
 	<view class="money">432.00元</view> -->
-	<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/yes.png" mode=""></image>
-	<!-- <image style="width: 160upx;height: 160upx;" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/zfsb.png" mode=""></image> -->
+	<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/yes.png" mode=""></image>
+	<!-- <image style="width: 160upx;height: 160upx;" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/zfsb.png" mode=""></image> -->
 	<view class="status">支付成功</view>
 	<!-- <view class="status">支付失败</view> -->
 	<button class="paybtn" @click="billDetails">账单详情</button>

@@ -8,7 +8,7 @@
       <view v-if="direction !== 'below' && direction !== 'center'" style="height: 100rpx"></view>
       <!-- #endif -->
       <image
-        src="http://yuanzhoulvwego.com/wp-content/uploads/static/ming-pop/close.png"
+        src="https://file.yuanzhoulvwego.com/prod/uploadFiles/ming-pop/close.png"
         mode=""
         :class="direction !== 'below' && direction !== 'center' ? 'iconfont-h5' : ''"
         class="iconfont"

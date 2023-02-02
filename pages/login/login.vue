@@ -1,7 +1,7 @@
 <template>
 	<view class="register_page">
 		<view class="logo">
-			<u-image width="185" height="185" src="http://yuanzhoulvwego.com/wp-content/uploads/static/logo.jpg"></u-image>
+			<u-image width="185" height="185" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/logo.jpg"></u-image>
 		</view>
 		<view class="body">
 			<u-row style="margin-bottom: 60upx;">

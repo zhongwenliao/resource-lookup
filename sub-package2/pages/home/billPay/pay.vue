@@ -20,11 +20,11 @@
 				<u-cell-group :border="false">
 					<u-radio-group size="45" icon-size="30" v-model="radioValue" @change="radioGroupChange">
 					<u-cell-item @click="radioValue='支付宝'" :arrow="false" :title-style="titleStyle" title="支付宝支付">
-						<u-icon slot="icon" size="50" name="http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/zhifubao.png"></u-icon>
+						<u-icon slot="icon" size="50" name="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/zhifubao.png"></u-icon>
 						<u-radio slot="right-icon" name="支付宝"></u-radio>
 					</u-cell-item>
 					<u-cell-item @click="radioValue='微信'" :border-bottom="false" :arrow="false" :title-style="titleStyle" title="微信支付">
-						<u-icon slot="icon" size="50" name="http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/weixinzhifu.png"></u-icon>
+						<u-icon slot="icon" size="50" name="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/weixinzhifu.png"></u-icon>
 						<u-radio slot="right-icon" name="微信"></u-radio>
 					</u-cell-item>
 					</u-radio-group>
@@ -144,7 +144,7 @@
 	.head{
 		width: 100%;
 		height: 380upx;
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/beijin.png') no-repeat;
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/beijin.png') no-repeat;
 		background-size: 100% 100%;
 	}
 	/deep/ .u-radio-group {

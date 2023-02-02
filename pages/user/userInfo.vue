@@ -6,7 +6,7 @@
 				<view  class="right-value" slot="right-value">
 					<view @tap.stop="preAvatar" class="">
 						<u-image   width="88" shape="circle" height="88"
-							:src="userInfo.avatar ? userInfo.avatar : 'http://yuanzhoulvwego.com/wp-content/uploads/static/morentouxiang.png'"></u-image>
+							:src="userInfo.avatar ? userInfo.avatar : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/morentouxiang.png'"></u-image>
 					</view>	
 				</view>
 			</u-cell-item>
@@ -95,7 +95,7 @@
 				);
 			},
 			preAvatar() {
-				let urls = this.userInfo.avatar ? this.userInfo.avatar : 'http://yuanzhoulvwego.com/wp-content/uploads/static/morentouxiang.png'
+				let urls = this.userInfo.avatar ? this.userInfo.avatar : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/morentouxiang.png'
 				wx.previewImage({
 					current: '', // 当前显示图片的 http 链接
 					urls: [urls] // 需要预览的图片 http 链接列表

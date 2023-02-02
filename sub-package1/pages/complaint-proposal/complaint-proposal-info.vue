@@ -5,7 +5,7 @@
 			:title="complaintProposa['Proposaldetails']||'建议详情'" @clickRight="clickNavRight()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 		</uni-nav-bar>
 		<!--自定义导航栏end-->
@@ -28,7 +28,7 @@
 				<p class="complaintreplyInfo">
 					<image :src="item.appAvatar" v-if="item.appAvatar" class="appAvatar"></image>
 					<!--没有头像就使用默认头像-->
-					<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/tx.png" v-if="!item.appAvatar" class="appAvatar"></image>
+					<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/tx.png" v-if="!item.appAvatar" class="appAvatar"></image>
 
 					<span v-if="item.nickname">{{item.nickname}}</span>
 					<span v-if="!item.nickname&&item.phone">{{item.phone.substr(0,3)+'****'+item.phone.substr(7,4)}}</span>

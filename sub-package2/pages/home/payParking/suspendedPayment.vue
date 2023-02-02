@@ -4,17 +4,17 @@
 		<!--显示停车二维码-->
 		<!-- <view class="box-erweima">
 			<view class="box-erweimaimage">
-				<u-image width="273px" height="403px" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchejiaofei.jpg"></u-image> 
+				<u-image width="273px" height="403px" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/tingchejiaofei.jpg"></u-image> 
 				<text>请扫车场二维码</text>
 			</view>
 		</view> -->
 		<div id="imgBox">
-			<u-image id="image" @click="previewImage" width="273px" height="403px" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchejiaofei.jpg"></u-image>
+			<u-image id="image" @click="previewImage" width="273px" height="403px" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/tingchejiaofei.jpg"></u-image>
 			<p>点击放大，长按可保存</p>
 		</div>
 		<!-- <view class="box-sao" @click="paymentCar">
 			<view class="box-bobo">
-				<u-image class="image-box" width="84upx" height="85upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/saoyisao.png"></u-image>
+				<u-image class="image-box" width="84upx" height="85upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/saoyisao.png"></u-image>
 				<text class="text-box">请扫车场二维码</text>
 			</view>
 		</view> -->
@@ -66,9 +66,9 @@
 				previewImage(e) {
 						uni.previewImage({
 							// 需要预览的图片链接列表
-							urls: ['http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchejiaofei.jpg'],
+							urls: ['https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/tingchejiaofei.jpg'],
 							// 为当前显示图片的链接/索引值
-							current: 'http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/tingchejiaofei.jpg',
+							current: 'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/tingchejiaofei.jpg',
 							// 图片指示器样式	
 							indicator:'default',
 							// 是否可循环预览

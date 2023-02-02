@@ -57,9 +57,9 @@
               "
               @click="jumpToCheckDetailPage(0)"
             >
-              <!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/u11.png"> -->
+              <!-- <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/u11.png"> -->
               <image
-                src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/wait-check.png"
+                src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/wait-check.png"
                 mode="aspectFit"
                 style="width: 80upx; height: 80upx; margin-left: 50upx"
               />
@@ -97,9 +97,9 @@
               "
               @click="jumpToCheckDetailPage(1)"
             >
-              <!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/u11.png"> -->
+              <!-- <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/u11.png"> -->
               <image
-                src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/check.png"
+                src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/check.png"
                 mode="aspectFit"
                 style="width: 80upx; height: 80upx; margin-left: 50upx"
               />
@@ -144,9 +144,9 @@
               "
               @click="jumpToCheckDetailPage(0)"
             >
-              <!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/u11.png"> -->
+              <!-- <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/u11.png"> -->
               <image
-                src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/wait-check.png"
+                src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/wait-check.png"
                 mode="aspectFit"
                 style="width: 80upx; height: 80upx; margin-left: 50upx"
               />
@@ -190,9 +190,9 @@
               "
               @click="jumpToCheckDetailPage(1)"
             >
-              <!-- <image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/u11.png"> -->
+              <!-- <image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/u11.png"> -->
               <image
-                src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/check.png"
+                src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/check.png"
                 mode="aspectFit"
                 style="width: 80upx; height: 80upx; margin-left: 50upx"
               />

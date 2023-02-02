@@ -5,15 +5,15 @@
 		</view>
 		<view class="payment-type-view">
 			<button @click="goToProperty">
-				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/property.png" alt=""><br>
+				<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/payment/property.png" alt=""><br>
 				<text>{{ payment["property"] || "物业缴费" }}</text>
 			</button>
 			<button @click="goToParking">
-				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/house.png" alt=""><br>
+				<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/payment/house.png" alt=""><br>
 				<text>{{ payment["parking"] || "房租缴费" }}</text>
 			</button>
 			<!-- <button @click="goToLifePayment">
-				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/payment/shjf.png" alt=""><br>
+				<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/payment/shjf.png" alt=""><br>
 				<text>生活缴费</text>
 			</button> -->
 		</view>

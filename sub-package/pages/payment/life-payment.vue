@@ -1,9 +1,9 @@
 <template>
 	<view class="life-payment">
 		<view class="pay-address">
-			<image class="payBg" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/paybg.jpg" mode=""></image>
+			<image class="payBg" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/paybg.jpg" mode=""></image>
 			<!-- <view class="arrdBox">
-				<image class="addrImg" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/address.png" mode=""></image>
+				<image class="addrImg" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/address.png" mode=""></image>
 				<text>{{addressName}}</text>
 			</view> -->
 		</view>
@@ -85,13 +85,13 @@
 					<view class="fl" v-for="(item,index) in supportPayList" :key="index">
 						<view class="" v-if="item == 1" @click="selectPay(item)">
 							<view class="img-box">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/wxzf.png" mode=""></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/wxzf.png" mode=""></image>
 							</view>
 							<text>微信支付</text>
 						</view>
 						<!-- <view class="" v-if="item == 2" @click="selectPay(item)">
 							<view class="img-box">
-								<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/zfbzf.png" mode=""></image>
+								<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/zfbzf.png" mode=""></image>
 							</view>
 							<text>支付宝支付</text>
 						</view> -->

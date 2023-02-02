@@ -465,7 +465,7 @@ view.green-fg-color.data-v-6a937b03, text.green-fg-color.data-v-6a937b03, button
 .head.data-v-6a937b03 {
   width: 100%;
   height: 380rpx;
-  background: url("http://yuanzhoulvwego.com/wp-content/uploads/static/home/billPay/beijin.png") no-repeat;
+  background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/beijin.png") no-repeat;
   background-size: 100% 100%;
 }
 .data-v-6a937b03 .u-radio-group {

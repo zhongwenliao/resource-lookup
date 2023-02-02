@@ -11,13 +11,13 @@
 			<u-row gutter="8" justify="center">
 				<u-col span="6">
 					<view class="box-car" @click="payFees">
-						<u-image width="55upx" height="60upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/lintingjiaofei.png"></u-image>
+						<u-image width="55upx" height="60upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/lintingjiaofei.png"></u-image>
 						<view class="yueka-box">临停缴费</view>
 					</view>
 				</u-col>
 				<u-col span="1">
 					<view class="box-car" @click="monthlyCard">
-						<u-image width="55upx" height="60upx" src="http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/yuekaishenqing.png"></u-image>
+						<u-image width="55upx" height="60upx" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/yuekaishenqing.png"></u-image>
 						<view class="yueka-box">月卡管理</view>
 					</view>
 				</u-col>
@@ -61,7 +61,7 @@
 	.beijin{
 		width: 100%;
 		height: 250upx;
-		background: url('http://yuanzhoulvwego.com/wp-content/uploads/static/home/payParking/beijin.png');
+		background: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/payParking/beijin.png');
 		background-size: 100% 100%;
 		position: relative;
 	}

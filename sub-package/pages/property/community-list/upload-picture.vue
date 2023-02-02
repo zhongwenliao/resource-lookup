@@ -3,7 +3,7 @@
 		<view class="photo-view">
 			<!-- 以前的写法 start -->
 			<!-- <image v-if="imgSrc" :src="imgSrc" class="face-img"></image>
-			<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg"  @click="takePhoto" class="photo-view-image" v-else ></image> -->
+			<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/house/take-photo.jpg"  @click="takePhoto" class="photo-view-image" v-else ></image> -->
 			<!-- 以前的写法 end -->
 			
 			<!-- 现在的写法 start -->
@@ -34,7 +34,7 @@
 		data() {
 			return {
 				imgList: [],
-				imgSrc: "http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/take-photo.jpg",
+				imgSrc: "https://file.yuanzhoulvwego.com/prod/uploadFiles/img/house/take-photo.jpg",
 				hasImg: null,
 				communityId: "",
 				roomId: null,

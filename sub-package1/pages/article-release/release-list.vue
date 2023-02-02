@@ -5,7 +5,7 @@
 			:title="articleRelease['Releaserecord']||'放行记录'" @clickRight="clickNavRight()">
 			<!-- 导航栏左侧插槽 -->
 			<view slot="left">
-				<image src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
+				<image src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/left.png" mode="" style="width: 15px;height: 15px;"></image>
 			</view>
 		</uni-nav-bar>
 		<!--自定义导航栏end-->
@@ -29,15 +29,15 @@
 						</view>
 						<view class="stateBox">
 							<view>
-								<image v-if="item.reviewStatus==1" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/pass.png" mode="" class="icon">
+								<image v-if="item.reviewStatus==1" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/pass.png" mode="" class="icon">
 								</image>
 								<p v-if="item.reviewStatus==1">{{articleRelease['Approved']||'已通过审批'}}</p>
 
-								<image v-if="item.reviewStatus==0" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/dd.png" mode="" class="icon">
+								<image v-if="item.reviewStatus==0" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/dd.png" mode="" class="icon">
 								</image>
 								<p v-if="item.reviewStatus==0">{{articleRelease['Approvalinprogress']||'正在审核'}}</p>
 
-								<image v-if="item.reviewStatus==2" src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/nopass.png" mode="" class="icon">
+								<image v-if="item.reviewStatus==2" src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/nopass.png" mode="" class="icon">
 								</image>
 								<p v-if="item.reviewStatus==2">{{articleRelease['Notapproved']||'未通过审批'}}</p>
 

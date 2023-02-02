@@ -5,7 +5,7 @@
       v-model="dataList"
       @query="getInfo"
       :emptyViewText="'暂无信息,请先发布信息'"
-      :emptyViewImg="'http://yuanzhoulvwego.com/wp-content/uploads/static/home/repairs/fabuxinxi.png'"
+      :emptyViewImg="'https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/fabuxinxi.png'"
       :emptyViewStyle="{ 'margin-top': '-200upx' }"
       :emptyViewImgStyle="{ width: '641upx', height: '297upx' }"
     >

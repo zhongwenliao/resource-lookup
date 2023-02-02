@@ -19,8 +19,8 @@
           <image
             :src="
               getInfo.gender === 1
-                ? 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/female.png'
-                : 'http://yuanzhoulvwego.com/wp-content/uploads/static/img/house/male.png'
+                ? 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/house/female.png'
+                : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/img/house/male.png'
             "
           >
           </image>
@@ -58,7 +58,7 @@
             </view>
             <image
               style="width: 26upx; height: 26upx; margin-left: 6upx"
-              src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/cha.png"
+              src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/cha.png"
               mode=""
               v-if="getInfo.isBindDoorLock != 1"
             >
@@ -87,7 +87,7 @@
             </view>
             <image
               style="width: 26upx; height: 26upx; margin-left: 6upx"
-              src="http://yuanzhoulvwego.com/wp-content/uploads/static/img/cha.png"
+              src="https://file.yuanzhoulvwego.com/prod/uploadFiles/img/cha.png"
               mode=""
             ></image>
           </li>
