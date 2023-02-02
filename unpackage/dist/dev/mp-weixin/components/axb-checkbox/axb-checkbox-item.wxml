@@ -1,1 +1,0 @@
-<view data-event-opts="{{[['tap',[['handleChange',['$event']]]]]}}" class="{{['radio','u-line-1','data-v-6b0113cc',(widthDefault)?'radio-width-default':'']}}" style="{{(checked?activeStyle:itemStyle)}}" bindtap="__e">{{''+label+''}}</view>

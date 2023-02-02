@@ -1,0 +1,100 @@
+
+page {
+	background-color: #F9F9F9;
+}
+
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+@font-face {
+  font-family: 'PingFang SC';
+  /*字体名称*/
+  src: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/PingFangSC.ttf");
+  /*字体源文件*/
+}
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.box.data-v-57db322a {
+  background-color: #ffffff;
+  padding: 40rpx;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+}
+.box1.data-v-57db322a {
+  display: inline-block;
+  width: 170rpx;
+  vertical-align: middle;
+  margin-right: 20rpx;
+}
+.box2.data-v-57db322a {
+  display: inline-block;
+}
+.box3.data-v-57db322a {
+  color: #3E76F4;
+  float: right;
+}
+.warp.data-v-57db322a {
+  height: 100%;
+}
+.rect.data-v-57db322a {
+  position: fixed;
+  bottom: 115rpx;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  margin: 15rpx;
+  background-color: #fff;
+  font-size: 34rpx;
+  color: #3E76F4;
+}
+.rect .rect-t.data-v-57db322a {
+  position: relative;
+  height: 100rpx;
+  width: 56%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  text-align: center;
+}
+.rect .rect-t .rect2.data-v-57db322a {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  display: inline-block;
+}
+.rect1.data-v-57db322a {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  margin: 15rpx;
+  background-color: #fff;
+  text-align: center;
+  line-height: 100rpx;
+  font-size: 17px;
+  color: #3E76F4;
+}
+

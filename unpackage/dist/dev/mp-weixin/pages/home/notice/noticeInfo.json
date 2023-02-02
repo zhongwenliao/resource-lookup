@@ -1,9 +1,0 @@
-{
-  "navigationStyle": "custom",
-  "navigationBarTitleText": "通知详情",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
-    "u-parse": "/components/feng-parse/parse"
-  }
-}

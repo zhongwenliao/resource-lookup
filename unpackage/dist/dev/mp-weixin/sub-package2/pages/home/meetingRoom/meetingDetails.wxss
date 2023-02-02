@@ -1,0 +1,196 @@
+
+page {
+	background: #f1f2f3;
+}
+
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+@font-face {
+  font-family: 'PingFang SC';
+  /*字体名称*/
+  src: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/PingFangSC.ttf");
+  /*字体源文件*/
+}
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.top.data-v-8b189706 {
+  border-radius: 40rpx 40rpx 0px 0px;
+  background: #FFFFFF;
+  margin-top: -40rpx;
+  z-index: 1;
+  padding: 50rpx 30rpx 32rpx 30rpx;
+  position: relative;
+  margin-bottom: 20rpx;
+}
+.top .top-title.data-v-8b189706 {
+  font-size: 38rpx;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+}
+.top .top-address.data-v-8b189706 {
+  color: #666666;
+}
+.top .top-grid .grid-text-top.data-v-8b189706 {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #E64340;
+}
+.top .top-grid .grid-text.data-v-8b189706 {
+  font-size: 24rpx;
+  color: #666666;
+}
+.top .top-reminder.data-v-8b189706 {
+  font-size: 26rpx;
+  color: #999999;
+}
+.top .top-reminder .top-reminder-image.data-v-8b189706 {
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.middle.data-v-8b189706 {
+  background: #FFFFFF;
+  padding: 50rpx 30rpx;
+  display: flex;
+  margin-bottom: 20rpx;
+}
+.middle .middle-text.data-v-8b189706 {
+  font-size: 28rpx;
+  color: #666666;
+}
+.middle-form.data-v-8b189706 {
+  background: #FFFFFF;
+  padding: 10rpx 30rpx 40rpx;
+  margin-bottom: 20rpx;
+}
+.middle-form .form-item_box_body .form-item.data-v-8b189706 {
+  position: relative;
+}
+.middle-form .form-item_box_body .form-item.data-v-8b189706:before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 40rpx;
+  height: 2rpx;
+  width: calc(100% - 180rpx);
+  background-color: #dddddd;
+}
+.bottom.data-v-8b189706 {
+  padding: 34rpx 30rpx 100rpx 30rpx;
+  background: #FFFFFF;
+}
+.bottom .bottom-title.data-v-8b189706 {
+  margin-bottom: 30rpx;
+  font-size: 26rpx;
+}
+.bottom .bottom-title .bottom-title-r.data-v-8b189706 {
+  color: #E64340;
+}
+.bottom .bottom-head.data-v-8b189706 {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 50rpx;
+}
+.bottom .bottom-head .bottom-head-left.data-v-8b189706 {
+  display: flex;
+}
+.bottom .bottom-head .bottom-head-right.data-v-8b189706 {
+  display: flex;
+}
+.bottom .bottom-head .bottom-head-right .bottom-head-right-box.data-v-8b189706 {
+  display: flex;
+  align-items: center;
+  margin-left: 40rpx;
+}
+.bottom .periodTime.data-v-8b189706 {
+  margin-bottom: 40rpx;
+}
+.bottom .box-periodTime.data-v-8b189706 {
+  width: 120rpx !important;
+  height: 45rpx !important;
+  margin-left: 10rpx;
+}
+.bottom .box.data-v-8b189706 {
+  width: 40rpx;
+  height: 34rpx;
+  border: 1px solid #dddddd;
+  border-radius: 3rpx;
+}
+.bottom .boxs.data-v-8b189706 {
+  padding: 0 16rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border: 2rpx solid #DDDDDD;
+  border-radius: 50rpx;
+  text-align: center;
+}
+.bottom .box-oselected.data-v-8b189706 {
+  background: #1677FF;
+  border: 1px solid #1677FF;
+  color: #FFFFFF;
+}
+.bottom .box-selected.data-v-8b189706 {
+  background: #F8926A;
+  border: 1px solid #F8926A;
+  color: #FFFFFF;
+}
+.bottom .box-title-right.data-v-8b189706 {
+  margin-left: 10rpx;
+  font-size: 28rpx;
+}
+.bottom .bottom-foot.data-v-8b189706 {
+  display: flex;
+  padding: 0rpx 40rpx 0rpx 40rpx;
+}
+.bottom .bottom-foot .bottom-foot-left.data-v-8b189706 {
+  padding-left: 15rpx;
+  flex: 1;
+}
+.bottom .bottom-foot .bottom-foot-left .bottom-foot-left-head.data-v-8b189706 {
+  padding-bottom: 50rpx;
+}
+.bottom .bottom-foot .bottom-foot-right.data-v-8b189706 {
+  padding-left: 15rpx;
+  flex: 1;
+  border-left: 1px solid #CCCCCC;
+}
+.bottom .bottom-foot .bottom-foot-right .bottom-foot-right-head.data-v-8b189706 {
+  padding-bottom: 50rpx;
+}
+.btn_box.data-v-8b189706 {
+  height: 98rpx;
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+  background-color: white;
+  padding: 0 64rpx;
+}
+.btn_box .btn_box_button.data-v-8b189706 {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
