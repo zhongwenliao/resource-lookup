@@ -11,6 +11,7 @@
     "minified": true,
     "newFeature": true,
     "bigPackageSizeSupport": true,
+    "packNpmRelationList": [],
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -19,7 +20,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "2.30.0",
-  "appid": "wx53496bd107ac49f9",
+  "appid": "wxab2619dd778f72ec",
   "projectname": "园区π",
   "condition": {},
   "editorSetting": {

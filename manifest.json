@@ -209,7 +209,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx53496bd107ac49f9",
+        "appid" : "wxab2619dd778f72ec",
         "setting" : {
             "urlCheck" : false,
             "es6" : true,
