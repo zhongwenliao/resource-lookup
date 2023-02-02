@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="logo-box">
-			<image src="http://www.thinmoo.com/wp-content/uploads/2020/10/logo.png"></image><br />
+			<image src="http://www.thinmoo.com/wp-content/uploads/2020/10/logo.jpg"></image><br />
 			<text>达管家社区</text>
 		</view>
 		<view class="instruction-box">

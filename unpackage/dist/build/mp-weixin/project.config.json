@@ -18,9 +18,9 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "2.29.0",
-  "appid": "wx53496bd107ac49f9",
-  "projectname": "园区π",
+  "libVersion": "2.30.0",
+  "appid": "wxab2619dd778f72ec",
+  "projectname": "南大科学园",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",

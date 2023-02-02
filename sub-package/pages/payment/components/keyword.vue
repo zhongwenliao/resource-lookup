@@ -22,7 +22,7 @@
 	    {{item}}
     </view>
     <view  :style="{border:buttonBorder}"   class='vehicle-panel-row-button vehicle-panel-row-button-img'>
-	    <!-- <img src='../assets/logo.png' > -->
+	    <!-- <img src='../assets/logo.jpg' > -->
 	   <icon type="close" color="#ee0a24" @click='vehicleTap("delete")'/>
       </view>
 	    </view>
@@ -44,7 +44,7 @@
     <view class="vehicle-panel-row">
 	    <view    class='vehicle-panel-row-button' :style="{border:buttonBorder}"  v-for="(item,idx) in keyEnInput2" @click='vehicleTap(item)'   :key="idx+item">{{item}}</view>
     <view  :style="{border:buttonBorder}"   class='vehicle-panel-row-button vehicle-panel-row-button-img'>
-	    <!-- <img src='../assets/logo.png' class='vehicle-en-button-delete' @click='vehicleTap("delete")' mode='aspectFit'> -->
+	    <!-- <img src='../assets/logo.jpg' class='vehicle-en-button-delete' @click='vehicleTap("delete")' mode='aspectFit'> -->
        <icon type="close" color="#ee0a24" @click='vehicleTap("delete")'/>
 	    </view>
 	    </view>

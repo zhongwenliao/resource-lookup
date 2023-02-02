@@ -5,7 +5,7 @@
 			<view class="login-page-view">
 				<!-- logo区域 start -->
 				<view class="login-page-logo-view">
-					<!-- <image class="login-page-logo-image" src="https://wxmini-1258758873.cos.ap-guangzhou.myqcloud.com/logo.png" /> -->
+					<!-- <image class="login-page-logo-image" src="https://wxmini-1258758873.cos.ap-guangzhou.myqcloud.com/logo.jpg" /> -->
 					<image class="login-page-logo-image" :src="logoUrl" />
 				</view>
 				<!-- logo区域 end -->

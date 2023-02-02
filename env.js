@@ -6,14 +6,14 @@
 const ENV_LOGIN_URL = {
 	development: 'http://www.api.dev.nccnt.com/', //开发环境
 	production: 'http://www.api.nccnt.com/', //生产环境
-	
+	production2:'https://api.yuanzhoulvwego.com/'
 }
 
 //项目接口
 const ENV_API_URL = {
 	development: 'http://lterzs5pko.xuduan.vip', //开发环境
 	production: 'http://119.91.205.37:7070', //测试环境
-	production2: 'http://api.yuanzhoulvwego.com', //正式环境
+	production2: 'https://api.yuanzhoulvwego.com', //正式环境
 }
 
 //图片上传
@@ -21,7 +21,7 @@ const IMG_UPLOAD_URL = {
 	development: 'http://lterzs5pko.xuduan.vip', //开发环境
 	// development: 'http://119.91.205.37:7070', 
 	// production: 'http://119.91.205.37:7070', //测试环境
-	production2: 'http://api.yuanzhoulvwego.com', //正式环境
+	production2: 'https://api.yuanzhoulvwego.com', //正式环境
 }
 //高德地图
 const GAODE_URL ='https://restapi.amap.com/';
@@ -42,7 +42,7 @@ const dev_Config = {
 	"?appSecret": "服务器接口请求所需的appSecret",
 	"appSecret": "1d559bc993d550af5d6b6291ed2ae296",
 	"?logo": "APP的logo",
-	"logo": "http://yuanzhoulvwego.com/wp-content/uploads/static/logo.png",
+	"logo": "http://yuanzhoulvwego.com/wp-content/uploads/static/logo.jpg",
 	"?email": "制作APP的公司邮箱",
 	"email": "admin@intelligoo.com",
 	"?company": "制作APP的公司名称",
