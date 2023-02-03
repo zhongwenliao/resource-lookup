@@ -5,17 +5,20 @@
 		</view>
 		<view class="body">
 			<u-row style="margin-bottom: 60upx;">
-				<u-col >
+				<u-col>
 					<view class="">
-						<view class="input_box"><input type="text" v-model="username" placeholder="账号/手机号" /></view>
+						<view class="input_box">
+							<input type="text" v-model="username" placeholder="账号/手机号" />
+						</view>
 					</view>
 				</u-col>
 			</u-row>
-			<u-row >
-				<u-col >
+			<u-row>
+				<u-col>
 					<view class="">
 						<view class="input_box">
-							<u-input type="password" password v-model="password" placeholder="密码"  :password="!flag"></u-input>
+							<u-input class="input_pwd" type="password" password v-model="password" placeholder="密码吗"
+								:password="!flag" :password-icon="true" />
 						</view>
 					</view>
 				</u-col>
@@ -30,8 +33,10 @@
 			</view>
 		</view>
 		<view class="btn_box">
-			<u-button :custom-style="customStyle" class="u-m-b-20" shape="circle" @click="onSubmit" type="primary">登录</u-button>
-			<u-button :custom-style="customStyle2" shape="circle" @click="onPageJump('/pages/login/register')" >注册</u-button>
+			<u-button :custom-style="customStyle" class="u-m-b-20" shape="circle" @click="onSubmit" type="primary">登录
+			</u-button>
+			<u-button :custom-style="customStyle2" shape="circle" @click="onPageJump('/pages/login/register')">注册
+			</u-button>
 		</view>
 	</view>
 </template>
@@ -47,13 +52,13 @@
 		data() {
 			return {
 				flag: false,
-				customStyle:{
-					fontSize:'32upx',
+				customStyle: {
+					fontSize: '32upx',
 				},
-				customStyle2:{
-					fontSize:'32upx',
+				customStyle2: {
+					fontSize: '32upx',
 					// fontWeight: 'bold',
-					color:'#3E76F4',
+					color: '#3E76F4',
 				},
 				type: 2000,
 				code: '',
@@ -249,19 +254,23 @@
 	page {
 		width: 100%;
 	}
-	/deep/ .uni-input-placeholder{
+
+	/deep/ .uni-input-placeholder {
 		color: $uni-text-color-grey;
 	}
+
 	.img {
 		width: 40upx;
 		height: 40upx;
 	}
-	.logo{
+
+	.logo {
 		display: flex;
 		justify-content: center;
 		height: 480upx;
 		align-items: center;
 	}
+
 	.project_name {
 		opacity: 1;
 		font-size: 26upx;
@@ -290,12 +299,22 @@
 			display: flex;
 			border-bottom: 2upx solid $uni-border-color;
 			align-items: center;
+
 			input {
 				margin-bottom: 10upx;
 				flex: 1;
 				font-size: 32upx;
 				color: #333;
 				height: 60upx;
+			}
+
+			.input_pwd {
+				margin-bottom: 10upx;
+				flex: 1;
+				font-size: 32upx;
+				color: #333;
+				height: 60upx;
+				line-height: 60upx;
 			}
 
 			button {
