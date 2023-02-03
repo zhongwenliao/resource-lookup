@@ -17,7 +17,7 @@
 				<u-col>
 					<view class="">
 						<view class="input_box">
-							<u-input class="input_pwd" type="password" password v-model="password" placeholder="密码吗"
+							<u-input class="input_pwd" type="password" password v-model="password" placeholder="密码"
 								:password="!flag" :password-icon="true" />
 						</view>
 					</view>
