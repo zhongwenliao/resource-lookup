@@ -1,32 +1,6 @@
 
-uni-textarea {
-  width: auto;
-}
-.r-top {
-  width: 100%;
-  padding: 10rpx;
-  background: #f5f5f5;
-  height: 300rpx;
-  font-size: 28rpx;
-  padding: 20rpx 20rpx;
-  /* border-radius: 20rpx; */
-  position: relative;
-}
-.r-top-t {
-  display: flex;
-  justify-content: space-between;
-  font-family: PingFang SC;
-  font-weight: 400;
-  position: absolute;
-  right: 10rpx;
-  bottom: 0;
-  color: rgba(153, 153, 153, 1);
-  opacity: 1;
-}
-
-
 page {
-	background: #F9F9F9;
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -64,7 +38,7 @@ page {
 .body .repairEvaluate-box.data-v-067d306b {
   margin: 20rpx 20rpx 0 20rpx;
   padding: 42rpx 15rpx;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 15rpx;
 }
 .body .repairEvaluate-box .repairEvaluate-box-title.data-v-067d306b {
@@ -105,7 +79,7 @@ page {
   position: relative;
   height: 64rpx;
   font-size: 52rpx;
-  color: #FA5656;
+  color: #fa5656;
   font-weight: bold;
 }
 .body .evaluate-title .evaluate-title-top .evaluate-title-top-left.data-v-067d306b {

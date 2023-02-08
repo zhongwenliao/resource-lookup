@@ -1,6 +1,6 @@
 
 page {
-	background: #F1F2F3;
+  background: #f1f2f3;
 }
 
 @charset "UTF-8";
@@ -72,10 +72,10 @@ page {
   text-align: center;
 }
 .card-box .card .card-right .stateBut.data-v-338aaa68 {
-  background: #3E76F4;
+  background: #3e76f4;
 }
 .card-box .card .card-right .fullBut.data-v-338aaa68 {
-  background: #CCCCCC;
+  background: #cccccc;
 }
 .content-box.data-v-338aaa68 {
   background: #fff;
@@ -101,8 +101,8 @@ page {
   border-radius: 0;
 }
 .content-box .foot_but .foot_but_right.data-v-338aaa68 {
-  background: #3E76F4;
-  color: #FFFFFF;
+  background: #3e76f4;
+  color: #ffffff;
 }
 .slot-content.data-v-338aaa68 {
   padding: 20rpx 30rpx;
@@ -151,7 +151,7 @@ page {
   font-size: 26rpx;
 }
 .slot-content .dropdown_radio.data-v-338aaa68 .radio {
-  background: #F1F2F3 !important;
+  background: #f1f2f3 !important;
   border-radius: 5rpx;
   border: 0;
   width: 160rpx;
@@ -178,14 +178,14 @@ page {
   -webkit-line-clamp: 1;
 }
 .u-tab-item-active.data-v-338aaa68 {
-  color: #3E76F4 !important;
+  color: #3e76f4 !important;
 }
 .u-tab-view.data-v-338aaa68 {
   height: 500rpx;
 }
 .u-tab-item.data-v-338aaa68 {
   height: 100rpx;
-  background: #FFFFFF;
+  background: #ffffff;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -228,7 +228,7 @@ page {
   height: 100%;
 }
 .u-menu-wrap .right-box.data-v-338aaa68 {
-  background-color: #FFF;
+  background-color: #fff;
 }
 .u-menu-wrap .class-item.data-v-338aaa68 {
   margin-bottom: 30rpx;
@@ -241,7 +241,7 @@ page {
   color: #333333;
 }
 .u-menu-wrap .zoneItem-active.data-v-338aaa68 {
-  color: #3E76F4 !important;
+  color: #3e76f4 !important;
   font-size: 30rpx;
 }
 .u-menu-wrap .item-title.data-v-338aaa68 {
@@ -250,11 +250,11 @@ page {
 }
 .meeting-bottom.data-v-338aaa68 {
   height: 98rpx;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .meeting-bottom .meeting-bottom_image.data-v-338aaa68 {
   position: relative;
-  left: 50%;
+  left: 45%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
 }
@@ -262,6 +262,6 @@ page {
   color: #666666;
 }
 .meeting-bottom .meeting-bottom-ctext.data-v-338aaa68 {
-  color: #3E76F4;
+  color: #3e76f4;
 }
 

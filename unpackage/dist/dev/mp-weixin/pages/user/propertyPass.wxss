@@ -1,6 +1,6 @@
 
 page {
-	background: #F9F9F9;
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -49,7 +49,7 @@ page {
 .body .content .form-item_box.data-v-2ef7bb21 {
   margin-top: 20rpx;
   padding: 40rpx 36rpx 20rpx 30rpx;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 15rpx;
 }
 .body .content .form-item_box .form-item_box_head.data-v-2ef7bb21 {
@@ -73,7 +73,7 @@ page {
   position: relative;
 }
 .body .content .form-item_box .form-item_box_body .form-item.data-v-2ef7bb21:before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   right: 40rpx;
@@ -95,7 +95,7 @@ page {
 }
 .body .btn_box .btn_box_button.data-v-2ef7bb21 {
   position: relative;
-  top: 50%;
+  top: 0%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
 }

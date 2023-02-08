@@ -1,6 +1,6 @@
 
 page {
-	background: #F9F9F9;
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -37,13 +37,16 @@ page {
 /* 文章场景相关 */
 .body .tops.data-v-0c93f5c8 {
   height: 340rpx;
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/chahua.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .body .content.data-v-0c93f5c8 {
   padding: 20rpx;
 }
 .body .content .boxs.data-v-0c93f5c8 {
   height: 214rpx;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 15rpx;
   margin-bottom: 20rpx;
   padding: 30rpx 20rpx 30rpx 10rpx;
@@ -83,11 +86,16 @@ page {
   position: fixed;
   right: 44rpx;
   bottom: 172rpx;
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/repairs/baoxiu.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 158rpx;
+  height: 164rpx;
 }
 .body .bules.data-v-0c93f5c8 {
-  background-color: #3E76F4;
+  background-color: #3e76f4;
 }
 .body .grays.data-v-0c93f5c8 {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
 }
 

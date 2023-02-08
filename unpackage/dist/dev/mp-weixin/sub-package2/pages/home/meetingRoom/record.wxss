@@ -1,6 +1,6 @@
 
 page {
-	background: #F1F2F3;
+  background: #f1f2f3;
 }
 
 @charset "UTF-8";
@@ -65,7 +65,7 @@ page {
   border-radius: 30rpx;
   border: 1px solid;
   text-align: center;
-  color: #3E76F4;
+  color: #3e76f4;
 }
 .card-box .card .card-body.data-v-39ffdb72 {
   padding: 32rpx 0rpx 20rpx 0rpx;
@@ -97,16 +97,16 @@ page {
   font-weight: bold;
 }
 .card-box .card .card-foot .card-foot-remark .card-foot-content.data-v-39ffdb72 {
-  color: #E64340;
+  color: #e64340;
   line-height: 24px;
 }
 .meeting-bottom.data-v-39ffdb72 {
   height: 98rpx;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .meeting-bottom .meeting-bottom_image.data-v-39ffdb72 {
   position: relative;
-  left: 50%;
+  left: 45%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
 }
@@ -114,6 +114,6 @@ page {
   color: #666666;
 }
 .meeting-bottom .meeting-bottom-ctext.data-v-39ffdb72 {
-  color: #3E76F4;
+  color: #3e76f4;
 }
 
