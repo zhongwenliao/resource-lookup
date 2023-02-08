@@ -1,6 +1,6 @@
 
 page {
-	background: #F1F2F3;
+  background: #f1f2f3;
 }
 
 @charset "UTF-8";
@@ -41,7 +41,7 @@ page {
   font-weight: bold;
   letter-spacing: 2rpx;
   text-align: center;
-  width: 100% !important;
+  width: 100vw !important;
 }
 .cell-group-exitLogin.data-v-52e26b05 {
   position: absolute;
