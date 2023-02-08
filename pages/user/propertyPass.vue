@@ -61,7 +61,7 @@
 					</view>
 					<view class="form-item_box_body">
 						<u-form-item label-position="top" :label-style="labelStyle" :border-bottom="false"
-							label="">
+							label=" ">
 							<u-upload width="181" height="181" :max-size="1 * 1024 * 1024" class="upload" max-count="3"
 								:custom-btn="true" :file-list="form.livePhoto" upload-text="" ref="uUpload" :action="action"
 								@on-list-change="listChange" @on-success="uploadSuccess" :auto-upload="true">

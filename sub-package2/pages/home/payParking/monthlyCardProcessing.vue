@@ -44,13 +44,13 @@
 					</view>
 					<view class="form-item_box_body">
 						<u-form-item v-if="type==1" label-position="top" prop="" :label-style="labelStyle" :border-bottom="false"
-							label="">
+							label=" ">
 							<u-image v-for="item in form.idPhoto" :src="item.imageUrl" width="181" height="181">
 							</u-image>
 							<!-- <text v-if="form.idPhoto && form.idPhoto.length === 0">暂无</text> -->
 						</u-form-item>
 						<u-form-item v-else label-position="top" prop="" :label-style="labelStyle" :border-bottom="false"
-							label="">
+							label=" ">
 							<u-upload width="181" height="181" :max-size="1 * 1024 * 1024" class="upload" max-count="2"
 								:custom-btn="true" :file-list="form.idPhoto" upload-text="" ref="uUpload"
 								:action="action" @on-list-change="idPhotolistChange" @on-success="idPhotoUploadSuccess"
@@ -69,13 +69,13 @@
 					</view>
 					<view class="form-item_box_body">
 						<u-form-item v-if="type==1" label-position="top" prop="" :label-style="labelStyle" :border-bottom="false"
-							label="">
+							label=" ">
 							<u-image v-for="item in form.driverPhoto" :src="item.imageUrl" width="181" height="181">
 							</u-image>
 							<!-- <text v-if="form.driverPhoto && form.driverPhoto.length === 0">暂无</text> -->
 						</u-form-item>
 						<u-form-item v-else label-position="top" prop="" :label-style="labelStyle" :border-bottom="false"
-							label="">
+							label=" ">
 							<u-upload width="181" height="181" :max-size="1 * 1024 * 1024" class="upload" max-count="2"
 								:custom-btn="true" :file-list="form.driverPhoto" upload-text="" ref="uUpload"
 								:action="action" @on-list-change="driverPhotolistChange"
@@ -95,7 +95,7 @@
 					备注
 				</view>
 				<view class="form-item_box">
-					<u-form-item label-position="top" :border-bottom="false" label="">
+					<u-form-item label-position="top" :border-bottom="false" label=" ">
 						<my-textarea :value.sync="form.remark"></my-textarea>
 					</u-form-item>
 				</view>

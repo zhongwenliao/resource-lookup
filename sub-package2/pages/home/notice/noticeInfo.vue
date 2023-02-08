@@ -1,6 +1,6 @@
 <template>
 	<page>
-		<u-navbar title="" :border-bottom="true" />
+		<u-navbar title=" " :border-bottom="true" />
 		<!-- 标题 -->
 		<view class="content">
 			<view class="head u-border-bottom u-margin-bottom-20">

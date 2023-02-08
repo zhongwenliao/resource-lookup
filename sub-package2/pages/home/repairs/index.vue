@@ -11,7 +11,7 @@
 			:emptyViewStyle="{ 'margin-top': '-200upx' }"
 			:emptyViewImgStyle="{ 'width': '641upx', 'height': '297upx' }">
 			<view slot="top" class="tops" :style="topBackground">
-				<u-navbar title="" :border-bottom="false" back-icon-color="#ffffff" :background="navbarBackground"></u-navbar>
+				<u-navbar title=" " :border-bottom="false" back-icon-color="#ffffff" :background="navbarBackground"></u-navbar>
 			</view>
 			<view class="content">
 				<view class="boxs" v-for="(item, index) in dataList" @click="goRepairProgress(item.id)">

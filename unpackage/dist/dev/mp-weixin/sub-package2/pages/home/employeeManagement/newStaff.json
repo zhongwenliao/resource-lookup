@@ -15,6 +15,7 @@
     "u-modal": "/uview-ui/components/u-modal/u-modal",
     "u-image": "/uview-ui/components/u-image/u-image",
     "u-loading": "/uview-ui/components/u-loading/u-loading",
-    "u-toast": "/uview-ui/components/u-toast/u-toast"
+    "u-toast": "/uview-ui/components/u-toast/u-toast",
+    "my-textarea": "/sub-package2/components/my-textarea/my-textarea"
   }
 }

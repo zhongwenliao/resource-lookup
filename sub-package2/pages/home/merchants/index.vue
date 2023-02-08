@@ -137,8 +137,8 @@
                       <view class="label">自定义</view>
                       <u-field
                         type="number"
-                        :clearable="false"
                         class="input"
+                        :clearable="false"
                         v-model="formDropdown.rentMonthSearch.rentMonthL"
                         label-width="0"
                         placeholder="最小价格"
@@ -146,8 +146,8 @@
                       <view class="jianhao">-</view>
                       <u-field
                         type="number"
-                        :clearable="false"
                         class="input"
+                        :clearable="false"
                         v-model="formDropdown.rentMonthSearch.rentMonthH"
                         label-width="0"
                         placeholder="最大价格"
@@ -210,10 +210,10 @@
                     </view>
                   </view>
                 </view>
-                <view class="slot-content">
+                <view class="slot-content" style="background-color: #ffffff">
                   <view class="">
                     <view class="dropdown_title"> 装修类型 </view>
-                    <view class="dropdown_radio">
+                    <view class="dropdown_radio" style="margin-top: 20upx">
                       <axb-check-box
                         :key="decorationStatus"
                         itemBackground="#F1F2F3"
@@ -229,12 +229,14 @@
                   </view>
                 </view>
                 <view class="foot_but">
-                  <u-row gutter="20">
+                  <u-row>
                     <u-col span="3">
-                      <u-button class="foot_but_left but" @click="resetDropdown(3)">重置</u-button>
+                      <button class="but" @click="resetDropdown(3)">重置</button>
                     </u-col>
                     <u-col span="9">
-                      <u-button class="foot_but_right but" hover-class="none" @click="confirmDropdown">确定</u-button>
+                      <button style="background-color: #3e76f4" class="but" hover-class="none" @click="confirmDropdown">
+                        确定
+                      </button>
                     </u-col>
                   </u-row>
                 </view>
@@ -848,16 +850,14 @@ page {
 .content-box {
   background: #fff;
   // height: 500upx;
-  padding-bottom: 90upx;
+  padding-bottom: 20upx;
   position: relative;
 
   .foot_but {
-    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 10upx 40upx;
     box-shadow: 0px 0px 35upx 0px rgba(204, 204, 204, 0.3);
-
     .but {
       height: 80upx;
       line-height: 80upx;
@@ -869,14 +869,6 @@ page {
         border: 0;
         border-radius: 0;
       }
-    }
-
-    .foot_but_left {
-    }
-
-    .foot_but_right {
-      background: #3e76f4;
-      color: #ffffff;
     }
   }
 }
@@ -893,9 +885,11 @@ page {
 
   .dropdown_price {
     display: flex;
-    padding: 50upx 30upx;
+    padding: 30upx 30upx;
     align-items: center;
-
+    /deep/ .u-field {
+      padding: 0;
+    }
     .label {
       margin-right: 30upx;
       font-size: 28upx;

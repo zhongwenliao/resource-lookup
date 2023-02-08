@@ -6,24 +6,24 @@
 		<u-form :border-bottom="false" label-width="190" style="padding: 70upx 20px 0upx 20px;" :model="form"
 			ref="uForm">
 			<view class="form-item_box">
-				<u-form-item class="form-item" prop="phone" :border-bottom="true" label="">
+				<u-form-item class="form-item" prop="phone" :border-bottom="true" label=" ">
 					<u-input v-model="form.phone" class="field" placeholder-style="color:#999999;" label-width="0"
 						:border-bottom="false" :field-style="fieldStyle" placeholder="请输入手机号">
 						<u-button class="codeBut" size="mini" slot="right" @click="getCode">{{codeText}}</u-button>
 					</u-input>
 				</u-form-item>
 
-				<u-form-item class="form-item" prop="code" :border-bottom="true" label="">
+				<u-form-item class="form-item" prop="code" :border-bottom="true" label=" ">
 					<u-input placeholder-style="color:#999999;" :custom-style="fieldStyle" placeholder="请输入验证码"
 						v-model="form.code">
 					</u-input>
 				</u-form-item>
-				<u-form-item class="form-item" prop="password" :border-bottom="true" label="">
+				<u-form-item class="form-item" prop="password" :border-bottom="true" label=" ">
 					<u-input placeholder-style="color:#999999;" type="password" :custom-style="fieldStyle"
 						placeholder="请输入密码" v-model="form.password">
 					</u-input>
 				</u-form-item>
-				<u-form-item class="form-item" prop="confirmPassword" :border-bottom="true" label="">
+				<u-form-item class="form-item" prop="confirmPassword" :border-bottom="true" label=" ">
 					<u-input placeholder-style="color:#999999;" type="password" :custom-style="fieldStyle"
 						placeholder="请输入再次输入密码" v-model="form.confirmPassword">
 					</u-input>

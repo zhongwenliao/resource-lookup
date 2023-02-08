@@ -38,11 +38,10 @@ page {
 /* 文章场景相关 */
 .content-box.data-v-50206541 {
   background: #fff;
-  padding-bottom: 90rpx;
+  padding-bottom: 20rpx;
   position: relative;
 }
 .content-box .foot_but.data-v-50206541 {
-  position: fixed;
   bottom: 0;
   width: 100%;
   padding: 10rpx 40rpx;
@@ -59,10 +58,6 @@ page {
   border: 0;
   border-radius: 0;
 }
-.content-box .foot_but .foot_but_right.data-v-50206541 {
-  background: #3e76f4;
-  color: #ffffff;
-}
 .slot-content.data-v-50206541 {
   padding: 20rpx 30rpx;
 }
@@ -74,8 +69,11 @@ page {
 }
 .slot-content .dropdown_price.data-v-50206541 {
   display: flex;
-  padding: 50rpx 30rpx;
+  padding: 30rpx 30rpx;
   align-items: center;
+}
+.slot-content .dropdown_price.data-v-50206541 .u-field {
+  padding: 0;
 }
 .slot-content .dropdown_price .label.data-v-50206541 {
   margin-right: 30rpx;

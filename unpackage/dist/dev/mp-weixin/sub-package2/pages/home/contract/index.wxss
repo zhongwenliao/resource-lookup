@@ -1,6 +1,6 @@
 
 page {
-	background: #F9F9F9;
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -45,7 +45,7 @@ page {
   justify-content: space-between;
   align-items: center;
   padding: 20rpx 20rpx 20rpx 10rpx;
-  border-bottom: 1px solid #F1F2F3;
+  border-bottom: 1px solid #f1f2f3;
   font-size: 32rpx;
   font-weight: bold;
 }
@@ -58,10 +58,13 @@ page {
 }
 .top-top.data-v-075a6e12 {
   height: 343rpx;
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/chahua.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .top-top .top-top-title.data-v-075a6e12 {
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 40rpx;
 }
 

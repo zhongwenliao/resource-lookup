@@ -1,7 +1,7 @@
 <template>
 	
 	<view>
-		<u-navbar class="navbar" title="" :border-bottom="false">
+		<u-navbar class="navbar" title=" " :border-bottom="false">
 			<view style=" width: 100%; text-align: right; " @click="applicationRecord">申请记录</view>
 		</u-navbar>
 		<view class="beijin">

@@ -1,8 +1,8 @@
 
 page {
-	/* background: red; */
-	background-image: url('https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/beijn.png');
-	overflow:auto !important;
+  /* background: red; */
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/beijn.png");
+  overflow: auto !important;
 }
 
 @charset "UTF-8";
@@ -65,12 +65,12 @@ page {
   background-repeat: no-repeat;
 }
 .card-img.data-v-b8f3ca60 {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 .card-bg.data-v-b8f3ca60 {
-  background: #FFFFFF;
+  background: #ffffff;
 }
 .card.data-v-b8f3ca60 {
   position: relative;
@@ -84,10 +84,13 @@ page {
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  background: #667BF7;
+  background: #667bf7;
   border-radius: 50%;
   width: 130rpx;
   height: 130rpx;
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/contract/hetong1.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .card .image .u-image.data-v-b8f3ca60 {
   left: 50%;

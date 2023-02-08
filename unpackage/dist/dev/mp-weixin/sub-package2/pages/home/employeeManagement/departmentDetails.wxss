@@ -31,7 +31,7 @@
 /* 透明度 */
 /* 文章场景相关 */
 .body .content.data-v-42d455cf {
-  background: #FFFFFF;
+  background: #ffffff;
   margin-top: 6rpx;
 }
 .body .content .form-item_box.data-v-42d455cf {
@@ -42,8 +42,9 @@
 }
 .body .content .form-item_box .form-item .check-all.data-v-42d455cf {
   position: absolute;
-  top: 30rpx;
-  right: -26rpx;
+  top: -60rpx;
+  right: 26rpx;
+  width: 160vpx;
 }
 .body .btn_box.data-v-42d455cf {
   height: 98rpx;

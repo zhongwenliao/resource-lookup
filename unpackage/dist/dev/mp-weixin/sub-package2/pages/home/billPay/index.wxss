@@ -1,6 +1,6 @@
 
 page {
-	background-color: #f1f2f3;
+  background-color: #f1f2f3;
 }
 
 @charset "UTF-8";
@@ -35,12 +35,15 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.bg1 {
+.bg1.data-v-723e2ff7 {
   background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/zhangdandi-lan.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
-.bg1::before {
+.data-v-723e2ff7 .u-navbar-content-title {
+  left: 30rpx;
+}
+.bg1.data-v-723e2ff7::before {
   content: "";
   position: absolute;
   left: 35rpx;
@@ -53,12 +56,12 @@ page {
   opacity: 0.4;
   border-radius: 6rpx;
 }
-.bg2 {
+.bg2.data-v-723e2ff7 {
   background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/di-hong.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
-.bg2::before {
+.bg2.data-v-723e2ff7::before {
   content: "";
   position: absolute;
   left: 35rpx;
@@ -71,12 +74,12 @@ page {
   opacity: 0.4;
   border-radius: 6rpx;
 }
-.bg3 {
+.bg3.data-v-723e2ff7 {
   background: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/billPay/di-cheng.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
-.bg3::before {
+.bg3.data-v-723e2ff7::before {
   content: "";
   position: absolute;
   left: 35rpx;
@@ -89,13 +92,13 @@ page {
   opacity: 0.4;
   border-radius: 6rpx;
 }
-.content {
+.content.data-v-723e2ff7 {
   padding-bottom: 0rpx !important;
 }
-.card {
+.card.data-v-723e2ff7 {
   width: 100%;
 }
-.card .card-foot {
+.card .card-foot.data-v-723e2ff7 {
   padding: 30rpx 28rpx 11rpx 17rpx;
 }
 

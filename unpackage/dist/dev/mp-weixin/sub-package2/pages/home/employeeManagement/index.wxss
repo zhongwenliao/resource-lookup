@@ -36,10 +36,13 @@
 .body .tops .top-top.data-v-46dac991 {
   height: 230rpx;
   position: relative;
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/home/employeeManagement/beijintu.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .body .tops .top-top .top-top-title.data-v-46dac991 {
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 40rpx;
   position: absolute;
   top: 80rpx;
@@ -51,12 +54,15 @@
   width: 146rpx;
   height: 146rpx;
   border-radius: 50%;
-  border: 2rpx solid #FFFFFF;
+  border: 2rpx solid #ffffff;
   position: absolute;
   top: 158rpx;
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
+  background-image: url("https://file.yuanzhoulvwego.com/prod/uploadFiles/images/2023-01-28/1674893658286_199412.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .body .content.data-v-46dac991 {
   padding-left: 20rpx;
@@ -70,7 +76,7 @@
 }
 .body .bottoms.data-v-46dac991 {
   height: 98rpx;
-  background: #3E76F4;
+  background: #3e76f4;
   font-weight: bold;
 }
 .body .bottoms .bottoms-button.data-v-46dac991 {
