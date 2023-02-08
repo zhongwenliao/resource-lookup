@@ -65,14 +65,15 @@
   padding: 15rpx;
 }
 .content.data-v-034b0b83 {
-  background: #FFFFFF;
+  background: #ffffff;
   margin-top: 3px;
+  padding-left: 20rpx;
 }
 .content .form-item.data-v-034b0b83 {
   position: relative;
 }
 .content .form-item.data-v-034b0b83:before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   right: 40rpx;

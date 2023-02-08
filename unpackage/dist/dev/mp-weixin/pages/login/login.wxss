@@ -148,7 +148,7 @@ page.data-v-b237504c {
   align-items: center;
 }
 .third_party_login_box .third_party_title.data-v-b237504c:before, .third_party_login_box .third_party_title.data-v-b237504c:after {
-  content: '';
+  content: "";
   flex: 1;
   height: 2rpx;
   background-color: #f5f5f5;

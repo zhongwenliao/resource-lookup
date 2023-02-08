@@ -1,8 +1,8 @@
 
 page {
-	width: 100%;
-	height: 100%;
-	background: #F9F9F9;
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
 }
 
 @charset "UTF-8";
@@ -61,7 +61,7 @@ page {
   padding: 20rpx 0rpx 20rpx 12rpx;
 }
 .notice .u-card .head_group .u-cell__left-icon-wrap {
-  color: #70A4FD;
+  color: #70a4fd;
 }
 .notice .u-card .head_group .u-icon--right {
   size: 29rpx;
@@ -91,14 +91,14 @@ page {
   word-break: break-all;
 }
  .u-indicator-item-round {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 .grid-box {
   border-radius: 20rpx;
   font-size: 26rpx;
   color: #333333;
   overflow: hidden;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 .grid {
   width: 100%;
@@ -106,7 +106,7 @@ page {
 }
 .userImage {
   margin: 0 20rpx;
-  background: linear-gradient(#709BFB, #7CA3FB);
+  background: linear-gradient(#709bfb, #7ca3fb);
   box-shadow: 0px 10rpx 20rpx 0px rgba(83, 134, 248, 0.3);
   border-radius: 20px;
 }
@@ -120,7 +120,7 @@ page {
   left: -2%;
   height: 400rpx;
   border-radius: 0 0 64% 64% / 20%;
-  background: linear-gradient(#709BFB, #ADC5FA) !important;
+  background: linear-gradient(#709bfb, #adc5fa) !important;
 }
 .content {
   display: flex;
