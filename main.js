@@ -16,6 +16,9 @@ import api from "@/common/request/index"
 import { blueToothOpenDoor, initPermission, blueToothScanDevice } from "@/common/utils/sdk-util.js"
 import Page from "./components/page.vue"
 import UniBasePage from "@/components/uni-base-page/uni-base-page.vue"
+// 引入uView对小程序分享的mixin封装
+import share from "@/common/utils/share"
+Vue.mixin(share)
 
 Vue.component("uni-base-page", UniBasePage)
 Vue.component("page", Page)
