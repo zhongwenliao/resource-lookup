@@ -2,6 +2,14 @@
 page {
   background: #f9f9f9;
 }
+.share-btn::after {
+  border: none;
+}
+.share-btn {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10rpx;
+}
 
 @charset "UTF-8";
 /**
@@ -35,6 +43,9 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+button[plain].data-v-32b72e6a {
+  border: 0;
+}
 .card-box.data-v-32b72e6a {
   padding: 40rpx 20rpx;
 }

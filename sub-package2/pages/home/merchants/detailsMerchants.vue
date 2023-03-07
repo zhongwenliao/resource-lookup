@@ -136,7 +136,7 @@
             height="42"
             :name="merchantsInfo.collectStatus ? yishoucang : shoucang"
           ></u-icon>
-          <button class="shareBtn" type="default" data-name="shareBtn" open-type="share">
+          <button class="share-btn" plain data-name="shareBtn" open-type="share">
             <u-icon
               label="转发"
               class="u-p-l-50"
@@ -299,8 +299,20 @@ export default {
 page {
   background: #f9f9f9;
 }
+.share-btn::after {
+  border: none;
+}
+.share-btn {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10upx;
+}
 </style>
 <style scoped lang="scss">
+button[plain] {
+  border: 0;
+}
+
 .card-box {
   padding: 40upx 20upx;
 }

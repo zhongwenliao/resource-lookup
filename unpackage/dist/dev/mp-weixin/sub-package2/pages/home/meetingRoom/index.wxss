@@ -35,6 +35,9 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.u-navbar-content-title.data-v-338aaa68 {
+  left: 80rpx !important;
+}
 .card-box.data-v-338aaa68 {
   padding: 0rpx 20rpx 0rpx 20rpx;
 }

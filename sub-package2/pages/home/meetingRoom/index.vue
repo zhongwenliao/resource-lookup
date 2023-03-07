@@ -9,19 +9,15 @@
           back-icon-color="#fff"
           title-color="#fff"
           :background="{ background: '#3E76F4' }"
-          title="会议室预约"
-          :border-bottom="false"
-        >
+          title=" "
+          :border-bottom="false">
+          <view style="color: #ffffff; margin-left: 60px"> 会议室预约 </view>
           <!-- 右边的城市选择 -->
           <view class="u-flex" v-if="investmentIsOpen && !this.enterpriseId" slot="right" @click="showAddress = true">
             <view class="u-font-lg u-text-color-fff">
               {{ location.city }}
             </view>
-            <u-icon
-              class="u-m-l-14"
-              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/xialaxuanzeanniu.png"
-              size="18"
-            >
+            <u-icon class="u-m-l-14" name="https://file.yuanzhoulvwego.com/prod/uploadFiles/xialaxuanzeanniu.png" size="18">
             </u-icon>
           </view>
         </u-navbar>
@@ -35,13 +31,9 @@
           active-color="#3E76F4"
           menu-icon="xialasanjiao"
           menu-icon-size="20"
-          class="u-m-b-20"
-        >
+          class="u-m-b-20">
           <!-- 区域 start -->
-          <u-dropdown-item
-            v-if="investmentIsOpen && !this.enterpriseId"
-            :title="selectData[0] ? selectData[0].name : '区域'"
-          >
+          <u-dropdown-item v-if="investmentIsOpen && !this.enterpriseId" :title="selectData[0] ? selectData[0].name : '区域'">
             <view class="u-menu-wrap">
               <!-- 区域左边 -->
               <scroll-view scroll-y scroll-with-animation class="u-tab-view menu-scroll-view" :scroll-top="scrollTop">
@@ -51,8 +43,7 @@
                   class="u-tab-item"
                   :class="[addressCurrent == index ? 'u-tab-item-active' : '']"
                   :data-current="index"
-                  @tap.stop="swichMenu(index)"
-                >
+                  @tap.stop="swichMenu(index)">
                   <text class="u-line-1">{{ item.district }}</text>
                 </view>
               </scroll-view>
@@ -65,8 +56,7 @@
                       v-for="(item1, index1) in item.children"
                       :key="index1"
                       :class="[dropdownActive[1] === index1 && dropdownActive[0] === index ? 'zoneItem-active' : '']"
-                      @tap.stop="clickZone(item1, index1, index)"
-                    >
+                      @tap.stop="clickZone(item1, index1, index)">
                       <view class="item-title">
                         <text>{{ item1.name }}</text>
                       </view>
@@ -83,8 +73,7 @@
               galleryfulSearch.minimumOccupancy && galleryfulSearch.maximumCapacity
                 ? galleryfulSearch.minimumOccupancy + '-' + galleryfulSearch.maximumCapacity
                 : '容纳人数'
-            "
-          >
+            ">
             <view class="content-box">
               <view class="slot-content" style="background-color: #ffffff">
                 <view class="">
@@ -97,8 +86,7 @@
                       class="input"
                       v-model="formDropdown.galleryfulSearch.minimumOccupancy"
                       label-width="0"
-                      placeholder="最少人数"
-                    />
+                      placeholder="最少人数" />
                     <view class="jianhao">-</view>
                     <u-field
                       type="number"
@@ -106,8 +94,7 @@
                       class="input"
                       v-model="formDropdown.galleryfulSearch.maximumCapacity"
                       label-width="0"
-                      placeholder="最多人数"
-                    />
+                      placeholder="最多人数" />
                   </view>
                   <!-- 搜索过的容纳人数区间 -->
                   <view class="dropdown_radio">
@@ -119,8 +106,7 @@
                       itemColor="#999999"
                       ref="radio1"
                       @change="galleryfulSearchRadioChange"
-                      :list="galleryfulSearchList"
-                    >
+                      :list="galleryfulSearchList">
                     </axb-check-box>
                   </view>
                 </view>
@@ -131,9 +117,7 @@
                     <u-button class="foot_but_left but" @click="resetDropdown(1)">重置</u-button>
                   </u-col>
                   <u-col span="9">
-                    <u-button class="foot_but_right but" hover-class="none" @click="confirmDropdown('galleryful')"
-                      >确定</u-button
-                    >
+                    <u-button class="foot_but_right but" hover-class="none" @click="confirmDropdown('galleryful')">确定</u-button>
                   </u-col>
                 </u-row>
               </view>
@@ -160,8 +144,7 @@
                       class="input"
                       v-model="formDropdown.priceSearch.priceL"
                       label-width="0"
-                      placeholder="最小价格"
-                    />
+                      placeholder="最小价格" />
                     <view class="jianhao">-</view>
                     <u-field
                       type="number"
@@ -169,8 +152,7 @@
                       class="input"
                       v-model="formDropdown.priceSearch.priceH"
                       label-width="0"
-                      placeholder="最大价格"
-                    />
+                      placeholder="最大价格" />
                   </view>
                   <!-- 搜索过的价格区间 -->
                   <view class="dropdown_radio">
@@ -182,8 +164,7 @@
                       itemColor="#999999"
                       ref="radio1"
                       @change="priceSearchRadioChange"
-                      :list="priceSearchList"
-                    >
+                      :list="priceSearchList">
                     </axb-check-box>
                   </view>
                 </view>
@@ -194,9 +175,7 @@
                     <u-button class="foot_but_left but" @click="resetDropdown(2)">重置</u-button>
                   </u-col>
                   <u-col span="9">
-                    <u-button class="foot_but_right but" hover-class="none" @click="confirmDropdown('price')"
-                      >确定</u-button
-                    >
+                    <u-button class="foot_but_right but" hover-class="none" @click="confirmDropdown('price')">确定</u-button>
                   </u-col>
                 </u-row>
               </view>
@@ -232,14 +211,10 @@
             v-for="(item, index) in meetingRoomTabbar"
             :key="index"
             style="text-align: center"
-            @click="goPaths(item)"
-          >
-            <view style="text-align: center;">
+            @click="goPaths(item)">
+            <view style="text-align: center">
               <u-image width="42" height="42" :src="item.iconPath" class="meeting-bottom_image"></u-image>
-              <span
-                class="u-font-22"
-                :class="item.text === '会议室预约' ? 'meeting-bottom-ctext' : 'meeting-bottom-text'"
-              >
+              <span class="u-font-22" :class="item.text === '会议室预约' ? 'meeting-bottom-ctext' : 'meeting-bottom-text'">
                 {{ item.text }}
               </span>
             </view>
@@ -247,18 +222,17 @@
         </u-row>
       </view>
     </z-paging>
-    <u-select v-model="showAddress" mode="mutil-column-auto" :list="addressCityList" @confirm="confirmAddress">
-    </u-select>
+    <u-select v-model="showAddress" mode="mutil-column-auto" :list="addressCityList" @confirm="confirmAddress"> </u-select>
   </page>
 </template>
 
 <script>
-let day = new Date()
-let oldPrice = "1"
-import axbCheckBox from "@/sub-package2/components/axb-checkbox/axb-checkbox.vue"
+let day = new Date();
+let oldPrice = "1";
+import axbCheckBox from "@/sub-package2/components/axb-checkbox/axb-checkbox.vue";
 export default {
   components: {
-    axbCheckBox,
+    axbCheckBox
   },
   data() {
     return {
@@ -270,13 +244,13 @@ export default {
         {
           pagePath: "/sub-package2/pages/home/meetingRoom/index",
           iconPath: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home/meetingRoom/huiyishiyuyue.png",
-          text: "会议室预约",
+          text: "会议室预约"
         },
         {
           pagePath: "/sub-package2/pages/home/meetingRoom/record",
           iconPath: "https://file.yuanzhoulvwego.com/prod/uploadFiles/home/meetingRoom/yuyuejilu2.png",
-          text: "预约记录",
-        },
+          text: "预约记录"
+        }
       ],
       investmentIsOpen: uni.getStorageSync("userInfo").investmentIsOpen,
       // 打开城市选择框
@@ -302,7 +276,7 @@ export default {
         // 容纳人数区间
         galleryfulSearch: {},
         // 价格区间
-        priceSearch: {},
+        priceSearch: {}
       },
       // 容纳人数是否按确认
       galleryfulFlag: false,
@@ -325,8 +299,8 @@ export default {
       // 下拉菜单 选择的数据
       selectData: [],
       // 选中的日期
-      value: this.$u.timeFormat(day, "yyyy-mm-dd"),
-    }
+      value: this.$u.timeFormat(day, "yyyy-mm-dd")
+    };
   },
   onLoad() {
     if (uni.getStorageSync("userInfo").enterpriseId === 0) {
@@ -336,326 +310,326 @@ export default {
           this.addressCityList.push({
             value: res[i].code,
             label: res[i].name,
-            children: [],
-          })
+            children: []
+          });
           this.$enum.addressEnum(
             {
-              pid: res[i].code,
+              pid: res[i].code
             },
             (res2) => {
               this.addressCityList[i].children = res2.map((res3) => {
                 return {
                   value: res3.code,
-                  label: res3.name,
-                }
-              })
+                  label: res3.name
+                };
+              });
             }
-          )
+          );
         }
-      })
+      });
       // 赋值城市列表
       this.$enum.getByCity((res) => {
-        this.addressList = res
-      })
+        this.addressList = res;
+      });
     }
     // 游客选择园区后，进入可看到选择的园区会议室信息
     if (uni.getStorageSync("zoneInfo") && uni.getStorageSync("userInfo").enterpriseId === 0) {
-      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"))
-      this.location = { province: uni.getStorageSync("zoneInfo").province, city: uni.getStorageSync("zoneInfo").city }
-      uni.setStorageSync("location", this.location)
+      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"));
+      this.location = { province: uni.getStorageSync("zoneInfo").province, city: uni.getStorageSync("zoneInfo").city };
+      uni.setStorageSync("location", this.location);
     } else {
-      this.location = uni.getStorageSync("location")
+      this.location = uni.getStorageSync("location");
     }
     // 看看是否本地存在搜索过的容纳人数
-    this.galleryfulSearchList = uni.getStorageSync("galleryfulSearchList") || []
+    this.galleryfulSearchList = uni.getStorageSync("galleryfulSearchList") || [];
     // 看看是否本地存在搜索过的价格
-    this.priceSearchList = uni.getStorageSync("priceSearchList") || []
+    this.priceSearchList = uni.getStorageSync("priceSearchList") || [];
   },
   onShow() {
     this.$nextTick(() => {
-      this.$refs.paging.reload()
-    })
+      this.$refs.paging.reload();
+    });
   },
   methods: {
     // 选择当前的城市
     confirmAddress(data) {
       this.location = {
         province: data[0].label,
-        city: data[1].label,
-      }
-      uni.setStorageSync("location", this.location)
+        city: data[1].label
+      };
+      uni.setStorageSync("location", this.location);
       this.$enum.getByCity((res) => {
-        this.addressList = res
-      })
+        this.addressList = res;
+      });
     },
     // 加载会议室列表，并赋值
     getInfo(pageNo, pageSize) {
       let params = {
         currPage: pageNo,
-        pageSize: pageSize,
-      }
-      if (this.zoneId > 0) params.zoneId = this.zoneId
+        pageSize: pageSize
+      };
+      if (this.zoneId > 0) params.zoneId = this.zoneId;
       // 游客 有选择园区，才赋值
-      if (this.selectData.length) params.zoneId = this.selectData[0].id
+      if (this.selectData.length) params.zoneId = this.selectData[0].id;
       // 有最少最多人数，才能赋值
       if (this.formDropdown.galleryfulSearch.minimumOccupancy && this.formDropdown.galleryfulSearch.maximumCapacity) {
-        params = this.$u.deepMerge(params, this.formDropdown.galleryfulSearch)
+        params = this.$u.deepMerge(params, this.formDropdown.galleryfulSearch);
       }
       // 有最小最大价格，才能赋值
       if (this.formDropdown.priceSearch.priceL && this.formDropdown.priceSearch.priceH) {
-        params.priceStatus = this.priceStatus
-        params = this.$u.deepMerge(params, this.formDropdown.priceSearch)
+        params.priceStatus = this.priceStatus;
+        params = this.$u.deepMerge(params, this.formDropdown.priceSearch);
       }
       this.$api("meetingRoom.getMeetingRoomList", params, false)
         .then((res) => {
           if (res.code == 200) {
-            this.$refs.paging.complete(res.data.list)
+            this.$refs.paging.complete(res.data.list);
           } else {
-            this.$refs.paging.complete(false)
+            this.$refs.paging.complete(false);
           }
         })
         .catch((e) => {
-          this.$refs.paging.complete(false)
-        })
+          this.$refs.paging.complete(false);
+        });
     },
     // 返回到首页
     customBack() {
-      uni.switchTab({ url: "/pages/index/index" })
+      uni.switchTab({ url: "/pages/index/index" });
     },
     // 点击左边的栏目切换
     async swichMenu(index) {
-      if (index == this.addressCurrent) return
-      this.addressCurrent = index
+      if (index == this.addressCurrent) return;
+      this.addressCurrent = index;
       // 如果为0，意味着尚未初始化
       if (this.menuHeight == 0 || this.menuItemHeight == 0) {
         // 获取区域左边元素的高度
-        await this.getElRect("menu-scroll-view", "menuHeight")
+        await this.getElRect("menu-scroll-view", "menuHeight");
         // 获取区域右边元素的高度
-        await this.getElRect("u-tab-item", "menuItemHeight")
+        await this.getElRect("u-tab-item", "menuItemHeight");
       }
       // 将菜单菜单活动item垂直居中
-      this.scrollTop = index * this.menuItemHeight + this.menuItemHeight / 2 - this.menuHeight / 2
+      this.scrollTop = index * this.menuItemHeight + this.menuItemHeight / 2 - this.menuHeight / 2;
     },
     // 获取一个目标元素的高度
     getElRect(elClass, dataVal) {
       new Promise((resolve, reject) => {
-        const query = uni.createSelectorQuery().in(this)
+        const query = uni.createSelectorQuery().in(this);
         query
           .select("." + elClass)
           .fields(
             {
-              size: true,
+              size: true
             },
             (res) => {
               // 如果节点尚未生成，res值为null，循环调用执行
               if (!res) {
                 setTimeout(() => {
-                  this.getElRect(elClass)
-                }, 10)
-                return
+                  this.getElRect(elClass);
+                }, 10);
+                return;
               }
-              this[dataVal] = res.height
+              this[dataVal] = res.height;
             }
           )
-          .exec()
-      })
+          .exec();
+      });
     },
     // 选择园区
     clickZone(item, index1, index) {
       if (index1 === this.dropdownActive[1] && index === this.dropdownActive[0]) {
-        this.$set(this.dropdownActive, 0, 0)
-        this.$set(this.dropdownActive, 1, "")
-        this.$set(this.selectData, 0, "")
+        this.$set(this.dropdownActive, 0, 0);
+        this.$set(this.dropdownActive, 1, "");
+        this.$set(this.selectData, 0, "");
         this.$nextTick(() => {
-          this.$refs.paging.reload()
-          this.$refs.floorDropdown.close()
-        })
-        return
+          this.$refs.paging.reload();
+          this.$refs.floorDropdown.close();
+        });
+        return;
       }
-      this.$set(this.dropdownActive, 0, index)
-      this.$set(this.dropdownActive, 1, index1)
-      this.$set(this.selectData, 0, item)
+      this.$set(this.dropdownActive, 0, index);
+      this.$set(this.dropdownActive, 1, index1);
+      this.$set(this.selectData, 0, item);
       this.$nextTick(() => {
-        this.$refs.paging.reload()
-        this.$refs.floorDropdown.close()
-      })
+        this.$refs.paging.reload();
+        this.$refs.floorDropdown.close();
+      });
     },
     // 点击曾经的容纳人数区间
     galleryfulSearchRadioChange(value, index) {
-      this.formDropdown.galleryfulSearch = this.$u.deepClone(value) || {}
+      this.formDropdown.galleryfulSearch = this.$u.deepClone(value) || {};
     },
     // 点击曾经的价格区间
     priceSearchRadioChange(value, index) {
-      this.formDropdown.priceSearch = this.$u.deepClone(value) || {}
+      this.formDropdown.priceSearch = this.$u.deepClone(value) || {};
     },
     // 重置
     resetDropdown(type) {
       switch (type) {
         case 1:
-          this.formDropdown.galleryfulSearch = {}
+          this.formDropdown.galleryfulSearch = {};
           this.galleryfulSearchList = this.galleryfulSearchList.map((item) => {
-            item.checked = false
-            return item
-          })
-          this.galleryfulSearch = {}
-          break
+            item.checked = false;
+            return item;
+          });
+          this.galleryfulSearch = {};
+          break;
         case 2:
-          this.formDropdown.priceSearch = {}
+          this.formDropdown.priceSearch = {};
           this.priceSearchList = this.priceSearchList.map((item) => {
-            item.checked = false
-            return item
-          })
-          this.priceSearch = {}
-          break
+            item.checked = false;
+            return item;
+          });
+          this.priceSearch = {};
+          break;
         default:
-          break
+          break;
       }
     },
     // 容纳人数/价格 确定
     confirmDropdown(type) {
       // 深拷贝
-      let formDropdown = this.$u.deepClone(this.formDropdown)
+      let formDropdown = this.$u.deepClone(this.formDropdown);
       switch (type) {
         case "galleryful":
           if (
             Object.keys(formDropdown.galleryfulSearch).length === 0 ||
             (!formDropdown.galleryfulSearch.minimumOccupancy && !formDropdown.galleryfulSearch.maximumCapacityc)
           ) {
-            break
+            break;
           }
           if (!formDropdown.galleryfulSearch.minimumOccupancy && formDropdown.galleryfulSearch.maximumCapacity) {
             uni.showToast({
               title: "请输入最少人数",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           if (!formDropdown.galleryfulSearch.maximumCapacity && formDropdown.galleryfulSearch.minimumOccupancy) {
             uni.showToast({
               title: "请输入最多人数",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           if (+formDropdown.galleryfulSearch.maximumCapacity < +formDropdown.galleryfulSearch.minimumOccupancy) {
             uni.showToast({
               title: "最多人数不能小与最少人数",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           let galleryfulSearchObj = {
             value: formDropdown.galleryfulSearch,
             label: formDropdown.galleryfulSearch.minimumOccupancy + "-" + formDropdown.galleryfulSearch.maximumCapacity,
-            checked: false,
-          }
+            checked: false
+          };
           // 检测单选数组中是否已存在确认后输入框中输入的值，如果存在则删除
           this.galleryfulSearchList.forEach((item, index) => {
             if (
               Object.entries(galleryfulSearchObj.value).toString() === Object.entries(item.value).toString() &&
               galleryfulSearchObj.label == item.label
             ) {
-              this.galleryfulSearchList.splice(index, 1)
+              this.galleryfulSearchList.splice(index, 1);
             } else {
-              item.checked = false
+              item.checked = false;
             }
-          })
+          });
           // 检测单选数组中长度是否大于5，如果大于5则删除最后一个数据
           if (this.galleryfulSearchList.length > 5) {
-            this.$delete(this.galleryfulSearchList, this.galleryfulSearchList.length - 1)
+            this.$delete(this.galleryfulSearchList, this.galleryfulSearchList.length - 1);
           }
-          this.galleryfulSearch = this.formDropdown.galleryfulSearch
-          this.galleryfulSearchList.unshift(galleryfulSearchObj)
-          uni.setStorageSync("galleryfulSearchList", this.galleryfulSearchList)
-          this.$set(this.galleryfulSearchList[0], "checked", true)
+          this.galleryfulSearch = this.formDropdown.galleryfulSearch;
+          this.galleryfulSearchList.unshift(galleryfulSearchObj);
+          uni.setStorageSync("galleryfulSearchList", this.galleryfulSearchList);
+          this.$set(this.galleryfulSearchList[0], "checked", true);
           // 确认标识
-          this.galleryfulFlag = true
-          break
+          this.galleryfulFlag = true;
+          break;
         case "price":
           if (
             Object.keys(formDropdown.priceSearch).length === 0 ||
             (!formDropdown.priceSearch.priceL && !formDropdown.priceSearch.priceH)
           ) {
-            break
+            break;
           }
           if (!formDropdown.priceSearch.priceL && formDropdown.priceSearch.priceH) {
             uni.showToast({
               title: "请输入最小价格",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           if (!formDropdown.priceSearch.priceH && formDropdown.priceSearch.priceL) {
             uni.showToast({
               title: "请输入最大价格",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           if (+formDropdown.priceSearch.priceH < +formDropdown.priceSearch.priceL) {
             uni.showToast({
               title: "最大价格不能小与最小价格",
-              icon: "none",
-            })
-            return
+              icon: "none"
+            });
+            return;
           }
           let priceSearchObj = {
             value: formDropdown.priceSearch,
             label: formDropdown.priceSearch.priceL + "-" + formDropdown.priceSearch.priceH,
-            checked: false,
-          }
+            checked: false
+          };
           this.priceSearchList.forEach((item, index) => {
             if (
               Object.entries(priceSearchObj.value).toString() === Object.entries(item.value).toString() &&
               priceSearchObj.label == item.label
             ) {
-              this.priceSearchList.splice(index, 1)
+              this.priceSearchList.splice(index, 1);
             } else {
-              item.checked = false
+              item.checked = false;
             }
-          })
+          });
           if (this.priceSearchList.length > 5) {
-            this.$delete(this.priceSearchList, this.priceSearchList.length - 1)
+            this.$delete(this.priceSearchList, this.priceSearchList.length - 1);
           }
-          this.priceSearchList.unshift(priceSearchObj)
-          uni.setStorageSync("priceSearchList", this.priceSearchList)
-          this.$set(this.priceSearchList[0], "checked", true)
+          this.priceSearchList.unshift(priceSearchObj);
+          uni.setStorageSync("priceSearchList", this.priceSearchList);
+          this.$set(this.priceSearchList[0], "checked", true);
           // 确认标识
-          this.priceFlag = true
+          this.priceFlag = true;
           // 赋值于选择（小时、半天、一天）
-          oldPrice = this.priceStatus
-          break
+          oldPrice = this.priceStatus;
+          break;
         default:
-          break
+          break;
       }
-      this.$refs.paging.reload()
-      this.$refs.floorDropdown.close()
+      this.$refs.paging.reload();
+      this.$refs.floorDropdown.close();
     },
     // 容纳区间 赋值之前的数据
     galleryfulSearchMetch() {
       // 容纳区间有值 赋值之前的数据
       if (this.galleryfulSearch.minimumOccupancy && this.galleryfulSearch.maximumCapacity) {
-        this.formDropdown.galleryfulSearch = this.galleryfulSearch
-        this.$set(this.galleryfulSearchList[0], "checked", true)
+        this.formDropdown.galleryfulSearch = this.galleryfulSearch;
+        this.$set(this.galleryfulSearchList[0], "checked", true);
       } else {
-        this.formDropdown.galleryfulSearch = {}
-        this.galleryfulSearchList.forEach((item) => (item.checked = false))
+        this.formDropdown.galleryfulSearch = {};
+        this.galleryfulSearchList.forEach((item) => (item.checked = false));
       }
       // 要有随机的key，才能刷新值
-      this.galleryfulKey = Math.floor(Math.random() * 10 + 1)
+      this.galleryfulKey = Math.floor(Math.random() * 10 + 1);
     },
     // 价格 赋值之前的数据
     priceSearchMetch() {
       // 价格有值 赋值之前的数据
       if (this.priceSearch.priceH && this.priceSearch.priceL) {
-        this.formDropdown.priceSearch = this.priceSearch
-        this.$set(this.priceSearchList[0], "checked", true)
+        this.formDropdown.priceSearch = this.priceSearch;
+        this.$set(this.priceSearchList[0], "checked", true);
       } else {
-        this.formDropdown.priceSearch = {}
-        this.priceSearchList.forEach((item) => (item.checked = false))
+        this.formDropdown.priceSearch = {};
+        this.priceSearchList.forEach((item) => (item.checked = false));
       }
       // 要有随机的key，才能刷新值
-      this.priceKey = Math.floor(Math.random() * 10 + 1)
+      this.priceKey = Math.floor(Math.random() * 10 + 1);
     },
     // 打开下拉框
     dropdownOpen(index) {
@@ -664,26 +638,26 @@ export default {
         // 0区域 1容纳人数 2价格
         if (index === 0) {
           // 赋值价格之前的值
-          this.priceSearchMetch()
+          this.priceSearchMetch();
           // 赋值容纳人数之前的值
-          this.galleryfulSearchMetch()
+          this.galleryfulSearchMetch();
         } else if (index == 1) {
           // 容纳人数
-          this.galleryfulSearch = this.$u.deepMerge(this.galleryfulSearch, this.formDropdown.galleryfulSearch)
+          this.galleryfulSearch = this.$u.deepMerge(this.galleryfulSearch, this.formDropdown.galleryfulSearch);
           // 赋值价格之前的值
-          this.priceSearchMetch()
+          this.priceSearchMetch();
         } else if (index == 2) {
           // 赋值容纳人数之前的值
-          this.galleryfulSearchMetch()
+          this.galleryfulSearchMetch();
           // 价格计算（小时、半天、一天）
-          this.priceStatus = oldPrice
+          this.priceStatus = oldPrice;
           // 价格
-          this.priceSearch = this.$u.deepMerge(this.priceSearch, this.formDropdown.priceSearch)
+          this.priceSearch = this.$u.deepMerge(this.priceSearch, this.formDropdown.priceSearch);
         }
       } else {
         // 租户
         // 容纳人数
-        this.galleryfulSearch = this.$u.deepMerge(this.galleryfulSearch, this.formDropdown.galleryfulSearch)
+        this.galleryfulSearch = this.$u.deepMerge(this.galleryfulSearch, this.formDropdown.galleryfulSearch);
       }
     },
     // 关闭下拉框
@@ -693,20 +667,20 @@ export default {
         // 0区域 1容纳人数 2价格
         if (index == 0) {
           // 赋值容纳人数之前的值
-          this.galleryfulSearchMetch()
+          this.galleryfulSearchMetch();
           // 赋值价格之前的值
-          this.priceSearchMetch()
+          this.priceSearchMetch();
         } else if (index == 1) {
           // 容纳人数 没有按确认
           if (!this.galleryfulFlag) {
             // 赋值容纳人数之前的值
-            this.galleryfulSearchMetch()
+            this.galleryfulSearchMetch();
           }
         } else if (index == 2) {
           // 价格 没有按确认
           if (!this.priceFlag) {
             // 赋值价格之前的值
-            this.priceSearchMetch()
+            this.priceSearchMetch();
           }
         }
       } else {
@@ -714,36 +688,36 @@ export default {
         // 容纳人数 没有按确认
         if (!this.galleryfulFlag) {
           // 赋值容纳人数之前的值
-          this.galleryfulSearchMetch()
+          this.galleryfulSearchMetch();
         }
       }
       // 容纳人数的确认标识关闭
-      this.galleryfulFlag = false
-      this.priceFlag = false
-      this.$refs.paging.updatePageScrollTopHeight()
+      this.galleryfulFlag = false;
+      this.priceFlag = false;
+      this.$refs.paging.updatePageScrollTopHeight();
     },
     // 改变选择的日期
     change(e) {
-      this.value = e.fulldate
-      this.$refs.paging.reload()
+      this.value = e.fulldate;
+      this.$refs.paging.reload();
     },
     // 跳转到会议室详情
     goMeetingDetails(item) {
       this.$Router.push({
         path: "/sub-package2/pages/home/meetingRoom/meetingDetails",
-        query: { dataTime: this.value, ...item },
-      })
+        query: { dataTime: this.value, ...item }
+      });
     },
     // 跳转到预约记录页面
     goPaths(item) {
       if (item.text === "预约记录") {
         this.$Router.push({
-          path: item.pagePath,
-        })
+          path: item.pagePath
+        });
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 <style>
 page {
@@ -751,6 +725,9 @@ page {
 }
 </style>
 <style scoped lang="scss">
+.u-navbar-content-title {
+  left: 80upx !important;
+}
 .card-box {
   padding: 0upx 20upx 0upx 20upx;
 

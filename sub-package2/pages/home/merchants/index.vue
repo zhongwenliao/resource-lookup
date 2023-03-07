@@ -7,29 +7,20 @@
           back-icon-color="#fff"
           title-color="#fff"
           :background="{ background: '#3E76F4' }"
-          title="招商信息"
-          :border-bottom="false"
-        >
+          title=" "
+          :border-bottom="false">
+          <view style="color: #ffffff; margin-left: 60px"> 会议室预约 </view>
           <view class="u-flex" v-if="investmentIsOpen" slot="right" @click="showAddress = true">
             <view class="u-font-lg u-text-color-fff">
               {{ location.city }}
             </view>
-            <u-icon
-              class="u-m-l-14"
-              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/xialaxuanzeanniu.png"
-              size="18"
-            >
+            <u-icon class="u-m-l-14" name="https://file.yuanzhoulvwego.com/prod/uploadFiles/xialaxuanzeanniu.png" size="18">
             </u-icon>
           </view>
         </u-navbar>
         <!-- 头部搜索 -->
         <view class="search">
-          <u-search
-            @search="search"
-            placeholder="请输入招商标题或房间名"
-            :show-action="false"
-            v-model="form.keywordSearch"
-          >
+          <u-search @search="search" placeholder="请输入招商标题或房间名" :show-action="false" v-model="form.keywordSearch">
           </u-search>
         </view>
         <!-- 下拉菜单 -->
@@ -41,8 +32,7 @@
           :border-bottom="true"
           active-color="#3E76F4"
           menu-icon="xialasanjiao"
-          menu-icon-size="20"
-        >
+          menu-icon-size="20">
           <u-dropdown-item v-if="investmentIsOpen" :title="selectData[0] ? selectData[0].name : '区域'">
             <view class="u-menu-wrap">
               <scroll-view scroll-y scroll-with-animation class="u-tab-view menu-scroll-view" :scroll-top="scrollTop">
@@ -52,8 +42,7 @@
                   class="u-tab-item"
                   :class="[addressCurrent == index ? 'u-tab-item-active' : '']"
                   :data-current="index"
-                  @tap.stop="swichMenu(index)"
-                >
+                  @tap.stop="swichMenu(index)">
                   <text class="u-line-1">{{ item.district }}</text>
                 </view>
               </scroll-view>
@@ -65,8 +54,7 @@
                       v-for="(item1, index1) in item.children"
                       :key="index1"
                       :class="[dropdownActive[1] === index1 && dropdownActive[0] === index ? 'zoneItem-active' : '']"
-                      @tap.stop="clickZone(item1, index1, index)"
-                    >
+                      @tap.stop="clickZone(item1, index1, index)">
                       <view class="item-title">
                         <text>{{ item1.name }}</text>
                       </view>
@@ -76,10 +64,7 @@
               </block>
             </view>
           </u-dropdown-item>
-          <u-dropdown-item
-            :title="selectData[2] ? selectData[2].label : '楼栋'"
-            :disabled="selectData[0] ? false : true"
-          >
+          <u-dropdown-item :title="selectData[2] ? selectData[2].label : '楼栋'" :disabled="selectData[0] ? false : true">
             <scroll-view scroll-y scroll-with-animation class="u-tab-view menu-scroll-view">
               <view
                 v-for="(item, index) in buildingList"
@@ -87,16 +72,12 @@
                 class="u-tab-item"
                 :class="[item.active ? 'u-tab-item-active' : '']"
                 :data-current="index"
-                @click.stop="floorScroll(item, buildingList, 2)"
-              >
+                @click.stop="floorScroll(item, buildingList, 2)">
                 <text class="u-line-1">{{ item.label }}</text>
               </view>
             </scroll-view>
           </u-dropdown-item>
-          <u-dropdown-item
-            :title="selectData[3] ? selectData[3].label : '楼层'"
-            :disabled="selectData[0] ? false : true"
-          >
+          <u-dropdown-item :title="selectData[3] ? selectData[3].label : '楼层'" :disabled="selectData[0] ? false : true">
             <scroll-view scroll-y scroll-with-animation class="u-tab-view menu-scroll-view">
               <view
                 v-for="(item, index) in floorList"
@@ -104,8 +85,7 @@
                 class="u-tab-item"
                 :class="[item.active ? 'u-tab-item-active' : '']"
                 :data-current="index"
-                @click.stop="floorScroll(item, floorList, 3)"
-              >
+                @click.stop="floorScroll(item, floorList, 3)">
                 <text class="u-line-1">{{ item.label }}</text>
               </view>
             </scroll-view>
@@ -118,8 +98,7 @@
                 class="u-tab-item"
                 :class="[dropdownActive[2] === index ? 'u-tab-item-active' : '']"
                 :data-current="index"
-                @click.stop="dropdownScroll(item, index, 1)"
-              >
+                @click.stop="dropdownScroll(item, index, 1)">
                 <text class="u-line-1">{{ item.label }}</text>
               </view>
             </scroll-view>
@@ -141,8 +120,7 @@
                         :clearable="false"
                         v-model="formDropdown.rentMonthSearch.rentMonthL"
                         label-width="0"
-                        placeholder="最小价格"
-                      />
+                        placeholder="最小价格" />
                       <view class="jianhao">-</view>
                       <u-field
                         type="number"
@@ -150,8 +128,7 @@
                         :clearable="false"
                         v-model="formDropdown.rentMonthSearch.rentMonthH"
                         label-width="0"
-                        placeholder="最大价格"
-                      />
+                        placeholder="最大价格" />
                     </view>
 
                     <view class="dropdown_radio">
@@ -163,8 +140,7 @@
                         itemColor="#999999"
                         ref="radio1"
                         @change="rentMonthSearchRadioChange"
-                        :list="rentMonthSearchList"
-                      >
+                        :list="rentMonthSearchList">
                       </axb-check-box>
                     </view>
                   </view>
@@ -183,8 +159,7 @@
                         class="input"
                         v-model="formDropdown.areaSearch.areaL"
                         label-width="0"
-                        placeholder="最小面积"
-                      />
+                        placeholder="最小面积" />
                       <view class="jianhao">-</view>
                       <u-field
                         type="number"
@@ -192,8 +167,7 @@
                         class="input"
                         v-model="formDropdown.areaSearch.areaH"
                         label-width="0"
-                        placeholder="最大面积"
-                      />
+                        placeholder="最大面积" />
                     </view>
                     <view class="dropdown_radio">
                       <axb-check-box
@@ -204,8 +178,7 @@
                         itemColor="#999999"
                         ref="radio1"
                         @change="areaSearchRadioChange"
-                        :list="areaSearchList"
-                      >
+                        :list="areaSearchList">
                       </axb-check-box>
                     </view>
                   </view>
@@ -222,8 +195,7 @@
                         itemColor="#999999"
                         ref="radio1"
                         @change="dropdownRadioChange"
-                        :list="decorationList"
-                      >
+                        :list="decorationList">
                       </axb-check-box>
                     </view>
                   </view>
@@ -274,8 +246,7 @@
                   :border-color="item.roomType == data.value ? '#e35d5d' : '#999999'"
                   size="mini"
                   :text="data.label"
-                  type="info"
-                />
+                  type="info" />
               </view>
               <view class="u-type-price u-font-lg2 u-text-bold"> 月租金：{{ item.rentMonth || 0 }}元 </view>
             </view>
@@ -288,16 +259,15 @@
         <view class="bottoms-button" @click="applyRecord(0)">申请记录</view>
       </view>
     </z-paging>
-    <u-select v-model="showAddress" mode="mutil-column-auto" :list="addressCityList" @confirm="confirmAddress">
-    </u-select>
+    <u-select v-model="showAddress" mode="mutil-column-auto" :list="addressCityList" @confirm="confirmAddress"> </u-select>
   </page>
 </template>
 
 <script>
-import axbCheckBox from "@/sub-package2/components/axb-checkbox/axb-checkbox.vue"
+import axbCheckBox from "@/sub-package2/components/axb-checkbox/axb-checkbox.vue";
 export default {
   components: {
-    axbCheckBox,
+    axbCheckBox
   },
   data() {
     return {
@@ -310,13 +280,13 @@ export default {
         {
           label: "全部",
           value: 0,
-          active: false,
-        },
+          active: false
+        }
       ],
       params: {
         province: true,
         city: true,
-        area: false,
+        area: false
       },
       city: "",
       addressCityList: [],
@@ -335,7 +305,7 @@ export default {
       addressList: [],
       formDropdown: {
         rentMonthSearch: {},
-        areaSearch: {},
+        areaSearch: {}
       },
       decorationStatus: "", //用于强制刷新单选按钮并赋值
       openDrop: false, //检测用户是否是点击了确定才触发的下拉菜单关闭
@@ -344,9 +314,9 @@ export default {
         rentMonthSearch: {},
         areaSearch: {},
         keywordSearch: "",
-        investmentStatus: 1,
-      },
-    }
+        investmentStatus: 1
+      }
+    };
   },
   onLoad() {
     this.$enum.addressEnum("", (res) => {
@@ -354,172 +324,172 @@ export default {
         this.addressCityList.push({
           value: res[i].code,
           label: res[i].name,
-          children: [],
-        })
+          children: []
+        });
         this.$enum.addressEnum(
           {
-            pid: res[i].code,
+            pid: res[i].code
           },
           (res2) => {
             this.addressCityList[i].children = res2.map((res3) => {
               return {
                 value: res3.code,
-                label: res3.name,
-              }
-            })
+                label: res3.name
+              };
+            });
           }
-        )
+        );
       }
-    })
+    });
     // 游客选择园区后，进入可看到选择的园区招商信息
     if (uni.getStorageSync("zoneInfo") && uni.getStorageSync("userInfo").enterpriseId === 0) {
-      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"))
-      this.location = { province: uni.getStorageSync("zoneInfo").province, city: uni.getStorageSync("zoneInfo").city }
-      uni.setStorageSync("location", this.location)
+      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"));
+      this.location = { province: uni.getStorageSync("zoneInfo").province, city: uni.getStorageSync("zoneInfo").city };
+      uni.setStorageSync("location", this.location);
     } else {
-      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"))
-      this.location = uni.getStorageSync("location")
+      this.$set(this.selectData, 0, uni.getStorageSync("zoneInfo"));
+      this.location = uni.getStorageSync("location");
     }
     if (uni.getStorageSync("zoneInfo").id) {
-      this.buildfloorEnum(uni.getStorageSync("zoneInfo").id)
+      this.buildfloorEnum(uni.getStorageSync("zoneInfo").id);
     }
     this.typeList = this.$enum.roomType.filter((item) => {
-      return item.value != 2 && item.value != 3 && item.value != 6 && item.value != 7
-    })
-    this.areaSearchList = uni.getStorageSync("areaSearchList") || []
-    this.rentMonthSearchList = uni.getStorageSync("rentMonthSearchList") || []
+      return item.value != 2 && item.value != 3 && item.value != 6 && item.value != 7;
+    });
+    this.areaSearchList = uni.getStorageSync("areaSearchList") || [];
+    this.rentMonthSearchList = uni.getStorageSync("rentMonthSearchList") || [];
     this.$enum.getByCity((res) => {
-      this.addressList = res
-    })
+      this.addressList = res;
+    });
     this.decorationList = this.$enum.decorationStatus.map((item) => {
-      item.checked = false
-      return item
-    })
+      item.checked = false;
+      return item;
+    });
   },
   methods: {
     // 楼栋楼层的加载
     buildfloorEnum(id) {
       let params = {
-        zoneId: id ? id : uni.getStorageSync("zoneInfo").id,
-      }
+        zoneId: id ? id : uni.getStorageSync("zoneInfo").id
+      };
       this.$enum.buildfloorEnum(params, (res) => {
         this.buildingList = res.map((item) => {
           return {
             value: item.id,
             label: item.name,
-            children: item.children,
-          }
-        })
+            children: item.children
+          };
+        });
         this.buildingList.push({
           value: "",
           label: "全部",
-          children: [],
-        })
+          children: []
+        });
         if (id) {
           this.floorList = [
             {
               label: "全部",
               value: 0,
-              active: false,
-            },
-          ]
+              active: false
+            }
+          ];
         }
-      })
+      });
     },
     // 楼栋楼层选择后的筛选
     floorScroll(res, arr, indexSelect) {
       if (indexSelect === 2) {
-        this.$set(this.selectData, 3, "")
+        this.$set(this.selectData, 3, "");
         this.floorList = res.children.map((item) => {
           return {
             value: item.id,
-            label: item.name,
-          }
-        })
+            label: item.name
+          };
+        });
         this.floorList.push({
           value: "",
-          label: "全部",
-        })
+          label: "全部"
+        });
       }
       if (res.label == "全部") {
         arr.forEach((item) => {
           if (res.value === item.value) {
-            item.active = true
+            item.active = true;
           } else {
-            item.active = false
+            item.active = false;
           }
-        })
-        this.$set(this.selectData, indexSelect, "")
+        });
+        this.$set(this.selectData, indexSelect, "");
       } else {
         arr.forEach((item) => {
           if (res.value === item.value) {
-            item.active = true
+            item.active = true;
           } else {
-            item.active = false
+            item.active = false;
           }
-        })
-        this.$set(this.selectData, indexSelect, res)
+        });
+        this.$set(this.selectData, indexSelect, res);
       }
-      this.$refs.paging.reload(false)
-      this.$refs.floorDropdown.close()
+      this.$refs.paging.reload(false);
+      this.$refs.floorDropdown.close();
     },
     confirmAddress(data) {
       this.location = {
         province: data[0].label,
-        city: data[1].label,
-      }
-      uni.setStorageSync("location", this.location)
+        city: data[1].label
+      };
+      uni.setStorageSync("location", this.location);
       this.$enum.getByCity((res) => {
-        this.addressList = res
-      })
+        this.addressList = res;
+      });
     },
     applyRecord(type) {
       this.$Router.push({
         path: "/sub-package2/pages/home/merchants/applyRecord",
         query: {
-          pageType: type,
-        },
-      })
+          pageType: type
+        }
+      });
     },
     // 去往详情页
     goDetails(res) {
       this.$Router.push({
         path: "/sub-package2/pages/home/merchants/detailsMerchants",
-        query: res,
-      })
+        query: res
+      });
     },
     rentMonthSearchRadioChange(value, index) {
       // 解决切换下拉的时候单选组件视图效果缺失的bug，如果下拉菜单为非联动状态应该不会有该bug
       this.rentMonthSearchList.forEach((item, index2) => {
-        if (index2 == index) item.checked = true
-        else item.checked = false
-      })
+        if (index2 == index) item.checked = true;
+        else item.checked = false;
+      });
       //深度克隆value的原因为防止value和输入框绑定导致同步更新单选数组的值
-      this.formDropdown.rentMonthSearch = this.$u.deepClone(value) || {}
+      this.formDropdown.rentMonthSearch = this.$u.deepClone(value) || {};
     },
     areaSearchRadioChange(value, index) {
       // 解决切换下拉的时候单选组件视图效果缺失的bug，如果下拉菜单为非联动状态应该不会有该bug
       this.areaSearchList.forEach((item, index2) => {
-        if (index2 == index) item.checked = true
-        else item.checked = false
-      })
+        if (index2 == index) item.checked = true;
+        else item.checked = false;
+      });
       //深度克隆value的原因为防止value和输入框绑定导致同步更新单选数组的值
-      this.formDropdown.areaSearch = this.$u.deepClone(value) || {}
+      this.formDropdown.areaSearch = this.$u.deepClone(value) || {};
     },
     dropdownRadioChange(value, index) {
       // 解决切换下拉的时候单选组件视图效果缺失的bug，如果下拉菜单为非联动状态应该不会有该bug
       this.decorationList.forEach((item, index2) => {
-        if (index2 == index) item.checked = true
-        else item.checked = false
-      })
+        if (index2 == index) item.checked = true;
+        else item.checked = false;
+      });
       //深度克隆value的原因为防止value和输入框绑定导致同步更新单选数组的值
-      this.decorationStatus = this.$u.deepClone(value) != null ? this.$u.deepClone(value) : ""
+      this.decorationStatus = this.$u.deepClone(value) != null ? this.$u.deepClone(value) : "";
     },
     // 更多下拉框的确认
     confirmDropdown(type) {
-      this.formDropdown.decorationStatus = this.decorationStatus
-      let formDropdown = this.$u.deepClone(this.formDropdown)
-      let form = this.$u.deepClone(this.form)
+      this.formDropdown.decorationStatus = this.decorationStatus;
+      let formDropdown = this.$u.deepClone(this.formDropdown);
+      let form = this.$u.deepClone(this.form);
       if (
         Object.keys(formDropdown.areaSearch).length !== 0 &&
         !(!formDropdown.areaSearch.areaL && !formDropdown.areaSearch.areaH)
@@ -527,47 +497,47 @@ export default {
         if (!formDropdown.areaSearch.areaL && formDropdown.areaSearch.areaH) {
           uni.showToast({
             title: "请输入最小面积",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         if (!formDropdown.areaSearch.areaH && formDropdown.areaSearch.areaL) {
           uni.showToast({
             title: "请输入最大面积",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         if (+formDropdown.areaSearch.areaH < +formDropdown.areaSearch.areaL) {
           uni.showToast({
             title: "最大面积不能小与最小面积",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         const areaSearchObj = {
           value: formDropdown.areaSearch,
           label: formDropdown.areaSearch.areaL + "-" + formDropdown.areaSearch.areaH,
-          checked: false,
-        }
+          checked: false
+        };
         // 检测单选数组中是否已存在确认后输入框中输入的值，如果存在则删除
         this.areaSearchList.forEach((item, index) => {
           if (
             Object.entries(areaSearchObj.value).toString() === Object.entries(item.value).toString() &&
             areaSearchObj.label == item.label
           ) {
-            this.areaSearchList.splice(index, 1)
+            this.areaSearchList.splice(index, 1);
           } else {
-            item.checked = false
+            item.checked = false;
           }
-        })
+        });
         // 检测单选数组中长度是否大于5，如果大于5则删除最后一个数据
         if (this.areaSearchList.length > 5) {
-          this.$delete(this.areaSearchList, this.areaSearchList.length - 1)
+          this.$delete(this.areaSearchList, this.areaSearchList.length - 1);
         }
-        this.areaSearchList.unshift(areaSearchObj)
-        uni.setStorageSync("areaSearchList", this.areaSearchList)
-        this.$set(this.areaSearchList[0], "checked", true)
+        this.areaSearchList.unshift(areaSearchObj);
+        uni.setStorageSync("areaSearchList", this.areaSearchList);
+        this.$set(this.areaSearchList[0], "checked", true);
       }
       if (
         Object.keys(formDropdown.rentMonthSearch).length !== 0 &&
@@ -576,72 +546,72 @@ export default {
         if (!formDropdown.rentMonthSearch.rentMonthL && formDropdown.rentMonthSearch.rentMonthH) {
           uni.showToast({
             title: "请输入最小价格",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         if (!formDropdown.rentMonthSearch.rentMonthH && formDropdown.rentMonthSearch.rentMonthL) {
           uni.showToast({
             title: "请输入最大价格",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         if (+formDropdown.rentMonthSearch.rentMonthH < +formDropdown.rentMonthSearch.rentMonthL) {
           uni.showToast({
             title: "最大价格不能小与最小价格",
-            icon: "none",
-          })
-          return
+            icon: "none"
+          });
+          return;
         }
         let rentMonthSearchObj = {
           value: formDropdown.rentMonthSearch,
           label: formDropdown.rentMonthSearch.rentMonthL + "-" + formDropdown.rentMonthSearch.rentMonthH,
-          checked: false,
-        }
+          checked: false
+        };
         this.rentMonthSearchList.forEach((item, index) => {
           if (
             Object.entries(rentMonthSearchObj.value).toString() === Object.entries(item.value).toString() &&
             rentMonthSearchObj.label == item.label
           ) {
-            this.rentMonthSearchList.splice(index, 1)
+            this.rentMonthSearchList.splice(index, 1);
           } else {
-            item.checked = false
+            item.checked = false;
           }
-        })
+        });
         if (this.rentMonthSearchList.length > 5) {
-          this.$delete(this.rentMonthSearchList, this.rentMonthSearchList.length - 1)
+          this.$delete(this.rentMonthSearchList, this.rentMonthSearchList.length - 1);
         }
-        this.rentMonthSearchList.unshift(rentMonthSearchObj)
-        uni.setStorageSync("rentMonthSearchList", this.rentMonthSearchList)
-        this.$set(this.rentMonthSearchList[0], "checked", true)
+        this.rentMonthSearchList.unshift(rentMonthSearchObj);
+        uni.setStorageSync("rentMonthSearchList", this.rentMonthSearchList);
+        this.$set(this.rentMonthSearchList[0], "checked", true);
       }
-      this.form = this.$u.deepMerge(form, formDropdown)
-      this.openDrop = true
-      this.$refs.paging.reload()
-      this.$refs.floorDropdown.close()
+      this.form = this.$u.deepMerge(form, formDropdown);
+      this.openDrop = true;
+      this.$refs.paging.reload();
+      this.$refs.floorDropdown.close();
     },
     // 更多下拉框的重置
     resetDropdown(type) {
-      this.formDropdown.rentMonthSearch = {}
-      this.formDropdown.areaSearch = {}
-      this.form.rentMonthSearch = {}
-      this.form.areaSearch = {}
-      this.decorationStatus = ""
+      this.formDropdown.rentMonthSearch = {};
+      this.formDropdown.areaSearch = {};
+      this.form.rentMonthSearch = {};
+      this.form.areaSearch = {};
+      this.decorationStatus = "";
       this.rentMonthSearchList = this.rentMonthSearchList.map((item) => {
-        item.checked = false
-        return item
-      })
+        item.checked = false;
+        return item;
+      });
 
       this.areaSearchList = this.areaSearchList.map((item) => {
-        item.checked = false
-        return item
-      })
+        item.checked = false;
+        return item;
+      });
 
       this.decorationList = this.$enum.decorationStatus.map((item) => {
-        item.checked = false
-        return item
-      })
+        item.checked = false;
+        return item;
+      });
       // switch (type) {
       // 	case 1:
       // 		this.formDropdown.rentMonthSearch = {}
@@ -675,170 +645,170 @@ export default {
       switch (indexSelect) {
         case 1:
           if (index === this.dropdownActive[2]) {
-            this.$set(this.dropdownActive, 2, "")
-            this.$set(this.selectData, 1, "")
+            this.$set(this.dropdownActive, 2, "");
+            this.$set(this.selectData, 1, "");
           } else {
-            this.$set(this.dropdownActive, 2, index)
-            this.$set(this.selectData, 1, res)
+            this.$set(this.dropdownActive, 2, index);
+            this.$set(this.selectData, 1, res);
           }
-          break
+          break;
         default:
-          break
+          break;
       }
-      this.$refs.paging.reload(false)
-      this.$refs.floorDropdown.close()
+      this.$refs.paging.reload(false);
+      this.$refs.floorDropdown.close();
     },
     open() {
-      this.openDrop = false
-      this.checkBox = ""
-      this.fallbackData() //解除下拉菜单联动效果就不要注释这一行
+      this.openDrop = false;
+      this.checkBox = "";
+      this.fallbackData(); //解除下拉菜单联动效果就不要注释这一行
     },
     fallbackData() {
       // 回退下拉菜单的数据
-      let formDropdown = this.$u.deepClone(this.form)
-      this.formDropdown.rentMonthSearch = formDropdown.rentMonthSearch
-      this.formDropdown.areaSearch = formDropdown.areaSearch
+      let formDropdown = this.$u.deepClone(this.form);
+      this.formDropdown.rentMonthSearch = formDropdown.rentMonthSearch;
+      this.formDropdown.areaSearch = formDropdown.areaSearch;
       this.rentMonthSearchList.forEach((item, index) => {
         if (Object.entries(formDropdown.rentMonthSearch).toString() === Object.entries(item.value).toString()) {
-          item.checked = true
+          item.checked = true;
         } else {
-          item.checked = false
+          item.checked = false;
         }
-      })
+      });
       this.areaSearchList.forEach((item, index) => {
         if (Object.entries(formDropdown.areaSearch).toString() === Object.entries(item.value).toString()) {
-          item.checked = true
+          item.checked = true;
         } else {
-          item.checked = false
+          item.checked = false;
         }
-      })
+      });
       this.decorationList = this.$enum.decorationStatus.map((item) => {
         if (item.value == this.formDropdown.decorationStatus) {
-          item.checked = true
+          item.checked = true;
         } else {
-          item.checked = false
+          item.checked = false;
         }
-        return item
-      })
-      this.decorationStatus = this.formDropdown.decorationStatus
+        return item;
+      });
+      this.decorationStatus = this.formDropdown.decorationStatus;
     },
     close() {
-      this.checkBox = 1
+      this.checkBox = 1;
       if (!this.openDrop) {
-        this.fallbackData()
+        this.fallbackData();
       }
-      this.$refs.paging.updatePageScrollTopHeight()
+      this.$refs.paging.updatePageScrollTopHeight();
     },
     search() {
-      this.$refs.paging.reload()
+      this.$refs.paging.reload();
     },
     getMerchants(pageNo, pageSize) {
-      console.log(this.selectData)
-      this.form.currPage = pageNo
-      this.form.pageSize = pageSize
+      console.log(this.selectData);
+      this.form.currPage = pageNo;
+      this.form.pageSize = pageSize;
       this.selectData.forEach((item, index) => {
         switch (index) {
           case 0:
-            this.form.zoneId = this.selectData[0].id
-            break
+            this.form.zoneId = this.selectData[0].id;
+            break;
           case 1:
-            this.form.roomType = this.selectData[1].value
-            break
+            this.form.roomType = this.selectData[1].value;
+            break;
           case 2:
-            this.form.buildingId = this.selectData[2].value
-            break
+            this.form.buildingId = this.selectData[2].value;
+            break;
           case 3:
-            this.form.floorId = this.selectData[3].value ? this.selectData[3].value : ""
-            break
+            this.form.floorId = this.selectData[3].value ? this.selectData[3].value : "";
+            break;
         }
-      })
-      let params = this.$u.deepClone(this.form)
+      });
+      let params = this.$u.deepClone(this.form);
       if (!this.form.areaSearch.areaL && !this.form.areaSearch.areaH) {
-        this.form.areaSearch = {}
+        this.form.areaSearch = {};
       }
       if (!this.form.rentMonthSearch.rentMonthL && !this.form.rentMonthSearch.rentMonthH) {
-        this.form.rentMonthSearch = {}
+        this.form.rentMonthSearch = {};
       }
       // 适配后端不支持传空的价格和面积
-      params = this.$u.deepMerge(params, this.form.rentMonthSearch)
-      params = this.$u.deepMerge(params, this.form.areaSearch)
+      params = this.$u.deepMerge(params, this.form.rentMonthSearch);
+      params = this.$u.deepMerge(params, this.form.areaSearch);
       if (!this.investmentIsOpen) {
-        params.zoneId = uni.getStorageSync("userInfo").zoneId
+        params.zoneId = uni.getStorageSync("userInfo").zoneId;
       }
       this.$api("merchants.merchantsList", params)
         .then((res) => {
           if (res.code == 200) {
-            this.$refs.paging.complete(res.data.list)
+            this.$refs.paging.complete(res.data.list);
           } else {
-            this.$refs.paging.complete(false)
+            this.$refs.paging.complete(false);
           }
         })
         .catch((e) => {
-          this.$refs.paging.complete(false)
-        })
+          this.$refs.paging.complete(false);
+        });
     },
     // 选择园区后
     clickZone(item, index1, index) {
-      this.$set(this.selectData, 2, "")
-      this.$set(this.selectData, 3, "")
+      this.$set(this.selectData, 2, "");
+      this.$set(this.selectData, 3, "");
       if (index1 === this.dropdownActive[1] && index === this.dropdownActive[0]) {
-        this.$set(this.dropdownActive, 0, 0)
-        this.$set(this.dropdownActive, 1, "")
-        this.$set(this.selectData, 0, "")
+        this.$set(this.dropdownActive, 0, 0);
+        this.$set(this.dropdownActive, 1, "");
+        this.$set(this.selectData, 0, "");
         this.$nextTick(() => {
-          this.$refs.paging.reload()
-          this.$refs.floorDropdown.close()
-        })
-        return
+          this.$refs.paging.reload();
+          this.$refs.floorDropdown.close();
+        });
+        return;
       }
-      this.$set(this.dropdownActive, 0, index)
-      this.$set(this.dropdownActive, 1, index1)
-      this.$set(this.selectData, 0, item)
-      this.buildfloorEnum(this.selectData[0].id)
+      this.$set(this.dropdownActive, 0, index);
+      this.$set(this.dropdownActive, 1, index1);
+      this.$set(this.selectData, 0, item);
+      this.buildfloorEnum(this.selectData[0].id);
       this.$nextTick(() => {
-        this.$refs.paging.reload()
-        this.$refs.floorDropdown.close()
-      })
+        this.$refs.paging.reload();
+        this.$refs.floorDropdown.close();
+      });
     },
     // 点击左边的栏目切换
     async swichMenu(index) {
-      if (index == this.addressCurrent) return
-      this.addressCurrent = index
-      this.seachTime = this.$u.timeFormat(new Date(), "yyyy年mm月")
+      if (index == this.addressCurrent) return;
+      this.addressCurrent = index;
+      this.seachTime = this.$u.timeFormat(new Date(), "yyyy年mm月");
       // 如果为0，意味着尚未初始化
       if (this.menuHeight == 0 || this.menuItemHeight == 0) {
-        await this.getElRect("menu-scroll-view", "menuHeight")
-        await this.getElRect("u-tab-item", "menuItemHeight")
+        await this.getElRect("menu-scroll-view", "menuHeight");
+        await this.getElRect("u-tab-item", "menuItemHeight");
       }
       // 将菜单菜单活动item垂直居中
-      this.scrollTop = index * this.menuItemHeight + this.menuItemHeight / 2 - this.menuHeight / 2
+      this.scrollTop = index * this.menuItemHeight + this.menuItemHeight / 2 - this.menuHeight / 2;
     },
     // 获取一个目标元素的高度
     getElRect(elClass, dataVal) {
       new Promise((resolve, reject) => {
-        const query = uni.createSelectorQuery().in(this)
+        const query = uni.createSelectorQuery().in(this);
         query
           .select("." + elClass)
           .fields(
             {
-              size: true,
+              size: true
             },
             (res) => {
               // 如果节点尚未生成，res值为null，循环调用执行
               if (!res) {
                 setTimeout(() => {
-                  this.getElRect(elClass)
-                }, 10)
-                return
+                  this.getElRect(elClass);
+                }, 10);
+                return;
               }
-              this[dataVal] = res.height
+              this[dataVal] = res.height;
             }
           )
-          .exec()
-      })
-    },
-  },
-}
+          .exec();
+      });
+    }
+  }
+};
 </script>
 <style>
 page {
