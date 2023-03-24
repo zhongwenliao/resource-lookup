@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "访客密码历史记录",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page",
-    "uni-empty-page": "/components/uni-empty-page/uni-empty-page"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "蓝牙固件版本升级",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page"
-  }
-}

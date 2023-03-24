@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "修改访客密码有效期",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page",
-    "uqrcode": "/uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode",
-    "uni-time-selector": "/sub-package/components/uni-time-selector/uni-time-selector"
-  }
-}
