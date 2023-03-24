@@ -1,0 +1,142 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/login/forget",
+    "pages/login/register",
+    "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+    "pages/user/user",
+    "pages/user/updatePassword",
+    "pages/user/updatePhone",
+    "pages/user/userInfo",
+    "pages/user/setting",
+    "pages/user/openDoorRecord",
+    "pages/user/releaseRecord",
+    "pages/user/myInformation",
+    "pages/user/aboutUs",
+    "pages/user/account",
+    "pages/user/propertyPass",
+    "pages/user/releaseDetails",
+    "pages/index/selectZone"
+  ],
+  "subPackages": [
+    {
+      "root": "sub-package",
+      "pages": [
+        "pages/dev-manage/card-list",
+        "pages/dev-manage/bt-version-upgrade",
+        "pages/dev-manage/all-open-door-records",
+        "pages/dev-manage/scan-dev-list",
+        "pages/dev-manage/configure-networking-mode",
+        "pages/vis/vis-history",
+        "pages/vis/edit-pwd-period"
+      ]
+    },
+    {
+      "root": "sub-package1",
+      "pages": [
+        "pages/vis/vis",
+        "pages/vis/vis-address",
+        "pages/vis-pwd/vis-pwd",
+        "pages/vis-pwd/vis-pwd-web"
+      ]
+    },
+    {
+      "root": "sub-package2",
+      "pages": [
+        "pages/home/employeeManagement/index",
+        "pages/home/employeeManagement/departmentDetails",
+        "pages/home/employeeManagement/newStaff",
+        "pages/home/employeeManagement/personnelList",
+        "pages/home/employeeManagement/staffDetails",
+        "pages/home/employeeManagement/selectPermissions",
+        "pages/home/meetingRoom/index",
+        "pages/home/meetingRoom/record",
+        "pages/home/meetingRoom/appointMent",
+        "pages/home/meetingRoom/meetingDetails",
+        "pages/home/payParking/index",
+        "pages/home/payParking/monthlyCard",
+        "pages/home/payParking/monthlyCardRecord",
+        "pages/home/payParking/monthlyCardProcessing",
+        "pages/home/payParking/monthlyCardDetail",
+        "pages/home/payParking/successfulApproval",
+        "pages/home/payParking/progressTrial",
+        "pages/home/payParking/suspendedPayment",
+        "pages/home/entranceGuard/index",
+        "pages/home/entranceGuard/openDoor",
+        "pages/home/entranceGuard/lunBoTu",
+        "pages/home/entranceGuard/bluetoothOpenDoor",
+        "pages/home/notice/noticeInfo",
+        "pages/home/notice/index",
+        "pages/home/billPay/index",
+        "pages/home/billPay/billInfo",
+        "pages/home/billPay/pay",
+        "pages/home/billPay/payResults",
+        "pages/home/billPay/payRecord",
+        "pages/home/billPay/billDetails",
+        "pages/home/contract/index",
+        "pages/home/contract/contractInfo",
+        "pages/home/contract/customerInfo",
+        "pages/home/contract/customerInfo2",
+        "pages/home/repairs/index",
+        "pages/home/repairs/repairApplication",
+        "pages/home/repairs/repairProgress",
+        "pages/home/repairs/repairEvaluate",
+        "pages/home/merchants/index",
+        "pages/home/merchants/detailsMerchants",
+        "pages/home/merchants/intentionApply",
+        "pages/home/merchants/applyRecord",
+        "pages/home/userComplaints/index",
+        "pages/home/userComplaints/sugGestions",
+        "pages/home/userComplaints/complaintProgress",
+        "pages/home/userComplaints/evaLuation",
+        "pages/home/userComplaints/evaluationSuccess",
+        "pages/home/contactProperty/index",
+        "pages/home/operationList/index",
+        "pages/dev-manage/dev-manage",
+        "pages/dev-manage/dev-info",
+        "pages/dev-manage/wifi-list",
+        "pages/dev-manage/setting-wifi-param",
+        "pages/dev-manage/set-APN",
+        "pages/dev-manage/sector-key",
+        "pages/dev-manage/set-dev-ip",
+        "pages/dev-manage/set-dev-pwd",
+        "pages/dev-manage/dev-system-info",
+        "pages/dev-manage/card-management",
+        "pages/dev-manage/input-card",
+        "pages/dev-manage/set-lock-open-time",
+        "pages/dev-manage/sim-info",
+        "pages/dev-manage/scan-dev-list",
+        "pages/dev-manage/addEquipment"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1677ff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "height": "55px",
+    "fontSize": "12px",
+    "iconWidth": "28px",
+    "list": [
+      {
+        "pagePath": "pages/index/index"
+      },
+      {
+        "pagePath": "pages/user/user"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {
+    "uni-base-page": "/components/uni-base-page/uni-base-page",
+    "page": "/components/page"
+  }
+}

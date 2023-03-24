@@ -1,0 +1,17 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "会议室预约记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "z-paging": "/uni_modules/z-paging/components/z-paging/z-paging",
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
+    "u-tabs": "/uview-ui/components/u-tabs/u-tabs",
+    "u-icon": "/uview-ui/components/u-icon/u-icon",
+    "u-line": "/uview-ui/components/u-line/u-line",
+    "u-row": "/uview-ui/components/u-row/u-row",
+    "u-col": "/uview-ui/components/u-col/u-col",
+    "u-image": "/uview-ui/components/u-image/u-image",
+    "u-modal": "/uview-ui/components/u-modal/u-modal",
+    "u-toast": "/uview-ui/components/u-toast/u-toast"
+  }
+}

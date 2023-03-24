@@ -1,0 +1,11 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "会议室预约待审核",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
+    "u-image": "/uview-ui/components/u-image/u-image",
+    "uqrcode": "/uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode",
+    "u-line": "/uview-ui/components/u-line/u-line"
+  }
+}

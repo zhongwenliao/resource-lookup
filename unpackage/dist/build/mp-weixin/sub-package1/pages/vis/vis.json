@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "访客授权",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uni-base-page": "/components/uni-base-page/uni-base-page",
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
+    "u-icon": "/uview-ui/components/u-icon/u-icon"
+  }
+}

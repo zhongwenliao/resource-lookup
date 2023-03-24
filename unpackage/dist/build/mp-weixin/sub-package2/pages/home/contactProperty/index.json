@@ -1,0 +1,11 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "联系物业",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
+    "u-mask": "/uview-ui/components/u-mask/u-mask",
+    "u-image": "/uview-ui/components/u-image/u-image",
+    "u-toast": "/uview-ui/components/u-toast/u-toast"
+  }
+}

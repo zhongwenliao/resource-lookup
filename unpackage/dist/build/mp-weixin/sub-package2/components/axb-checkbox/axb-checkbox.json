@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "filter-radio-item": "/sub-package2/components/axb-checkbox/axb-checkbox-item"
+  }
+}
