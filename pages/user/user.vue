@@ -7,18 +7,14 @@
         title-color="#fff"
         :background="{ backgroundColor: '' }"
         title="我的"
-        :border-bottom="false"
-      >
+        :border-bottom="false">
       </u-navbar>
       <view style="float: right; padding-right: 30upx">
         <u-icon @click="goSetting" color="#fff" name="setting" size="40"> </u-icon>
       </view>
       <view class="user-top u-flex">
         <view @click="goUserInfo" class="u-flex u-m-l-50" style="margin-top: -50rpx">
-          <u-avatar
-            :src="src ? src : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/morentouxiang.png'"
-            size="110"
-          ></u-avatar>
+          <u-avatar :src="src ? src : 'https://file.yuanzhoulvwego.com/prod/uploadFiles/morentouxiang.png'" size="110"></u-avatar>
           <view class="u-m-l-10 u-flex-col u-row-around u-text-color-fff" style="height: 60px">
             <view class="u-font-xl">
               {{ userName ? userName : userInfo.phone }}
@@ -32,11 +28,7 @@
     <view class="grid" v-if="userInfo.enterpriseId">
       <u-grid :col="3" :border="false">
         <block v-for="(item, index) of gridList" :key="index">
-          <u-grid-item
-            v-if="$permission([item.permission]) || !item.permission"
-            class="grid_item"
-            @click="goPage(item)"
-          >
+          <u-grid-item v-if="$permission([item.permission]) || !item.permission" class="grid_item" @click="goPage(item)">
             <view class="left">
               <view style="height: 60upx; display: flex; align-items: center; justify-content: center" class="">
                 <u-badge :count="item.count" :is-dot="true" :offset="[30, 90]"></u-badge>
@@ -45,12 +37,7 @@
               <view class="grid-text">{{ item.title }}</view>
             </view>
             <view class="right">
-              <u-line
-                v-if="(index + 1) % 3 != 0 && index + 1 != gridList.length"
-                color="#dddddd"
-                direction="col"
-                length="110"
-              />
+              <u-line v-if="(index + 1) % 3 != 0 && index + 1 != gridList.length" color="#dddddd" direction="col" length="110" />
             </view>
           </u-grid-item>
         </block>
@@ -66,8 +53,7 @@
               label="  "
               size="30"
               slot="icon"
-              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/wodexiaoxi.png"
-            >
+              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/wodexiaoxi.png">
             </u-icon>
             <view slot="title" class="" style="position: relative">
               我的消息
@@ -81,8 +67,7 @@
               label="  "
               size="30"
               slot="icon"
-              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/guanyuwomen.png"
-            >
+              name="https://file.yuanzhoulvwego.com/prod/uploadFiles/user-grid/guanyuwomen.png">
             </u-icon>
             <view slot="title" class="" style="position: relative"> 关于我们 </view>
           </u-cell-item>
@@ -98,7 +83,7 @@
 </template>
 
 <script>
-import tabbar from "@/config/tabBar"
+import tabbar from "@/config/tabBar";
 export default {
   data() {
     return {
@@ -113,7 +98,7 @@ export default {
         color: "#333333",
         fontSize: "32upx",
         fontWeight: "bold",
-        letterSpacing: "2upx",
+        letterSpacing: "2upx"
       },
       // 我的消息数量
       count: 0,
@@ -128,55 +113,55 @@ export default {
         // 	type: 3,
         // 	count: 0
         // },
-      ],
-    }
+      ]
+    };
   },
   onLoad() {},
   onShow() {
-    if (this.userInfo.enterpriseId > 0) this.userInformationList()
-    this.src = uni.getStorageSync("userInfo").avatar
+    if (this.userInfo.enterpriseId > 0) this.userInformationList();
+    this.src = uni.getStorageSync("userInfo").avatar;
   },
   methods: {
     goPage(data) {
-      this.$tools.routerTo(data.url, data, data.isTabBar)
+      this.$tools.routerTo(data.url, data, data.isTabBar);
     },
     userInformationList() {
       const params = {
         currPage: 1,
-        pageSize: 10,
-      }
+        pageSize: 10
+      };
       this.$api("user.userInformationList", params)
         .then((res) => {
           if (res.code == 200) {
-            this.count = res.data.totalCount
-            console.log("dddddd", res)
+            this.count = res.data.totalCount;
+            console.log("dddddd", res);
           }
         })
-        .catch((e) => {})
+        .catch((e) => {});
     },
     goAboutUs() {
       this.$Router.push({
-        path: "/pages/user/aboutUs",
-      })
+        path: "/pages/user/aboutUs"
+      });
     },
     goMyInformation() {
       this.$Router.push({
-        path: "/pages/user/myInformation",
-      })
+        path: "/pages/user/myInformation"
+      });
     },
     goSetting() {
-      console.log(this.pageScrollTop)
+      console.log(this.pageScrollTop);
       this.$Router.push({
-        path: "/pages/user/setting",
-      })
+        path: "/pages/user/setting"
+      });
     },
     goUserInfo() {
       this.$Router.push({
-        path: "/pages/user/userInfo",
-      })
-    },
-  },
-}
+        path: "/pages/user/userInfo"
+      });
+    }
+  }
+};
 </script>
 <style>
 page {

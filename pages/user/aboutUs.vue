@@ -6,8 +6,7 @@
         class="avatar"
         size="180"
         mode="square"
-        src="https://file.yuanzhoulvwego.com/prod/uploadFiles/logo.jpg"
-      ></u-avatar>
+        src="https://file.yuanzhoulvwego.com/prod/uploadFiles/logo.jpg"></u-avatar>
       <text class="version">园区π {{ version }}</text>
     </view>
     <u-cell-group class="cell-group" :border="false">
@@ -24,22 +23,21 @@ export default {
       cellTitle: {
         fontSize: "30upx",
         letterSpacing: "2upx",
-        color: "#333333",
+        color: "#333333"
       },
-      version: "1.1.182",
-    }
+      version: "1.1.182"
+    };
   },
   onLoad() {},
   onShow() {
-    this.getAPPinfo()
+    this.getAPPinfo();
   },
   methods: {
     getAPPinfo() {
-      let that = this
-      plus.runtime.getProperty(plus.runtime.appid, (wgtinfo) => {
-        that.version = wgtinfo.version
-      })
-
+      // let that = this;
+      // plus.runtime.getProperty(plus.runtime.appid, (wgtinfo) => {
+      //   that.version = wgtinfo.version;
+      // });
       // // #ifndef APP-PLUS
       // console.log(123456)
       // 	let obj = {}
@@ -54,20 +52,26 @@ export default {
     },
     goUpdatePassword() {
       this.$Router.push({
-        path: "/pages/user/updatePassword",
-      })
-    },
-    yinsi() {
-      plus.runtime.openURL("https://mobile.doormaster.me/#/privacy?appName=yuanzhoulv")
+        path: "/pages/user/updatePassword"
+      });
     },
     fuwu() {
-      plus.runtime.openURL("https://mobile.doormaster.me/#/protocol?appName=youzhoulv")
+      this.$Router.push({
+        path: "/pages/user/protocol"
+      });
+      // plus.runtime.openURL("https://mobile.doormaster.me/#/protocol?appName=youzhoulv");
     },
-  },
+    yinsi() {
+      this.$Router.push({
+        path: "/pages/user/privacy"
+      });
+      // plus.runtime.openURL("https://mobile.doormaster.me/#/privacy?appName=yuanzhoulv");
+    }
+  }
   // onLoad() {
   // 	this.version = plus.runtime.version
   // }
-}
+};
 </script>
 <style>
 page {

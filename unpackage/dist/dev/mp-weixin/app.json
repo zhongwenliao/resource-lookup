@@ -14,6 +14,8 @@
     "pages/user/releaseRecord",
     "pages/user/myInformation",
     "pages/user/aboutUs",
+    "pages/user/protocol",
+    "pages/user/privacy",
     "pages/user/account",
     "pages/user/propertyPass",
     "pages/user/releaseDetails",

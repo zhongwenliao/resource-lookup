@@ -163,7 +163,35 @@
 				"zoneId": false
 			}
 
-		}, {
+		},
+		
+		
+		{
+			"path": "pages/user/protocol",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "服务协议",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"auth": true,
+				"zoneId": false
+			}
+		},
+		{
+			"path": "pages/user/privacy",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "隐私政策",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"auth": true,
+				"zoneId": false
+			}
+		},
+
+		{
 			"path": "pages/user/account",
 			"style": {
 				"navigationStyle": "custom",

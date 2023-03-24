@@ -1,6 +1,6 @@
 
 page {
-	background: #F1F2F3;
+  background: #f1f2f3;
 }
 
 @charset "UTF-8";
