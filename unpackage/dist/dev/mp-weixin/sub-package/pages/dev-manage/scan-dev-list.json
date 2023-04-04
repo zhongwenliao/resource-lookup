@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "附近设备",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page"
-  }
-}

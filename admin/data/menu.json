@@ -1,0 +1,53 @@
+[{
+		"id": 1,
+		"title": "A股票",
+		"icon": "layui-icon layui-icon-console",
+		"type": 0,
+		"href": "",
+		"children": [{
+			"id": 10,
+			"title": "上海",
+			"icon": "layui-icon layui-icon-console",
+			"type": 1,
+			"openType": "_iframe",
+			"href": "view/console/console1.html"
+		}, {
+			"id": 14,
+			"title": "百度一下",
+			"icon": "layui-icon layui-icon-console",
+			"type": 1,
+			"openType": "_iframe",
+			"href": "https://pc.shanliwawa.top/"
+		}]
+	},
+	{
+		"id": "americar",
+		"title": "美股",
+		"icon": "layui-icon layui-icon-component",
+		"type": 0,
+		"href": "",
+		"children": [{
+			"id": 201,
+			"title": "纳斯达克",
+			"icon": "layui-icon layui-icon-console",
+			"type": 0,
+			"children": [
+			{
+				"id": 2011,
+				"title": "功能按钮",
+				"icon": "layui-icon layui-icon-face-smile",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/console/console2.html"
+			}]
+		}]
+	},
+	{
+		"id": "pg",
+		"title": "单页",
+		"icon": "layui-icon layui-icon-face-cry",
+		"type": 1,
+		"openType": "_iframe",
+		"href": "view/console/console1.html"
+	}
+]

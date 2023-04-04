@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "读取设备开门记录",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page",
-    "uni-empty-page": "/components/uni-empty-page/uni-empty-page"
-  }
-}

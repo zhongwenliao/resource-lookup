@@ -1,9 +1,0 @@
-{
-  "navigationStyle": "custom",
-  "navigationBarTitleText": "月卡申请记录",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
-    "uni-tab": "/components/uni-tab/uni-tab"
-  }
-}

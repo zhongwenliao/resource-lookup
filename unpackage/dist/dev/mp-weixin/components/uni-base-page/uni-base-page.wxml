@@ -1,1 +1,0 @@
-<view data-event-opts="{{[['touchstart',[['start',['$event']]]],['touchend',[['end',['$event']]]]]}}" class="uni-base-page" bindtouchstart="__e" bindtouchend="__e"><slot></slot><uni-base-toast class="vue-ref" vue-id="a7d89db8-1" data-ref="toast" bind:__l="__l"></uni-base-toast></view>

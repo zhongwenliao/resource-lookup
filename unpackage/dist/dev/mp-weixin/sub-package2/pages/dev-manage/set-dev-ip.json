@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "配置设备IP",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page"
-  }
-}

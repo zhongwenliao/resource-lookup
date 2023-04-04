@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "设备卡数据",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page",
-    "uni-empty-page": "/components/uni-empty-page/uni-empty-page",
-    "uni-search": "/sub-package/components/uni-search/uni-search"
-  }
-}
