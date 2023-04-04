@@ -1,69 +1,81 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>控制后台</title>
-		<meta name="renderer" content="webkit">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<link rel="stylesheet" href="../../component/pear/css/pear.css" />
-		<link rel="stylesheet" href="../../admin/css/other/console1.css" />
-	</head>
-	<body class="pear-container">
-		<div>
-			<div class="layui-row layui-col-space10">
-				<div class="layui-col-md12">
-					<div class="layui-card">
-						<div class="layui-card-header">更 新</div>
-						<div class="layui-card-body">
-							<ul class="list">
-								<li class="list-item"><span class="title">优化代码格式</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">新增消息组件</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">移动端兼容</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">系统布局优化</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">兼容多系统菜单模式</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">兼容多标签页切换</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">扩展下拉组件</span><span class="footer">2021-09-06 11:28</span></li>
-								<li class="list-item"><span class="title">扩展卡片样式</span><span class="footer">2021-09-06 11:28</span></li>
-							</ul>
-						</div>
-					</div>
-					<div class="layui-card">
-						<div class="layui-card-header">
-							链接
-						</div>
-						<div class="layui-card-body">
-							<a target="_blank" href="http://www.pearadmin.com" class="pear-btn pear-btn-primary  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">官
-								网</a>
-							<br />
-							<a target="_blank" href="https://gitee.com/pear-admin/Pear-Admin-Layui" class="pear-btn pear-btn-warming  layui-btn-fluid"
-							 style="margin-top: 8px;height: 50px;line-height: 50px;">下 载</a>
-							<br />
-							<a target="_blank" href="https://gitee.com/pear-admin/Pear-Admin-Boot" class="pear-btn pear-btn-danger  layui-btn-fluid"
-							 style="margin-top: 8px;height: 50px;line-height: 50px;">后 端</a>
-						</div>
-					</div>
-					<div class="layui-card">
-						<div class="layui-card-header">
-							寄语
-						</div>
-						<div class="layui-card-body" style="line-height:40px;">
-							原想将澎湃的爱平平稳稳放置你手心，奈何我徒有一股蛮劲，只顾向你跑去，一个不稳跌的满身脏兮兮。试图爬起的我，
-							心想你会不会笑我 " 献爱献的这样笨拙, 怎么不知避开爱里的埋伏 "
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!--</div>-->
-		<script src="../../component/layui/layui.js"></script>
-		<script src="../../component/pear/pear.js"></script>
-		<script>
-			layui.use(['layer'], function() {
-				var $ = layui.jquery,
-					layer = layui.layer;
-
-			});
-		</script>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>控制后台</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="../../component/pear/css/pear.css" />
+    <link rel="stylesheet" href="../../admin/css/other/console1.css" />
+  </head>
+  <body class="pear-container">
+    <div>
+      <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+          <div class="layui-card">
+            <div class="layui-card-header">更 新</div>
+            <div class="layui-card-body">
+              <ul class="list">
+                <li class="list-item"><span class="title">优化代码格式</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item"><span class="title">新增消息组件</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item"><span class="title">移动端兼容</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item"><span class="title">系统布局优化</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item">
+                  <span class="title">兼容多系统菜单模式</span><span class="footer">2021-09-06 11:28</span>
+                </li>
+                <li class="list-item"><span class="title">兼容多标签页切换</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item"><span class="title">扩展下拉组件</span><span class="footer">2021-09-06 11:28</span></li>
+                <li class="list-item"><span class="title">扩展卡片样式</span><span class="footer">2021-09-06 11:28</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="layui-card">
+            <div class="layui-card-header">链接</div>
+            <div class="layui-card-body">
+              <a
+                target="_blank"
+                href="http://www.pearadmin.com"
+                class="pear-btn pear-btn-primary layui-btn-fluid"
+                style="margin-top: 8px; height: 50px; line-height: 50px"
+                >官 网</a
+              >
+              <br />
+              <a
+                target="_blank"
+                href="https://gitee.com/pear-admin/Pear-Admin-Layui"
+                class="pear-btn pear-btn-warming layui-btn-fluid"
+                style="margin-top: 8px; height: 50px; line-height: 50px"
+                >下 载</a
+              >
+              <br />
+              <a
+                target="_blank"
+                href="https://gitee.com/pear-admin/Pear-Admin-Boot"
+                class="pear-btn pear-btn-danger layui-btn-fluid"
+                style="margin-top: 8px; height: 50px; line-height: 50px"
+                >后 端</a
+              >
+            </div>
+          </div>
+          <div class="layui-card">
+            <div class="layui-card-header">寄语</div>
+            <div class="layui-card-body" style="line-height: 40px">
+              原想将澎湃的爱平平稳稳放置你手心，奈何我徒有一股蛮劲，只顾向你跑去，一个不稳跌的满身脏兮兮。试图爬起的我，
+              心想你会不会笑我 " 献爱献的这样笨拙, 怎么不知避开爱里的埋伏 "
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--</div>-->
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script>
+      layui.use(["layer"], function () {
+        var $ = layui.jquery,
+          layer = layui.layer;
+      });
+    </script>
+  </body>
 </html>
