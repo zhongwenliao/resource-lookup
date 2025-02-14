@@ -17,6 +17,17 @@ const routeConfig = [
     }
   },
   {
+    path: '/map',
+    name: 'MapObj',
+    component: loadingLazy('Map/Index'),
+    meta: {
+      name: '地图相关',
+      title: '地图相关',
+      module: 'mapObj',
+      hideAslide: false
+    }
+  },
+  {
     path: '/resourceVideo',
     name: 'ResourceVideo',
     component: loadingLazy('Resources/Index'),
