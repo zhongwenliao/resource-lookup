@@ -16,20 +16,20 @@
         <div class="writeMonitorRegionTools">
           <div class="w_title">隐患覆盖区域</div>
           <div class="change_tools" index="1">
-            <div title="红色预警" value="RED" class="box red">
-              <img src="http://139.159.139.174:9999/images/Project/tools/red.png" alt="" />
-            </div>
-            <div title="蓝色预警" value="BLUE" class="box blue">
-              <img src="http://139.159.139.174:9999/images/Project/tools/blue.png" alt="" />
-            </div>
-            <div title="黄色预警" value="YELLOW" class="box yellow">
-              <img src="http://139.159.139.174:9999/images/Project/tools/yellow.png" alt="" />
-            </div>
-            <div title="绿色安全" value="GREEN" class="box green">
-              <img src="http://139.159.139.174:9999/images/Project/tools/green.png" alt="" />
-            </div>
-            <div title="回滚一级" value="reset" class="resetPolygon">
-              <span style="white-space: nowrap">撤销</span>
+            <div
+              v-for="(item, index) in warningList"
+              :key="index"
+              :title="item.title"
+              :value="item.value"
+              :class="item.class"
+              @click="handleWarningClick(item.value)"
+            >
+              <template v-if="item.type === 'image'">
+                <img :src="item.src" alt="" />
+              </template>
+              <template v-else>
+                <span>{{ item.text }}</span>
+              </template>
             </div>
           </div>
         </div>
@@ -93,8 +93,12 @@
 
           <div class="tools-btn">
             <span id="addFlyToLine" style="display: flex; align-items: center; justify-content: center">
-              <img src="http://139.159.139.174:9999/images/Project/tools/add.png"
-                style="margin-right: 5px; width: 15px; height: 15px" alt="" />新增巡检</span>
+              <img
+                src="http://139.159.139.174:9999/images/Project/tools/add.png"
+                style="margin-right: 5px; width: 15px; height: 15px"
+                alt=""
+              />新增巡检</span
+            >
           </div>
         </div>
 
@@ -109,11 +113,12 @@
           </div>
           <div class="analysisBox" style="display: none;" data-id="">
             <div class="w_title">压平设置</div>
-            <div class="w_title">压平面名称：
+            <div class="w_title">
+              压平面名称：
               <input type="text" id="FlatName" class="basicPolygonH" value="未命名面" />
             </div>
-            <div class="w_title">压平面高度：
-              <input type="number" id="FlatHeight" class="basicPolygonH" value="0" max="100" />米
+            <div class="w_title">
+              压平面高度： <input type="number" id="FlatHeight" class="basicPolygonH" value="0" max="100" />米
             </div>
             <div class="analysisBtn" id="sureFlat">确定</div>
             <div class="analysisBtn cancel" id="cancelFlat">取消</div>
@@ -125,67 +130,132 @@
 </template>
 
 <script>
-
+import EntityEdit from './EntityEdit.js'
 export default {
-  components: {
-
-  },
+  components: {},
   data() {
     return {
-      modalTitle: '素材调整',
-      isShowTool:false
+      isShowTool: false,
+      viewer: null, // Cesium视图实例
+      handler: null, // 事件处理器
+      drawing: false, // 绘制状态标志
+      positions: [], // 存储坐标点数组
+      tempEntities: [], // 临时图形实体
+      polygonColor: '#FF000080', // 可配置的多边形颜色（支持透明度）
+      // 新增预警列表
+      warningList: [
+        {
+          title: '红色预警',
+          value: 'RED',
+          class: 'box red',
+          type: 'image',
+          src: 'http://139.159.139.174:9999/images/Project/tools/red.png'
+        },
+        {
+          title: '蓝色预警',
+          value: 'BLUE',
+          class: 'box blue',
+          type: 'image',
+          src: 'http://139.159.139.174:9999/images/Project/tools/blue.png'
+        },
+        {
+          title: '黄色预警',
+          value: 'YELLOW',
+          class: 'box yellow',
+          type: 'image',
+          src: 'http://139.159.139.174:9999/images/Project/tools/yellow.png'
+        },
+        {
+          title: '绿色安全',
+          value: 'GREEN',
+          class: 'box green',
+          type: 'image',
+          src: 'http://139.159.139.174:9999/images/Project/tools/green.png'
+        },
+        {
+          title: '回滚一级',
+          value: 'reset',
+          class: 'resetPolygon',
+          type: 'text',
+          text: '撤销'
+        }
+      ]
     }
   },
-  created() {
-  },
   mounted() {
-    this.initMap();
+    this.initMap()
   },
   methods: {
     initMap() {
-      let subdomains = ["0", "1", "2", "3", "4", "5", "6", "7"];
+      let subdomains = ['0', '1', '2', '3', '4', '5', '6', '7']
       // 初始化地球
-      var viewer = new LSGlobe.Viewer('lsGlobe', {
+      this.viewer = new LSGlobe.Viewer('lsGlobe', {
         baseLayerPicker: false,
         sceneModePicker: false,
         fullscreenButton: false,
         guid: '1903883411',
         //许可码
-        licenseUrl: "http://139.159.139.174:9999/wish3dearth/api/access/v1.0.0" // 许可服务地址
-      });
-      viewer.scene.globe.translucency.frontFaceAlphaByDistance = new LSGlobe.NearFarScalar(-10.0, 1.0, 800.0, 1.0);
-      viewer.scene.screenSpaceCameraController.enableCollisionDetection = true;
-      viewer.scene.globe.translucency.enabled = true; //开启地表透明度设置
-      viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10;
-      window.viewer = viewer;
+        licenseUrl: 'http://139.159.139.174:9999/wish3dearth/api/access/v1.0.0' // 许可服务地址
+      })
+      this.viewer.scene.globe.translucency.frontFaceAlphaByDistance = new LSGlobe.NearFarScalar(-10.0, 1.0, 800.0, 1.0)
+      this.viewer.scene.screenSpaceCameraController.enableCollisionDetection = true
+      this.viewer.scene.globe.translucency.enabled = true //开启地表透明度设置
+      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10
       // 加载ArcGIS卫星图
       let ArcGISLayer = new LSGlobe.ArcGisMapServerImageryProvider({
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-      });
-      viewer.imageryLayers.addImageryProvider(ArcGISLayer);
+        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+      })
+      this.viewer.imageryLayers.addImageryProvider(ArcGISLayer)
 
       // 影像注记-路网
       let ImageLabel = new LSGlobe.WebMapTileServiceImageryProvider({
         url:
-          "http://t{s}.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=24138528cf64d71be24834e9b0720b6b",
-        layer: "tdtCiaLayer",
+          'http://t{s}.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=24138528cf64d71be24834e9b0720b6b',
+        layer: 'tdtCiaLayer',
         subdomains: subdomains,
-        style: "default",
-        format: "image/jpeg",
-        credit: new LSGlobe.Credit("天地图全球影像注记"),
-        tileMatrixSetID: "GoogleMapsCompatible"
-      });
+        style: 'default',
+        format: 'image/jpeg',
+        credit: new LSGlobe.Credit('天地图全球影像注记'),
+        tileMatrixSetID: 'GoogleMapsCompatible'
+      })
       // 默认增加路网展示
-      viewer.imageryLayers.addImageryProvider(ImageLabel);
-
+      this.viewer.imageryLayers.addImageryProvider(ImageLabel)
     },
-    handleShowTool(){
-      this.isShowTool = !this.isShowTool;
-    }
+    // 展示工具箱
+    handleShowTool() {
+      this.isShowTool = !this.isShowTool
+    },
+    // 点击预警
+    handleWarningClick(value) {
+      switch (value) {
+        case 'RED':
+          // 处理红色预警点击事件
+          console.log('红色预警被点击')
+          break
+        case 'BLUE':
+          // 处理蓝色预警点击事件
+          console.log('蓝色预警被点击')
+          break
+        case 'YELLOW':
+          // 处理黄色预警点击事件
+          console.log('黄色预警被点击')
+          break
+        case 'GREEN':
+          // 处理绿色安全点击事件
+          console.log('绿色安全被点击')
+          break
+        case 'reset':
+          // 处理回滚一级点击事件
+          console.log('回滚一级被点击')
+          break
+        default:
+          console.log('未知的点击事件')
+      }
+    },
+    // 绘制隐患点覆盖区域
+    handleDrawDegion() {}
   },
-  beforeDestroy() {
-
-  },
+  beforeDestroy() {}
 }
 </script>
 
@@ -266,9 +336,7 @@ export default {
             box-sizing: border-box;
 
             img {
-
               height: 100%;
-
             }
           }
 
@@ -332,7 +400,6 @@ export default {
           &.cancel:hover {
             background: #cdcdcd;
           }
-
         }
 
         /*压平面名称、高度设置*/
@@ -347,7 +414,6 @@ export default {
           margin-left: 0px;
           margin-right: 0px;
         }
-
       }
     }
   }
