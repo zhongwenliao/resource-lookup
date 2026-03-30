@@ -11,31 +11,31 @@ export default {
     }
 
     // 定位功能，由于需求变更取消
-    // let platform=uni.getSystemInfoSync().platform
-    //     if(platform=='ios'){
-    //          uni.getLocation({
-    //          	type: 'wgs84',//gcj02 wgs84
-    //          	geocode: true,
-    //             success(res) {
-    //               uni.setStorageSync('location', res.address);
-    //             },
-    //             fail(error) {
-    //          	   console.log(error);
-    //             }
-    //             })
-    //     }else if(platform=='android'){
-    //          uni.getLocation({
-    //          	type: 'gcj02',//gcj02 wgs84
-    //          	geocode: true,
-    //             success(res) {
-    // 				console.log(res);
-    //               uni.setStorageSync('location', res.address);
-    //             },
-    //             fail(error) {
-    //          	   console.log(error);
-    //             }
-    //             })
+    // let platform = uni.getSystemInfoSync().platform
+    // if (platform == 'ios') {
+    //   uni.getLocation({
+    //     type: 'wgs84',//gcj02 wgs84
+    //     geocode: true,
+    //     success(res) {
+    //       uni.setStorageSync('location', res.address);
+    //     },
+    //     fail(error) {
+    //       console.log(error);
     //     }
+    //   })
+    // } else if (platform == 'android') {
+    //   uni.getLocation({
+    //     type: 'gcj02',//gcj02 wgs84
+    //     geocode: true,
+    //     success(res) {
+    //       console.log(res);
+    //       uni.setStorageSync('location', res.address);
+    //     },
+    //     fail(error) {
+    //       console.log(error);
+    //     }
+    //   })
+    // }
 
     console.log("App Launch")
   },
