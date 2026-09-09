@@ -1,142 +1,120 @@
 <template>
-  <div class="aside">
-    <div class="menu">
-      <h2>资源查询</h2>
-      <dl class="menu-list">
-        <dd v-for="(aslide, i) in aslideConfig"
-            :key="i"
-            :class="{'act': aslide.active}">
-          <a href="javascript:;"
-             class="menu-lv2"
-             :class="{'act': aslide.active}"
-             @click="handleGoLink(aslide,i)">
-            <span>{{ aslide.meta.name }}</span>
-            <i v-if="aslide.children"
-               style="line-height: 30px; padding-right: 10px;"
-               class="pull-right"
-               :class="aslide.children && aslide.active? 'el-icon-arrow-down' : 'el-icon-arrow-right'"
-               title="展开"></i>
-          </a>
-          <ul class="menu-sub">
-            <li v-for="sub in aslide.children"
-                :key="sub.path">
-                <a href="javascript:;"
-                   class="menu-lv3"
-                   @click="handleGoLink(sub)">
-                  <span>{{ sub.meta.name }}</span>
-                </a>
-            </li>
-          </ul>
-        </dd>
-      </dl>
+  <div class="g-slide" :class="{ folded }">
+    <div class="slide-scroll">
+      <div v-for="group in asideGroups" :key="group.group" class="menu-group">
+        <div class="group-title">{{ group.group }}</div>
+        <router-link
+          v-for="item in group.items"
+          :key="item.path"
+          :to="item.path"
+          class="menu-item"
+          active-class="act">
+          <span>{{ item.meta.name }}</span>
+        </router-link>
+      </div>
     </div>
-    <a href="javascript:void(0);"
-       :title="folding ? '展开' : '收起' "
-       class="btn-fold-menu"
-       :class="{retract: folding}"
-       @click="onClickMenuToggle"></a>
+    <a href="javascript:;"
+       class="btn-fold"
+       :title="folded ? '展开' : '收起'"
+       @click="$emit('handMenuToggle', !folded)">
+      {{ folded ? '»' : '«' }} {{ folded ? '' : '收起菜单' }}
+    </a>
   </div>
 </template>
+
 <script>
+// 技术点：路由配置驱动侧边栏 —— 菜单数据来自 router.js 的 getAsideConfig，
+// 新增页面只需在 routeConfig 中注册，菜单自动生成，无需改动本组件
 import { getAsideConfig } from '@/router.js';
 
 export default {
+  name: 'GlobalSlide',
   props: {
-  },
-  computed: {
-    // // 侧边栏数据
-    // aslideConfig() {
-    //   return getAsideConfig().configAslide
-    // }
+    // 折叠状态由父组件 App.vue 持有，通过 prop 下发
+    folded: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
-      // 折叠
-      folding: false,
-      aslideConfig: [],
-      // 菜单列表
-      menuList: [{
-        text: '猜你喜欢'
-      }, {
-        text: '音乐资源',
-        menus: [{
-          text: '歌名'
-        }, {
-          text: '歌词'
-        }]
-      }, {
-        text: '视频资源',
-        menus: [{
-          text: '电影'
-        }, {
-          text: '电视剧'
-        }, {
-          text: '综艺'
-        }, {
-          text: '动漫'
-        }, {
-          text: '其他'
-        }]
-      }, {
-        text: '应用资源',
-        menus: [{
-          text: '安卓APP'
-        }, {
-          text: '苹果APP'
-        }, {
-          text: '桌面应用'
-        }, {
-          text: 'MAC专区'
-        }]
-      }, {
-        text: '实体经营',
-        menus: [{
-          text: '手机卡'
-        }, {
-          text: '信用卡'
-        }, {
-          text: '贴膜'
-        }]
-      }, {
-        text: '其他',
-        menus: [{
-          text: '帐户权限'
-        }, {
-          text: '历史记录'
-        }]
-      }]
+      asideGroups: []
     };
   },
   created () {
-    const { configAslide } = getAsideConfig();
-    this.aslideConfig = { ...configAslide };
-  },
-  methods: {
-    // 点击折叠按钮
-    onClickMenuToggle () {
-      this.folding = !this.folding;
-      this.$emit('handMenuToggle', this.folding);
-    },
-    // 跳转链接
-    handleGoLink (v, i) {
-      if (v.children) {
-        if (v['active']) {
-          v.active = false;
-        } else {
-          this.$set(this.aslideConfig[i], 'active', true);
-        }
-      } else {
-        if (v['active']) {
-          v.active = false;
-        } else {
-          this.$set(this.aslideConfig[i], 'active', true);
-        }
-        this.$router.push({path: v.path});
-      }
+    const { groups } = getAsideConfig();
+    this.asideGroups = groups;
+  }
+};
+</script>
+
+<style lang="less">
+.g-slide {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  transition: width 0.25s;
+  overflow: hidden;
+
+  &.folded {
+    width: 0;
+    border-right: none;
+  }
+
+  .slide-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+
+  .menu-group {
+    margin-bottom: 8px;
+  }
+
+  .group-title {
+    padding: 8px 16px 4px;
+    font-size: 12px;
+    color: #999;
+  }
+
+  .menu-item {
+    display: block;
+    padding: 9px 16px 9px 24px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+      background: #f5f5f5;
+      color: #1890ff;
+    }
+
+    &.act {
+      background: #e6f7ff;
+      color: #1890ff;
+      border-right: 2px solid #1890ff;
+    }
+  }
+
+  .btn-fold {
+    flex-shrink: 0;
+    display: block;
+    padding: 10px 16px;
+    border-top: 1px solid #e8e8e8;
+    font-size: 12px;
+    color: #666;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+
+    &:hover {
+      color: #1890ff;
+      background: #f5f5f5;
     }
   }
 }
-</script>
-<style lang="less">
-
 </style>

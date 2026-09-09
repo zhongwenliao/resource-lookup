@@ -23,6 +23,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     clientLogLevel: 'warning',
+    // PWA：允许 /static/sw.js 注册为根作用域（默认作用域仅 /static/，无法拦截页面请求）
+    headers: { 'Service-Worker-Allowed': '/' },
     historyApiFallback: {
       rewrites: [
         { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, 'index.html') },

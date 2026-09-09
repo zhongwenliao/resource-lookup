@@ -1,0 +1,5 @@
+{
+  "name": "cache-first 资源",
+  "policy": "Cache First",
+  "tip": "缓存命中即返回，完全不走网络；适合带版本号的静态资源（js/css/图片）"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "swr 资源",
+  "policy": "Stale-While-Revalidate",
+  "tip": "先回缓存保证速度，同时后台请求更新缓存，下次请求生效；适合允许短暂滞后的数据"
+}
