@@ -1,55 +1,45 @@
 {
-  "name": "resource-lookup",
+  "name": "qc-label-generator",
   "version": "1.0.0",
-  "description": "前端技术沉淀：可运行的前端技术练习场，每个技术点一个可交互示例",
+  "description": "质检二维码标签生成器：检测设备导出 Excel → 合格品一物一码二维码标签打印",
   "author": "chineseliao",
   "private": true,
+  "main": "electron/main.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
-    "ws:server": "node scripts/ws-server.js",
-    "upload:server": "node scripts/upload-server.js",
-    "tile:server": "node scripts/tile-server.js",
-    "unit": "jest --config test/unit/jest.conf.js --coverage",
-    "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e",
-    "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs --fix",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "electron:dev": "electron .",
+    "electron:build": "npm run build && electron-builder --win nsis"
   },
   "dependencies": {
-    "ant-design-vue": "^1.7.8",
-    "canvas-nest.js": "^2.0.4",
     "element-ui": "^2.13.1",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
-    "prettier": "^1.19.1",
     "qrcode": "^1.5.4",
-    "spark-md5": "^3.0.2",
     "vue": "^2.6.14",
     "vue-router": "^3.0.1",
-    "vuex": "^3.1.1",
-    "ws": "^8.21.3"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^8.2.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
-    "babel-jest": "^21.0.2",
     "babel-loader": "^7.1.1",
     "babel-plugin-dynamic-import-node": "^1.2.0",
     "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-plugin-transform-runtime": "^6.22.0",
     "babel-plugin-transform-vue-jsx": "^3.5.0",
     "babel-preset-env": "^1.3.2",
     "babel-preset-stage-2": "^6.22.0",
     "babel-register": "^6.22.0",
     "chalk": "^2.0.1",
-    "chromedriver": "^2.27.2",
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
+    "electron": "^41.7.1",
+    "electron-builder": "^26.15.3",
     "eslint": "^4.15.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
@@ -63,24 +53,18 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
-    "jest": "^22.0.4",
-    "jest-serializer-vue": "^0.3.0",
-    "nightwatch": "^0.9.12",
     "node-notifier": "^5.1.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
     "portfinder": "^1.0.13",
     "postcss-import": "^11.0.0",
     "postcss-loader": "^2.0.8",
-    "postcss-pxtorem": "^5.1.0",
     "postcss-url": "^7.2.1",
     "rimraf": "^2.6.0",
-    "selenium-server": "^3.0.1",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
-    "vue-jest": "^1.0.2",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.6.14",
@@ -88,6 +72,38 @@
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0"
+  },
+  "build": {
+    "appId": "com.qclabel.generator",
+    "productName": "质检二维码标签生成器",
+    "directories": {
+      "output": "release",
+      "buildResources": "build-res"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "!node_modules/**/*"
+    ],
+    "win": {
+      "icon": "build-res/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "质检二维码标签生成器",
+      "artifactName": "质检二维码标签生成器-Setup-${version}.${ext}"
+    }
   },
   "engines": {
     "node": ">= 6.0.0",

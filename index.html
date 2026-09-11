@@ -3,24 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- PWA：应用清单与主题色（配合 static/sw.js 构成完整 PWA） -->
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#1890ff">
-    <script>
-      // 技术点：rem 适配 —— 设计稿基准 375px，1rem = 37.5px（clientWidth / 10）
-      // 移动端（<=750px）随视口等比缩放；PC 端固定 37.5px，保持原始 px 设计
-      // 配合 .postcssrc.js 中 postcss-pxtorem 自动换算
-      (function () {
-        function setRem () {
-          var w = document.documentElement.clientWidth;
-          var fs = w > 750 ? 37.5 : w / 10;
-          document.documentElement.style.fontSize = fs + 'px';
-        }
-        setRem();
-        window.addEventListener('resize', setRem);
-      })();
-    </script>
-    <title>前端技术沉淀</title>
+    <title>质检二维码标签生成器</title>
   </head>
   <body>
     <div id="app"></div>

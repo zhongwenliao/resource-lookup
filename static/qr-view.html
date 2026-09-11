@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>质检记录</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f2f4f7;
+      min-height: 100vh;
+      padding: 16px;
+      color: #333;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    .head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .head h1 { font-size: 20px; font-weight: 600; }
+    .badge {
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      background: #1a7f37;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 6px 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+    }
+    .row { display: flex; padding: 11px 0; border-bottom: 1px solid #f0f2f5; font-size: 15px; }
+    .row:last-child { border-bottom: none; }
+    .k { flex: none; width: 76px; color: #999; }
+    .v { flex: 1; font-weight: 500; word-break: break-all; }
+    h2 { margin: 18px 0 10px; font-size: 15px; color: #666; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .m { background: #fff; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0, 0, 0, .06); }
+    .m .i { display: block; margin-bottom: 4px; font-size: 12px; color: #999; }
+    .m .n { font-size: 18px; font-weight: 600; word-break: break-all; }
+    .err {
+      background: #fff1f0;
+      border: 1px solid #ffa39e;
+      color: #cf1322;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app"></div>
+  <script>
+    /**
+     * 质检记录展示页（纯静态，无任何网络请求）：
+     * 生成端把记录编码在 URL # 之后（hash 不会发送到服务器，数据不落库），
+     * 本页从 hash 解码 base64url → UTF-8 JSON 后本地渲染。
+     */
+    (function () {
+      var esc = function (s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      };
+      var app = document.getElementById('app');
+      try {
+        var b64 = location.hash.replace(/^#/, '');
+        if (!b64) throw new Error('链接中未包含数据');
+        var bin = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        var d = JSON.parse(new TextDecoder().decode(bytes));
+        var html =
+          '<div class="head"><h1>质检记录</h1><span class="badge">' + esc(d.j || 'OK') + '</span></div>' +
+          '<div class="card">' +
+          '<div class="row"><span class="k">型号</span><span class="v">' + esc(d.m || '-') + '</span></div>' +
+          '<div class="row"><span class="k">序号</span><span class="v">#' + esc(d.s) + '</span></div>' +
+          '<div class="row"><span class="k">检测时间</span><span class="v">' + esc(d.t || '-') + '</span></div>' +
+          '</div>';
+        if (d.v && d.v.length) {
+          html += '<h2>测量值（' + d.v.length + '）</h2><div class="grid">';
+          for (var j = 0; j < d.v.length; j++) {
+            html += '<div class="m"><span class="i">测量 ' + (j + 1) + '</span><span class="n">' + esc(d.v[j]) + '</span></div>';
+          }
+          html += '</div>';
+        }
+        app.innerHTML = html;
+        document.title = '质检记录 #' + d.s;
+      } catch (e) {
+        app.innerHTML = '<div class="err">数据解析失败：' + esc(e.message) + '</div>';
+      }
+    })();
+  </script>
+</body>
+</html>

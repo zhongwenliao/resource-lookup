@@ -1,49 +1,55 @@
 <template>
   <div class="demo-page">
-    <div class="demo-header">
-      <h2 class="demo-title">{{ title }}</h2>
-      <p v-if="description" class="demo-desc">{{ description }}</p>
-    </div>
+    <header class="page-header">
+      <h1 class="page-title">{{ title }}</h1>
+      <p v-if="description" class="page-desc">{{ description }}</p>
+    </header>
     <slot></slot>
   </div>
 </template>
 
 <script>
-/**
- * 演示页统一容器：标题 + 描述 + 内容区
- * 所有演示页共用同一结构，保证阅读体验一致
- */
+// 页面级容器：统一「标题 + 描述 + 内容块」的文档式版式
 export default {
   name: 'DemoPage',
   props: {
-    title: { type: String, required: true },
-    description: { type: String, default: '' }
+    title: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      default: ''
+    }
   }
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .demo-page {
-  max-width: 1080px;
+  max-width: 960px;
+  padding: 32px 24px 48px;
   margin: 0 auto;
-  padding: 24px;
+}
 
-  .demo-header {
-    margin-bottom: 20px;
+.page-header {
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
 
-    .demo-title {
-      margin: 0 0 8px;
-      font-size: 22px;
-      font-weight: 600;
-      color: #262626;
-    }
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+}
 
-    .demo-desc {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.7;
-      color: #666;
-    }
-  }
+.page-desc {
+  max-width: 720px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #888;
 }
 </style>

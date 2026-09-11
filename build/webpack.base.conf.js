@@ -35,6 +35,8 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
+      // webpack 3 会把 xlsx 解析到 ESM 版 xlsx.mjs（无 default 导出），强制走 CJS 入口
+      'xlsx$': resolve('node_modules/xlsx/xlsx.js'),
       '@': resolve('src'),
       '@static': resolve('static'),
     }
