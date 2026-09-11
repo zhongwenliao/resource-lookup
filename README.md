@@ -19,7 +19,7 @@
 | Vuex | 单向数据流、mapXxx 辅助函数、异步 action | `/vuex/counter` |
 | 样式方案 | Less 变量/mixin、scoped 穿透、px2rem 链路 | `/style/less` |
 | 工程化 | require.context 自动注册、webpack 配置要点 | `/engineering/*` |
-| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池） | `/websocket/*` `/upload/*` |
+| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底） | `/websocket/*` `/upload/*` `/map/*` |
 | PWA | Service Worker 生命周期、Cache First / Network First / SWR 缓存策略、离线感知、manifest、消息通知 | `/pwa/*` |
 
 ## 目录结构
@@ -43,6 +43,7 @@ src/
     ├── engineering/      # 工程化（modules/ 子目录演示自动注册）
     ├── websocket/        # 网络通信（基础用法 / 心跳与重连）
     ├── upload/           # 大文件上传（分片/秒传/断点续传/并发池）
+    ├── map/              # 地图瓦片离线缓存（弱网模拟 / 缓存策略 / 离线兜底）
     └── pwa/              # PWA（Service Worker / 缓存策略 / 离线与通知）
 static/
 ├── sw.js                 # 手写 Service Worker（三种缓存策略，PWA 演示配套）
@@ -50,7 +51,8 @@ static/
 └── pwa-demo/             # 缓存策略测试资源
 scripts/
 ├── ws-server.js          # WebSocket 演示服务器（npm run ws:server，端口 8081）
-└── upload-server.js      # 大文件上传服务器（npm run upload:server，端口 8082）
+├── upload-server.js      # 大文件上传服务器（npm run upload:server，端口 8082）
+└── tile-server.js        # 地图瓦片服务器（npm run tile:server，端口 8083，支持弱网模拟）
 ```
 
 ## Build Setup
@@ -67,6 +69,9 @@ npm run ws:server
 
 # 启动大文件上传服务器（大文件上传演示依赖它，端口 8082）
 npm run upload:server
+
+# 启动地图瓦片服务器（瓦片离线缓存演示依赖它，端口 8083）
+npm run tile:server
 
 # build for production with minification
 npm run build

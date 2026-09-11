@@ -128,6 +128,11 @@ const routeConfig = [{
   name: 'BigFileUpload',
   component: loadingLazy('demos/upload/BigFile'),
   meta: { name: '大文件上传', group: '网络通信' }
+}, {
+  path: '/map/tile-cache',
+  name: 'MapTileCache',
+  component: loadingLazy('demos/map/TileCache'),
+  meta: { name: '地图瓦片离线缓存', group: '网络通信' }
 },
 
 // ---------- PWA ----------
@@ -136,6 +141,14 @@ const routeConfig = [{
   name: 'PwaServiceWorker',
   component: loadingLazy('demos/pwa/Pwa'),
   meta: { name: 'Service Worker 与离线缓存', group: 'PWA' }
+},
+
+// ---------- 二维码 ----------
+{
+  path: '/qrcode/generate',
+  name: 'QrcodeGenerate',
+  component: loadingLazy('demos/qrcode/Qrcode'),
+  meta: { name: '二维码生成', group: '二维码' }
 }];
 
 /**
