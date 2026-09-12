@@ -100,6 +100,11 @@ export default {
     };
   },
   computed: {
+    // 技术点：模板只能访问组件实例上的属性（data / computed / methods）——
+    // script 顶层的模块级常量对模板不可见，需经 computed（或 data）暴露后才能 v-for
+    docList () {
+      return docList;
+    },
     currentDocHtml () {
       const doc = docList.find(d => d.name === this.currentDoc);
       return doc ? md.render(doc.content) : '';

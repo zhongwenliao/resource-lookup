@@ -22,12 +22,14 @@
         <el-select v-model="iconType" size="small" style="width: 110px">
           <el-option v-for="t in ICON_TYPES" :key="t.value" :label="t.label" :value="t.value"></el-option>
         </el-select>
-        <el-button size="small" type="primary" @click="addBatch">批量 +500</el-button>
-        <el-button size="small" :type="moving ? 'warning' : 'default'" @click="toggleMove">{{ moving ? '停止移动' : '移动模拟' }}</el-button>
-        <el-button size="small" @click="clearAll">清空</el-button>
+        <el-button size="small" type="primary" :disabled="loading" @click="addBatch">批量 +500</el-button>
+        <el-button size="small" :disabled="loading" :type="moving ? 'warning' : 'default'" @click="toggleMove">{{ moving ? '停止移动' : '移动模拟' }}</el-button>
+        <el-button size="small" :disabled="loading" @click="clearAll">清空</el-button>
         <span class="label">当前 {{ count }} 个广告牌</span>
       </div>
-      <div class="cesium-wrap" ref="container"></div>
+      <div class="cesium-wrap" ref="container">
+        <div v-if="loading" class="cesium-loading">Cesium 引擎加载中（约 10MB，仅首次较慢）…</div>
+      </div>
       <div class="state-panel">
         <p>
           <span class="label">操作提示：</span>
@@ -87,7 +89,6 @@ Primitive 层：billboards.add({ position, image })
 </template>
 
 <script>
-import * as Cesium from 'cesium';
 import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
 
@@ -141,6 +142,7 @@ export default {
       count: 0,
       moving: false,
       tileReady: false,
+      loading: true, // cesium 引擎异步加载中（完成后撤遮罩）
       ICON_TYPES: [
         { value: 'blue', label: '蓝色 POI' },
         { value: 'green', label: '绿色 站点' },
@@ -189,14 +191,31 @@ export default {
         'setInterval(() => {\n' +
         '  b._lon += vel.x; b._lat += vel.y\n' +
         '  b.position = Cartesian3.fromDegrees(b._lon, b._lat)\n' +
-        '}, 100)'
+        '}, 100)\n\n' +
+        '// ⑤ 按需渲染：静止时不空转，改动后手动补帧\n' +
+        'const viewer = new Viewer(container, {\n' +
+        '  requestRenderMode: true,              // 默认 60fps 连续重画\n' +
+        '  maximumRenderTimeChange: Infinity\n' +
+        '})\n' +
+        'scene.requestRender()                   // 增删改后请求一帧'
     };
   },
-  mounted () {
+  async mounted () {
+    // 技术点：引擎按需动态加载 —— cesium 预打包产物约 10MB，
+    // 静态 import 会把它打进路由 chunk，点菜单得等下载+解析完才渲染页面；
+    // 动态 import() 让路由 chunk 保持轻量，页面骨架秒出，引擎异步就位
+    const Cesium = await import('cesium');
+    if (this._destroyed) return; // 引擎加载期间用户已切走，放弃初始化
+    this.Cesium = Cesium;
     const container = this.$refs.container;
 
     // Viewer：关闭全部 widget 与默认 Ion 影像（免 token）
+    // 技术点：requestRenderMode 按需渲染 —— 默认 60fps 连续重画（画面静止也烧
+    // CPU/GPU，拖慢同页菜单、过渡等一切 UI）；开启后仅相机/场景变化时出一帧，
+    // 程序化改动（增删广告牌、改 position）需手动 scene.requestRender() 补帧
     this.viewer = new Cesium.Viewer(container, {
+      requestRenderMode: true,
+      maximumRenderTimeChange: Infinity,
       animation: false,
       timeline: false,
       baseLayerPicker: false,
@@ -241,6 +260,7 @@ export default {
       if (Cesium.defined(picked) && picked.primitive instanceof Cesium.Billboard) {
         this.billboards.remove(picked.primitive);
         this.count = this.billboards.length;
+        this.viewer.scene.requestRender(); // 按需渲染：删除后补一帧
         return;
       }
       const cartesian = this.viewer.camera.pickEllipsoid(click.position, this.viewer.scene.globe.ellipsoid);
@@ -249,12 +269,15 @@ export default {
       this.addBillboard(Cesium.Math.toDegrees(carto.longitude), Cesium.Math.toDegrees(carto.latitude));
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+    this.loading = false; // 引擎就位，撤掉加载遮罩
+
     // 瓦片服务健康检查（仅用于页面提示）
     fetch(TILE_BASE + '/health').then((r) => {
       this.tileReady = r.ok;
     }).catch(() => {});
   },
   beforeDestroy () {
+    this._destroyed = true; // 引擎还在异步加载时切走：通知 mounted 放弃初始化
     if (this._moveTimer) clearInterval(this._moveTimer);
     if (this.handler) this.handler.destroy();
     if (this.viewer) this.viewer.destroy(); // 连带销毁 primitives
@@ -263,15 +286,16 @@ export default {
     // 添加单个广告牌：图标底部钉在点位，业务数据挂实例上供移动模拟用
     addBillboard (lon, lat, type) {
       const b = this.billboards.add({
-        position: Cesium.Cartesian3.fromDegrees(lon, lat),
+        position: this.Cesium.Cartesian3.fromDegrees(lon, lat),
         image: this.icons[type || this.iconType],
-        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM,
         scale: type ? 0.8 : 1
       });
       b._lon = lon;
       b._lat = lat;
       b._vel = [(Math.random() - 0.5) * 0.0008, (Math.random() - 0.5) * 0.0006]; // 度/步
       this.count = this.billboards.length;
+      this.viewer.scene.requestRender(); // 按需渲染：添加后补一帧
     },
 
     // 批量添加：一次 500 个随机点位，验证批渲染性能
@@ -301,14 +325,16 @@ export default {
           // 出界反弹，保持在视野附近
           if (b._lon < RAND.lon[0] || b._lon > RAND.lon[1]) b._vel[0] *= -1;
           if (b._lat < RAND.lat[0] || b._lat > RAND.lat[1]) b._vel[1] *= -1;
-          b.position = Cesium.Cartesian3.fromDegrees(b._lon, b._lat);
+          b.position = this.Cesium.Cartesian3.fromDegrees(b._lon, b._lat);
         }
+        this.viewer.scene.requestRender(); // 按需渲染：整批位移后补一帧（10fps 而非 60fps 空转）
       }, 100);
     },
 
     clearAll () {
       this.billboards.removeAll();
       this.count = 0;
+      this.viewer.scene.requestRender(); // 按需渲染：清空后补一帧
     }
   }
 };
@@ -330,6 +356,7 @@ export default {
 }
 
 .cesium-wrap {
+  position: relative;
   width: 640px;
   max-width: 100%;
   height: 384px;
@@ -337,6 +364,21 @@ export default {
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 14px;
+
+  .cesium-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+    color: #888;
+    font-size: 13px;
+    z-index: 1;
+  }
 
   /deep/ .cesium-viewer,
   /deep/ .cesium-widget,
