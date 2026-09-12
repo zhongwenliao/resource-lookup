@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- PWA：应用清单与主题色（配合 static/sw.js 构成完整 PWA） -->
-    <link rel="manifest" href="/static/manifest.json">
+    <!-- PWA：应用清单与主题色（配合 public/sw.js 构成完整 PWA） -->
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1890ff">
     <script>
       // 技术点：rem 适配 —— 设计稿基准 375px，1rem = 37.5px（clientWidth / 10）
@@ -24,6 +24,7 @@
   </head>
   <body>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <!-- Vite：以根目录 index.html 为工程入口，模块脚本直接指向源码，dev 无需打包 -->
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

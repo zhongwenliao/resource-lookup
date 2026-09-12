@@ -2,14 +2,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-// 读取各个模块的文件
-const files = require.context('.', false, /\.js$/);
+// 读取各个模块的文件（import.meta.glob 构建期展开，等价 webpack 的 require.context）
+const files = import.meta.glob('./*.js', { eager: true });
 const storeModules = {};
-files.keys().forEach(key => {
+Object.keys(files).forEach(key => {
   if (key === './index.js') {
     return;
   }
-  storeModules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default;
+  storeModules[key.replace(/(\.\/|\.js)/g, '')] = files[key].default;
 });
 
 // 调用vuex

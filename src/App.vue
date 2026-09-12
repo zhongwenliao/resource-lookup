@@ -12,9 +12,9 @@
 
 <script>
 // 导入公共头部组件
-import GlobalHeader from './common/components/GlobalHeader';
+import GlobalHeader from './components/GlobalHeader';
 // 导入公共侧边栏组件
-import GlobalSlide from './common/components/GlobalSlide';
+import GlobalSlide from './components/GlobalSlide';
 
 export default {
   name: 'App',

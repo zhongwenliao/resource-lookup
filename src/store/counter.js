@@ -1,7 +1,7 @@
 /**
  * Vuex 演示模块：完整覆盖 state / getters / mutations / actions / namespaced
  * 配套演示页：/vuex/counter
- * 本文件由 store/index.js 中 require.context 自动扫描注册，无需手动 import
+ * 本文件由 store/index.js 中 import.meta.glob 自动扫描注册，无需手动 import
  */
 export default {
   namespaced: true,

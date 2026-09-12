@@ -1,9 +1,8 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+// Vue 完整版构建（支持 template 选项）的别名配置见 vite.config.js 的 resolve.alias
 import Vue from 'vue';
-import App from './App';
-import generateRouter from './router.js';
-import store from './store';
+import App from './App.vue';
+import generateRouter from './router/index.js';
+import store from './store/index.js';
 // 技术点：双组件库共存（Element UI 2.x + Ant Design Vue 1.x），用于同场景对比沉淀
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
