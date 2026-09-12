@@ -1,12 +1,17 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue2';
+import cesium from 'vite-plugin-cesium';
 import autoprefixer from 'autoprefixer';
 import pxtorem from 'postcss-pxtorem';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    // Cesium 静态资源（Workers/Assets/Widgets）拷贝与 CESIUM_BASE_URL 注入
+    cesium()
+  ],
   resolve: {
     // 等价 webpack 的 resolve.extensions（补 .vue 以支持 import App from './App'）
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],

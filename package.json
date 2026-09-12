@@ -17,6 +17,7 @@
   "dependencies": {
     "ant-design-vue": "^1.7.8",
     "canvas-nest.js": "^2.0.4",
+    "cesium": "^1.140.0",
     "element-ui": "^2.15.14",
     "markdown-it": "^15.0.2",
     "qrcode": "^1.5.4",
@@ -39,6 +40,7 @@
     "postcss-pxtorem": "^6.1.0",
     "prettier": "^3.4.2",
     "vite": "^5.4.21",
+    "vite-plugin-cesium": "^1.2.23",
     "vue-template-compiler": "^2.7.16",
     "ws": "^8.21.3"
   },

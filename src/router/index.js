@@ -158,6 +158,11 @@ const routeConfig = [{
   name: 'MapPanorama',
   component: loadingLazy('map/Panorama'),
   meta: { name: '全景图查看器', group: '网络通信' }
+}, {
+  path: '/map/billboard',
+  name: 'MapBillboard',
+  component: loadingLazy('map/Billboard'),
+  meta: { name: 'Cesium 广告牌', group: '网络通信' }
 },
 
 // ---------- PWA ----------
