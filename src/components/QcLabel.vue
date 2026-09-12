@@ -58,7 +58,7 @@
     <demo-block
       :index="2"
       title="生成二维码标签"
-      description="每条 OK 记录一个二维码（一物一码），扫码可读出型号、序号、检测时间与全部测量值；标签明文印序号供人工核对防错贴。微信已不展示纯文本码内容，需微信扫码查看请选「网页链接」模式。">
+      description="每条 OK 记录一个二维码（一物一码），扫码可读出型号、序号、检测时间与全部测量值；标签明文印序号供人工核对防错贴。微信已不展示纯文本码内容，需微信扫码查看请选「网页链接」模式。除浏览器打印外，还可导出 BarTender BTXML 打印任务，配合既有 .btw 模板批量打印。">
 
       <!-- 操作栏：产品型号 / 标签规格 / 生成 / 打印 -->
       <div class="opt-bar">
@@ -83,6 +83,26 @@
         <el-input v-if="qrMode === 'url'" v-model="viewUrl" size="small" class="view-url-input"
           placeholder="展示页地址，如 https://your-host/qr-view.html"></el-input>
       </div>
+      <!-- BarTender 导出：OK 记录 → BTXML 打印任务脚本，配合既有 .btw 模板批量打印 -->
+      <div class="btw-bar">
+        <span class="opt-label">BarTender 模板</span>
+        <el-input v-model="btwPath" size="small" class="btw-path-input"
+          placeholder="本机 .btw 绝对路径，留空用内置模板"></el-input>
+        <span class="opt-label">数据源名</span>
+        <el-input v-model="btwField" size="small" class="btw-field-input"
+          placeholder="模板中二维码绑定的具名数据源名"></el-input>
+        <el-button type="warning" size="small" :disabled="!okRecords.length" @click="printBtxml">
+          BarTender 打印（{{ okRecords.length }} 个）
+        </el-button>
+        <el-button type="warning" size="small" plain :disabled="!okRecords.length" @click="exportBtxml">
+          导出 BTXML 文件
+        </el-button>
+      </div>
+      <p class="btw-tip">
+        「BarTender 打印」一键完成：自动调起本机 BarTender 按模板打印，无需命令行（仅安装包版本可用）。
+        「导出 BTXML 文件」导出脚本备用：命令行 <code>BarTend /XMLScript=脚本.btxml</code> 或用 BarTender 直接打开。
+        应用已内置「歌尔260701-1中框 锖色.btw」模板（启动后自动填入路径）；数据源名需与模板一致（歌尔模板为 BcQrcodeData）。
+      </p>
       <!-- 生成进度 + 就绪提示 -->
       <el-progress v-if="generating" :percentage="progress" class="gen-progress"></el-progress>
       <p v-if="qrReady" class="ready-tip">已生成 {{ okRecords.length }} 个二维码，点击「打印 / 导出 PDF」后在打印对话框中选择标签打印机，或选择「另存为 PDF」。</p>
@@ -140,6 +160,10 @@ const RECEIPT_SPECS = {
   'receipt38': { w: 38, qr: 8, gap: 1 } // 38mm 窄卷纸：一行 4 个 8mm 码
 };
 
+// 浏览器模式（npm run dev，无 Electron 主进程）下的默认模板路径：
+// 无法探测本机路径，回退到开发机上的模板原位置；安装包/Electron 环境用内置模板，不经过此常量
+const DEFAULT_BTW_PATH = 'E:\\xwechat_files\\wxid_qwxn8c1tnfo422_9f87\\msg\\file\\2026-09\\歌尔260701-1中框 锖色.btw';
+
 export default {
   name: 'QcLabel',
   components: { DemoPage, DemoBlock },
@@ -176,6 +200,11 @@ export default {
       qrMode: 'text', // 二维码内容模式：text 明文文本 / url 网页链接（微信扫码打开展示页）
       viewUrl: '', // url 模式的展示页地址（static/qr-view.html 部署后的 http 地址）
 
+      /* ---- BarTender 导出 ---- */
+      btwPath: '', // .btw 模板绝对路径（BTXML 的 <Format> 引用它；Electron 下自动填入内置模板）
+      btwField: 'BcQrcodeData', // 模板中二维码绑定的具名数据源名（歌尔模板为 BcQrcodeData）
+      bundledBtw: [], // 内置模板列表 [{ name, path }]（Electron 主进程提供；浏览器模式为空）
+
       /* ---- 生成状态 ---- */
       generating: false, // 是否正在批量生成二维码
       progress: 0, // 生成进度（百分比）
@@ -186,6 +215,18 @@ export default {
   created () {
     // 二维码缓存（故意不放 data：非响应式，避免上千条记录的 defineProperty 开销）
     this.qrStore = {};
+  },
+  mounted () {
+    // Electron 环境：取随应用打包的 .btw 模板（static/ 目录）并自动填入路径
+    if (window.electronAPI && window.electronAPI.listBtwTemplates) {
+      window.electronAPI.listBtwTemplates().then(list => {
+        this.bundledBtw = list || [];
+        if (!this.btwPath && this.bundledBtw.length) this.btwPath = this.bundledBtw[0].path;
+      });
+    } else if (!this.btwPath) {
+      // 浏览器模式（npm run dev）：无主进程，回退到开发机上的模板路径
+      this.btwPath = DEFAULT_BTW_PATH;
+    }
   },
   computed: {
     /** 合格记录（仅 OK 参与二维码生成） */
@@ -580,6 +621,90 @@ export default {
       };
       if (doc.readyState === 'complete') doPrint();
       else iframe.onload = doPrint;
+    },
+
+    /* ==================== BarTender BTXML 导出 ==================== */
+
+    /** XML 转义（属性值与文本节点通用） */
+    escapeXml (s) {
+      return String(s).replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]
+      ));
+    },
+    /**
+     * 校验并生成 BTXML 脚本内容（直接打印与导出文件共用）。
+     *   每条 OK 记录一个 <Print> 命令，二维码内容（与浏览器打印同款 buildQrText）
+     *   写入模板的具名数据源（如 BcQrcodeData），二维码由 BarTender 按模板渲染。
+     *   说明：.btw 为闭源二进制格式无法在浏览器端生成，BTXML 是 BarTender 官方自动化通道。
+     * 返回 { xml, count }；校验失败返回 { error }
+     */
+    buildBtxml () {
+      const list = this.okRecords;
+      if (!list.length) return { error: '没有可打印的 OK 记录' };
+      // 路径优先级：手填 > Electron 内置模板（static/ 随应用打包）> 浏览器模式默认路径
+      const fallback = (this.bundledBtw.length ? this.bundledBtw[0].path : '') || DEFAULT_BTW_PATH;
+      const path = this.btwPath.trim() || fallback;
+      const field = this.btwField.trim() || 'BcQrcodeData';
+      if (!/\.btw$/i.test(path)) {
+        return { error: '模板路径需以 .btw 结尾（BarTender 标签格式文件）' };
+      }
+      // 链接模式复用 generateAll 的地址校验，保证导出的二维码内容扫码可打开
+      if (this.qrMode === 'url' && !/^https?:\/\/\S+/i.test(this.viewUrl.trim())) {
+        return { error: '请先填写以 http(s):// 开头的展示页地址（static/qr-view.html 部署后的地址）' };
+      }
+      const esc = this.escapeXml;
+      const cmds = list.map((r, i) =>
+        '  <Command Name="Label' + (i + 1) + '">\n' +
+        '    <Print>\n' +
+        '      <Format>' + esc(path) + '</Format>\n' +
+        '      <NamedSubString Name="' + esc(field) + '">\n' +
+        '        <Value>' + esc(this.buildQrText(r)) + '</Value>\n' +
+        '      </NamedSubString>\n' +
+        '    </Print>\n' +
+        '  </Command>'
+      ).join('\n');
+      const xml = '<?xml version="1.0" encoding="utf-8"?>\n' +
+        '<XMLScript Version="2.0">\n' + cmds + '\n</XMLScript>\n';
+      return { xml, count: list.length };
+    },
+    /**
+     * 一键直接打印：主进程写临时 BTXML 并调起本机 BarTend.exe 执行（仅安装包/Electron 版可用）
+     */
+    async printBtxml () {
+      const r = this.buildBtxml();
+      if (r.error) { this.parseErr = r.error; return; }
+      if (!(window.electronAPI && window.electronAPI.printBtxml)) {
+        this.parseErr = '直接打印仅在安装包版本可用；当前浏览器模式请用「导出 BTXML 文件」';
+        return;
+      }
+      const res = await window.electronAPI.printBtxml(r.xml);
+      if (res && res.ok) {
+        if (this.$message) this.$message.success('已调起 BarTender 打印（' + r.count + ' 个标签）');
+      } else {
+        this.parseErr = (res && res.error) || '调起 BarTender 失败';
+      }
+    },
+    /**
+     * 导出 BTXML 文件备用（命令行 BarTend /XMLScript=脚本.btxml 执行，或用 BarTender 直接打开）
+     */
+    exportBtxml () {
+      const r = this.buildBtxml();
+      if (r.error) { this.parseErr = r.error; return; }
+      // \ufeff BOM：防止 Windows 下部分工具把无 BOM 的 UTF-8 按 ANSI 误读中文
+      const blob = new Blob(['\ufeff' + r.xml], { type: 'application/xml;charset=utf-8' });
+      const d = new Date();
+      const stamp = '' + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) +
+        '-' + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+      const name = ('质检标签-' + (this.model || '未命名') + '-' + stamp + '.btxml')
+        .replace(/[\\/:*?"<>|]/g, '_');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   }
 };
@@ -711,6 +836,44 @@ export default {
 
   .view-url-input {
     width: 340px;
+  }
+}
+
+// BarTender 导出栏：模板路径 + 具名数据源名 + 导出按钮
+.btw-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+
+  .opt-label {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .btw-path-input {
+    width: 320px;
+  }
+
+  .btw-field-input {
+    width: 150px;
+  }
+}
+
+// BarTender 导出说明：灰字小号，命令行片段用 code 样式
+.btw-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #999;
+
+  code {
+    padding: 1px 6px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    background: #f5f7fa;
+    border-radius: 3px;
   }
 }
 

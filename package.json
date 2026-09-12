@@ -9,7 +9,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build": "node build/build.js",
     "electron:dev": "electron .",
-    "electron:build": "npm run build && electron-builder --win nsis"
+    "electron:build": "set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/&& set ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/&& npm run build && electron-builder --win nsis"
   },
   "dependencies": {
     "element-ui": "^2.13.1",
@@ -76,6 +76,9 @@
   "build": {
     "appId": "com.qclabel.generator",
     "productName": "质检二维码标签生成器",
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    },
     "directories": {
       "output": "release",
       "buildResources": "build-res"
@@ -84,6 +87,9 @@
       "electron/**/*",
       "dist/**/*",
       "!node_modules/**/*"
+    ],
+    "asarUnpack": [
+      "dist/static/**/*.btw"
     ],
     "win": {
       "icon": "build-res/icon.ico",

@@ -1,5 +1,0 @@
-{
-  "name": "network-first 资源",
-  "policy": "Network First",
-  "tip": "网络优先保证最新，请求失败回退缓存；适合时效性数据（新闻/行情/用户信息）"
-}
