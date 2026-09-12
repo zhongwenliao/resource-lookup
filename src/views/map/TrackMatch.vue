@@ -54,13 +54,40 @@
 
     <demo-block
       :index="3"
+      title="原理解释：三步各自在解决什么"
+      description="先建立直觉，再看代码会顺畅很多。每一步只解决一类问题：">
+      <div class="principle">
+        <h4>① 限速剔除 —— 用「物理约束」识别不可能</h4>
+        <p><b>本质</b>：车不会瞬移。相邻两点间隔 1 秒，若推算速度达到 500km/h，错的必然是定位，不是车。</p>
+        <p><b>类比</b>：像刷卡记录对账——上一秒还在北京，下一秒出现在上海，两笔里必有一笔是假的。</p>
+        <p><b>为什么插值修补而不是直接删点</b>：删点会让时间轴缺位，里程与速度统计随之失真；插值的含义是「这个点我不信，但用前后两个可信点猜一个占位」，点数与时间保持对齐。</p>
+
+        <h4>② 卡尔曼平滑 —— 在「预测」与「观测」之间找平衡</h4>
+        <p><b>本质</b>：手里有两份都不完全准的信息——模型推算的「车应该在这」和 GPS 报的「车在这」。卡尔曼滤波的答案：按可信度加权融合。</p>
+        <pre class="mini-diagram">预测位置 ●━━━━━━━━━━━━━━━● GPS 观测位置
+              ↓ 融合
+最终估计 = 预测 + K × (观测 − 预测)     K ∈ [0,1] 为卡尔曼增益
+K → 0：完全信预测（GPS 没信号时）
+K → 1：完全信观测（模型没把握时）</pre>
+        <p><b>为什么能平滑</b>：噪声随机、正负交替，加权平均后相互抵消；真实运动连续、前后相关，被保留下来。</p>
+        <p><b>q / r 的直觉</b>：q 大 = 认为「车可能急转急停」→ 更信 GPS → 平滑弱；r 大 = 认为「GPS 很吵」→ 更信预测 → 平滑强。两者只有比值有意义。</p>
+
+        <h4>③ 路网吸附 —— 垂直投影的几何直觉</h4>
+        <p><b>本质</b>：车在路上跑，GPS 点在路边晃。把点沿垂线方向「拉回」最近的路段，就是它最可能在的位置——因为垂线段是点到直线的最短距离。</p>
+        <p><b>为什么 t 要夹到 [0,1]</b>：路是有限线段不是无限直线，投影可能落在延长线上（路口附近尤其常见），必须截回路段端点之内，否则会把点吸到「路不存在的地方」。</p>
+        <p><b>局限</b>：贪心选「最近路段」不看全局——平行路两条都近，可能吸错；这正是生产级方案改用 HMM 地图匹配（把转移概率建模进候选路段）的原因。</p>
+      </div>
+    </demo-block>
+
+    <demo-block
+      :index="4"
       title="核心算法拆解"
       description="纠偏管线三步的完整实现（与本页演示同逻辑）："
       :code="codeAlgo">
     </demo-block>
 
     <demo-block
-      :index="4"
+      :index="5"
       title="技术点速记"
       description="纠偏的核心取舍与常见坑：">
       <ul class="point-list">
@@ -105,6 +132,10 @@ ROADS.forEach((road) => {
   for (let i = 0; i < road.length - 1; i++) SEGMENTS.push([road[i], road[i + 1]]);
 });
 
+// 展平真实路径为段数组，供评估计算
+const ROUTE_SEGS = [];
+for (let i = 0; i < ROUTE.length - 1; i++) ROUTE_SEGS.push([ROUTE[i], ROUTE[i + 1]]);
+
 // 标准正态随机数（Box-Muller）
 function gauss () {
   let u = 0;
@@ -122,6 +153,22 @@ function projectToSegment (p, a, b) {
   let t = len2 ? ((p[0] - a[0]) * abx + (p[1] - a[1]) * aby) / len2 : 0;
   t = Math.max(0, Math.min(1, t)); // 夹到 [0,1]，投影落在segment内
   return [a[0] + t * abx, a[1] + t * aby];
+}
+
+// 点到线段集合的最近投影：吸附（取投影点）与评估（取距离）共用同一套
+// 「遍历 → 投影 → 取最近」逻辑，返回 [投影点, 距离]，调用方各取所需
+function nearestOnSegments (p, segs) {
+  let best = p;
+  let min = Infinity;
+  segs.forEach((seg) => {
+    const q = projectToSegment(p, seg[0], seg[1]);
+    const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
+    if (d < min) {
+      min = d;
+      best = q;
+    }
+  });
+  return [best, min];
 }
 
 export default {
@@ -307,30 +354,14 @@ export default {
       });
     },
 
-    // ③ 路网吸附：对每条候选路段做投影，取最近者
+    // ③ 路网吸附：取最近投影点
     snapToRoad (p) {
-      let best = p;
-      let min = Infinity;
-      SEGMENTS.forEach((seg) => {
-        const q = projectToSegment(p, seg[0], seg[1]);
-        const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
-        if (d < min) {
-          min = d;
-          best = q;
-        }
-      });
-      return best;
+      return nearestOnSegments(p, SEGMENTS)[0];
     },
 
     // 点到真实路径的距离（评估用）
     distToRoute (p) {
-      let min = Infinity;
-      for (let i = 0; i < ROUTE.length - 1; i++) {
-        const q = projectToSegment(p, ROUTE[i], ROUTE[i + 1]);
-        const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
-        if (d < min) min = d;
-      }
-      return min;
+      return nearestOnSegments(p, ROUTE_SEGS)[1];
     },
 
     /* ---------------- 播放与绘制 ---------------- */
@@ -522,5 +553,36 @@ export default {
   font-size: 13px;
   line-height: 2;
   color: #555;
+}
+
+.principle {
+  h4 {
+    margin: 18px 0 8px;
+    font-size: 14px;
+    color: #262626;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #555;
+  }
+
+  .mini-diagram {
+    margin: 8px 0;
+    padding: 10px 14px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #595959;
+    overflow-x: auto;
+  }
 }
 </style>

@@ -114,6 +114,14 @@ const routeConfig = [{
   meta: { name: 'import.meta.glob 自动注册', group: '工程化' }
 },
 
+// ---------- 文档渲染 ----------
+{
+  path: '/markdown/render',
+  name: 'MarkdownRender',
+  component: loadingLazy('markdown/Markdown'),
+  meta: { name: '前端渲染 Markdown 文件', group: '文档渲染' }
+},
+
 // ---------- 网络通信 ----------
 {
   path: '/websocket/basic',
@@ -140,6 +148,16 @@ const routeConfig = [{
   name: 'MapTrackMatch',
   component: loadingLazy('map/TrackMatch'),
   meta: { name: '轨迹纠偏', group: '网络通信' }
+}, {
+  path: '/map/geofence',
+  name: 'MapGeofence',
+  component: loadingLazy('map/Geofence'),
+  meta: { name: '电子围栏', group: '网络通信' }
+}, {
+  path: '/map/panorama',
+  name: 'MapPanorama',
+  component: loadingLazy('map/Panorama'),
+  meta: { name: '全景图查看器', group: '网络通信' }
 },
 
 // ---------- PWA ----------
