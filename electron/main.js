@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { execSync, spawn } = require('child_process');
+const license = require('./license');
 
 // 随应用打包的 static 目录：.btw 模板经 asarUnpack 解包到 app.asar.unpacked，
 // BarTender 等外部程序才能按绝对路径读取（asar 归档内的文件外部程序不可见）
@@ -50,9 +51,19 @@ function findBarTendExe () {
   return null;
 }
 
+// ==================== 授权(试用期 + 授权码)====================
+// 渲染进程启动时查询状态;过期后界面锁死,激活需输入与机器码绑定的授权码
+ipcMain.handle('license:get-state', () => license.getState());
+ipcMain.handle('license:activate', (event, code) => license.activate(code));
+
 // 直接打印：BTXML 写临时文件 → 调 BarTend.exe /XMLScript 执行（一键完成，无需命令行）
 ipcMain.handle('btw:print-btxml', async (event, xml) => {
   try {
+    // 主进程侧授权校验(纵深防御:即使渲染层被绕过,过期后打印通道同样关闭)
+    const st = license.getState();
+    if (st.status === 'expired') {
+      return { ok: false, error: '试用期已结束，请激活后再使用打印功能' };
+    }
     if (!xml || typeof xml !== 'string') return { ok: false, error: '打印内容为空' };
     const exe = findBarTendExe();
     if (!exe) {

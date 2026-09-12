@@ -1,12 +1,17 @@
 <template>
   <div id="app">
-    <router-view/>
+    <license-gate>
+      <router-view/>
+    </license-gate>
   </div>
 </template>
 
 <script>
+import LicenseGate from '@/components/LicenseGate';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: { LicenseGate }
 };
 </script>
 
