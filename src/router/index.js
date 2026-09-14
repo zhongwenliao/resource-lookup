@@ -217,6 +217,11 @@ const routeConfig = [{
   component: loadingLazy('xml/Interaction'),
   meta: { name: 'XML 与 HTML 交互', group: '网络通信' }
 }, {
+  path: '/map/coord-transform',
+  name: 'MapCoordTransform',
+  component: loadingLazy('map/CoordTransform'),
+  meta: { name: '地图坐标转换', group: '网络通信' }
+}, {
   path: '/map/tile-cache',
   name: 'MapTileCache',
   component: loadingLazy('map/TileCache'),

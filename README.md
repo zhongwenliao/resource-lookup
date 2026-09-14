@@ -26,7 +26,7 @@
 | 前端安全 | XSS 注入演示与净化、CSRF 攻击链路 | `/security/xss-csrf` |
 | 工程化 | import.meta.glob 自动注册、Vite 配置要点 | `/engineering/*` |
 | 文档渲染 | markdown-it 前端渲染 Markdown 文件 | `/markdown/render` |
-| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底）、轨迹纠偏（限速剔除/卡尔曼平滑/路网吸附）、电子围栏、全景图查看器、Cesium 动态广告牌 | `/websocket/*` `/upload/*` `/map/*` |
+| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底）、轨迹纠偏（限速剔除/卡尔曼平滑/路网吸附）、电子围栏、全景图查看器、Cesium 动态广告牌、地图坐标转换（WGS-84/GCJ-02/BD-09、迭代逆推、回环误差） | `/websocket/*` `/upload/*` `/map/*` |
 | XML 交互 | DOMParser 解析、parsererror 严格性、XPath 查询、XSLT 转换渲染、JS 同步桥（MutationObserver + CustomEvent 双向同步）、XHR/fetch 加载 XML | `/xml/interaction` |
 | PWA | Service Worker 生命周期、Cache First / Network First / SWR 缓存策略、离线感知、manifest、消息通知 | `/pwa/*` |
 | 二维码 | qrcode 生成、容错级别/边距配置 | `/qrcode/generate` |
@@ -72,7 +72,7 @@
         ├── websocket/    #   网络通信（基础用法 / 心跳与重连）
         ├── upload/       #   大文件上传（分片/秒传/断点续传/并发池）
         ├── xml/          #   XML 交互（DOMParser / XPath / XSLT / JS 同步桥 / XHR 加载）
-        ├── map/          #   地图（瓦片缓存 / 轨迹纠偏 / 电子围栏 / 全景图 / 广告牌）
+        ├── map/          #   地图（坐标转换 / 瓦片缓存 / 轨迹纠偏 / 电子围栏 / 全景图 / 广告牌）
         ├── pwa/          #   PWA（Service Worker / 缓存策略 / 离线与通知）
         └── qrcode/       #   二维码
 ```
