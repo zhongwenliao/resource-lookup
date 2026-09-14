@@ -97,7 +97,7 @@ export default {
       }, {
         path: '/browser/process',
         title: '浏览器原理',
-        desc: '多进程架构、渲染线程互斥、Web Worker 并行计算'
+        desc: '多进程架构、渲染线程互斥、Web Worker 并行计算、iframe 跨窗口通信'
       }, {
         path: '/performance/debounce-throttle',
         title: '性能优化',

@@ -130,6 +130,11 @@ const routeConfig = [{
   name: 'BrowserProcess',
   component: loadingLazy('browser/Process'),
   meta: { name: '浏览器进程与线程', group: '浏览器原理' }
+}, {
+  path: '/browser/iframe',
+  name: 'BrowserIframe',
+  component: loadingLazy('browser/Iframe'),
+  meta: { name: 'iframe 跨窗口通信', group: '浏览器原理' }
 },
 
 // ---------- 性能优化 ----------

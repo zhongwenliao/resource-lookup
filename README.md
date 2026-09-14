@@ -19,7 +19,7 @@
 | Vuex | 单向数据流、mapXxx 辅助函数、异步 action | `/vuex/counter` |
 | 样式方案 | Less 变量/mixin、scoped 穿透、px2rem 链路 | `/style/less` |
 | JS 核心 | 事件循环执行顺序、Promise 并发调度器、深拷贝四种方案 | `/javascript/*` |
-| 浏览器原理 | 多进程架构、渲染进程多线程、GUI 与 JS 互斥、Web Worker 并行计算 | `/browser/process` |
+| 浏览器原理 | 多进程架构、渲染进程多线程、Web Worker 并行计算、iframe 跨窗口通信 | `/browser/*` |
 | 性能优化 | 防抖节流手写实现、万条数据虚拟滚动 | `/performance/*` |
 | 错误监控 | 四大错误入口捕获、上报设计与踩坑 | `/monitor/error` |
 | 浏览器存储 | 五类存储能力矩阵、跨标签页同步 | `/storage/compare` |
@@ -59,7 +59,7 @@
         ├── vuex/         #   Vuex
         ├── style/        #   样式方案
         ├── javascript/   #   JS 核心（事件循环 / Promise 并发 / 深拷贝）
-        ├── browser/      #   浏览器原理（进程与线程 / Web Worker）
+        ├── browser/      #   浏览器原理（进程与线程 / Web Worker / iframe 通信）
         ├── performance/  #   性能优化（防抖节流 / 虚拟滚动）
         ├── monitor/      #   错误监控（错误捕获与上报）
         ├── storage/      #   浏览器存储（存储方案对比）

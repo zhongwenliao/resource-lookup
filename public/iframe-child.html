@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iframe 子页面（同源演示）</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 14px 16px;
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+      color: #262626;
+      background: #fff;
+    }
+    .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .tag {
+      padding: 2px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      background: #f6ffed;
+      border: 1px solid #b7eb8f;
+      color: #52c41a;
+    }
+    .tag.blue { background: #e6f7ff; border-color: #91d5ff; color: #1890ff; }
+    .tag code { font-size: 12px; }
+    .counter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      background: #fafafa;
+      border-radius: 4px;
+    }
+    #count {
+      min-width: 48px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #1890ff;
+      color: #fff;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    #count.flash { background: #fa8c16; }
+    .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    button {
+      padding: 5px 12px;
+      border: 1px solid #1890ff;
+      border-radius: 3px;
+      background: #fff;
+      color: #1890ff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button:hover { background: #e6f7ff; }
+    button.green { border-color: #52c41a; color: #52c41a; }
+    button.green:hover { background: #f6ffed; }
+    .log {
+      margin: 0;
+      padding: 8px 10px;
+      list-style: none;
+      background: #fafafa;
+      border-radius: 4px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+    .log li { line-height: 1.9; display: flex; gap: 8px; }
+    .log .t { color: #bbb; flex-shrink: 0; }
+    .log .in { color: #1890ff; }
+    .log .out { color: #52c41a; }
+    .log .sys { color: #888; }
+    .log .empty { color: #bbb; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <span class="tag blue">子页面 · origin: <code id="origin">（读取中）</code></span>
+    <span class="tag">与父页面同源 → 允许 contentDocument 直接访问</span>
+  </div>
+
+  <div class="counter-row">
+    计数器（父页面可直接读写的 DOM 节点）：
+    <b id="count">0</b>
+    <button class="green" id="btn-inc">自己 +1（子页内部操作）</button>
+  </div>
+
+  <div class="btns">
+    <button id="btn-up">postMessage → 父页面</button>
+    <button id="btn-up-broadcast">postMessage → 顶层窗口（window.top）</button>
+  </div>
+
+  <ul class="log" id="log">
+    <li class="empty">（子页面消息日志，等待父页面指令…）</li>
+  </ul>
+
+  <script>
+    // 纯原生实现：iframe 通信演示不依赖任何框架，看清最原始的 API
+    (function () {
+      var count = 0;
+      var logEl = document.getElementById('log');
+      var countEl = document.getElementById('count');
+
+      // 技术点：子页面被嵌入时，location.origin 就是自己的源
+      document.getElementById('origin').textContent = location.origin;
+
+      function log (text, type) {
+        if (logEl.querySelector('.empty')) logEl.innerHTML = '';
+        var li = document.createElement('li');
+        var t = new Date();
+        var ts = t.toTimeString().slice(0, 8) + '.' + ('00' + t.getMilliseconds()).slice(-3);
+        li.innerHTML = '<span class="t">' + ts + '</span><span class="' + (type || 'sys') + '">' + text + '</span>';
+        logEl.appendChild(li);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function setCount (val, from) {
+        count = val;
+        countEl.textContent = count;
+        countEl.classList.add('flash');
+        setTimeout(function () { countEl.classList.remove('flash'); }, 400);
+        log('计数器被 ' + from + ' 改为 ' + count, 'sys');
+      }
+
+      // ---- 收消息：message 事件是 iframe 通信的统一入口 ----
+      window.addEventListener('message', function (e) {
+        // 安全要点①：先校验来源。同源演示放开为注释；跨域生产必须白名单校验：
+        // if (e.origin !== 'https://parent.example.com') return;
+        var data = e.data;
+
+        // 安全要点②：按 type 分发指令，只认白名单消息，不 eval、不拼接 HTML
+        if (data && typeof data === 'object') {
+          if (data.type === 'setCount') {
+            setCount(Number(data.value) || 0, '父页面 postMessage 指令');
+            // 技术点：用 e.source + e.origin 定向回信（不要用 window.parent 猜）
+            e.source.postMessage({ type: 'countChanged', value: count }, e.origin);
+            return;
+          }
+          if (data.type === 'getCount') {
+            log('收到父页面数据请求 getCount，回信中…', 'in');
+            e.source.postMessage({ type: 'count', value: count }, e.origin);
+            return;
+          }
+          if (data.type === 'ping') {
+            e.source.postMessage({ type: 'pong', value: count }, e.origin);
+            log('收到 ping，已回 pong', 'in');
+            return;
+          }
+        }
+        log('收到消息: ' + (typeof data === 'object' ? JSON.stringify(data) : data) +
+          '（e.origin=' + e.origin + '）', 'in');
+      });
+
+      // ---- 发消息：子 → 父 ----
+      document.getElementById('btn-up').onclick = function () {
+        var msg = { type: 'hello', from: 'child', time: Date.now() };
+        // 技术点：targetOrigin 写父页面真实的源（同源即 location.origin）；
+        // 写 '*' 任何源都能收到，仅用于不敏感数据
+        window.parent.postMessage(msg, location.origin);
+        log('已 postMessage → 父页面: ' + JSON.stringify(msg), 'out');
+      };
+
+      document.getElementById('btn-up-broadcast').onclick = function () {
+        // window.top 是最顶层窗口；多层嵌套时 parent 只是上一层
+        var depth = window === window.top ? 0 : (window === window.parent ? 1 : 2);
+        var msg = { type: 'top-hello', note: '发给 window.top', depth: depth };
+        window.top.postMessage(msg, location.origin);
+        log('已 postMessage → 顶层窗口（嵌套层级 ' + depth + '）', 'out');
+      };
+
+      document.getElementById('btn-inc').onclick = function () {
+        setCount(count + 1, '子页面自己');
+      };
+
+      // ---- 同源特权：向父页面暴露可直接调用的 API ----
+      // 跨域时父页面拿到的 contentWindow 是受限代理，访问 childApi 会抛 SecurityError
+      window.childApi = {
+        version: '1.0.0',
+        getCount: function () { return count; },
+        reset: function () { setCount(0, '父页面直接调用 childApi.reset()'); return 'ok'; }
+      };
+
+      log('子页面就绪，已暴露 window.childApi 供父页面同源直接调用', 'sys');
+    })();
+  </script>
+</body>
+</html>
