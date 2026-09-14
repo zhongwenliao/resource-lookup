@@ -1,7 +1,7 @@
 <template>
   <demo-page
     title="前端技术沉淀"
-    description="这不是业务项目，而是一个可运行的前端技术练习场：每个技术点一个可交互示例，边看边玩。所有示例基于本项目的真实工程配置（webpack 3 + Vue 2 全家桶）。">
+    description="这不是业务项目，而是一个可运行的前端技术练习场：每个技术点一个可交互示例，边看边玩。所有示例基于本项目的真实工程配置（Vite 5 + Vue 2 全家桶）。">
     <demo-block
       :index="1"
       title="技术栈"
@@ -34,7 +34,7 @@
       <pre class="quick-start"><code># 安装依赖
 npm install
 
-# 本地开发（webpack-dev-server 热更新）
+# 本地开发（Vite dev server 热更新）
 npm run dev
 
 # 生产构建
@@ -90,6 +90,30 @@ export default {
         path: '/engineering/auto-register',
         title: '工程化',
         desc: 'import.meta.glob 自动注册、Vite 配置要点'
+      }, {
+        path: '/javascript/event-loop',
+        title: 'JS 核心',
+        desc: '事件循环执行顺序、Promise 并发调度器、深拷贝四种方案'
+      }, {
+        path: '/browser/process',
+        title: '浏览器原理',
+        desc: '多进程架构、渲染线程互斥、Web Worker 并行计算'
+      }, {
+        path: '/performance/debounce-throttle',
+        title: '性能优化',
+        desc: '防抖节流手写实现、万条数据虚拟滚动'
+      }, {
+        path: '/monitor/error',
+        title: '错误监控',
+        desc: '四大错误入口捕获、上报设计与踩坑'
+      }, {
+        path: '/storage/compare',
+        title: '浏览器存储',
+        desc: '五类存储能力矩阵、跨标签页同步'
+      }, {
+        path: '/security/xss-csrf',
+        title: '前端安全',
+        desc: 'XSS 注入演示与净化、CSRF 攻击链路'
       }]
     };
   }

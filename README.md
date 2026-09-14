@@ -18,8 +18,15 @@
 | 路由方案 | 动态参数、编程式导航、导航守卫与执行顺序 | `/router/*` |
 | Vuex | 单向数据流、mapXxx 辅助函数、异步 action | `/vuex/counter` |
 | 样式方案 | Less 变量/mixin、scoped 穿透、px2rem 链路 | `/style/less` |
+| JS 核心 | 事件循环执行顺序、Promise 并发调度器、深拷贝四种方案 | `/javascript/*` |
+| 浏览器原理 | 多进程架构、渲染进程多线程、GUI 与 JS 互斥、Web Worker 并行计算 | `/browser/process` |
+| 性能优化 | 防抖节流手写实现、万条数据虚拟滚动 | `/performance/*` |
+| 错误监控 | 四大错误入口捕获、上报设计与踩坑 | `/monitor/error` |
+| 浏览器存储 | 五类存储能力矩阵、跨标签页同步 | `/storage/compare` |
+| 前端安全 | XSS 注入演示与净化、CSRF 攻击链路 | `/security/xss-csrf` |
 | 工程化 | import.meta.glob 自动注册、Vite 配置要点 | `/engineering/*` |
-| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底）、轨迹纠偏（限速剔除/卡尔曼平滑/路网吸附） | `/websocket/*` `/upload/*` `/map/*` |
+| 文档渲染 | markdown-it 前端渲染 Markdown 文件 | `/markdown/render` |
+| 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底）、轨迹纠偏（限速剔除/卡尔曼平滑/路网吸附）、电子围栏、全景图查看器、Cesium 动态广告牌 | `/websocket/*` `/upload/*` `/map/*` |
 | PWA | Service Worker 生命周期、Cache First / Network First / SWR 缓存策略、离线感知、manifest、消息通知 | `/pwa/*` |
 | 二维码 | qrcode 生成、容错级别/边距配置 | `/qrcode/generate` |
 
@@ -51,10 +58,17 @@
         ├── router/       #   路由方案
         ├── vuex/         #   Vuex
         ├── style/        #   样式方案
+        ├── javascript/   #   JS 核心（事件循环 / Promise 并发 / 深拷贝）
+        ├── browser/      #   浏览器原理（进程与线程 / Web Worker）
+        ├── performance/  #   性能优化（防抖节流 / 虚拟滚动）
+        ├── monitor/      #   错误监控（错误捕获与上报）
+        ├── storage/      #   浏览器存储（存储方案对比）
+        ├── security/     #   前端安全（XSS 与 CSRF）
         ├── engineering/  #   工程化（modules/ 子目录演示自动注册）
+        ├── markdown/     #   文档渲染（markdown-it 渲染 Markdown 文件）
         ├── websocket/    #   网络通信（基础用法 / 心跳与重连）
         ├── upload/       #   大文件上传（分片/秒传/断点续传/并发池）
-        ├── map/          #   地图（瓦片离线缓存 / 轨迹纠偏）
+        ├── map/          #   地图（瓦片缓存 / 轨迹纠偏 / 电子围栏 / 全景图 / 广告牌）
         ├── pwa/          #   PWA（Service Worker / 缓存策略 / 离线与通知）
         └── qrcode/       #   二维码
 ```

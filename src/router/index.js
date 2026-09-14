@@ -106,6 +106,69 @@ const routeConfig = [{
   meta: { name: 'Less 与 scoped', group: '样式方案' }
 },
 
+// ---------- JS 核心 ----------
+{
+  path: '/javascript/event-loop',
+  name: 'EventLoop',
+  component: loadingLazy('javascript/EventLoop'),
+  meta: { name: '事件循环与执行顺序', group: 'JS 核心' }
+}, {
+  path: '/javascript/promise-concurrency',
+  name: 'PromiseConcurrency',
+  component: loadingLazy('javascript/PromiseConcurrency'),
+  meta: { name: 'Promise 并发控制', group: 'JS 核心' }
+}, {
+  path: '/javascript/deep-clone',
+  name: 'DeepClone',
+  component: loadingLazy('javascript/DeepClone'),
+  meta: { name: '深拷贝四种方案', group: 'JS 核心' }
+},
+
+// ---------- 浏览器原理 ----------
+{
+  path: '/browser/process',
+  name: 'BrowserProcess',
+  component: loadingLazy('browser/Process'),
+  meta: { name: '浏览器进程与线程', group: '浏览器原理' }
+},
+
+// ---------- 性能优化 ----------
+{
+  path: '/performance/debounce-throttle',
+  name: 'DebounceThrottle',
+  component: loadingLazy('performance/DebounceThrottle'),
+  meta: { name: '防抖与节流', group: '性能优化' }
+}, {
+  path: '/performance/virtual-list',
+  name: 'VirtualList',
+  component: loadingLazy('performance/VirtualList'),
+  meta: { name: '长列表虚拟滚动', group: '性能优化' }
+},
+
+// ---------- 错误监控 ----------
+{
+  path: '/monitor/error',
+  name: 'ErrorMonitor',
+  component: loadingLazy('monitor/ErrorMonitor'),
+  meta: { name: '错误捕获与上报', group: '错误监控' }
+},
+
+// ---------- 浏览器存储 ----------
+{
+  path: '/storage/compare',
+  name: 'StorageCompare',
+  component: loadingLazy('storage/StorageCompare'),
+  meta: { name: '存储方案对比', group: '浏览器存储' }
+},
+
+// ---------- 前端安全 ----------
+{
+  path: '/security/xss-csrf',
+  name: 'XssCsrf',
+  component: loadingLazy('security/XssCsrf'),
+  meta: { name: 'XSS 与 CSRF 攻防', group: '前端安全' }
+},
+
 // ---------- 工程化 ----------
 {
   path: '/engineering/auto-register',
