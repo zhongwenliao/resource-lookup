@@ -93,7 +93,7 @@ export default {
       }, {
         path: '/javascript/event-loop',
         title: 'JS 核心',
-        desc: '事件循环执行顺序、Promise 并发调度器、深拷贝四种方案'
+        desc: '事件循环执行顺序、Promise 并发调度器、深拷贝四种方案、DOM 事件交互'
       }, {
         path: '/browser/process',
         title: '浏览器原理',

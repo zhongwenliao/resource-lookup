@@ -18,7 +18,7 @@
 | 路由方案 | 动态参数、编程式导航、导航守卫与执行顺序 | `/router/*` |
 | Vuex | 单向数据流、mapXxx 辅助函数、异步 action | `/vuex/counter` |
 | 样式方案 | Less 变量/mixin、scoped 穿透、px2rem 链路 | `/style/less` |
-| JS 核心 | 事件循环执行顺序、Promise 并发调度器、深拷贝四种方案 | `/javascript/*` |
+| JS 核心 | 事件循环执行顺序、Promise 并发调度器、深拷贝四种方案、DOM 事件交互（事件流/委托/自定义事件） | `/javascript/*` |
 | 浏览器原理 | 多进程架构、渲染进程多线程、Web Worker 并行计算、iframe 跨窗口通信 | `/browser/*` |
 | 性能优化 | 防抖节流手写实现、万条数据虚拟滚动 | `/performance/*` |
 | 错误监控 | 四大错误入口捕获、上报设计与踩坑 | `/monitor/error` |
@@ -27,6 +27,7 @@
 | 工程化 | import.meta.glob 自动注册、Vite 配置要点 | `/engineering/*` |
 | 文档渲染 | markdown-it 前端渲染 Markdown 文件 | `/markdown/render` |
 | 网络通信 | WebSocket 状态机、心跳保活、指数退避重连、大文件上传（分片/秒传/断点续传/并发池）、地图瓦片离线缓存（弱网模拟/Cache First/SWR/离线兜底）、轨迹纠偏（限速剔除/卡尔曼平滑/路网吸附）、电子围栏、全景图查看器、Cesium 动态广告牌 | `/websocket/*` `/upload/*` `/map/*` |
+| XML 交互 | DOMParser 解析、parsererror 严格性、XPath 查询、XSLT 转换渲染、JS 同步桥（MutationObserver + CustomEvent 双向同步）、XHR/fetch 加载 XML | `/xml/interaction` |
 | PWA | Service Worker 生命周期、Cache First / Network First / SWR 缓存策略、离线感知、manifest、消息通知 | `/pwa/*` |
 | 二维码 | qrcode 生成、容错级别/边距配置 | `/qrcode/generate` |
 
@@ -38,7 +39,9 @@
 ├── public/               # 静态资源（Vite 约定，构建时原样拷贝）
 │   ├── sw.js             #   手写 Service Worker（三种缓存策略，PWA 演示配套）
 │   ├── manifest.json     #   PWA 应用清单（index.html 已关联）
-│   └── pwa-demo/         #   缓存策略测试资源
+│   ├── pwa-demo/         #   缓存策略测试资源
+│   ├── iframe-child.html #   iframe 通信演示子页面（原生实现）
+│   └── feed.xml          #   模拟 RSS 订阅源（XML 交互演示的数据源）
 ├── scripts/              # 本地演示服务器（Node 脚本，与前端工程解耦）
 │   ├── ws-server.js      #   WebSocket 服务器（npm run ws:server，端口 8081）
 │   ├── upload-server.js  #   大文件上传服务器（npm run upload:server，端口 8082）
@@ -58,7 +61,7 @@
         ├── router/       #   路由方案
         ├── vuex/         #   Vuex
         ├── style/        #   样式方案
-        ├── javascript/   #   JS 核心（事件循环 / Promise 并发 / 深拷贝）
+        ├── javascript/   #   JS 核心（事件循环 / Promise 并发 / 深拷贝 / DOM 事件交互）
         ├── browser/      #   浏览器原理（进程与线程 / Web Worker / iframe 通信）
         ├── performance/  #   性能优化（防抖节流 / 虚拟滚动）
         ├── monitor/      #   错误监控（错误捕获与上报）
@@ -68,6 +71,7 @@
         ├── markdown/     #   文档渲染（markdown-it 渲染 Markdown 文件）
         ├── websocket/    #   网络通信（基础用法 / 心跳与重连）
         ├── upload/       #   大文件上传（分片/秒传/断点续传/并发池）
+        ├── xml/          #   XML 交互（DOMParser / XPath / XSLT / JS 同步桥 / XHR 加载）
         ├── map/          #   地图（瓦片缓存 / 轨迹纠偏 / 电子围栏 / 全景图 / 广告牌）
         ├── pwa/          #   PWA（Service Worker / 缓存策略 / 离线与通知）
         └── qrcode/       #   二维码

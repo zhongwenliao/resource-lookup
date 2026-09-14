@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 模拟 RSS 2.0 订阅源：XML 交互演示的网络数据源（真实 HTTP 请求加载） -->
+<rss version="2.0">
+  <channel>
+    <title>前端技术沉淀 · 更新日志</title>
+    <link>https://example.com/changelog</link>
+    <description>resource-lookup 项目各技术模块的更新记录</description>
+    <item>
+      <title>新增 iframe 跨窗口通信模块</title>
+      <link>/browser/iframe</link>
+      <category>浏览器原理</category>
+      <pubDate>Mon, 14 Sep 2026 09:00:00 +0800</pubDate>
+      <description>postMessage 双向收发、同源直访、跨域方案演进、sandbox 安全</description>
+    </item>
+    <item>
+      <title>新增浏览器进程与线程模块</title>
+      <link>/browser/process</link>
+      <category>浏览器原理</category>
+      <pubDate>Sun, 13 Sep 2026 15:30:00 +0800</pubDate>
+      <description>多进程架构、GUI 与 JS 引擎互斥、主线程 vs Web Worker 可运行对比</description>
+    </item>
+    <item>
+      <title>新增 JS 核心三页</title>
+      <link>/javascript/event-loop</link>
+      <category>JS 核心</category>
+      <pubDate>Sat, 12 Sep 2026 20:00:00 +0800</pubDate>
+      <description>事件循环执行顺序、Promise 并发调度器、深拷贝四种方案</description>
+    </item>
+    <item>
+      <title>新增前端安全模块</title>
+      <link>/security/xss-csrf</link>
+      <category>前端安全</category>
+      <pubDate>Fri, 11 Sep 2026 11:20:00 +0800</pubDate>
+      <description>XSS 注入演示与净化、CSRF 攻击链路与防御</description>
+    </item>
+    <item>
+      <title>新增浏览器存储模块</title>
+      <link>/storage/compare</link>
+      <category>浏览器存储</category>
+      <pubDate>Thu, 10 Sep 2026 18:45:00 +0800</pubDate>
+      <description>五类存储能力矩阵、跨标签页同步方案</description>
+    </item>
+  </channel>
+</rss>

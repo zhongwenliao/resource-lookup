@@ -99,5 +99,5 @@ npm run tile:server    # 地图瓦片服务（端口 8083，map 模块依赖，�
     ├── components/       # 公共组件（DemoPage / DemoBlock / 布局组件）
     └── views/            # 演示页（按模块分目录：vue/ ui/ router/ vuex/ style/
                           #   javascript/ browser/ performance/ monitor/ storage/ security/
-                          #   engineering/ markdown/ websocket/ upload/ map/ pwa/ qrcode/）
+                          #   engineering/ markdown/ websocket/ upload/ xml/ map/ pwa/ qrcode/）
 ```

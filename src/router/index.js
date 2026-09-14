@@ -122,6 +122,11 @@ const routeConfig = [{
   name: 'DeepClone',
   component: loadingLazy('javascript/DeepClone'),
   meta: { name: '深拷贝四种方案', group: 'JS 核心' }
+}, {
+  path: '/javascript/events',
+  name: 'DomEvents',
+  component: loadingLazy('javascript/Events'),
+  meta: { name: 'DOM 事件交互', group: 'JS 核心' }
 },
 
 // ---------- 浏览器原理 ----------
@@ -206,6 +211,11 @@ const routeConfig = [{
   name: 'BigFileUpload',
   component: loadingLazy('upload/BigFile'),
   meta: { name: '大文件上传', group: '网络通信' }
+}, {
+  path: '/xml/interaction',
+  name: 'XmlInteraction',
+  component: loadingLazy('xml/Interaction'),
+  meta: { name: 'XML 与 HTML 交互', group: '网络通信' }
 }, {
   path: '/map/tile-cache',
   name: 'MapTileCache',
