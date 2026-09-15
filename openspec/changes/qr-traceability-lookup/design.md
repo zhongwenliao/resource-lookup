@@ -2,11 +2,11 @@
 
 ## Context
 
-现有应用为单路由（`/` → `QcLabel.vue`）的 Electron + Vue 2 应用，二维码三种内容模式的生成端实现均在 `QcLabel.vue`：
+现有应用为单路由（`/` → `QcLabel.vue`）的 Electron + Vue 2 应用。二维码内容模式已由生成端变更 `qr-code-generation` 收窄为仅编码规则模式（明文文本与网页链接模式移除，`static/qr-view.html` 展示页删除）：
 
-- 明文文本：`型号:…\n序号:…\n时间:…\n判定:…\n测量:…`（`buildQrText`）
-- 网页链接：`viewUrl + '#' + base64url(UTF-8(JSON))`（`encodeRecord`，字段 `m/s/t/j/v`），展示端为 `static/qr-view.html`
-- 编码规则：`项目+组件+阶段码+颜色码+供方/原材/阳极首字母+年份末位+月份码+两位日期+五位流水码`（`buildRuleCode`，映射常量 `STAGE_OPTIONS`/`COLOR_OPTIONS`/`MONTH_CODES`）
+- 编码规则：`项目+组件+阶段码+颜色码+供方/原材/阳极首字母+年份末位+月份码+两位日期+五位流水码`（`buildRuleCode`，映射常量已抽取至共享模块 `src/common/qc-code-rules.js` 的 `STAGE_CODE_MAP`/`COLOR_CODE_MAP`/`MONTH_CODES`）
+- 早期产出的历史明文码：`型号:…\n序号:…\n时间:…\n判定:…\n测量:…`（查询端仍需可解析）
+- 历史网页链接码：依赖服务器部署的展示页，随模式移除不再支持
 
 约束：纯前端、数据不出本机；webpack 3 + Vue 2 + Element UI 技术栈；Electron `contextIsolation: true`。生成端变更 `qr-code-generation` 已决策二维码内容只保留编码规则模式，并把每条 OK 记录的规则码内嵌进批次记录持久化（IndexedDB），本变更的规则码查询需消费该关联数据回查记录。
 
@@ -14,7 +14,7 @@
 
 **Goals:**
 
-- 新增溯源查询页，离线解析三种模式的码值并展示结构化溯源信息
+- 新增溯源查询页，离线解析两种模式（历史明文文本/编码规则）的码值并展示结构化溯源信息
 - 解析端与生成端规则互逆，且共享同一份映射常量防止漂移
 - 摄像头扫码作为增强入口，不可用时无缝降级为手动输入
 - 编码规则码在拆段展示之外，按码回查本地批次库中的关联检测记录
@@ -22,7 +22,7 @@
 **Non-Goals:**
 
 - 不改动现有生成、打印、BTXML 导出的行为与界面结构
-- 不做服务器端溯源数据库、不做 `qr-view.html` 展示页改造
+- 不做服务器端溯源数据库（`qr-view.html` 展示页已随生成端模式收窄删除）
 - 不做批量查询/导入历史 Excel 反查（后续可选）
 
 ## Decisions
@@ -35,7 +35,7 @@
 
 ### D2. 解析逻辑独立成纯函数模块
 
-新建 `src/common/qc-code-rules.js`：把 `STAGE_OPTIONS`/`COLOR_OPTIONS`/`MONTH_CODES` 及阶段/颜色/月份的反查映射、base64url 编解码、规则码拆段函数从 `QcLabel.vue` 抽出（QcLabel 改为引用，行为不变）。`src/common/qr-parse.js` 提供纯函数 `parseQrContent(text)` → `{ mode, data | error }`，供查询页调用。
+新建 `src/common/qc-code-rules.js`：把 `STAGE_CODE_MAP`/`COLOR_CODE_MAP`/`MONTH_CODES` 及阶段/颜色/月份的反查映射、`pad2`/`pad5`、规则码拆段函数 `splitRuleCode` 从 `QcLabel.vue` 抽出（QcLabel 改为引用，行为不变）。`src/common/qr-parse.js` 提供纯函数 `parseQrContent(text)` → `{ mode, data | error }`，供查询页调用。
 
 - 理由：解析端必须与生成端共享映射常量，否则规则漂移（如新增颜色）会导致解析错误；纯函数便于验证各场景。
 - 备选：解析逻辑写在 QrLookup 组件内 —— 与生成端常量重复，弃用。
@@ -44,10 +44,9 @@
 
 `parseQrContent` 按以下顺序判定（先具体后宽泛）：
 
-1. **网页链接**：`/^https?:\/\//i` 且含 `#` 且 `#` 后非空 → 解码校验失败则报错（不回退其他模式，避免把损坏链接误判为规则码）
-2. **明文文本**：包含「型号:」特征行 → 按行前缀解析
-3. **编码规则**：单行、无空白字符、总长度 ≥ 14（前缀至少 2 字符 + 尾部固定 12 位），且尾部 12 位逐段校验通过（流水码 5 位数字、日期 2 位数字、月份码 ∈ 1-9/A/B/C、年份 1 位数字、供方/原材/阳极 3 位字母）
-4. 其余 → 无法识别
+1. **明文文本**：包含「型号:」特征行 + 至少一个其他已知字段行（序号/时间/判定/测量）共同判定 → 按行前缀解析；仅有「型号:」行而缺其他字段行时判为无法识别（避免第三方工具产出的相似文本误判）
+2. **编码规则**：单行、无空白字符、总长度 ≥ 14（尾部固定 12 位 + 阶段码 1 位 + 颜色码 1 位，前缀允许为空），且逐段校验通过（流水码 5 位数字、日期 2 位数字、月份码 ∈ 1-9/A/B/C、年份 1 位数字、供方/原材/阳极 3 位字母、阶段码 ∈ 3-7、颜色码 ∈ Q/Y）
+3. 其余（含历史网页链接码）→ 无法识别，给出具体原因
 
 ### D4. 规则码前缀拆分（项目/组件）
 
@@ -68,9 +67,9 @@
 
 `localStorage` 键 `qc-lookup-history`，数组按时间倒序，最多 20 条，元素 `{ text, time, mode, data }`：除码值与时间外同时缓存解析结果（模式与结构化数据），点击历史条目直接展示缓存结果、无需重新解析；缓存缺失或损坏时回退为对码值重新解析。摄像头扫码与手动输入的查询同等写入。同码值重复查询时置顶并刷新时间与结果。清空即移除该键。不引入 IndexedDB/Vuex——数据量小、结构简单。
 
-### D7. base64url 解码（与 encodeRecord 互逆）
+### D7. 历史网页链接码不再支持
 
-`-_` 还原为 `+/`、补 `=` 填充 → `atob` → 字节序列 → `TextDecoder('utf-8')` → `JSON.parse`；字段按 `m/s/t/j/v` 读取，缺失字段展示「-」。与 `static/qr-view.html` 的解码逻辑保持一致。
+网页链接模式（`viewUrl + '#' + base64url(JSON)`）依赖服务器部署的展示页，已随生成端模式收窄移除（`static/qr-view.html` 删除、`encodeRecord` 移除）：`parseQrContent` 不再识别该模式，链接码落入「无法识别」并提示原因；查询端不保留 base64url 解码逻辑（无展示端可消费）。
 
 ### D8. 规则码关联数据检索
 

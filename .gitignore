@@ -22,5 +22,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 
-# CodeBuddy
-.codebuddy
+# CodeBuddy（保留 rules/ 随仓库分发，其余为本地数据）
+.codebuddy/*
+!.codebuddy/rules/

@@ -129,29 +129,3 @@ export function splitRuleCode (code) {
     serial: m[7]
   };
 }
-
-/* ==================== 网页链接记录编解码（与 static/qr-view.html 一致） ==================== */
-
-/**
- * 记录对象 → 紧凑 JSON → UTF-8 字节 → base64url（URL 安全、去填充），供展示页/查询端解码。
- * 字段为生成端约定的 { m 型号, s 序号, t 时间, j 判定, v 测量值[] }，与 decodeRecordFromBase64url 互逆。
- */
-export function encodeRecordToBase64url (r, model) {
-  const json = JSON.stringify({ m: model, s: r.seq, t: r.time, j: r.judge, v: r.measures });
-  const bin = String.fromCharCode.apply(null, new TextEncoder().encode(json));
-  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-/**
- * base64url → UTF-8 JSON → 记录对象（与生成端 encodeRecord 互逆）：
- * `-_` 还原为 `+/`、补 `=` 填充 → atob → 字节序列 → TextDecoder('utf-8') → JSON.parse。
- * 字段为生成端约定的 { m 型号, s 序号, t 时间, j 判定, v 测量值[] }。
- * 解码失败（非法 base64url / 非法 JSON）抛出异常，由调用方给出错误提示。
- */
-export function decodeRecordFromBase64url (str) {
-  const b64 = String(str || '').replace(/-/g, '+').replace(/_/g, '/');
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return JSON.parse(new TextDecoder('utf-8').decode(bytes));
-}

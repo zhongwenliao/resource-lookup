@@ -6,8 +6,9 @@
 
 - 上传检测设备导出的 `.xlsx / .xls`，纯前端解析（SheetJS），数据不出本机
 - 自动识别判定列（OK/NG 占比最高）、序号列、时间列、测量列，也可手动指定
-- 筛出 OK 记录，每条生成一个二维码（含型号、序号、检测时间、全部测量值）
-- 二维码内容三种模式：明文文本 / 网页链接（微信扫码可查看）/ 编码规则（KBWK@@##*!%YMMDDXXXXX：项目+组件+试制阶段+颜色+供方/原材/阳极供方首字母+年月日+五位流水码自动 +1）
+- 筛出 OK 记录，每条按编码规则生成一个唯一二维码（一物一码）
+- 二维码内容为编码规则码值（KBWK@@##*!%YMMDDXXXXX：项目+组件+试制阶段+颜色+供方/原材/阳极供方首字母+年月日+五位流水码自动 +1）
+- 内置溯源查询页：粘贴/输入或摄像头扫码，自动识别内容模式（明文文本 / 编码规则）并解析展示；规则码可回查本机批次中的关联检测记录，全程离线
 - 标签规格：50×40mm / 40×30mm / 38×38mm（每页 1 个，适配标签打印机）、A4 排版（每页 24 个带裁切线）
 - 调起系统打印对话框，可直接打印或另存为 PDF
 - 导出 BarTender 打印任务（.btxml）：每条 OK 记录一个打印命令，二维码内容写入模板具名数据源（如歌尔模板的 `BcQrcodeData`），由 BarTender 渲染二维码
@@ -41,10 +42,11 @@ npm run electron:build   # = npm run build + electron-builder --win nsis
 
 ```
 electron/main.js                      # Electron 主进程
-src/main.js / router.js / App.vue     # Vue 入口（单路由）
-src/components/QcLabel.vue            # 工具主页面
-src/common/components/                # DemoPage / DemoBlock 容器组件
-static/qr-view.html                   # 「网页链接」模式扫码展示页（部署到服务器）
+src/main.js / router.js / App.vue     # Vue 入口（标签生成 / 溯源查询双路由）
+src/views/QcLabel.vue                 # 标签生成主页面
+src/views/QrLookup.vue                # 二维码溯源查询页
+src/components/                       # DemoPage / DemoBlock 容器组件
+src/common/                           # 编码规则 / 码值解析 / IndexedDB 共享模块
 static/*.btw                          # 内置 BarTender 标签模板（随安装包分发）
 build-res/                            # 应用图标（icon.ico / icon.png）
 build/ config/                        # webpack 构建配置（vue-cli 2 模板）

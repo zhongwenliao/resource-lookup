@@ -1,12 +1,12 @@
 <template>
   <demo-page
     title="二维码溯源查询"
-    description="粘贴/输入或摄像头扫描二维码内容，自动识别三种内容模式（明文文本 / 网页链接 / 编码规则）并解析展示质检溯源信息；编码规则码可回查本机批次中的关联检测记录。全程离线、不依赖服务器；查询成功的记录在本机离线留存，可随时回看。">
+    description="粘贴/输入或摄像头扫描二维码内容，自动识别两种内容模式（明文文本 / 编码规则）并解析展示质检溯源信息；编码规则码可回查本机批次中的关联检测记录。全程离线、不依赖服务器；查询成功的记录在本机离线留存，可随时回看。">
     <!-- ==================== 区块 1：码值输入 ==================== -->
     <demo-block :index="1" title="码值输入"
-      description="支持粘贴含换行的多行明文码、网页链接码与单行编码规则码；也可调用摄像头实时扫码。">
+      description="支持粘贴含换行的多行明文码与单行编码规则码；也可调用摄像头实时扫码。">
       <el-input v-model="inputText" type="textarea" :rows="6" class="code-input"
-        placeholder="粘贴或输入二维码内容：明文（型号:/序号:/时间:/判定:/测量:）、网页链接（…#base64url）或编码规则码（如 King12-Basic中框3QABC6091400001）"></el-input>
+        placeholder="粘贴或输入二维码内容：明文（型号:/序号:/时间:/判定:/测量:）或编码规则码（如 KBWKV3-3QHYX691400001）"></el-input>
       <div class="action-bar">
         <el-button type="primary" size="small" @click="doQuery">查 询</el-button>
         <el-button type="success" size="small" plain icon="el-icon-camera" @click="openScan">摄像头扫码</el-button>
@@ -28,8 +28,8 @@
         <i class="el-icon-warning"></i> {{ result.error }}
       </div>
 
-      <!-- 明文 / 网页链接：记录字段网格 -->
-      <template v-else-if="result.mode === 'url' || result.mode === 'text'">
+      <!-- 明文文本：记录字段网格 -->
+      <template v-else-if="result.mode === 'text'">
         <div class="record-grid">
           <div class="record-cell"><span class="k">型号</span><span class="v">{{ recordData.m || '-' }}</span></div>
           <div class="record-cell"><span class="k">序号</span><span class="v">#{{ recordData.s || '-' }}</span></div>
@@ -130,7 +130,7 @@
 /**
  * 二维码溯源查询页 —— 与标签生成页（QcLabel.vue）并列的第二个路由页
  *
- * 数据流：输入/扫码码值 → parseQrContent 识别模式（url/text/rule）→ 展示结构化溯源信息
+ * 数据流：输入/扫码码值 → parseQrContent 识别模式（text/rule）→ 展示结构化溯源信息
  *         → 成功解析的记录写入 localStorage（qc-lookup-history，离线缓存，含解析结果）
  * 摄像头扫码：getUserMedia 后置摄像头 → 每 200ms 抽帧 → jsQR 识别 → 成功停流回填。
  * 全程纯前端、数据不出本机。
@@ -164,7 +164,7 @@ export default {
     };
   },
   computed: {
-    /** 明文/网页链接模式的记录字段（缺失字段展示 '-'） */
+    /** 明文模式的记录字段（缺失字段展示 '-'） */
     recordData () {
       const d = (this.result && this.result.data) || {};
       return { m: d.m, s: d.s, t: d.t, j: d.j, v: Array.isArray(d.v) ? d.v : [] };
@@ -239,7 +239,7 @@ export default {
     /** 点击历史条目：优先直接展示缓存结果（无需重新解析），缓存缺失/损坏时回退重新解析 */
     openHistory (item) {
       this.inputText = item.text;
-      if (item.mode && item.mode !== 'unknown' && item.data && typeof item.data === 'object') {
+      if ((item.mode === 'text' || item.mode === 'rule') && item.data && typeof item.data === 'object') {
         this.customComponent = '';
         this.relatedHits = null;
         this.result = { mode: item.mode, data: item.data, cached: true };
@@ -326,10 +326,10 @@ export default {
       return line.length > 46 ? line.slice(0, 46) + '…' : line;
     },
     historyModeLabel (mode) {
-      return { url: '网页链接', text: '明文文本', rule: '编码规则', unknown: '无法识别' }[mode] || mode;
+      return { text: '明文文本', rule: '编码规则', unknown: '无法识别' }[mode] || mode;
     },
     historyTagType (mode) {
-      return { url: 'success', text: '', rule: 'warning', unknown: 'danger' }[mode] || 'info';
+      return { text: '', rule: 'warning', unknown: 'danger' }[mode] || 'info';
     },
 
     /* ==================== 摄像头扫码（jsQR） ==================== */

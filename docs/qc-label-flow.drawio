@@ -1,0 +1,150 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="qc-label-flow" name="质检二维码标签流程">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1560" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="lane1" value="生成端 · 标签生成（QcLabel.vue）" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#37474F;swimlaneFillColor=#FAFAFA;fontSize=15;fontStyle=1;fontColor=#FFFFFF;strokeColor=#37474F;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="580" height="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" value="查询端 · 溯源查询（QrLookup.vue）" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=none;fontSize=14;fontStyle=1;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="660" y="40" width="760" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="start1" value="开始" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="230" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="upload" value="上传检测设备导出的 Excel&lt;br&gt;（.xlsx / .xls，拖拽或点选）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="120" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="parse" value="SheetJS 解析首个 Sheet → 二维数组&lt;br&gt;文件名猜测产品型号" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="200" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="detect" value="自动识别列：判定列（OK/NG 占比最多）&lt;br&gt;← 左侧找时间列、序号列&lt;br&gt;→ 右侧收集测量列" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="290" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="judge_ok" value="找到判定列且&lt;br&gt;有效值 ≥ 3？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="180" y="390" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="err1" value="提示：未找到判定列&lt;br&gt;请确认为检测设备导出数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#8E0000;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="440" y="395" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="build" value="构建结构化记录（序号/时间/判定/测量）&lt;br&gt;统计：总数 / OK / NG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="490" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sync1" value="批次入库 IndexedDB&lt;br&gt;（解析即存，改选判定列覆盖更新）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="580" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rule_cfg" value="配置编码规则：项目/组件/试制阶段/&lt;br&gt;颜色/供方×3/年月日/流水码起始" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="660" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rule_ok" value="规则校验通过？&lt;br&gt;（项目/组件必填，手动日期已选）" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="180" y="750" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gen" value="批量生成二维码：逐条拼规则码&lt;br&gt;（KBWK@@##*!%YMMDDXXXXX，流水码+1）&lt;br&gt;回写记录 ruleCode → QRCode 生成&lt;br&gt;（每 20 条刷新进度）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="860" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sync2" value="规则码关联随批次覆盖入库" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="160" y="980" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p_browser" value="浏览器打印 / 另存 PDF&lt;br&gt;按规格拼打印 HTML&lt;br&gt;（标签纸/小票纸/A4）&lt;br&gt;→ 隐藏 iframe 打印" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6A1B9A;strokeColor=#4A148C;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="20" y="1080" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p_btw" value="BarTender 一键打印&lt;br&gt;生成 BTXML → 主进程&lt;br&gt;授权校验 → 调起&lt;br&gt;BarTend.exe 执行" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6A1B9A;strokeColor=#4A148C;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="205" y="1080" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p_btxml" value="导出 BTXML 文件&lt;br&gt;（命令行 / BarTender&lt;br&gt;打开备用）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6A1B9A;strokeColor=#4A148C;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="390" y="1080" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="end1" value="结束" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="230" y="1220" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="start2" value="开始" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="320" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="input" value="粘贴 / 输入码值&lt;br&gt;或摄像头扫码（getUserMedia →&lt;br&gt;200ms 抽帧 → jsQR 识别）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="120" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="parse_mode" value="parseQrContent 识别内容模式" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="220" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mode_d" value="内容模式？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="290" y="300" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="text_url" value="明文文本模式&lt;br&gt;按「型号:/序号:/时间:/判定:/测量:」行解析 → 展示&lt;br&gt;型号/序号/时间/判定/测量值" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="20" y="420" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="split" value="splitRuleCode 从右向左拆固定段：&lt;br&gt;流水码/日期/月份/年份/供方×3/&lt;br&gt;颜色/阶段；前缀按组件词表拆分" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="420" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="unknown" value="展示无法识别原因&lt;br&gt;（保留原始输入）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#8E0000;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="560" y="420" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="prefix_fix" value="前缀歧义：手动填组件名&lt;br&gt;重新拆分项目 / 组件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F9A825;strokeColor=#F57F17;fontColor=#FFFFFF;fontStyle=1;dashed=1;" vertex="1" parent="lane2">
+          <mxGeometry x="20" y="540" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fetch" value="findByRuleCode：遍历本机批次&lt;br&gt;按完整码值匹配记录 ruleCode&lt;br&gt;（大小写不敏感，多批次全返回）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="540" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="hit_d" value="命中关联记录？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="290" y="650" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="show_hit" value="展示关联检测记录（Excel 对应那条）&lt;br&gt;批次：文件名/型号/导入时间&lt;br&gt;记录：序号/检测时间/判定/测量值" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="750" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="no_hit" value="提示未找到：标签可能先于数据入库&lt;br&gt;或生成配置变更后码值已更新" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#8E0000;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="550" y="760" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="history" value="写入查询历史（去重置顶，最多 20 条）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="260" y="880" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="end2" value="结束" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane2">
+          <mxGeometry x="320" y="950" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="idb" value="IndexedDB：qc-label-db / import-batches&lt;br&gt;批次 { fileName, model, stats, records[] }&lt;br&gt;records 内嵌 ruleCode（生成时回写）" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#F9A825;strokeColor=#F57F17;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="1370" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ls" value="localStorage：qc-lookup-history&lt;br&gt;最近查询缓存（最多 20 条）" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#F9A825;strokeColor=#F57F17;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="1380" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="start1" target="upload"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="upload" target="parse"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="parse" target="detect"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="detect" target="judge_ok"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="judge_ok" target="err1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="judge_ok" target="build"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="build" target="sync1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="sync1" target="rule_cfg"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="rule_cfg" target="rule_ok"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" value="否：按提示修正" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="rule_ok" target="rule_cfg"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="rule_ok" target="gen"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="gen" target="sync2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="sync2" target="p_browser"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="sync2" target="p_btw"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="sync2" target="p_btxml"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="p_browser" target="end1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="p_btw" target="end1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="p_btxml" target="end1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e19" value="写入批次" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;dashed=1;fontSize=12;strokeColor=#E65100;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="sync1" target="idb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e20" value="覆盖更新（ruleCode 关联）" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;dashed=1;fontSize=12;strokeColor=#E65100;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="sync2" target="idb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="start2" target="input"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="input" target="parse_mode"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="parse_mode" target="mode_d"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" value="明文文本" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="mode_d" target="text_url"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" value="编码规则" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="mode_d" target="split"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f6" value="无法识别" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="mode_d" target="unknown"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f7" value="前缀歧义" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;dashed=1;fontSize=12;strokeColor=#E65100;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="split" target="prefix_fix"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="split" target="fetch"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="fetch" target="hit_d"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f10" value="命中" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="hit_d" target="show_hit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f11" value="未命中" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;fontSize=12;strokeColor=#455A64;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="hit_d" target="no_hit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="show_hit" target="history"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="no_hit" target="history"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="text_url" target="history"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="history" target="end2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;" edge="1" parent="1" source="unknown" target="end2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f17" value="按 ruleCode 检索" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;dashed=1;fontSize=12;strokeColor=#E65100;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="fetch" target="idb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f18" value="写入 / 置顶" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#455A64;dashed=1;fontSize=12;strokeColor=#E65100;fontColor=#263238;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="history" target="ls"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
