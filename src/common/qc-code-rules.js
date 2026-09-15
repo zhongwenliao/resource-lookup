@@ -32,6 +32,16 @@ export const normalizeStage = s => {
   const k = String(s || '').trim();
   return STAGE_CODE_MAP[k.toUpperCase()] || k;
 };
+
+/**
+ * 试制阶段段拼码（生成端）：填阶段名（V3/V4/VN1/VN2/LV，忽略大小写）时输出
+ * 「名称-码值」（如 V3 → V3-3，连字符分隔名称与码值）；直接填码值（3-7）时仅输出码值。
+ */
+export const buildStageSegment = s => {
+  const k = String(s || '').trim().toUpperCase();
+  const code = STAGE_CODE_MAP[k];
+  return code ? k + '-' + code : normalizeStage(s);
+};
 // 颜色输入归一化：直接填码值（Q/Y）原样使用，填颜色名（锖色/银色）或小写码自动转码
 export const normalizeColor = c => {
   const k = String(c || '').trim();
@@ -41,7 +51,9 @@ export const normalizeColor = c => {
 /* ==================== 规则码拆段（解析端） ==================== */
 
 // 内置组件词表：规则码前缀（项目+组件直接拼接，无法无损拆分）按词表从尾部匹配拆分
+// （含字母组件代号与中文组件名）
 export const COMPONENT_WORDS = [
+  'WK',
   '中框', '后盖', '电池盖', '前壳', '后壳', '中板', '底壳', '面板',
   '装饰圈', '装饰件', '摄像头圈', '按键', '镜片', '支架', '卡托'
 ];
@@ -73,7 +85,17 @@ export function splitRuleCode (code) {
   const colorCode = head.slice(-1).toUpperCase();
   const stageCode = head.slice(-2, -1);
   if (!COLOR_NAME_MAP[colorCode] || !STAGE_NAME_MAP[stageCode]) return null;
-  const prefix = head.slice(0, head.length - 2);
+  const rawPrefix = head.slice(0, head.length - 2);
+  // 生成端阶段段为「名称-码值」格式（如 V3-3）：前缀尾部若带「阶段名-」则归入阶段段，
+  // 避免阶段名混入项目/组件拆分（旧格式码/直填码值无此尾缀，不受影响）。
+  // stageSegment 与剥离量严格对应：prefix + stageSegment + 后续段可无损还原原码
+  let stageSegment = stageCode;
+  let prefix = rawPrefix;
+  const stageTail = STAGE_NAME_MAP[stageCode] + '-';
+  if (rawPrefix.endsWith(stageTail)) {
+    stageSegment = stageTail + stageCode;
+    prefix = rawPrefix.slice(0, rawPrefix.length - stageTail.length);
+  }
 
   // 前缀拆分：项目名称 + 组件名称（生成端为两个自由字符串直接拼接，无法无损拆分）
   let project = prefix;
@@ -89,11 +111,13 @@ export function splitRuleCode (code) {
   }
 
   return {
+    code: s, // 原始完整码值（查询端按码回查关联记录直接使用，免去重组）
     project,
     component,
     prefixAmbiguous,
     prefix,
     stage: { code: stageCode, name: STAGE_NAME_MAP[stageCode] },
+    stageSegment, // 完整试制阶段段（名称-码值如 V3-3，或直填码值如 3），重组完整码用
     color: { code: colorCode, name: COLOR_NAME_MAP[colorCode] },
     supplier: m[1].toUpperCase(),
     raw: m[2].toUpperCase(),

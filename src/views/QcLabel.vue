@@ -83,9 +83,9 @@
       <div class="rule-bar">
         <div class="rule-row">
           <span class="opt-label">项目名称</span>
-          <el-input v-model="ruleKb" size="small" class="rule-kb-input" placeholder="如 King12-Basic"></el-input>
+          <el-input v-model="ruleKb" size="small" class="rule-kb-input" placeholder="如 KB"></el-input>
           <span class="opt-label">组件名称</span>
-          <el-input v-model="ruleWk" size="small" class="rule-wk-input" placeholder="如 中框"></el-input>
+          <el-input v-model="ruleWk" size="small" class="rule-wk-input" placeholder="如 WK"></el-input>
           <span class="opt-label">试制阶段</span>
           <el-input v-model="ruleStage" size="small" class="rule-stage-input" placeholder="码 3/4/5/6/7"></el-input>
           <span class="opt-label">颜色</span>
@@ -126,7 +126,7 @@
             type="date" value-format="yyyy-MM-dd" class="rule-date-picker" placeholder="二阳日期"></el-date-picker>
         </div>
         <p class="rule-tip">
-          编码规则：项目 + 组件 + 试制阶段（填码值 3/4/5/6/7，填 V3/V4/VN1/VN2/LV 自动转码）+
+          编码规则：项目 + 组件 + 试制阶段（填阶段名拼「名称-码值」如 V3-3，直接填码值 3/4/5/6/7 仅输出码值）+
           颜色（填码值 Q/Y，填 锖色/银色 自动转码）+ 供方/原材/阳极供方首字母 +
           年份末位 + 月份（1-9 月用数字，10/11/12 月用 A/B/C）+ 两位日期 + 五位流水码（逐条自动 +1）。
           码样例：<code>{{ ruleSample }}</code>
@@ -168,16 +168,16 @@
     <!-- ==================== 历史批次弹层 ==================== -->
     <el-dialog title="历史批次（本机留存）" :visible.sync="batchListVisible" width="680px" append-to-body>
       <el-table :data="batchList" size="mini" border v-loading="batchLoading">
-        <el-table-column prop="fileName" label="文件名" min-width="170" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="model" label="型号" min-width="120" show-overflow-tooltip></el-table-column>
-        <el-table-column label="记录" width="70">
+        <el-table-column prop="fileName" label="文件名" min-width="160" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="model" label="型号" min-width="110" show-overflow-tooltip></el-table-column>
+        <el-table-column label="记录" width="60" align="center">
           <template slot-scope="s">{{ s.row.stats ? s.row.stats.total : '-' }}</template>
         </el-table-column>
-        <el-table-column prop="importedAt" label="导入时间" width="160"></el-table-column>
-        <el-table-column label="操作" width="140">
+        <el-table-column prop="importedAt" label="导入时间" width="150"></el-table-column>
+        <el-table-column label="操作" width="100">
           <template slot-scope="s">
-            <el-button type="primary" size="mini" plain @click="loadBatch(s.row.id)">载入</el-button>
-            <el-button type="danger" size="mini" plain @click="removeBatch(s.row.id)">删除</el-button>
+            <el-button type="text" size="mini" @click="loadBatch(s.row.id)">载入</el-button>
+            <el-button type="text" size="mini" class="batch-del-btn" @click="removeBatch(s.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -201,7 +201,7 @@ import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
 // 编码规则常量与纯函数：生成端 / 查询端共享的唯一事实来源（src/common/qc-code-rules.js）
 import {
-  pad2, pad5, MONTH_CODES, normalizeStage, normalizeColor
+  pad2, pad5, MONTH_CODES, buildStageSegment, normalizeColor
 } from '@/common/qc-code-rules';
 // 导入批次本地持久化（IndexedDB）：解析自动入库、历史批次载入/删除、规则码关联留存
 import { saveBatch, listBatches, getBatch, deleteBatch } from '@/common/qc-db';
@@ -240,6 +240,8 @@ export default {
   name: 'QcLabel',
   components: { DemoPage, DemoBlock },
   data () {
+    // 当前时间：编码规则 manual 模式的年/月/日默认值取自它
+    const now = new Date();
     return {
       /* ---- Excel 解析结果 ---- */
       rows: [], // 原始二维数组（sheet_to_json header:1），rows[行][列]
@@ -277,19 +279,21 @@ export default {
       batchList: [], // 历史批次摘要列表 [{ id, fileName, model, importedAt, stats }]
 
       /* ---- 编码规则模式（KBWK@@##*!%YMMDDXXXXX）---- */
-      ruleKb: '', // 1.项目名称，如 King12-Basic
-      ruleWk: '', // 2.组件名称
-      ruleStage: '', // 3.试制阶段：直接填码值（3/4/5/6/7），填 V3/V4/VN1/VN2/LV 自动转码
-      ruleColor: '', // 4.颜色：直接填码值（Q/Y），填 锖色/银色 自动转码
-      ruleSupplier: '', // 5.供方首字母
-      ruleRaw: '', // 6.原材料供方首字母
-      ruleAnode: '', // 7.阳极供方首字母
+      // 输入项默认值：按参考码 KBWKV3-3QHYX691400001 配置（项目 KB + 组件 WK + 阶段段 V3-3），
+      // 实际使用时按项目修改（码样例实时预览）
+      ruleKb: 'KB', // 1.项目名称
+      ruleWk: 'WK', // 2.组件名称（解析端按组件词表从尾部拆分还原）
+      ruleStage: 'V3', // 3.试制阶段：填阶段名拼「名称-码值」（V3→V3-3），也可直接填码值 3/4/5/6/7
+      ruleColor: '锖色', // 4.颜色：填颜色名自动转码（锖色→Q），也可直接填码值 Q/Y
+      ruleSupplier: 'H', // 5.供方首字母
+      ruleRaw: 'Y', // 6.原材料供方首字母
+      ruleAnode: 'X', // 7.阳极供方首字母
       ruleYearMode: 'auto', // 8.年份：auto 自动取当前年份末位 / manual 手动输入
-      ruleYearManual: '', // manual 模式下的年份码（年份末位，如 6）
+      ruleYearManual: String(now.getFullYear() % 10), // manual 模式默认当前年份末位
       ruleMonthMode: 'auto', // 9.月份：auto 自动取当前月份码 / manual 手动输入
-      ruleMonthManual: '', // manual 模式下的月份码（1-9 数字 / 10-12 月 A/B/C）
+      ruleMonthManual: MONTH_CODES[now.getMonth()], // manual 模式默认当前月份码（1-9 数字 / 10-12 月 A/B/C）
       ruleDateSource: 'record', // 10.日期 DD 来源：record 取记录检测时间 / manual 手动指定二阳日期
-      ruleManualDate: '', // manual 模式下的二阳日期（yyyy-MM-dd）
+      ruleManualDate: now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()), // manual 模式默认今天
       ruleSerialStart: 1, // 11.五位流水码起始值，逐条自动 +1
 
       /* ---- BarTender 导出 ---- */
@@ -605,12 +609,12 @@ export default {
     },
     /**
      * 按编码规则拼装单条码值（KBWK@@##*!%YMMDDXXXXX 共 11 段）：
-     *   项目 + 组件 + 试制阶段码 + 颜色码 + 供方/原材/阳极供方首字母 +
-     *   年份末位 + 月份码 + 两位日期 + 五位流水码（起始值 + idx，自动 +1）
+     *   项目 + 组件 + 试制阶段段（填阶段名输出「名称-码值」如 V3-3，直接填码值仅输出码值）
+     *   + 颜色码 + 供方/原材/阳极供方首字母 + 年份末位 + 月份码 + 两位日期 + 五位流水码（起始值 + idx，自动 +1）
      */
     buildRuleCode (r, idx) {
       const d = this.ruleDateParts(r);
-      return this.ruleKb.trim() + this.ruleWk.trim() + normalizeStage(this.ruleStage) + normalizeColor(this.ruleColor) +
+      return this.ruleKb.trim() + this.ruleWk.trim() + buildStageSegment(this.ruleStage) + normalizeColor(this.ruleColor) +
         this.ruleSupplier.trim() + this.ruleRaw.trim() + this.ruleAnode.trim() +
         d.year + d.month + d.day + pad5((this.ruleSerialStart || 0) + idx);
     },
@@ -1072,6 +1076,15 @@ export default {
   font-size: 13px;
   color: #999;
   text-align: center;
+}
+
+// 弹层操作列：文字按钮里的删除项保留红色警示（type=text 默认为主题蓝）
+.batch-del-btn {
+  color: #f56c6c;
+
+  &:hover {
+    color: #f78989;
+  }
 }
 
 // 编码规则配置面板：两行分段输入 + 规则说明与码样例

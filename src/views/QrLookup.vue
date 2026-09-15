@@ -192,7 +192,7 @@ export default {
         { label: '月份', value: d.month + '（' + d.monthNum + ' 月）' },
         { label: '日期', value: d.day + ' 日' },
         { label: '流水号', value: d.serial },
-        { label: '完整码值', value: d.prefix + d.stage.code + d.color.code + d.supplier + d.raw + d.anode + d.year + d.month + d.day + d.serial }
+        { label: '完整码值', value: d.code || (d.prefix + (d.stageSegment || d.stage.code) + d.color.code + d.supplier + d.raw + d.anode + d.year + d.month + d.day + d.serial) }
       ];
     },
     /** 结果区模式标签 */
@@ -251,13 +251,15 @@ export default {
     },
 
     /**
-     * 规则码关联记录回查：按解析结果重组完整码值，检索本机批次库
-     * （生成端批量生成时落库的「规则码 ↔ 记录」关联）。
+     * 规则码关联记录回查：按完整码值检索本机批次库
+     * （生成端批量生成时落库的「规则码 ↔ 记录」关联，即 Excel 中对应的那条检测数据）。
+     * 完整码值优先用解析时保留的原码（d.code）；旧缓存无 code 时按段重组
+     * （stageSegment 含「阶段名-」段，缺失时回退纯阶段码，兼容历史数据）。
      * 未命中仅提示（拆段含义始终可用），检索失败静默降级为未查状态。
      */
     async fetchRelated (d) {
-      const code = d.prefix + d.stage.code + d.color.code + d.supplier + d.raw + d.anode +
-        d.year + d.month + d.day + d.serial;
+      const code = d.code || (d.prefix + (d.stageSegment || d.stage.code) + d.color.code + d.supplier + d.raw + d.anode +
+        d.year + d.month + d.day + d.serial);
       this.relatedLoading = true;
       try {
         this.relatedHits = await findByRuleCode(code);

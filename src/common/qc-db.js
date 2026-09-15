@@ -9,7 +9,9 @@
  */
 
 const DB_NAME = 'qc-label-db';
-const DB_VERSION = 1;
+// v2：v1 期间仓库结构曾调整（keyPath/自增配置变更），升版本触发 onupgradeneeded
+// 校验重建，避免沿用本机遗留的旧结构仓库导致 put 报 keyPath 无效
+const DB_VERSION = 2;
 const STORE_NAME = 'import-batches';
 
 // 打开成功的数据库连接缓存（失败不缓存，下次调用自动重试）
@@ -29,6 +31,14 @@ function openDb () {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
       req.onupgradeneeded = () => {
         const db = req.result;
+        if (db.objectStoreNames.contains(STORE_NAME)) {
+          // 本机遗留仓库若与当前结构约定不符（主键非 id 或未开自增），
+          // 旧数据本就无法按当前约定读写，删除后按新结构重建
+          const legacy = req.transaction.objectStore(STORE_NAME);
+          if (legacy.keyPath !== 'id' || legacy.autoIncrement !== true) {
+            db.deleteObjectStore(STORE_NAME);
+          }
+        }
         if (!db.objectStoreNames.contains(STORE_NAME)) {
           const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
           store.createIndex('importedAt', 'importedAt', { unique: false });
@@ -66,13 +76,24 @@ function withStore (mode, run) {
   }));
 }
 
+/** 是否为可用的自增主键回填值（仅接受正数；null/空串/NaN 等一律视为无主键） */
+function isValidId (v) {
+  return typeof v === 'number' && Number.isFinite(v) && v > 0;
+}
+
 /**
- * 写入批次：无 id 新增（自增主键），带 id 更新（判定列改选后同步当前批次）。
+ * 写入批次：无有效 id 新增（自增主键），带有效 id 更新（判定列改选后同步当前批次）。
+ * 写入前浅拷贝并剔除无效 id 字段：自增主键只在 keyPath 求值为 undefined 时生成，
+ * 显式传入 null/空串等无效值会令 put 直接抛 keyPath 无效错误，这里统一防御。
  * @param {object} batch { id?, fileName, model, importedAt, stats, records }
  * @returns {Promise<number>} 写入后的批次 id
  */
 export function saveBatch (batch) {
-  return withStore('readwrite', store => store.put(batch));
+  return withStore('readwrite', store => {
+    const doc = Object.assign({}, batch);
+    if (!isValidId(doc.id)) delete doc.id;
+    return store.put(doc);
+  });
 }
 
 /**
