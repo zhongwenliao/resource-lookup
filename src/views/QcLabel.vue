@@ -18,6 +18,12 @@
       <!-- 解析 / 生成失败提示 -->
       <p v-if="parseErr" class="err-tip">{{ parseErr }}</p>
 
+      <!-- 历史批次：本机 IndexedDB 留存的导入批次，可载入恢复 / 删除 -->
+      <div class="batch-bar">
+        <el-button size="small" icon="el-icon-folder-opened" @click="openBatchList">历史批次</el-button>
+        <span v-if="currentBatchId" class="batch-flag">当前批次已存本机，解析与生成改动自动同步</span>
+      </div>
+
       <!-- 解析结果：统计卡片 → 列映射 → 数据预览 -->
       <div v-if="stats" class="result-wrap">
         <!-- 检测记录统计：总数 / OK / NG -->
@@ -27,8 +33,8 @@
           <div class="stat-card ng"><span class="num">{{ stats.ng }}</span><span class="label">NG 不合格</span></div>
         </div>
 
-        <!-- 列映射：判定列可手动改选，改后自动重识别其余列 -->
-        <div class="mapping-bar">
+        <!-- 列映射：判定列可手动改选，改后自动重识别其余列（历史批次载入无原始行，不显示） -->
+        <div v-if="rows.length" class="mapping-bar">
           <span>判定列：</span>
           <el-select v-model="judgeCol" size="small" class="col-select" @change="reDetect">
             <el-option v-for="o in colOptions" :key="o.value" :label="o.label" :value="o.value"></el-option>
@@ -58,7 +64,7 @@
     <demo-block
       :index="2"
       title="生成二维码标签"
-      description="每条 OK 记录一个二维码（一物一码），扫码可读出型号、序号、检测时间与全部测量值；标签明文印序号供人工核对防错贴。微信已不展示纯文本码内容，需微信扫码查看请选「网页链接」模式。除浏览器打印外，还可导出 BarTender BTXML 打印任务，配合既有 .btw 模板批量打印。">
+      description="每条 OK 记录一个二维码（一物一码），按图纸编码规则（KBWK@@##*!%YMMDDXXXXX）拼装码值；标签明文印序号供人工核对防错贴。除浏览器打印外，还可导出 BarTender BTXML 打印任务，配合既有 .btw 模板批量打印。">
 
       <!-- 操作栏：产品型号 / 标签规格 / 生成 / 打印 -->
       <div class="opt-bar">
@@ -73,15 +79,58 @@
         </el-button>
         <el-button type="success" size="small" :disabled="!qrReady" @click="printLabels">打印 / 导出 PDF</el-button>
       </div>
-      <!-- 二维码内容模式：微信已不展示纯文本码内容，需微信扫码查看时选「网页链接」 -->
-      <div class="qr-mode-bar">
-        <span class="opt-label">二维码内容</span>
-        <el-radio-group v-model="qrMode" size="small">
-          <el-radio label="text">明文文本</el-radio>
-          <el-radio label="url">网页链接（微信扫码可查看）</el-radio>
-        </el-radio-group>
-        <el-input v-if="qrMode === 'url'" v-model="viewUrl" size="small" class="view-url-input"
-          placeholder="展示页地址，如 https://your-host/qr-view.html"></el-input>
+      <!-- 编码规则配置：项目/组件/试制阶段/颜色/供方首字母 + 年月日 + 五位流水码 -->
+      <div class="rule-bar">
+        <div class="rule-row">
+          <span class="opt-label">项目名称</span>
+          <el-input v-model="ruleKb" size="small" class="rule-kb-input" placeholder="如 King12-Basic"></el-input>
+          <span class="opt-label">组件名称</span>
+          <el-input v-model="ruleWk" size="small" class="rule-wk-input" placeholder="如 中框"></el-input>
+          <span class="opt-label">试制阶段</span>
+          <el-input v-model="ruleStage" size="small" class="rule-stage-input" placeholder="码 3/4/5/6/7"></el-input>
+          <span class="opt-label">颜色</span>
+          <el-input v-model="ruleColor" size="small" class="rule-color-input" placeholder="码 Q/Y"></el-input>
+        </div>
+        <div class="rule-row">
+          <span class="opt-label">供方</span>
+          <el-input v-model="ruleSupplier" size="small" class="rule-letter-input" placeholder="首字母"></el-input>
+          <span class="opt-label">原材供方</span>
+          <el-input v-model="ruleRaw" size="small" class="rule-letter-input" placeholder="首字母"></el-input>
+          <span class="opt-label">阳极供方</span>
+          <el-input v-model="ruleAnode" size="small" class="rule-letter-input" placeholder="首字母"></el-input>
+          <span class="opt-label">流水码起始</span>
+          <el-input-number v-model="ruleSerialStart" size="small" :min="0" :max="99999"
+            controls-position="right" class="rule-serial-input"></el-input-number>
+        </div>
+        <div class="rule-row">
+          <span class="opt-label">年份</span>
+          <el-radio-group v-model="ruleYearMode" size="small">
+            <el-radio label="auto">自动取当前</el-radio>
+            <el-radio label="manual">手动</el-radio>
+          </el-radio-group>
+          <el-input v-if="ruleYearMode === 'manual'" v-model="ruleYearManual" size="small"
+            class="rule-ym-input" placeholder="如 6"></el-input>
+          <span class="opt-label">月份</span>
+          <el-radio-group v-model="ruleMonthMode" size="small">
+            <el-radio label="auto">自动取当前</el-radio>
+            <el-radio label="manual">手动</el-radio>
+          </el-radio-group>
+          <el-input v-if="ruleMonthMode === 'manual'" v-model="ruleMonthManual" size="small"
+            class="rule-ym-input" placeholder="如 9 / A"></el-input>
+          <span class="opt-label">日期</span>
+          <el-radio-group v-model="ruleDateSource" size="small">
+            <el-radio label="record">取记录检测时间</el-radio>
+            <el-radio label="manual">手动指定</el-radio>
+          </el-radio-group>
+          <el-date-picker v-if="ruleDateSource === 'manual'" v-model="ruleManualDate" size="small"
+            type="date" value-format="yyyy-MM-dd" class="rule-date-picker" placeholder="二阳日期"></el-date-picker>
+        </div>
+        <p class="rule-tip">
+          编码规则：项目 + 组件 + 试制阶段（填码值 3/4/5/6/7，填 V3/V4/VN1/VN2/LV 自动转码）+
+          颜色（填码值 Q/Y，填 锖色/银色 自动转码）+ 供方/原材/阳极供方首字母 +
+          年份末位 + 月份（1-9 月用数字，10/11/12 月用 A/B/C）+ 两位日期 + 五位流水码（逐条自动 +1）。
+          码样例：<code>{{ ruleSample }}</code>
+        </p>
       </div>
       <!-- BarTender 导出：OK 记录 → BTXML 打印任务脚本，配合既有 .btw 模板批量打印 -->
       <div class="btw-bar">
@@ -115,6 +164,25 @@
         </div>
       </div>
     </demo-block>
+
+    <!-- ==================== 历史批次弹层 ==================== -->
+    <el-dialog title="历史批次（本机留存）" :visible.sync="batchListVisible" width="680px" append-to-body>
+      <el-table :data="batchList" size="mini" border v-loading="batchLoading">
+        <el-table-column prop="fileName" label="文件名" min-width="170" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="model" label="型号" min-width="120" show-overflow-tooltip></el-table-column>
+        <el-table-column label="记录" width="70">
+          <template slot-scope="s">{{ s.row.stats ? s.row.stats.total : '-' }}</template>
+        </el-table-column>
+        <el-table-column prop="importedAt" label="导入时间" width="160"></el-table-column>
+        <el-table-column label="操作" width="140">
+          <template slot-scope="s">
+            <el-button type="primary" size="mini" plain @click="loadBatch(s.row.id)">载入</el-button>
+            <el-button type="danger" size="mini" plain @click="removeBatch(s.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <p v-if="!batchList.length && !batchLoading" class="batch-empty">暂无历史批次</p>
+    </el-dialog>
   </demo-page>
 </template>
 
@@ -129,12 +197,16 @@
  */
 import XLSX from 'xlsx';
 import QRCode from 'qrcode';
-import DemoPage from '@/common/components/DemoPage';
-import DemoBlock from '@/common/components/DemoBlock';
+import DemoPage from '@/components/DemoPage';
+import DemoBlock from '@/components/DemoBlock';
+// 编码规则常量与纯函数：生成端 / 查询端共享的唯一事实来源（src/common/qc-code-rules.js）
+import {
+  pad2, pad5, MONTH_CODES, normalizeStage, normalizeColor
+} from '@/common/qc-code-rules';
+// 导入批次本地持久化（IndexedDB）：解析自动入库、历史批次载入/删除、规则码关联留存
+import { saveBatch, listBatches, getBatch, deleteBatch } from '@/common/qc-db';
 
 /* ==================== 常量配置 ==================== */
-// 数字补零：9 -> '09'（时间格式化用）
-const pad2 = n => (n < 10 ? '0' + n : '' + n);
 // 预览表格最多显示的记录条数 / 测量列数
 const PREVIEW_ROW_COUNT = 5;
 const PREVIEW_MEASURE_COLS = 4;
@@ -197,8 +269,28 @@ export default {
         { value: 'receipt58', label: '小票纸 58mm（连续密集排列）' },
         { value: 'receipt38', label: '小票纸 38mm（连续密集排列）' }
       ],
-      qrMode: 'text', // 二维码内容模式：text 明文文本 / url 网页链接（微信扫码打开展示页）
-      viewUrl: '', // url 模式的展示页地址（static/qr-view.html 部署后的 http 地址）
+      /* ---- 本地批次持久化（IndexedDB）---- */
+      currentBatchId: null, // 当前批次在本地数据库中的 id（null 表示尚未入库）
+      currentImportedAt: '', // 当前批次导入时间（入库时生成，更新时保留）
+      batchListVisible: false, // 历史批次弹层
+      batchLoading: false, // 历史批次列表加载中
+      batchList: [], // 历史批次摘要列表 [{ id, fileName, model, importedAt, stats }]
+
+      /* ---- 编码规则模式（KBWK@@##*!%YMMDDXXXXX）---- */
+      ruleKb: '', // 1.项目名称，如 King12-Basic
+      ruleWk: '', // 2.组件名称
+      ruleStage: '', // 3.试制阶段：直接填码值（3/4/5/6/7），填 V3/V4/VN1/VN2/LV 自动转码
+      ruleColor: '', // 4.颜色：直接填码值（Q/Y），填 锖色/银色 自动转码
+      ruleSupplier: '', // 5.供方首字母
+      ruleRaw: '', // 6.原材料供方首字母
+      ruleAnode: '', // 7.阳极供方首字母
+      ruleYearMode: 'auto', // 8.年份：auto 自动取当前年份末位 / manual 手动输入
+      ruleYearManual: '', // manual 模式下的年份码（年份末位，如 6）
+      ruleMonthMode: 'auto', // 9.月份：auto 自动取当前月份码 / manual 手动输入
+      ruleMonthManual: '', // manual 模式下的月份码（1-9 数字 / 10-12 月 A/B/C）
+      ruleDateSource: 'record', // 10.日期 DD 来源：record 取记录检测时间 / manual 手动指定二阳日期
+      ruleManualDate: '', // manual 模式下的二阳日期（yyyy-MM-dd）
+      ruleSerialStart: 1, // 11.五位流水码起始值，逐条自动 +1
 
       /* ---- BarTender 导出 ---- */
       btwPath: '', // .btw 模板绝对路径（BTXML 的 <Format> 引用它；Electron 下自动填入内置模板）
@@ -255,6 +347,10 @@ export default {
     /** 当前标签纸规格尺寸；A4 / 小票纸排版返回 null（走独立排版分支） */
     currentSpec () {
       return LABEL_SPECS[this.spec] || null;
+    },
+    /** 编码规则码样例：按当前配置拼一条（年份/月份自动取当前、日期取不到时回退今天、流水取起始值），供生成前核对 */
+    ruleSample () {
+      return this.buildRuleCode({ time: '' }, 0);
     }
   },
   methods: {
@@ -276,9 +372,11 @@ export default {
         this.rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
         this.fileName = name;
         this.model = this.guessModel(name);
-        // 新文件：清空上一次的生成结果
+        // 新文件：清空上一次的生成结果与批次关联（新解析将作为新批次入库）
         this.qrReady = false;
         this.cards = [];
+        this.currentBatchId = null;
+        this.currentImportedAt = '';
         this.parseErr = '';
         this.autoDetect();
       } catch (e) {
@@ -429,6 +527,8 @@ export default {
       this.records = records;
       const ok = records.filter(r => r.judge === 'OK').length;
       this.stats = { total: records.length, ok, ng: records.length - ok };
+      // 记录重建即同步本地批次：新解析自动入库，判定列改选覆盖更新当前批次
+      this.syncBatch();
     },
     /** 时间格式化为 'YYYY-MM-DD HH:mm:ss'，兼容 Date 对象与 Excel 日期序列号 */
     formatTime (v) {
@@ -454,37 +554,78 @@ export default {
     /* ==================== 二维码生成 ==================== */
 
     /**
-     * 组装二维码内容：
-     *   text 模式 —— 明文：型号 / 序号 / 时间 / 判定 / 全部测量值
-     *     （注意：微信已不展示纯文本码内容，仅其他扫码 App 可读）
-     *   url  模式 —— 展示页链接，记录数据以 base64url 编码放在 # 之后
-     *     （hash 不会发送到服务器，数据仍不落库；微信扫码直接打开网页展示）
+     * 编码规则校验：项目名称与组件名称必填（其余分段允许留空由供方后补）；
+     * 年份/月份选「手动」时必须填码值，日期选「手动指定」时必须选择二阳日期。
+     * 返回错误文案，空串表示通过。
      */
-    buildQrText (r) {
-      if (this.qrMode === 'url') {
-        return this.viewUrl.trim().replace(/#.*$/, '') + '#' + this.encodeRecord(r);
+    ruleValidate () {
+      if (!this.ruleKb.trim() || !this.ruleWk.trim()) {
+        return '需先填写项目名称与组件名称';
       }
-      return '型号:' + this.model + '\n序号:' + r.seq + '\n时间:' + r.time + '\n判定:' + r.judge +
-        (r.measures.length ? '\n测量:' + r.measures.join(',') : '');
-    },
-    /** 记录 → 紧凑 JSON → UTF-8 字节 → base64url（URL 安全、去填充），供展示页解码 */
-    encodeRecord (r) {
-      const json = JSON.stringify({ m: this.model, s: r.seq, t: r.time, j: r.judge, v: r.measures });
-      const bin = String.fromCharCode.apply(null, new TextEncoder().encode(json));
-      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      if (this.ruleYearMode === 'manual' && !this.ruleYearManual.trim()) {
+        return '年份已选「手动」，请填写年份码（年份末位，如 6）';
+      }
+      if (this.ruleMonthMode === 'manual' && !this.ruleMonthManual.trim()) {
+        return '月份已选「手动」，请填写月份码（如 9 / A / B / C）';
+      }
+      if (this.ruleDateSource === 'manual' && !/^\d{4}-\d{1,2}-\d{1,2}$/.test(this.ruleManualDate || '')) {
+        return '日期已选「手动指定」，请选择二阳日期';
+      }
+      return '';
     },
     /**
-     * 批量生成全部 OK 记录的二维码。
+     * 解析编码规则中的 Y / M / DD 三段日期：
+     *   Y 年份 —— auto 取当前年份末位，manual 取手输码值；
+     *   M 月份 —— auto 取当前月份码（1-9 数字 / 10-12 月 A/B/C），manual 取手输码值；
+     *   DD 日期 —— record 模式取该记录的检测时间（YYYY-MM-DD 开头），manual 模式取手选二阳日期，
+     *              均取不到时回退今天。
+     */
+    ruleDateParts (r) {
+      const now = new Date();
+      // 年份：手动优先，否则当前年份末位
+      const year = this.ruleYearMode === 'manual' && this.ruleYearManual.trim() !== ''
+        ? this.ruleYearManual.trim()
+        : String(now.getFullYear() % 10);
+      // 月份：手动优先，否则当前月份码
+      const month = this.ruleMonthMode === 'manual' && this.ruleMonthManual.trim() !== ''
+        ? this.ruleMonthManual.trim()
+        : MONTH_CODES[now.getMonth()];
+      // 日期 DD：记录检测时间 / 手选二阳日期 / 回退今天
+      let ymd = null;
+      if (this.ruleDateSource === 'record' && r && r.time) {
+        const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(String(r.time));
+        if (m) ymd = { y: +m[1], m: +m[2], d: +m[3] };
+      }
+      if (!ymd && this.ruleDateSource === 'manual' && this.ruleManualDate) {
+        const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(this.ruleManualDate);
+        if (m) ymd = { y: +m[1], m: +m[2], d: +m[3] };
+      }
+      if (!ymd) ymd = { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() };
+      return { year, month, day: pad2(ymd.d) };
+    },
+    /**
+     * 按编码规则拼装单条码值（KBWK@@##*!%YMMDDXXXXX 共 11 段）：
+     *   项目 + 组件 + 试制阶段码 + 颜色码 + 供方/原材/阳极供方首字母 +
+     *   年份末位 + 月份码 + 两位日期 + 五位流水码（起始值 + idx，自动 +1）
+     */
+    buildRuleCode (r, idx) {
+      const d = this.ruleDateParts(r);
+      return this.ruleKb.trim() + this.ruleWk.trim() + normalizeStage(this.ruleStage) + normalizeColor(this.ruleColor) +
+        this.ruleSupplier.trim() + this.ruleRaw.trim() + this.ruleAnode.trim() +
+        d.year + d.month + d.day + pad5((this.ruleSerialStart || 0) + idx);
+    },
+    /**
+     * 批量生成全部 OK 记录的二维码（编码规则码值）。
      * 分批 + setTimeout 让出主线程：上千条记录时进度条仍能刷新、界面不卡死。
+     * 每条记录的规则码同时回写记录明细（r.ruleCode），生成完成后随批次持久化，
+     * 供溯源查询端按码回查对应检测记录；重新生成时覆盖更新。
      */
     async generateAll () {
       const list = this.okRecords;
       if (!list.length) return;
-      // 链接模式必须先填展示页地址，否则生成的码扫码后无法打开
-      if (this.qrMode === 'url' && !/^https?:\/\/\S+/i.test(this.viewUrl.trim())) {
-        this.parseErr = '请先填写以 http(s):// 开头的展示页地址（static/qr-view.html 部署后的地址）';
-        return;
-      }
+      // 编码规则校验：项目/组件必填，手动日期需已选择
+      const ruleErr = this.ruleValidate();
+      if (ruleErr) { this.parseErr = ruleErr; return; }
       this.generating = true;
       this.progress = 0;
       this.qrReady = false;
@@ -493,7 +634,9 @@ export default {
       for (let i = 0; i < total; i++) {
         const r = list[i];
         try {
-          this.qrStore[r.seq] = await QRCode.toDataURL(this.buildQrText(r), {
+          const code = this.buildRuleCode(r, i);
+          r.ruleCode = code; // 规则码关联回写（随批次入库，查询端 findByRuleCode 消费）
+          this.qrStore[r.seq] = await QRCode.toDataURL(code, {
             width: 400, margin: 1, errorCorrectionLevel: 'M'
           });
         } catch (e) {
@@ -511,6 +654,97 @@ export default {
       this.cards = list.slice(0, CARD_PREVIEW_COUNT).map(r => ({ seq: r.seq, url: this.qrStore[r.seq] }));
       this.qrReady = true;
       this.generating = false;
+      // 规则码关联持久化（重新生成覆盖更新）
+      this.syncBatch();
+    },
+
+    /* ==================== 本地批次持久化（IndexedDB） ==================== */
+
+    /**
+     * 当前批次同步入库：新解析（无 currentBatchId）新增，其后记录重建（判定列改选）、
+     * 生成回写规则码均以同 id 覆盖更新。写入失败仅提示降级，不阻断解析与生成
+     * （内存态数据仍可用于本次生成与打印）。
+     */
+    async syncBatch () {
+      if (!this.stats || !this.records.length) return;
+      if (!this.currentBatchId) this.currentImportedAt = this.nowStr();
+      const batch = {
+        id: this.currentBatchId || undefined, // undefined → 自增新键；有值 → 覆盖更新
+        fileName: this.fileName,
+        model: this.model,
+        importedAt: this.currentImportedAt,
+        stats: this.stats,
+        records: this.records
+      };
+      try {
+        this.currentBatchId = await saveBatch(batch);
+      } catch (e) {
+        this.currentBatchId = null;
+        if (this.$message) {
+          this.$message.warning('本机保存失败（' + ((e && e.message) || '未知原因') + '），本次数据仅内存可用');
+        }
+      }
+    },
+    /** 打开历史批次弹层并加载列表（按导入时间倒序，仅摘要不含明细） */
+    async openBatchList () {
+      this.batchListVisible = true;
+      this.batchLoading = true;
+      try {
+        this.batchList = await listBatches();
+      } catch (e) {
+        this.batchList = [];
+        if (this.$message) this.$message.warning('读取历史批次失败：' + ((e && e.message) || '未知原因'));
+      }
+      this.batchLoading = false;
+    },
+    /**
+     * 载入历史批次：恢复文件名/型号/统计/记录明细（二维码需重新生成）。
+     * 原始二维行不落库，故列映射区不显示、判定列改选不可用。
+     */
+    async loadBatch (id) {
+      let batch = null;
+      try {
+        batch = await getBatch(id);
+      } catch (e) {
+        if (this.$message) this.$message.warning('读取批次失败：' + ((e && e.message) || '未知原因'));
+        return;
+      }
+      if (!batch) {
+        if (this.$message) this.$message.warning('该批次不存在（可能已被删除）');
+        this.openBatchList();
+        return;
+      }
+      this.fileName = batch.fileName;
+      this.model = batch.model || '';
+      this.stats = batch.stats;
+      this.records = batch.records || [];
+      this.rows = []; // 无原始行：隐藏列映射区
+      this.currentBatchId = batch.id;
+      this.currentImportedAt = batch.importedAt;
+      this.qrReady = false;
+      this.cards = [];
+      this.parseErr = '';
+      this.batchListVisible = false;
+      if (this.$message) this.$message.success('已载入批次「' + (batch.fileName || '未命名') + '」，可重新生成二维码');
+    },
+    /** 删除历史批次；删除的是当前批次时解除当前关联 */
+    removeBatch (id) {
+      this.$confirm('确定删除该批次？删除后不可恢复。', '删除批次', { type: 'warning' })
+        .then(async () => {
+          try {
+            await deleteBatch(id);
+            if (this.currentBatchId === id) this.currentBatchId = null;
+            this.openBatchList();
+          } catch (e) {
+            if (this.$message) this.$message.warning('删除失败：' + ((e && e.message) || '未知原因'));
+          }
+        })
+        .catch(() => {});
+    },
+    nowStr () {
+      const d = new Date();
+      return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' +
+        pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
     },
 
     /* ==================== 打印输出 ==================== */
@@ -633,7 +867,7 @@ export default {
     },
     /**
      * 校验并生成 BTXML 脚本内容（直接打印与导出文件共用）。
-     *   每条 OK 记录一个 <Print> 命令，二维码内容（与浏览器打印同款 buildQrText）
+     *   每条 OK 记录一个 <Print> 命令，二维码内容（与浏览器打印同款编码规则码值）
      *   写入模板的具名数据源（如 BcQrcodeData），二维码由 BarTender 按模板渲染。
      *   说明：.btw 为闭源二进制格式无法在浏览器端生成，BTXML 是 BarTender 官方自动化通道。
      * 返回 { xml, count }；校验失败返回 { error }
@@ -648,17 +882,16 @@ export default {
       if (!/\.btw$/i.test(path)) {
         return { error: '模板路径需以 .btw 结尾（BarTender 标签格式文件）' };
       }
-      // 链接模式复用 generateAll 的地址校验，保证导出的二维码内容扫码可打开
-      if (this.qrMode === 'url' && !/^https?:\/\/\S+/i.test(this.viewUrl.trim())) {
-        return { error: '请先填写以 http(s):// 开头的展示页地址（static/qr-view.html 部署后的地址）' };
-      }
+      // 编码规则校验，保证 BTXML 与浏览器打印内容一致
+      const ruleErr = this.ruleValidate();
+      if (ruleErr) return { error: ruleErr };
       const esc = this.escapeXml;
       const cmds = list.map((r, i) =>
         '  <Command Name="Label' + (i + 1) + '">\n' +
         '    <Print>\n' +
         '      <Format>' + esc(path) + '</Format>\n' +
         '      <NamedSubString Name="' + esc(field) + '">\n' +
-        '        <Value>' + esc(this.buildQrText(r)) + '</Value>\n' +
+        '        <Value>' + esc(this.buildRuleCode(r, i)) + '</Value>\n' +
         '      </NamedSubString>\n' +
         '    </Print>\n' +
         '  </Command>'
@@ -821,21 +1054,97 @@ export default {
   }
 }
 
-// 二维码内容模式行：明文 / 网页链接切换，链接模式下展示地址输入
-.qr-mode-bar {
+// 历史批次入口行：弹层按钮 + 当前批次已入库标识
+.batch-bar {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 10px;
   margin-top: 12px;
+
+  .batch-flag {
+    font-size: 12px;
+    color: #1a7f37;
+  }
+}
+
+.batch-empty {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+}
+
+// 编码规则配置面板：两行分段输入 + 规则说明与码样例
+.rule-bar {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #f8f9fb;
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+
+  .rule-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    & + .rule-row {
+      margin-top: 10px;
+    }
+  }
 
   .opt-label {
     font-size: 13px;
     color: #666;
   }
 
-  .view-url-input {
-    width: 340px;
+  .rule-kb-input {
+    width: 170px;
+  }
+
+  .rule-wk-input {
+    width: 120px;
+  }
+
+  .rule-stage-input {
+    width: 110px;
+  }
+
+  .rule-color-input {
+    width: 90px;
+  }
+
+  .rule-letter-input {
+    width: 70px;
+  }
+
+  .rule-ym-input {
+    width: 80px;
+  }
+
+  .rule-date-picker {
+    width: 140px;
+  }
+
+  .rule-serial-input {
+    width: 110px;
+  }
+
+  .rule-tip {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #999;
+
+    code {
+      padding: 1px 6px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      color: #b45309;
+      background: #fdf6ec;
+      border-radius: 3px;
+      word-break: break-all;
+    }
   }
 }
 

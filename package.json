@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "element-ui": "^2.13.1",
+    "jsqr": "^1.4.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "qrcode": "^1.5.4",
