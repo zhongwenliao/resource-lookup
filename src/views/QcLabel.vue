@@ -195,7 +195,6 @@
  *        → 按标签规格拼装打印 HTML → 隐藏 iframe 调起系统打印
  * 全程纯前端处理，检测数据不出本机。
  */
-import XLSX from 'xlsx';
 import QRCode from 'qrcode';
 import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
@@ -203,6 +202,10 @@ import DemoBlock from '@/components/DemoBlock';
 import {
   pad2, pad5, MONTH_CODES, buildStageSegment, normalizeColor
 } from '@/common/qc-code-rules';
+// Excel 解析纯函数：生成页 / 绑定页共享的唯一实现（src/common/qc-excel.js）
+import {
+  readSheetRows, guessModelFromName, detectJudgeCol, detectOtherCols, buildRecords
+} from '@/common/qc-excel';
 // 导入批次本地持久化（IndexedDB）：解析自动入库、历史批次载入/删除、规则码关联留存
 import { saveBatch, listBatches, getBatch, deleteBatch } from '@/common/qc-db';
 
@@ -371,11 +374,9 @@ export default {
     /** 解析工作簿：取第一个 Sheet 转二维数组，猜测型号后进入列自动识别 */
     parseWorkbook (buf, name) {
       try {
-        const wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        this.rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
+        this.rows = readSheetRows(buf);
         this.fileName = name;
-        this.model = this.guessModel(name);
+        this.model = guessModelFromName(name);
         // 新文件：清空上一次的生成结果与批次关联（新解析将作为新批次入库）
         this.qrReady = false;
         this.cards = [];
@@ -388,12 +389,6 @@ export default {
         this.stats = null;
       }
     },
-    /** 从文件名猜测产品型号：去扩展名 → 去导出时间戳（_2026_9_8 16_26_48）→ 去尾部日期（-3-28） */
-    guessModel (name) {
-      return name.replace(/\.[^.]+$/, '')
-        .replace(/[-_ ]?\d{4}[_ ]\d.*$/, '')
-        .replace(/[-_]\d{1,2}[-_]\d{1,2}$/, '');
-    },
     /* ==================== 列自动识别 ==================== */
 
     /**
@@ -401,27 +396,13 @@ export default {
      * 有效判定值不足 3 个则认为不是检测设备导出的数据。
      */
     autoDetect () {
-      const rows = this.rows;
-      const maxCol = rows.reduce((m, r) => Math.max(m, r.length), 0);
-      let judgeCol = -1;
-      let judgeCount = 0;
-      for (let c = 0; c < maxCol; c++) {
-        let n = 0;
-        rows.forEach(r => {
-          const v = r[c];
-          if (v !== null && v !== undefined && /^(ok|ng)$/i.test(String(v).trim())) n++;
-        });
-        if (n > judgeCount) {
-          judgeCount = n;
-          judgeCol = c;
-        }
-      }
-      if (judgeCol < 0 || judgeCount < 3) {
+      const hit = detectJudgeCol(this.rows);
+      if (!hit || hit.count < 3) {
         this.parseErr = '未找到判定列（OK/NG），请确认这是检测设备导出的数据';
         this.stats = null;
         return;
       }
-      this.judgeCol = judgeCol;
+      this.judgeCol = hit.col;
       this.detectOthers();
     },
     /** 判定列手动改选后触发：基于新判定列重新识别其余列 */
@@ -429,130 +410,30 @@ export default {
       this.detectOthers();
     },
     /**
-     * 以判定列为锚点识别其余列：
-     *   时间列 —— 判定列左侧，Date 类型占比 > 50%（取最靠近判定列的命中者）
-     *   序号列 —— 判定列左侧（跳过时间列），数值且递增比例 > 80%
-     *   测量列 —— 判定列右侧，数值占比 > 80%（全部收集）
+     * 以判定列为锚点识别其余列（时间/序号/测量），识别逻辑在公共模块 qc-excel.js
+     * （与绑定页共享，防止两页解析结果漂移）。
      */
     detectOthers () {
-      const rows = this.rows;
-      const judgeCol = this.judgeCol;
-      // 只统计判定列有效的行，排除表头/汇总行等噪声
-      const recRows = rows.filter(r => {
-        const v = r[judgeCol];
-        return v !== null && v !== undefined && /^(ok|ng)$/i.test(String(v).trim());
-      });
-      const maxCol = rows.reduce((m, r) => Math.max(m, r.length), 0);
-
-      // 时间列：判定列左侧 Date 占比高的列
-      let timeCol = -1;
-      for (let c = judgeCol - 1; c >= 0; c--) {
-        let total = 0;
-        let dates = 0;
-        recRows.forEach(r => {
-          const v = r[c];
-          if (v !== null && v !== undefined && String(v).trim() !== '') {
-            total++;
-            if (v instanceof Date) dates++;
-          }
-        });
-        if (total > recRows.length * 0.5 && dates > total * 0.5) {
-          timeCol = c;
-          break;
-        }
-      }
-
-      // 序号列：判定列左侧（跳过时间列）数值且递增
-      let seqCol = -1;
-      for (let c = judgeCol - 1; c >= 0; c--) {
-        if (c === timeCol) continue;
-        let nums = 0;
-        let inc = 0;
-        let pairs = 0;
-        let prev = null;
-        recRows.forEach(r => {
-          const v = r[c];
-          if (v !== null && v !== undefined && v !== '' && !isNaN(Number(v))) {
-            nums++;
-            const n = Number(v);
-            if (prev !== null) {
-              pairs++;
-              if (n > prev) inc++;
-            }
-            prev = n;
-          }
-        });
-        if (nums > recRows.length * 0.5 && pairs > 0 && inc / pairs > 0.8) {
-          seqCol = c;
-          break;
-        }
-      }
-
-      // 测量列：判定列右侧数值占比 > 80%
-      const measureCols = [];
-      for (let c = judgeCol + 1; c < maxCol; c++) {
-        let total = 0;
-        let nums = 0;
-        recRows.forEach(r => {
-          const v = r[c];
-          if (v !== null && v !== undefined && String(v).trim() !== '') {
-            total++;
-            if (v !== '' && !isNaN(Number(v))) nums++;
-          }
-        });
-        if (total > recRows.length * 0.5 && nums > total * 0.8) measureCols.push(c);
-      }
-
-      this.timeCol = timeCol;
-      this.seqCol = seqCol;
-      this.measureCols = measureCols;
+      const cols = detectOtherCols(this.rows, this.judgeCol);
+      this.timeCol = cols.timeCol;
+      this.seqCol = cols.seqCol;
+      this.measureCols = cols.measureCols;
       this.buildRecords();
     },
     /* ==================== 记录构建与格式化 ==================== */
 
-    /** 按列映射把原始行转为结构化记录，并汇总统计数字 */
+    /** 按列映射把原始行转为结构化记录，并汇总统计数字（构建逻辑在公共模块 qc-excel.js） */
     buildRecords () {
-      const records = [];
-      this.rows.forEach(r => {
-        const v = r[this.judgeCol];
-        if (v === null || v === undefined) return;
-        const judge = String(v).trim().toUpperCase();
-        if (judge !== 'OK' && judge !== 'NG') return; // 跳过表头/噪声行
-        // 序号：去掉 Excel 数值化带来的尾部 .0
-        let seq = '';
-        if (this.seqCol >= 0) {
-          const sv = r[this.seqCol];
-          seq = sv === null || sv === undefined ? '' : String(sv).replace(/\.0+$/, '');
-        }
-        const time = this.timeCol >= 0 ? this.formatTime(r[this.timeCol]) : '';
-        const measures = this.measureCols.map(c => this.formatVal(r[c]));
-        records.push({ seq, time, judge, measures });
+      const built = buildRecords(this.rows, {
+        judgeCol: this.judgeCol,
+        timeCol: this.timeCol,
+        seqCol: this.seqCol,
+        measureCols: this.measureCols
       });
-      this.records = records;
-      const ok = records.filter(r => r.judge === 'OK').length;
-      this.stats = { total: records.length, ok, ng: records.length - ok };
+      this.records = built.records;
+      this.stats = built.stats;
       // 记录重建即同步本地批次：新解析自动入库，判定列改选覆盖更新当前批次
       this.syncBatch();
-    },
-    /** 时间格式化为 'YYYY-MM-DD HH:mm:ss'，兼容 Date 对象与 Excel 日期序列号 */
-    formatTime (v) {
-      if (v instanceof Date) {
-        return v.getFullYear() + '-' + pad2(v.getMonth() + 1) + '-' + pad2(v.getDate()) + ' ' +
-          pad2(v.getHours()) + ':' + pad2(v.getMinutes()) + ':' + pad2(v.getSeconds());
-      }
-      if (typeof v === 'number') {
-        const d = XLSX.SSF.parse_date_code(v);
-        if (d) {
-          return d.y + '-' + pad2(d.m) + '-' + pad2(d.d) + ' ' + pad2(d.H) + ':' + pad2(d.M) + ':' + pad2(d.S);
-        }
-      }
-      return v === null || v === undefined ? '' : String(v);
-    },
-    /** 测量值格式化：数值统一保留 3 位小数，非数值原样输出 */
-    formatVal (v) {
-      if (v === null || v === undefined || v === '') return '';
-      const n = Number(v);
-      return isNaN(n) ? String(v) : n.toFixed(3);
     },
 
     /* ==================== 二维码生成 ==================== */

@@ -4,15 +4,19 @@
  * - 数据库 `qc-label-db`，对象仓库 `import-batches`（keyPath `id` 自增，`importedAt` 索引）
  * - 批次结构 { id, fileName, model, importedAt, stats, records }：只存源记录明细与统计，
  *   不存二维码图片（可再生成，避免体积膨胀）
- * - `importedAt` 须为可排序值（ISO 字符串或时间戳），历史列表按其倒序排列
+ * - v3 新增对象仓库 `code-bindings`（keyPath `id` 自增，code/boundAt/batchId 索引）：
+ *   扫码绑定数据 { id, code, batchId, batchFileName, record, recordKey, boundAt }，
+ *   存记录快照而非引用（批次删除后绑定仍可独立查询展示）
+ * - `importedAt` / `boundAt` 须为可排序值（ISO 字符串或时间戳），历史列表按其倒序排列
  * - 所有接口返回 Promise：打开或读写失败时 reject(Error)，由调用方降级提示、不阻断解析
  */
 
 const DB_NAME = 'qc-label-db';
-// v2：v1 期间仓库结构曾调整（keyPath/自增配置变更），升版本触发 onupgradeneeded
-// 校验重建，避免沿用本机遗留的旧结构仓库导致 put 报 keyPath 无效
-const DB_VERSION = 2;
+// v3：新增 code-bindings 仓库（扫码绑定）；v2 期间 import-batches 结构曾调整（keyPath/自增
+// 配置变更），升版本触发 onupgradeneeded 校验重建，避免沿用本机遗留的旧结构仓库导致 put 报 keyPath 无效
+const DB_VERSION = 3;
 const STORE_NAME = 'import-batches';
+const BINDING_STORE = 'code-bindings';
 
 // 打开成功的数据库连接缓存（失败不缓存，下次调用自动重试）
 let dbPromise = null;
@@ -43,6 +47,13 @@ function openDb () {
           const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
           store.createIndex('importedAt', 'importedAt', { unique: false });
         }
+        // v3：扫码绑定仓库（一码一行，索引均非唯一——唯一性由 saveBinding 写入前清理维护）
+        if (!db.objectStoreNames.contains(BINDING_STORE)) {
+          const store = db.createObjectStore(BINDING_STORE, { keyPath: 'id', autoIncrement: true });
+          store.createIndex('code', 'code', { unique: false });
+          store.createIndex('boundAt', 'boundAt', { unique: false });
+          store.createIndex('batchId', 'batchId', { unique: false });
+        }
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error || new Error('打开本地数据库失败'));
@@ -59,13 +70,14 @@ function openDb () {
  * 在单事务上执行仓库操作，事务完成 resolve、出错/中止 reject。
  * @param {IDBTransactionMode} mode 事务模式
  * @param {(store: IDBObjectStore) => IDBRequest} run 仓库操作，返回取值请求（可为 null）
+ * @param {string} [storeName] 目标仓库名，缺省为批次仓库
  */
-function withStore (mode, run) {
+function withStore (mode, run, storeName) {
   return openDb().then(db => new Promise((resolve, reject) => {
     let req = null;
-    const tx = db.transaction(STORE_NAME, mode);
+    const tx = db.transaction(storeName || STORE_NAME, mode);
     try {
-      req = run(tx.objectStore(STORE_NAME));
+      req = run(tx.objectStore(storeName || STORE_NAME));
     } catch (e) {
       reject(e);
       return;
@@ -174,4 +186,130 @@ export function findByRuleCode (code) {
     tx.onerror = () => reject(tx.error || new Error('检索关联记录失败'));
     tx.onabort = () => reject(tx.error || new Error('检索关联记录已中止'));
   }));
+}
+
+/* ==================== 扫码绑定（code-bindings 仓库） ==================== */
+
+/**
+ * 写入一条扫码绑定（一码一行，双向唯一）：
+ * 同码旧绑定与同 recordKey 旧绑定在同一事务内先删除再写入，保证
+ * 「一个码只指向一条记录、一条记录只挂一个码」，重绑即覆盖。
+ * @param {object} binding { code, batchId, batchFileName, record, recordKey, boundAt }
+ *   record 为绑定行的记录快照（seq/time/judge/measures），批次删除后仍可独立展示
+ * @returns {Promise<void>}
+ */
+export function saveBinding (binding) {
+  const code = String(binding && binding.code || '').trim();
+  if (!code) return Promise.reject(new Error('绑定码值不能为空'));
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(BINDING_STORE, 'readwrite');
+    const store = tx.objectStore(BINDING_STORE);
+    const req = store.openCursor();
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        const b = cursor.value;
+        // 大小写不敏感比对：物理标签码内容恒定，宽松匹配仅为容错手动输入的大小写误差
+        const sameCode = String(b.code || '').toUpperCase() === code.toUpperCase();
+        const sameRow = binding.recordKey && b.recordKey === binding.recordKey;
+        if (sameCode || sameRow) cursor.delete();
+        cursor.continue();
+      } else {
+        store.put(Object.assign({}, binding, { code }));
+      }
+    };
+    tx.oncomplete = () => resolve(undefined);
+    tx.onerror = () => reject(tx.error || new Error('保存绑定失败'));
+    tx.onabort = () => reject(tx.error || new Error('保存绑定已中止'));
+  }));
+}
+
+/**
+ * 按码值查绑定（溯源查询端优先入口）：大小写不敏感（同 findByRuleCode 约定）。
+ * @param {string} code 码值（外部码或本系统规则码，原样传入）
+ * @returns {Promise<object|null>} 绑定记录 { id, code, batchId, batchFileName, record, boundAt }；无绑定返回 null
+ */
+export function findBindingByCode (code) {
+  const target = String(code || '').trim().toUpperCase();
+  if (!target) return Promise.resolve(null);
+  return openDb().then(db => new Promise((resolve, reject) => {
+    let hit = null;
+    const tx = db.transaction(BINDING_STORE, 'readonly');
+    const req = tx.objectStore(BINDING_STORE).index('code').openCursor();
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        const b = cursor.value;
+        if (String(b.code || '').toUpperCase() === target) hit = b;
+        cursor.continue();
+      } else {
+        resolve(hit);
+      }
+    };
+    tx.onerror = () => reject(tx.error || new Error('查询绑定失败'));
+    tx.onabort = () => reject(tx.error || new Error('查询绑定已中止'));
+  }));
+}
+
+/**
+ * 某批次下的全部绑定（绑定页标记「该行已绑定」用）。
+ * @param {number} batchId 批次 id
+ * @returns {Promise<Array<object>>} 绑定数组
+ */
+export function findBindingsByBatch (batchId) {
+  if (typeof batchId !== 'number' || !Number.isFinite(batchId)) return Promise.resolve([]);
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const out = [];
+    const tx = db.transaction(BINDING_STORE, 'readonly');
+    const req = tx.objectStore(BINDING_STORE).index('batchId').openCursor(IDBKeyRange.only(batchId));
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        out.push(cursor.value);
+        cursor.continue();
+      } else {
+        resolve(out);
+      }
+    };
+    tx.onerror = () => reject(tx.error || new Error('查询批次绑定失败'));
+    tx.onabort = () => reject(tx.error || new Error('查询批次绑定已中止'));
+  }));
+}
+
+/**
+ * 本机绑定列表（按绑定时间倒序，绑定页回看用）。
+ * @param {number} [limit] 最多返回条数，缺省 50
+ * @returns {Promise<Array<object>>}
+ */
+export function listBindings (limit) {
+  const max = typeof limit === 'number' && limit > 0 ? limit : 50;
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const out = [];
+    const tx = db.transaction(BINDING_STORE, 'readonly');
+    const req = tx.objectStore(BINDING_STORE).index('boundAt').openCursor(null, 'prev');
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        out.push(cursor.value);
+        if (out.length >= max) {
+          resolve(out.slice(0, max));
+          return;
+        }
+        cursor.continue();
+      } else {
+        resolve(out);
+      }
+    };
+    tx.onerror = () => reject(tx.error || new Error('读取绑定列表失败'));
+    tx.onabort = () => reject(tx.error || new Error('读取绑定列表已中止'));
+  }));
+}
+
+/**
+ * 删除一条绑定（解绑）。
+ * @param {number} id 绑定 id
+ * @returns {Promise<void>}
+ */
+export function deleteBinding (id) {
+  return withStore('readwrite', store => store.delete(id), BINDING_STORE).then(() => undefined);
 }

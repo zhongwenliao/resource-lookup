@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <license-gate>
-      <!-- 顶部导航条：两个功能页并列切换 -->
+      <!-- 顶部导航条：三个功能页并列切换 -->
       <nav class="top-nav">
         <router-link to="/" exact class="nav-link">标签生成</router-link>
+        <router-link to="/bind" class="nav-link">扫码绑定</router-link>
         <router-link to="/lookup" class="nav-link">溯源查询</router-link>
       </nav>
       <router-view/>

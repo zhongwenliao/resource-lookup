@@ -28,6 +28,32 @@
         <i class="el-icon-warning"></i> {{ result.error }}
       </div>
 
+      <!-- 扫码绑定命中：码值已与本机表格数据绑定，直接展示绑定记录（优先于模式解析） -->
+      <template v-else-if="result.mode === 'binding'">
+        <div class="record-grid">
+          <div class="record-cell"><span class="k">序号</span><span class="v">#{{ bindingRecord.seq || '-' }}</span></div>
+          <div class="record-cell"><span class="k">检测时间</span><span class="v">{{ bindingRecord.time || '-' }}</span></div>
+          <div class="record-cell">
+            <span class="k">判定</span>
+            <span class="v" :class="judgeClass">{{ bindingRecord.judge || '-' }}</span>
+          </div>
+          <div class="record-cell"><span class="k">绑定时间</span><span class="v">{{ result.data.boundAt || '-' }}</span></div>
+        </div>
+        <p class="bind-source">
+          数据来源：扫码绑定（批次「{{ result.data.batchFileName || '未命名' }}」）；
+          <router-link to="/bind" class="bind-manage-link">管理绑定</router-link>
+        </p>
+        <template v-if="bindingRecord.measures && bindingRecord.measures.length">
+          <h3 class="sub-title">测量值（{{ bindingRecord.measures.length }}）</h3>
+          <div class="measure-grid">
+            <div v-for="(mv, i) in bindingRecord.measures" :key="i" class="measure-cell">
+              <span class="k">测量 {{ i + 1 }}</span><span class="v">{{ mv === '' ? '-' : mv }}</span>
+            </div>
+          </div>
+        </template>
+        <p v-else class="no-measure">无测量值</p>
+      </template>
+
       <!-- 明文文本：记录字段网格 -->
       <template v-else-if="result.mode === 'text'">
         <div class="record-grid">
@@ -117,40 +143,34 @@
       <p v-else class="history-empty">暂无查询记录</p>
     </demo-block>
 
-    <!-- ==================== 摄像头扫码弹层 ==================== -->
-    <el-dialog title="摄像头扫码" :visible.sync="scanVisible" width="420px" append-to-body @closed="stopCamera">
-      <video ref="scanVideo" class="scan-video" muted playsinline></video>
-      <p v-if="cameraErr" class="camera-err"><i class="el-icon-warning"></i> {{ cameraErr }}</p>
-      <p v-else class="camera-tip">将二维码对准取景框，识别成功后自动关闭并解析</p>
-    </el-dialog>
+    <!-- ==================== 摄像头扫码弹层（公共组件） ==================== -->
+    <scan-dialog :visible.sync="scanVisible" @scan="onScanCode"></scan-dialog>
   </demo-page>
 </template>
 
 <script>
 /**
- * 二维码溯源查询页 —— 与标签生成页（QcLabel.vue）并列的第二个路由页
+ * 二维码溯源查询页 —— 与标签生成页（QcLabel.vue）并列的路由页
  *
- * 数据流：输入/扫码码值 → parseQrContent 识别模式（text/rule）→ 展示结构化溯源信息
+ * 数据流：输入/扫码码值 → 优先查本机扫码绑定库（code-bindings，命中直接展示绑定的表格记录）
+ *         → 未绑定再 parseQrContent 识别模式（text/rule）→ 展示结构化溯源信息
  *         → 成功解析的记录写入 localStorage（qc-lookup-history，离线缓存，含解析结果）
- * 摄像头扫码：getUserMedia 后置摄像头 → 每 200ms 抽帧 → jsQR 识别 → 成功停流回填。
- * 全程纯前端、数据不出本机。
+ * 摄像头扫码走公共组件 ScanDialog（与绑定页共用）。全程纯前端、数据不出本机。
  */
-import jsQR from 'jsqr';
 import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
+import ScanDialog from '@/components/ScanDialog';
 import { parseQrContent } from '@/common/qr-parse';
 import { pad2 } from '@/common/qc-code-rules';
-import { findByRuleCode } from '@/common/qc-db';
+import { findByRuleCode, findBindingByCode } from '@/common/qc-db';
 
 // 查询历史 localStorage 键与容量（设计 D6：最近 20 条，去重置顶）
 const HISTORY_KEY = 'qc-lookup-history';
 const HISTORY_MAX = 20;
-// 摄像头抽帧识别间隔（ms）
-const SCAN_INTERVAL_MS = 200;
 
 export default {
   name: 'QrLookup',
-  components: { DemoPage, DemoBlock },
+  components: { DemoPage, DemoBlock, ScanDialog },
   data () {
     return {
       inputText: '', // 码值输入（含换行多行）
@@ -159,19 +179,29 @@ export default {
       relatedHits: null, // 规则码关联记录回查结果：null 未查 / [] 未命中 / 数组命中（多批次全部列出）
       relatedLoading: false, // 关联记录检索中
       history: [], // 查询历史：[{ text, time, mode, data }]，时间倒序
-      scanVisible: false, // 摄像头扫码弹层
-      cameraErr: '' // 摄像头不可用原因，空串表示正常取景中
+      scanVisible: false // 摄像头扫码弹层
     };
   },
   computed: {
+    /** 绑定模式的记录字段（快照结构 { seq, time, judge, measures }） */
+    bindingRecord () {
+      const d = (this.result && this.result.data) || {};
+      const r = d.record || {};
+      return {
+        seq: r.seq,
+        time: r.time,
+        judge: r.judge,
+        measures: Array.isArray(r.measures) ? r.measures : []
+      };
+    },
     /** 明文模式的记录字段（缺失字段展示 '-'） */
     recordData () {
       const d = (this.result && this.result.data) || {};
       return { m: d.m, s: d.s, t: d.t, j: d.j, v: Array.isArray(d.v) ? d.v : [] };
     },
-    /** 判定值着色 */
+    /** 判定值着色（明文与绑定两种模式取各自记录的判定） */
     judgeClass () {
-      const j = this.recordData.j;
+      const j = this.result && this.result.mode === 'binding' ? this.bindingRecord.judge : this.recordData.j;
       return j === 'OK' ? 'txt-ok' : (j === 'NG' ? 'txt-ng' : '');
     },
     /** 编码规则逐段含义行 */
@@ -204,22 +234,33 @@ export default {
     }
   },
   created () {
-    // 摄像头媒体流与抽帧定时器（非响应式）
-    this._stream = null;
-    this._scanTimer = null;
     this.loadHistory();
-  },
-  beforeDestroy () {
-    this.stopCamera();
   },
   methods: {
     /* ==================== 查询与解析 ==================== */
 
-    /** 触发查询：空输入提示不解析；成功解析写入离线历史 */
-    doQuery () {
+    /**
+     * 触发查询：空输入提示不解析。优先查本机扫码绑定库（外部码/规则码都可能已绑定
+     * 表格数据，绑定命中直接展示绑定记录）；未绑定再走模式解析。
+     * 绑定库查询失败静默降级为解析流程（解析能力不受影响）。
+     */
+    async doQuery () {
       const text = this.inputText.trim();
       if (!text) {
         this.$message.warning('请先输入或扫描二维码内容');
+        return;
+      }
+      let binding = null;
+      try {
+        binding = await findBindingByCode(text);
+      } catch (e) {
+        binding = null;
+      }
+      if (binding) {
+        this.customComponent = '';
+        this.relatedHits = null;
+        this.result = { mode: 'binding', data: binding, cached: false };
+        this.upsertHistory(text, 'binding', binding);
         return;
       }
       const parsed = parseQrContent(text);
@@ -239,7 +280,8 @@ export default {
     /** 点击历史条目：优先直接展示缓存结果（无需重新解析），缓存缺失/损坏时回退重新解析 */
     openHistory (item) {
       this.inputText = item.text;
-      if ((item.mode === 'text' || item.mode === 'rule') && item.data && typeof item.data === 'object') {
+      if ((item.mode === 'text' || item.mode === 'rule' || item.mode === 'binding') &&
+        item.data && typeof item.data === 'object') {
         this.customComponent = '';
         this.relatedHits = null;
         this.result = { mode: item.mode, data: item.data, cached: true };
@@ -326,84 +368,21 @@ export default {
       return line.length > 46 ? line.slice(0, 46) + '…' : line;
     },
     historyModeLabel (mode) {
-      return { text: '明文文本', rule: '编码规则', unknown: '无法识别' }[mode] || mode;
+      return { text: '明文文本', rule: '编码规则', binding: '扫码绑定', unknown: '无法识别' }[mode] || mode;
     },
     historyTagType (mode) {
-      return { text: '', rule: 'warning', unknown: 'danger' }[mode] || 'info';
+      return { text: '', rule: 'warning', binding: 'success', unknown: 'danger' }[mode] || 'info';
     },
 
-    /* ==================== 摄像头扫码（jsQR） ==================== */
+    /* ==================== 摄像头扫码（公共组件 ScanDialog） ==================== */
 
     openScan () {
-      this.cameraErr = '';
       this.scanVisible = true;
-      this.$nextTick(() => this.startCamera());
     },
-    async startCamera () {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        this.cameraErr = '当前环境不支持摄像头调用（需 https 页面或 Electron 环境）';
-        return;
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: false
-        });
-        this._stream = stream;
-        const video = this.$refs.scanVideo;
-        if (!video) return;
-        video.srcObject = stream;
-        await video.play();
-        this.startScanLoop();
-      } catch (e) {
-        this.cameraErr = this.cameraErrMsg(e) + '；仍可通过粘贴/输入码值查询';
-      }
-    },
-    /** 每 200ms 抽帧到 canvas 交给 jsQR 识别，成功即停流回填并触发解析 */
-    startScanLoop () {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      this.stopScanTimer();
-      this._scanTimer = setInterval(() => {
-        const video = this.$refs.scanVideo;
-        if (!video || video.readyState < 2 || !video.videoWidth) return;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let code = null;
-        try {
-          code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
-        } catch (e) {
-          code = null;
-        }
-        if (code && code.data) {
-          this.stopCamera();
-          this.scanVisible = false;
-          this.inputText = code.data;
-          this.doQuery();
-        }
-      }, SCAN_INTERVAL_MS);
-    },
-    stopScanTimer () {
-      if (this._scanTimer) {
-        clearInterval(this._scanTimer);
-        this._scanTimer = null;
-      }
-    },
-    stopCamera () {
-      this.stopScanTimer();
-      if (this._stream) {
-        this._stream.getTracks().forEach(t => t.stop());
-        this._stream = null;
-      }
-    },
-    cameraErrMsg (e) {
-      const name = e && e.name;
-      if (name === 'NotAllowedError' || name === 'PermissionDeniedError') return '摄像头权限被拒绝';
-      if (name === 'NotFoundError' || name === 'DevicesNotFoundError') return '未检测到可用摄像头';
-      if (name === 'NotReadableError' || name === 'TrackStartError') return '摄像头被其他应用占用';
-      return '摄像头启动失败：' + ((e && e.message) || '未知原因');
+    /** 扫码组件回填：识别成功后回填码值并触发查询 */
+    onScanCode (code) {
+      this.inputText = code;
+      this.doQuery();
     },
 
     /* ==================== 展示辅助 ==================== */
@@ -731,26 +710,14 @@ export default {
   text-align: center;
 }
 
-/* ==================== 扫码弹层 ==================== */
-.scan-video {
-  display: block;
-  width: 100%;
-  height: 315px;
-  background: #000;
-  border-radius: 6px;
-}
-
-.camera-tip {
+/* ==================== 绑定来源提示 ==================== */
+.bind-source {
   margin: 10px 0 0;
   font-size: 13px;
   color: #666;
-  text-align: center;
 }
 
-.camera-err {
-  margin: 10px 0 0;
-  font-size: 13px;
-  color: #cf1322;
-  text-align: center;
+.bind-manage-link {
+  color: #409eff;
 }
 </style>
