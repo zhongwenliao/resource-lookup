@@ -6,6 +6,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   listBtwTemplates: () => ipcRenderer.invoke('btw:list-templates'),
   // 直接调起本机 BarTender 执行 BTXML 打印任务（xml 为脚本内容，主进程写临时文件后调 BarTend.exe）
   printBtxml: (xml) => ipcRenderer.invoke('btw:print-btxml', xml),
+  // 绑定页数据源表格（实时读取，不导入批次）：选择文件 / 探测变化（轮询 mtime）/ 读取二进制
+  pickExcelFile: () => ipcRenderer.invoke('excel:pick-file'),
+  statExcelFile: (path) => ipcRenderer.invoke('excel:stat-file', path),
+  readExcelFile: (path) => ipcRenderer.invoke('excel:read-file', path),
   // 授权:查询试用期/激活状态;输入授权码激活(与机器码绑定)
   getLicenseState: () => ipcRenderer.invoke('license:get-state'),
   activateLicense: (code) => ipcRenderer.invoke('license:activate', code)

@@ -7,6 +7,9 @@
  * - v3 新增对象仓库 `code-bindings`（keyPath `id` 自增，code/boundAt/batchId 索引）：
  *   扫码绑定数据 { id, code, batchId, batchFileName, record, recordKey, boundAt }，
  *   存记录快照而非引用（批次删除后绑定仍可独立查询展示）
+ * - v4 绑定页改为「实时读取数据源文件、不导入批次」：新绑定不再写 batchId/batchFileName，
+ *   改写 sourceKey（数据源标识，桌面版为文件绝对路径）/ sourceName（文件名）；
+ *   code-bindings 补 sourceKey 索引（旧绑定无此字段，索引自动跳过，回查不受影响）
  * - `importedAt` / `boundAt` 须为可排序值（ISO 字符串或时间戳），历史列表按其倒序排列
  * - 所有接口返回 Promise：打开或读写失败时 reject(Error)，由调用方降级提示、不阻断解析
  */
@@ -14,7 +17,8 @@
 const DB_NAME = 'qc-label-db';
 // v3：新增 code-bindings 仓库（扫码绑定）；v2 期间 import-batches 结构曾调整（keyPath/自增
 // 配置变更），升版本触发 onupgradeneeded 校验重建，避免沿用本机遗留的旧结构仓库导致 put 报 keyPath 无效
-const DB_VERSION = 3;
+// v4：code-bindings 补 sourceKey 索引（实时读取模式下按数据源文件检索绑定标记）
+const DB_VERSION = 4;
 const STORE_NAME = 'import-batches';
 const BINDING_STORE = 'code-bindings';
 
@@ -53,6 +57,10 @@ function openDb () {
           store.createIndex('code', 'code', { unique: false });
           store.createIndex('boundAt', 'boundAt', { unique: false });
           store.createIndex('batchId', 'batchId', { unique: false });
+          store.createIndex('sourceKey', 'sourceKey', { unique: false });
+        } else if (!req.transaction.objectStore(BINDING_STORE).indexNames.contains('sourceKey')) {
+          // v4：既有绑定仓库补 sourceKey 索引（v3 装机用户原地升级；旧绑定无该字段，索引自动跳过）
+          req.transaction.objectStore(BINDING_STORE).createIndex('sourceKey', 'sourceKey', { unique: false });
         }
       };
       req.onsuccess = () => resolve(req.result);
@@ -194,8 +202,10 @@ export function findByRuleCode (code) {
  * 写入一条扫码绑定（一码一行，双向唯一）：
  * 同码旧绑定与同 recordKey 旧绑定在同一事务内先删除再写入，保证
  * 「一个码只指向一条记录、一条记录只挂一个码」，重绑即覆盖。
- * @param {object} binding { code, batchId, batchFileName, record, recordKey, boundAt }
- *   record 为绑定行的记录快照（seq/time/judge/measures），批次删除后仍可独立展示
+ * @param {object} binding { code, sourceKey, sourceName, record, recordKey, boundAt }
+ *   record 为绑定行的记录快照（seq/time/judge/measures），数据源文件删除/更换后仍可独立展示；
+ *   sourceKey 为数据源标识（桌面版实时读取模式为文件绝对路径，浏览器降级上传为 'upload:文件名'）；
+ *   batchId/batchFileName 为旧批次模式遗留字段，仅历史绑定记录存在，查询端向后兼容展示
  * @returns {Promise<void>}
  */
 export function saveBinding (binding) {
@@ -273,6 +283,31 @@ export function findBindingsByBatch (batchId) {
     };
     tx.onerror = () => reject(tx.error || new Error('查询批次绑定失败'));
     tx.onabort = () => reject(tx.error || new Error('查询批次绑定已中止'));
+  }));
+}
+
+/**
+ * 某数据源下的全部绑定（绑定页标记「该行已绑定」用，实时读取模式按文件路径检索）。
+ * @param {string} sourceKey 数据源标识（文件绝对路径或 'upload:文件名'）
+ * @returns {Promise<Array<object>>} 绑定数组
+ */
+export function findBindingsBySource (sourceKey) {
+  if (typeof sourceKey !== 'string' || !sourceKey) return Promise.resolve([]);
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const out = [];
+    const tx = db.transaction(BINDING_STORE, 'readonly');
+    const req = tx.objectStore(BINDING_STORE).index('sourceKey').openCursor(IDBKeyRange.only(sourceKey));
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        out.push(cursor.value);
+        cursor.continue();
+      } else {
+        resolve(out);
+      }
+    };
+    tx.onerror = () => reject(tx.error || new Error('查询数据源绑定失败'));
+    tx.onabort = () => reject(tx.error || new Error('查询数据源绑定已中止'));
   }));
 }
 

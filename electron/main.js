@@ -1,5 +1,5 @@
 // Electron 主进程：质检二维码标签生成器
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { execSync, spawn } = require('child_process');
@@ -50,6 +50,51 @@ function findBarTendExe () {
   } catch (e) { /* 注册表无此键 */ }
   return null;
 }
+
+// ==================== Excel 数据源实时读取（绑定页） ====================
+// 绑定页不导入批次，改为选定一个检测数据表格文件实时读取（设备持续导出时自动刷新）。
+// 渲染进程无 nodeIntegration，文件能力一律走主进程 IPC；Excel 为二进制，无 utf8 编码问题。
+
+// 选择数据源表格（系统对话框，.xlsx/.xls）
+ipcMain.handle('excel:pick-file', async (event) => {
+  try {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const r = await dialog.showOpenDialog(win, {
+      title: '选择检测数据表格',
+      properties: ['openFile'],
+      filters: [{ name: 'Excel 表格', extensions: ['xlsx', 'xls'] }]
+    });
+    if (r.canceled || !r.filePaths.length) return { ok: false, canceled: true };
+    return { ok: true, path: r.filePaths[0] };
+  } catch (e) {
+    return { ok: false, error: '打开文件选择框失败：' + e.message };
+  }
+});
+
+// 探测文件 mtime/size：渲染层轮询用，mtime 未变不重读全文件，避免无谓的大体积 IPC 传输
+ipcMain.handle('excel:stat-file', (event, p) => {
+  if (typeof p !== 'string' || !p) return { ok: false, error: '参数无效' };
+  try {
+    const st = fs.statSync(p);
+    return { ok: true, mtimeMs: st.mtimeMs, size: st.size };
+  } catch (e) {
+    return { ok: false, error: e.code === 'ENOENT' ? '文件不存在（可能已被移动或删除）' : '访问文件失败：' + e.message };
+  }
+});
+
+// 读取文件二进制（Uint8Array 经 IPC 结构化克隆直达渲染层，交给共享解析管线 qc-excel.js）。
+// 检测设备写入瞬间可能短暂独占锁定文件（EBUSY/EPERM），此处如实返回错误，
+// 由渲染层静默等下一轮轮询重试（stat 不受写入锁影响，可继续探测）
+ipcMain.handle('excel:read-file', (event, p) => {
+  if (typeof p !== 'string' || !p) return { ok: false, error: '参数无效' };
+  try {
+    const st = fs.statSync(p);
+    const buf = fs.readFileSync(p);
+    return { ok: true, mtimeMs: st.mtimeMs, data: new Uint8Array(buf) };
+  } catch (e) {
+    return { ok: false, error: '读取文件失败：' + e.message };
+  }
+});
 
 // ==================== 授权(试用期 + 授权码)====================
 // 渲染进程启动时查询状态;过期后界面锁死,激活需输入与机器码绑定的授权码

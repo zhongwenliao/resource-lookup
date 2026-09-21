@@ -40,7 +40,7 @@
           <div class="record-cell"><span class="k">绑定时间</span><span class="v">{{ result.data.boundAt || '-' }}</span></div>
         </div>
         <p class="bind-source">
-          数据来源：扫码绑定（批次「{{ result.data.batchFileName || '未命名' }}」）；
+          数据来源：扫码绑定（数据源「{{ result.data.sourceName || result.data.batchFileName || '未命名' }}」）；
           <router-link to="/bind" class="bind-manage-link">管理绑定</router-link>
         </p>
         <template v-if="bindingRecord.measures && bindingRecord.measures.length">
