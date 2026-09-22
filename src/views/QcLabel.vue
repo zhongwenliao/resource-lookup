@@ -42,7 +42,8 @@
           <span class="mapping-info">
             序号列{{ seqCol >= 0 ? '第' + (seqCol + 1) + '列' : '未识别' }} ·
             时间列{{ timeCol >= 0 ? '第' + (timeCol + 1) + '列' : '未识别' }} ·
-            测量列 {{ measureCols.length }} 项
+            测量列 {{ measureCols.length }} 项 ·
+            设备列{{ machineCol >= 0 ? '第' + (machineCol + 1) + '列' : '未识别' }}
           </span>
         </div>
 
@@ -52,6 +53,9 @@
           <el-table-column prop="time" label="检测时间" width="170"></el-table-column>
           <el-table-column prop="judge" label="判定" width="70">
             <template slot-scope="s"><span :class="s.row.judge === 'OK' ? 'txt-ok' : 'txt-ng'">{{ s.row.judge }}</span></template>
+          </el-table-column>
+          <el-table-column v-if="machineCol >= 0" label="设备" width="80">
+            <template slot-scope="s">{{ s.row.machine || '-' }}</template>
           </el-table-column>
           <el-table-column v-for="(m, i) in measurePreviewCols" :key="i" :label="'测量' + (i + 1)" width="90">
             <template slot-scope="s">{{ s.row.measures[i] }}</template>
@@ -204,7 +208,7 @@ import {
 } from '@/common/qc-code-rules';
 // Excel 解析纯函数：生成页 / 绑定页共享的唯一实现（src/common/qc-excel.js）
 import {
-  readSheetRows, guessModelFromName, detectJudgeCol, detectOtherCols, buildRecords
+  readSheetRows, guessModelFromName, detectJudgeCol, detectOtherCols, detectMachineCol, buildRecords
 } from '@/common/qc-excel';
 // 导入批次本地持久化（IndexedDB）：解析自动入库、历史批次载入/删除、规则码关联留存
 import { saveBatch, listBatches, getBatch, deleteBatch } from '@/common/qc-db';
@@ -256,9 +260,10 @@ export default {
       seqCol: -1, // 序号列
       timeCol: -1, // 检测时间列
       measureCols: [], // 测量值列索引数组
+      machineCol: -1, // 设备/机台列（表头关键词识别；-1 未识别，记录 machine 为空串）
 
       /* ---- 结构化数据 ---- */
-      records: [], // 记录：{ seq 序号, time 时间, judge 判定, measures 测量值[] }
+      records: [], // 记录：{ seq 序号, time 时间, judge 判定, measures 测量值[], machine 设备标识 }
       stats: null, // 统计：{ total 总数, ok 合格, ng 不合格 }
 
       /* ---- 标签生成选项 ---- */
@@ -410,7 +415,7 @@ export default {
       this.detectOthers();
     },
     /**
-     * 以判定列为锚点识别其余列（时间/序号/测量），识别逻辑在公共模块 qc-excel.js
+     * 以判定列为锚点识别其余列（时间/序号/测量/设备），识别逻辑在公共模块 qc-excel.js
      * （与绑定页共享，防止两页解析结果漂移）。
      */
     detectOthers () {
@@ -418,6 +423,8 @@ export default {
       this.timeCol = cols.timeCol;
       this.seqCol = cols.seqCol;
       this.measureCols = cols.measureCols;
+      // 设备/机台列：表头关键词识别（与绑定页同一实现，保证两页记录结构一致）
+      this.machineCol = detectMachineCol(this.rows, this.judgeCol, cols.timeCol, cols.seqCol, cols.measureCols);
       this.buildRecords();
     },
     /* ==================== 记录构建与格式化 ==================== */
@@ -428,7 +435,8 @@ export default {
         judgeCol: this.judgeCol,
         timeCol: this.timeCol,
         seqCol: this.seqCol,
-        measureCols: this.measureCols
+        measureCols: this.measureCols,
+        machineCol: this.machineCol
       });
       this.records = built.records;
       this.stats = built.stats;

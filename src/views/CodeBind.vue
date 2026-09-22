@@ -1,7 +1,7 @@
 <template>
   <demo-page
     title="扫码绑定"
-    description="选定检测数据表格（桌面版实时读取，检测数据更新后自动刷新，无需导入）后，逐个扫描实物二维码并在表格中点选对应检测记录，确认后建立「码值 ↔ 表格数据」绑定。外部码与本系统规则码均可绑定；绑定关系保存在本机，溯源查询页扫码时优先展示绑定数据。">
+    description="选定检测数据表格（桌面版实时读取，检测数据更新后自动刷新，无需导入）后，逐个扫描实物二维码，按表格顺序自动绑定到未绑定的合格（OK）记录，无需手动点选与确认。外部码与本系统规则码均可绑定；绑定关系保存在本机，溯源查询页扫码时优先展示绑定数据。">
     <!-- ==================== 区块 1：数据源表格（实时读取） ==================== -->
     <demo-block :index="1" title="数据源表格（实时读取）"
       description="桌面版选择检测数据表格文件后实时读取（不导入本机批次库）：检测设备持续导出数据时自动刷新，与标签生成页共用同一套列识别逻辑。浏览器调试模式降级为上传快照。">
@@ -27,6 +27,13 @@
           <div class="el-upload__text">将检测设备导出的 Excel 拖到此处，或<em>点击选择</em></div>
         </el-upload>
       </template>
+      <!-- 检测设备标识：表格自带设备列时按行自动读取，否则整表手动指定（区分 1号机/2号机） -->
+      <div v-if="sourceKey" class="machine-bar">
+        <span class="machine-tag">检测设备</span>
+        <el-input v-model="machineLabel" size="small" class="machine-input"
+          :placeholder="machineCol >= 0 ? '表格已识别设备列，按行自动读取（可留空）' : '如 1号机 / 2号机（区分多台检测设备）'"></el-input>
+        <span v-if="machineCol >= 0" class="machine-auto">已按表头识别设备列「{{ machineColName }}」，逐行读取</span>
+      </div>
       <p v-if="sourceErr" class="err-tip">{{ sourceErr }}</p>
       <p v-if="parseErr" class="err-tip">{{ parseErr }}</p>
 
@@ -40,31 +47,29 @@
 
     <!-- ==================== 区块 2：扫码绑定 ==================== -->
     <demo-block v-if="records.length" :index="2" title="扫码绑定"
-      description="扫描一个码 → 在下方表格点选对应记录行 → 确认绑定 → 扫下一个。同一码或同一行重复绑定时覆盖旧绑定（一码一行）。">
+      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，无需手动点选与确认。支持摄像头扫码与扫码枪（键盘模式，页面任意位置即扫即绑）。NG 记录无二维码、不参与自动绑定；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
       <div class="pending-bar">
         <el-button type="success" size="small" plain icon="el-icon-camera" @click="scanVisible = true">摄像头扫码</el-button>
-        <el-input v-model="manualCode" size="small" class="manual-input" placeholder="扫码不可用时手动输入码值"
-          @keyup.enter.native="useManualCode"></el-input>
-        <el-button size="small" @click="useManualCode">填入</el-button>
+        <el-input v-model="manualCode" size="small" class="manual-input" placeholder="手动输入码值（回车直接绑定）"
+          @keyup.enter.native="onManualEnter"></el-input>
+        <el-button size="small" @click="useManualCode">绑定</el-button>
       </div>
-      <div class="pending-code-box" :class="{ active: !!pendingCode }">
-        <span class="pending-label">待绑定码</span>
-        <span class="pending-code">{{ pendingCode || '（扫码或输入后显示）' }}</span>
-        <span v-if="pendingHint" class="pending-hint">{{ pendingHint }}</span>
-        <el-button type="primary" size="small" class="confirm-btn" :disabled="!pendingCode || !selectedRow"
-          @click="confirmBind">确认绑定{{ selectedRow ? ' → #' + (selectedRow.record.seq || selectedRow.index + 1) : '' }}</el-button>
-        <el-button v-if="pendingCode" size="text" class="clear-btn" @click="pendingCode = ''">清除</el-button>
-      </div>
-      <p class="bind-tip">已选行：{{ selectedRow ? '#' + (selectedRow.record.seq || selectedRow.index + 1) + '（' + (selectedRow.record.judge || '-') + '）' : '未选择（点击表格行选择）' }}</p>
+      <p class="bind-tip">
+        下一条扫码将绑定：
+        <template v-if="nextBindRow"><span class="next-seq">#{{ nextBindRow.record.seq || nextBindRow.index + 1 }}</span>（{{ nextBindRow.record.time || '时间未识别' }}）</template>
+        <span v-else class="no-next">合格记录已全部绑定</span>
+      </p>
 
-      <el-table :data="records" size="mini" border highlight-current-row class="record-table"
-        @current-change="onRowChange">
+      <el-table :data="records" size="mini" border class="record-table">
         <el-table-column label="序号" width="70">
           <template slot-scope="s"><span :class="s.row.judge === 'OK' ? 'txt-ok' : 'txt-ng'">#{{ s.row.seq || (s.$index + 1) }}</span></template>
         </el-table-column>
         <el-table-column prop="time" label="检测时间" width="160"></el-table-column>
         <el-table-column prop="judge" label="判定" width="60">
           <template slot-scope="s"><span :class="s.row.judge === 'OK' ? 'txt-ok' : 'txt-ng'">{{ s.row.judge }}</span></template>
+        </el-table-column>
+        <el-table-column v-if="machineCol >= 0 || machineLabel" label="设备" width="80">
+          <template slot-scope="s"><span class="machine-cell">{{ s.row.machine || machineLabel || '-' }}</span></template>
         </el-table-column>
         <el-table-column v-for="(m, i) in measurePreviewCols" :key="i" :label="'测量' + (i + 1)" width="90">
           <template slot-scope="s">{{ s.row.measures[i] }}</template>
@@ -96,6 +101,9 @@
             <span :class="(s.row.record && s.row.record.judge) === 'OK' ? 'txt-ok' : 'txt-ng'">{{ (s.row.record && s.row.record.judge) || '-' }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="设备" width="80">
+          <template slot-scope="s">{{ s.row.machine || '-' }}</template>
+        </el-table-column>
         <el-table-column label="来源" min-width="140" show-overflow-tooltip>
           <template slot-scope="s">{{ s.row.sourceName || s.row.batchFileName || '未命名' }}</template>
         </el-table-column>
@@ -110,7 +118,7 @@
     </demo-block>
 
     <!-- ==================== 摄像头扫码弹层（公共组件） ==================== -->
-    <scan-dialog :visible.sync="scanVisible" tip="将待绑定的二维码对准取景框，识别成功后自动填入待绑定码"
+    <scan-dialog :visible.sync="scanVisible" tip="将待绑定的二维码对准取景框，识别成功后自动绑定到下一条合格记录"
       @scan="onScanCode"></scan-dialog>
   </demo-page>
 </template>
@@ -121,9 +129,9 @@
  *
  * 数据流：选择数据源表格文件（桌面版经主进程 IPC 实时读取，不导入批次库；轮询
  *         mtime 感知检测设备持续导出，变化后自动重读刷新）→ 摄像头扫码（ScanDialog）
- *         或手动输入得到码值（外部码原样存储，规则码顺带拆段提示）→ 表格点选行
- *         → saveBinding 落 IndexedDB（一码一行，重绑覆盖）
- *         → 溯源查询页扫码优先展示绑定记录。
+ *         / 扫码枪 / 手动输入得到码值 → 自动绑定到表格中第一条未绑定的合格（OK）
+ *         记录（标签只为 OK 记录生成，扫码顺序即表格顺序）→ saveBinding 落
+ *         IndexedDB（一码一行）→ 溯源查询页扫码优先展示绑定记录。
  * 绑定存记录快照（非引用）：数据源文件删除/更换后绑定仍可独立查询。
  * 浏览器调试模式无 electronAPI，降级为上传快照（sourceKey 用 'upload:文件名'）。
  * 全程纯前端、数据不出本机。
@@ -131,9 +139,9 @@
 import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
 import ScanDialog from '@/components/ScanDialog';
+import { createScannerGun } from '@/common/scanner-gun';
 // Excel 解析一站式管线（与生成页共享的唯一实现，防止两页解析结果漂移）
 import { parseQcExcel } from '@/common/qc-excel';
-import { parseQrContent } from '@/common/qr-parse';
 import { pad2 } from '@/common/qc-code-rules';
 import {
   saveBinding, findBindingByCode, findBindingsBySource, listBindings, deleteBinding
@@ -147,6 +155,8 @@ const BINDING_LIST_MAX = 50;
 const POLL_INTERVAL = 3000;
 // 记住上次数据源文件路径的 localStorage 键（重进页面自动恢复实时读取）
 const SOURCE_PATH_KEY = 'qc-bind-source-path';
+// 各数据源整表设备标识的 localStorage 键（JSON map：sourceKey → 设备标识，如「1号机」）
+const MACHINE_MAP_KEY = 'qc-bind-machine-map';
 
 export default {
   name: 'CodeBind',
@@ -164,15 +174,16 @@ export default {
       sourceErr: '', // 数据源文件访问错误（被移动/删除等），空串表示正常
 
       /* ---- 解析结果 ---- */
-      records: [], // 记录：{ seq, time, judge, measures, ruleCode? }
+      records: [], // 记录：{ seq, time, judge, measures, machine?, ruleCode? }
       stats: null, // 统计：{ total, ok, ng }
       parseErr: '', // 解析错误提示，空串表示无错误
+      machineCol: -1, // 表格自带设备/机台列索引（-1 未识别，用整表设备标识兜底）
+      machineColName: '', // 设备列表头名（识别成功时展示，帮用户确认认对了列）
 
       /* ---- 绑定操作 ---- */
       scanVisible: false, // 摄像头扫码弹层
-      manualCode: '', // 手动输入码值（扫码不可用降级入口）
-      pendingCode: '', // 待绑定码（扫码/输入回填，确认后清空）
-      selectedRow: null, // 待绑定行：{ record, index }（表格 current-change 记录）
+      manualCode: '', // 手动输入码值（扫码不可用降级入口，回车直接绑定）
+      machineLabel: '', // 整表设备标识（手动指定，如「1号机」；按数据源记忆，行级设备值优先）
       bindings: [], // 当前数据源的绑定数组（行绑定状态标记用）
 
       /* ---- 本机绑定列表 ---- */
@@ -194,19 +205,18 @@ export default {
       return cols;
     },
     /**
-     * 待绑定码提示：规则码顺带拆段摘要（帮用户确认扫对了码）；
-     * 其余内容标注为外部码原样存储（不解析、不校验格式）。
+     * 自动绑定的下一条目标行：表格顺序第一条「OK 且未绑定」的记录。
+     * 标签只为 OK 记录生成（NG 不打码），扫码顺序即 OK 记录顺序；
+     * 绑定错了在列表删除后该行自动回到待绑定队头，扫码即自动补绑。
      */
-    pendingHint () {
-      if (!this.pendingCode) return '';
-      const parsed = parseQrContent(this.pendingCode);
-      if (parsed.mode === 'rule') {
-        const d = parsed.data;
-        return '规则码：' + (d.prefix || '') + ' · ' + d.stage.name + ' · ' + d.color.name +
-          ' · ' + this.inferYear(d.year) + '-' + pad2(d.monthNum) + '-' + d.day + ' · #' + d.serial;
+    nextBindRow () {
+      for (let i = 0; i < this.records.length; i++) {
+        const r = this.records[i];
+        if (r.judge !== 'OK') continue;
+        if (this.rowBinding(r)) continue;
+        return { record: r, index: i };
       }
-      if (parsed.mode === 'text') return '历史明文码';
-      return '外部码（原样绑定，不解析内容）';
+      return null;
     }
   },
   watch: {
@@ -218,14 +228,23 @@ export default {
       } else if (!on) {
         this.stopPolling();
       }
+    },
+    /** 整表设备标识：输入即保存（按数据源记忆，换源自动恢复，重进页面不丢） */
+    machineLabel () {
+      this.saveMachineLabel();
     }
   },
   created () {
     this.loadBindingList();
     this.restoreSource();
   },
+  mounted () {
+    // 扫码枪（键盘模式）全局监听：无需聚焦输入框，页面任意位置扫码即直接绑定
+    this._stopGun = createScannerGun(code => this.onScanCode(code));
+  },
   beforeDestroy () {
     this.stopPolling(); // 路由切走清理轮询定时器，避免后台空转
+    if (this._stopGun) this._stopGun(); // 扫码枪监听随页面销毁移除
   },
   methods: {
     /* ==================== 数据源管理（实时读取） ==================== */
@@ -250,6 +269,7 @@ export default {
       try {
         localStorage.setItem(SOURCE_PATH_KEY, path);
       } catch (e) { /* 存储不可用：仅本次会话记忆路径，不影响功能 */ }
+      this.loadMachineLabel(); // 换源恢复该源的整表设备标识（1号机/2号机各记各的）
       this.reloadSource(true);
       this.startPolling();
     },
@@ -322,6 +342,7 @@ export default {
         // 浏览器拿不到文件路径，以 'upload:文件名' 为数据源标识（同名重传可恢复绑定行标记）
         this.sourceKey = 'upload:' + raw.name;
         this.sourceName = raw.name;
+        this.loadMachineLabel(); // 同名文件恢复整表设备标识
         this.applyParsed(new Uint8Array(e.target.result), raw.name);
       };
       reader.readAsArrayBuffer(raw);
@@ -343,22 +364,40 @@ export default {
       this.records = parsed.records;
       this.stats = parsed.stats;
       this.lastRefreshAt = this.nowStr();
-      // 数据刷新后按序号重新定位选中行（检测数据通常只追加，前行不变）；
-      // 定位不到（记录被替换）则清空，避免把码绑到已不存在的旧行快照
-      if (this.selectedRow) {
-        const old = this.selectedRow;
-        const oldSeq = old.record && old.record.seq;
-        let hit = null;
-        if (oldSeq !== '' && oldSeq !== undefined) {
-          for (let i = 0; i < this.records.length; i++) {
-            if (this.records[i].seq === oldSeq) { hit = { record: this.records[i], index: i }; break; }
-          }
-        } else if (old.index < this.records.length && this.records[old.index].seq === '') {
-          hit = { record: this.records[old.index], index: old.index };
-        }
-        this.selectedRow = hit;
-      }
+      this.machineCol = parsed.machineCol >= 0 ? parsed.machineCol : -1;
+      this.machineColName = this.machineCol >= 0 ? this.headCellName(parsed.rows, this.machineCol) : '';
+      // 自动绑定按「第一条未绑定 OK 行」实时计算，数据刷新（通常只追加）无需特殊处理
       this.refreshBindings();
+    },
+    /** 取某列表头名（前 5 行该列第一个非空单元格，识别设备列后展示帮用户确认） */
+    headCellName (rows, col) {
+      for (let r = 0; r < Math.min(rows.length, 5); r++) {
+        const v = rows[r][col];
+        if (v !== null && v !== undefined && String(v).trim() !== '') return String(v).trim();
+      }
+      return '';
+    },
+    /** 恢复当前数据源的整表设备标识（换源/重进页面自动回到上次设定） */
+    loadMachineLabel () {
+      let label = '';
+      try {
+        const map = JSON.parse(localStorage.getItem(MACHINE_MAP_KEY) || '{}');
+        label = map[this.sourceKey] || '';
+      } catch (e) {
+        label = '';
+      }
+      this.machineLabel = label;
+    },
+    /** 保存整表设备标识到当前数据源名下（清空输入即删除该源记忆） */
+    saveMachineLabel () {
+      if (!this.sourceKey) return;
+      try {
+        const map = JSON.parse(localStorage.getItem(MACHINE_MAP_KEY) || '{}');
+        const label = this.machineLabel.trim();
+        if (label) map[this.sourceKey] = label;
+        else delete map[this.sourceKey];
+        localStorage.setItem(MACHINE_MAP_KEY, JSON.stringify(map));
+      } catch (e) { /* 存储不可用：仅本次会话生效，不影响绑定功能 */ }
     },
     /** 路径取文件名（Windows 与 POSIX 分隔符都兼容） */
     baseName (path) {
@@ -368,24 +407,25 @@ export default {
 
     /* ==================== 扫码与绑定 ==================== */
 
-    /** 扫码组件回填：识别成功后填入待绑定码（未确认的旧码直接覆盖，扫码节奏即逐个迭代） */
+    /** 扫码入口（摄像头/扫码枪共用）：直接自动绑定到下一条合格记录 */
     onScanCode (code) {
-      this.pendingCode = code;
+      // 扫码枪字符可能落入聚焦的输入框，清空避免其回车键二次触发手动绑定
       this.manualCode = '';
+      this.autoBind(code);
     },
-    /** 手动输入码值填入待绑定码（扫码不可用降级入口） */
+    /** 输入框回车：空值静默忽略（扫码枪回车被全局监听接管后此处可能为空） */
+    onManualEnter () {
+      if (this.manualCode.trim()) this.useManualCode();
+    },
+    /** 手动输入码值直接绑定（扫码不可用降级入口） */
     useManualCode () {
       const code = this.manualCode.trim();
+      this.manualCode = '';
       if (!code) {
         this.$message.warning('请先输入码值');
         return;
       }
-      this.pendingCode = code;
-      this.manualCode = '';
-    },
-    /** 表格行点选：记录待绑定行（record 引用 + 下标，确认绑定用） */
-    onRowChange (row) {
-      this.selectedRow = row ? { record: row, index: this.records.indexOf(row) } : null;
+      this.autoBind(code);
     },
     /**
      * 行标识（绑定 recordKey）：序号优先（人可读、检测数据追加行后仍稳定），
@@ -405,52 +445,49 @@ export default {
       return null;
     },
     /**
-     * 确认绑定：一码一行（saveBinding 写入前清理同码与同 recordKey 旧绑定，重绑即覆盖）。
-     * 同码已绑定其他行时先确认提示，避免误扫覆盖。
+     * 自动绑定：码值 → 表格中第一条未绑定的 OK 记录（标签只为 OK 记录生成，
+     * 扫码顺序即表格顺序）。已绑定的码直接跳过，防止同一码连扫两次误占下一条
+     * （重绑路径：绑定记录中删除后重扫，被删行自动回到待绑定队头）。
      */
-    async confirmBind () {
-      const code = this.pendingCode.trim();
-      const row = this.selectedRow;
-      if (!code) {
-        this.$message.warning('请先扫码或输入码值');
-        return;
-      }
-      if (!row) {
-        this.$message.warning('请先在表格中点选要绑定的记录行');
+    async autoBind (code) {
+      const c = String(code || '').trim();
+      if (!c) return;
+      if (!this.records.length) {
+        this.$message.warning('请先选择数据源表格');
         return;
       }
       let old = null;
       try {
-        old = await findBindingByCode(code);
+        old = await findBindingByCode(c);
       } catch (e) {
         old = null; // 查询失败不阻断：写入端 saveBinding 自会清理同码旧绑定
       }
-      const doSave = async () => {
-        try {
-          await saveBinding({
-            code,
-            sourceKey: this.sourceKey,
-            sourceName: this.sourceName,
-            record: row.record,
-            recordKey: this.rowKey(row.index, row.record),
-            boundAt: this.nowStr()
-          });
-          this.$message.success('已绑定 ' + this.codePreview(code) + ' → #' + (row.record.seq || row.index + 1));
-          this.pendingCode = '';
-          this.selectedRow = null;
-          this.refreshBindings();
-          this.loadBindingList();
-        } catch (e) {
-          this.$message.warning('绑定失败：' + ((e && e.message) || '未知原因'));
-        }
-      };
       if (old) {
-        this.$confirm('该码已绑定 #' + ((old.record && old.record.seq) || '-') +
-          '（数据源「' + (old.sourceName || old.batchFileName || '未命名') + '」），重新绑定将覆盖。', '码已绑定', { type: 'warning' })
-          .then(doSave)
-          .catch(() => {});
-      } else {
-        doSave();
+        this.$message.warning('该码已绑定 #' + ((old.record && old.record.seq) || '-') +
+          '，已跳过（重绑请先在绑定记录中删除）');
+        return;
+      }
+      const target = this.nextBindRow;
+      if (!target) {
+        this.$message.warning('没有可绑定的合格记录（OK 记录已全部绑定）');
+        return;
+      }
+      try {
+        await saveBinding({
+          code: c,
+          sourceKey: this.sourceKey,
+          sourceName: this.sourceName,
+          record: target.record,
+          recordKey: this.rowKey(target.index, target.record),
+          // 设备标识：行级值（表格自带设备列）优先，整表手动标识兜底，均无则空串
+          machine: target.record.machine || this.machineLabel.trim(),
+          boundAt: this.nowStr()
+        });
+        this.$message.success('已绑定 ' + this.codePreview(c) + ' → #' + (target.record.seq || target.index + 1));
+        this.refreshBindings();
+        this.loadBindingList();
+      } catch (e) {
+        this.$message.warning('绑定失败：' + ((e && e.message) || '未知原因'));
       }
     },
     /** 解绑/删除一条绑定：当前数据源的同步刷新行标记，列表刷新 */
@@ -499,16 +536,6 @@ export default {
       const d = new Date();
       return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' +
         pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
-    },
-    /** 年份末位 → 推断完整年份（取不超过当前年份且末位匹配者，与查询页口径一致） */
-    inferYear (code) {
-      const last = Number(code);
-      if (isNaN(last)) return '-';
-      const cur = new Date().getFullYear();
-      for (let y = cur; y > cur - 10; y--) {
-        if (y % 10 === last) return String(y);
-      }
-      return String(2000 + last);
     }
   }
 };
@@ -556,6 +583,29 @@ export default {
   }
 }
 
+.machine-bar {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .machine-tag {
+    font-size: 13px;
+    color: #666;
+    flex-shrink: 0;
+  }
+
+  .machine-input {
+    width: 300px;
+  }
+
+  .machine-auto {
+    font-size: 12px;
+    color: #389e0d;
+    flex-shrink: 0;
+  }
+}
+
 .stat-cards {
   margin-top: 14px;
   display: flex;
@@ -599,59 +649,19 @@ export default {
   }
 }
 
-.pending-code-box {
-  margin-top: 10px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fafafa;
-
-  &.active {
-    border-color: #409eff;
-    background: #f0f7ff;
-  }
-
-  .pending-label {
-    font-size: 12px;
-    color: #999;
-    flex-shrink: 0;
-  }
-
-  .pending-code {
-    font-family: Consolas, 'Courier New', monospace;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    word-break: break-all;
-  }
-
-  .pending-hint {
-    font-size: 12px;
-    color: #888;
-    flex-shrink: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .confirm-btn {
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-
-  .clear-btn {
-    flex-shrink: 0;
-    padding: 0;
-  }
-}
-
 .bind-tip {
   margin: 8px 0 10px;
   font-size: 13px;
   color: #666;
+
+  .next-seq {
+    color: #389e0d;
+    font-weight: 600;
+  }
+
+  .no-next {
+    color: #999;
+  }
 }
 
 .record-table {

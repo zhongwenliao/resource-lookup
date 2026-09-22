@@ -2,7 +2,8 @@
  * 检测设备 Excel 解析纯函数（生成端与绑定端共用，防止解析规则漂移）
  *
  * 从 QcLabel.vue 抽出的解析管线：SheetJS 读表 → 判定列自动识别（OK/NG 占比）
- * → 以判定列为锚点识别时间/序号/测量列 → 行转结构化记录。
+ * → 以判定列为锚点识别时间/序号/测量列 → 设备/机台列识别（表头关键词）
+ * → 行转结构化记录。
  * 标签生成页（QcLabel.vue）与扫码绑定页（CodeBind.vue）必须走同一份实现，
  * 否则同一文件两页解析出的记录不一致，绑定快照与生成数据对不上。
  */
@@ -130,6 +131,39 @@ export function detectOtherCols (rows, judgeCol) {
   return { timeCol, seqCol, measureCols };
 }
 
+// 设备/机台列表头关键词（小写匹配，中文不受影响）：命中即认为该列标识检测设备
+const MACHINE_HEADER_KEYS = ['设备', '机台', '机器', '机号', '测试机', 'machine', 'station', '线体', '产线'];
+
+/**
+ * 识别设备/机台列：表头区（前 5 行）单元格文本命中关键词的列，
+ * 排除判定/时间/序号/测量等已识别列。只认表头关键词、不做值模式猜测，
+ * 避免把型号/备注等文本列误判为设备列；识别不到时由绑定页手动指定整表设备标识。
+ * @param {Array<Array>} rows 原始二维数组
+ * @param {number} judgeCol 判定列索引
+ * @param {number} timeCol 时间列索引（-1 未识别）
+ * @param {number} seqCol 序号列索引（-1 未识别）
+ * @param {number[]} measureCols 测量列索引数组
+ * @returns {number} 设备列索引，-1 表示未识别
+ */
+export function detectMachineCol (rows, judgeCol, timeCol, seqCol, measureCols) {
+  const skip = {};
+  skip[judgeCol] = true;
+  if (timeCol >= 0) skip[timeCol] = true;
+  if (seqCol >= 0) skip[seqCol] = true;
+  (measureCols || []).forEach(c => { skip[c] = true; });
+  const maxCol = rows.reduce((m, r) => Math.max(m, r.length), 0);
+  const headRows = rows.slice(0, 5); // 表头区：检测设备导出的表头一般在前几行
+  for (let c = 0; c < maxCol; c++) {
+    if (skip[c]) continue;
+    for (let r = 0; r < headRows.length; r++) {
+      const v = headRows[r][c];
+      const s = v === null || v === undefined ? '' : String(v).trim().toLowerCase();
+      if (s && MACHINE_HEADER_KEYS.some(k => s.indexOf(k) >= 0)) return c;
+    }
+  }
+  return -1;
+}
+
 /** 时间格式化为 'YYYY-MM-DD HH:mm:ss'，兼容 Date 对象与 Excel 日期序列号 */
 export function formatTimeVal (v) {
   if (v instanceof Date) {
@@ -155,12 +189,13 @@ export function formatMeasureVal (v) {
 /**
  * 按列映射把原始行转为结构化记录，并汇总统计数字。
  * @param {Array<Array>} rows 原始二维数组
- * @param {{ judgeCol: number, timeCol?: number, seqCol?: number, measureCols?: number[] }} mapping 列映射
- * @returns {{ records: Array<{seq,time,judge,measures}>, stats: { total, ok, ng } }}
+ * @param {{ judgeCol: number, timeCol?: number, seqCol?: number, measureCols?: number[], machineCol?: number }} mapping 列映射
+ * @returns {{ records: Array<{seq,time,judge,measures,machine}>, stats: { total, ok, ng } }}
+ *   machine 为该行的设备/机台标识（表格自带设备列时按行取值，未识别设备列为空串）
  */
 export function buildRecords (rows, mapping) {
-  const { judgeCol, timeCol, seqCol, measureCols } = Object.assign(
-    { timeCol: -1, seqCol: -1, measureCols: [] }, mapping);
+  const { judgeCol, timeCol, seqCol, measureCols, machineCol } = Object.assign(
+    { timeCol: -1, seqCol: -1, measureCols: [], machineCol: -1 }, mapping);
   const records = [];
   rows.forEach(r => {
     const v = r[judgeCol];
@@ -175,7 +210,10 @@ export function buildRecords (rows, mapping) {
     }
     const time = timeCol >= 0 ? formatTimeVal(r[timeCol]) : '';
     const measures = measureCols.map(c => formatMeasureVal(r[c]));
-    records.push({ seq, time, judge, measures });
+    // 设备/机台标识：多台设备混在同一文件时逐行区分（1号机/2号机各测各的行）
+    const machine = machineCol >= 0 && r[machineCol] !== null && r[machineCol] !== undefined
+      ? String(r[machineCol]).trim() : '';
+    records.push({ seq, time, judge, measures, machine });
   });
   const ok = records.filter(r => r.judge === 'OK').length;
   return { records, stats: { total: records.length, ok, ng: records.length - ok } };
@@ -185,7 +223,8 @@ export function buildRecords (rows, mapping) {
  * 一站式解析：文件二进制 → 列识别 → 结构化记录（绑定页直接消费）。
  * @param {ArrayBuffer} buf 文件二进制
  * @param {string} name 文件名（型号猜测用）
- * @returns {{ rows, fileName, model, judgeCol, timeCol, seqCol, measureCols, records, stats }}
+ * @returns {{ rows, fileName, model, judgeCol, timeCol, seqCol, measureCols, machineCol, records, stats }}
+ *   machineCol 为设备/机台列索引（-1 未识别，绑定页以整表手动标识兜底）
  * @throws {Error} 判定列未识别（非检测设备导出数据）或工作簿解析失败
  */
 export function parseQcExcel (buf, name) {
@@ -196,10 +235,12 @@ export function parseQcExcel (buf, name) {
     throw new Error('未找到判定列（OK/NG），请确认这是检测设备导出的数据');
   }
   const others = detectOtherCols(rows, hit.col);
-  const built = buildRecords(rows, Object.assign({ judgeCol: hit.col }, others));
+  const machineCol = detectMachineCol(rows, hit.col, others.timeCol, others.seqCol, others.measureCols);
+  const built = buildRecords(rows, Object.assign({ judgeCol: hit.col, machineCol }, others));
   return Object.assign({
     rows,
     fileName: name,
-    model: guessModelFromName(name)
+    model: guessModelFromName(name),
+    machineCol
   }, others, { judgeCol: hit.col }, built);
 }

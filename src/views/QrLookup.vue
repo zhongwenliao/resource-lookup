@@ -4,13 +4,13 @@
     description="粘贴/输入或摄像头扫描二维码内容，自动识别两种内容模式（明文文本 / 编码规则）并解析展示质检溯源信息；编码规则码可回查本机批次中的关联检测记录。全程离线、不依赖服务器；查询成功的记录在本机离线留存，可随时回看。">
     <!-- ==================== 区块 1：码值输入 ==================== -->
     <demo-block :index="1" title="码值输入"
-      description="支持粘贴含换行的多行明文码与单行编码规则码；也可调用摄像头实时扫码。">
+      description="支持粘贴含换行的多行明文码与单行编码规则码；可调用摄像头实时扫码，也支持扫码枪（键盘模式）即扫即查。">
       <el-input v-model="inputText" type="textarea" :rows="6" class="code-input"
         placeholder="粘贴或输入二维码内容：明文（型号:/序号:/时间:/判定:/测量:）或编码规则码（如 KBWKV3-3QHYX691400001）"></el-input>
       <div class="action-bar">
         <el-button type="primary" size="small" @click="doQuery">查 询</el-button>
         <el-button type="success" size="small" plain icon="el-icon-camera" @click="openScan">摄像头扫码</el-button>
-        <span class="action-tip">无法识别的内容会给出原因，不会误报为某种模式</span>
+        <span class="action-tip">扫码枪即扫即查（系统输入法需为英文）；无法识别的内容会给出原因，不会误报为某种模式</span>
       </div>
     </demo-block>
 
@@ -38,6 +38,7 @@
             <span class="v" :class="judgeClass">{{ bindingRecord.judge || '-' }}</span>
           </div>
           <div class="record-cell"><span class="k">绑定时间</span><span class="v">{{ result.data.boundAt || '-' }}</span></div>
+          <div v-if="bindingRecord.machine" class="record-cell"><span class="k">检测设备</span><span class="v">{{ bindingRecord.machine }}</span></div>
         </div>
         <p class="bind-source">
           数据来源：扫码绑定（数据源「{{ result.data.sourceName || result.data.batchFileName || '未命名' }}」）；
@@ -107,6 +108,7 @@
                   <span class="k">判定</span>
                   <span class="v" :class="hit.record.judge === 'OK' ? 'txt-ok' : 'txt-ng'">{{ hit.record.judge || '-' }}</span>
                 </div>
+                <div v-if="hit.record.machine" class="record-cell"><span class="k">检测设备</span><span class="v">{{ hit.record.machine }}</span></div>
               </div>
               <template v-if="hit.record.measures && hit.record.measures.length">
                 <div class="measure-grid">
@@ -160,6 +162,7 @@
 import DemoPage from '@/components/DemoPage';
 import DemoBlock from '@/components/DemoBlock';
 import ScanDialog from '@/components/ScanDialog';
+import { createScannerGun } from '@/common/scanner-gun';
 import { parseQrContent } from '@/common/qr-parse';
 import { pad2 } from '@/common/qc-code-rules';
 import { findByRuleCode, findBindingByCode } from '@/common/qc-db';
@@ -183,7 +186,7 @@ export default {
     };
   },
   computed: {
-    /** 绑定模式的记录字段（快照结构 { seq, time, judge, measures }） */
+    /** 绑定模式的记录字段（快照结构 { seq, time, judge, measures, machine }） */
     bindingRecord () {
       const d = (this.result && this.result.data) || {};
       const r = d.record || {};
@@ -191,7 +194,9 @@ export default {
         seq: r.seq,
         time: r.time,
         judge: r.judge,
-        measures: Array.isArray(r.measures) ? r.measures : []
+        measures: Array.isArray(r.measures) ? r.measures : [],
+        // 设备标识：绑定快照顶层（行级值优先整表标识的合成结果）优先，旧绑定回退记录内嵌值
+        machine: d.machine || r.machine || ''
       };
     },
     /** 明文模式的记录字段（缺失字段展示 '-'） */
@@ -235,6 +240,13 @@ export default {
   },
   created () {
     this.loadHistory();
+  },
+  mounted () {
+    // 扫码枪（键盘模式）全局监听：页面任意位置扫码即回填查询，与摄像头扫码共用回填逻辑
+    this._stopGun = createScannerGun(code => this.onScanCode(code));
+  },
+  beforeDestroy () {
+    if (this._stopGun) this._stopGun();
   },
   methods: {
     /* ==================== 查询与解析 ==================== */
@@ -379,7 +391,7 @@ export default {
     openScan () {
       this.scanVisible = true;
     },
-    /** 扫码组件回填：识别成功后回填码值并触发查询 */
+    /** 扫码回填（摄像头/扫码枪共用）：识别成功后回填码值并触发查询 */
     onScanCode (code) {
       this.inputText = code;
       this.doQuery();
