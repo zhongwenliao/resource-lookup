@@ -665,12 +665,13 @@ export default {
 
 .bind-tip {
   margin: 8px 0 10px;
-  font-size: 13px;
-  color: #666;
+  font-size: 15px;
+  color: #cf1322;
+  font-weight: 700;
 
   .next-seq {
     color: #389e0d;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .no-next {
