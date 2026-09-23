@@ -47,9 +47,9 @@
 
     <!-- ==================== 区块 2：扫码绑定 ==================== -->
     <demo-block v-if="records.length" :index="2" title="扫码绑定"
-      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，无需手动点选与确认。支持摄像头扫码与扫码枪（键盘模式，页面任意位置即扫即绑）。NG 记录无二维码、不参与自动绑定；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
+      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，全程无需点击。摄像头开启后连续扫码即连续绑定；扫码枪（键盘模式）页面任意位置即扫即绑。NG 记录无二维码、不参与自动绑定；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
       <div class="pending-bar">
-        <el-button type="success" size="small" plain icon="el-icon-camera" @click="scanVisible = true">摄像头扫码</el-button>
+        <el-button type="success" size="small" plain icon="el-icon-camera" @click="scanVisible = true">摄像头连续扫码</el-button>
         <el-input v-model="manualCode" size="small" class="manual-input" placeholder="手动输入码值（回车直接绑定）"
           @keyup.enter.native="onManualEnter"></el-input>
         <el-button size="small" @click="useManualCode">绑定</el-button>
@@ -117,8 +117,9 @@
       <p v-if="!bindingList.length && !bindingListLoading" class="binding-empty">暂无绑定记录</p>
     </demo-block>
 
-    <!-- ==================== 摄像头扫码弹层（公共组件） ==================== -->
-    <scan-dialog :visible.sync="scanVisible" tip="将待绑定的二维码对准取景框，识别成功后自动绑定到下一条合格记录"
+    <!-- ==================== 摄像头扫码弹层（公共组件，连续模式） ==================== -->
+    <scan-dialog :visible.sync="scanVisible" continuous
+      tip="将待绑定的二维码逐个对准取景框，识别成功即自动绑定，可连续扫码"
       @scan="onScanCode"></scan-dialog>
   </demo-page>
 </template>
@@ -445,17 +446,29 @@ export default {
       return null;
     },
     /**
-     * 自动绑定：码值 → 表格中第一条未绑定的 OK 记录（标签只为 OK 记录生成，
-     * 扫码顺序即表格顺序）。已绑定的码直接跳过，防止同一码连扫两次误占下一条
-     * （重绑路径：绑定记录中删除后重扫，被删行自动回到待绑定队头）。
+     * 自动绑定入口（摄像头连续扫码/扫码枪/手动输入共用）：串行排队执行。
+     * 连续模式下两个码可能先后紧接到达，若并发跑会同时把 nextBindRow 算成
+     * 同一行（前一个尚未落库刷新），排队保证一码一行按顺序绑定。
      */
-    async autoBind (code) {
+    autoBind (code) {
       const c = String(code || '').trim();
-      if (!c) return;
+      if (!c) return Promise.resolve();
       if (!this.records.length) {
         this.$message.warning('请先选择数据源表格');
-        return;
+        return Promise.resolve();
       }
+      const prev = this._bindChain || Promise.resolve();
+      const run = prev.then(() => this.doAutoBind(c));
+      this._bindChain = run.catch(() => {}); // 失败不断链：后续扫码继续处理
+      return run;
+    },
+    /**
+     * 绑定执行（经 autoBind 串行调度）：码值 → 表格中第一条未绑定的 OK 记录
+     * （标签只为 OK 记录生成，扫码顺序即表格顺序）。已绑定的码直接跳过，防止
+     * 同一码连扫两次误占下一条（重绑路径：绑定记录中删除后重扫，被删行自动
+     * 回到待绑定队头）。
+     */
+    async doAutoBind (c) {
       let old = null;
       try {
         old = await findBindingByCode(c);
@@ -484,7 +497,8 @@ export default {
           boundAt: this.nowStr()
         });
         this.$message.success('已绑定 ' + this.codePreview(c) + ' → #' + (target.record.seq || target.index + 1));
-        this.refreshBindings();
+        // 串行链上等刷新完成，下一码计算 nextBindRow 时看到的才是最新绑定状态
+        await this.refreshBindings();
         this.loadBindingList();
       } catch (e) {
         this.$message.warning('绑定失败：' + ((e && e.message) || '未知原因'));
