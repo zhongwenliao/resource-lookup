@@ -28,7 +28,7 @@
             </u-input>
           </u-form-item>
 
-          <!-- 					<u-form-item class="form-item" prop="idCard" :border-bottom="false" label="身份证">
+          <!-- <u-form-item class="form-item" prop="idCard" :border-bottom="false" label="身份证">
 						<u-input placeholder="请输入身份证" v-model="form.idCard" />
 					</u-form-item> -->
         </view>
@@ -107,7 +107,6 @@ export default {
       })
     },
     onSubmit() {
-      // setDevDevice
       this.$refs.uForm.validate((valid) => {
         if (valid) {
           let params = {
@@ -150,10 +149,7 @@ page {
   color: rgb(0, 122, 255);
 }
 .btn_box {
-  // position: sticky;
-  // position: fixed;
   width: 100%;
-  // bottom: 0;
   margin-top: 20px;
   padding: 0 75upx;
   margin-bottom: 10upx;
