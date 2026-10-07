@@ -1,6 +1,0 @@
-
-.li-border-bottom {
-	padding: 10rpx;
-	border-bottom: 1rpx solid #D3D3D3;
-}
-

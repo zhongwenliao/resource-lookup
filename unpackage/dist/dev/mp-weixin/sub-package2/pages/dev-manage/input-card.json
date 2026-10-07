@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "输入卡号添卡",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page"
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "navigationStyle": "custom",
-  "navigationBarTitleText": "审批成功",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-navbar": "/uview-ui/components/u-navbar/u-navbar",
-    "u-button": "/uview-ui/components/u-button/u-button"
-  }
-}

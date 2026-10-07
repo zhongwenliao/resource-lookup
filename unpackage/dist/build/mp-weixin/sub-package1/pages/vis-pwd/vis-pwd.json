@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "访客密码",
-  "usingComponents": {
-    "uqrcode": "/uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "uni-base-toast": "/components/uni-base-toast/uni-base-toast"
-  },
-  "component": true
-}

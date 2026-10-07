@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "配置联网模式",
-  "usingComponents": {
-    "uni-base-page": "/components/uni-base-page/uni-base-page"
-  }
-}
