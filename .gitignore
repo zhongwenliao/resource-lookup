@@ -2,3 +2,4 @@ node_modules
 release
 .codebuddy
 dist
+__pycache__

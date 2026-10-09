@@ -18,7 +18,6 @@
   python screener.py --watch                    预备箱体候选
   python screener.py 600030 万华化学            只检查指定标的
   python screener.py --lookback 3 --top 60      回看3天、显示前60名
-  GYTO……Gp.iuj8=]u
 
 说明:
   - 盘中运行时最后一根K线为实时快照，收盘前信号可能变化，建议收盘后运行;
