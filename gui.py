@@ -546,7 +546,7 @@ function niceTicks(lo,hi,n){
   const span=hi-lo; if(!(span>0)) return [lo];
   const raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), norm=raw/mag;
   const step=(norm<1.5?1:norm<3?2:norm<7?5:10)*mag, out=[];
-  for(let v=Math.ceil(lo/s)*s; v<=hi+1e-9; v+=s) out.push(+v.toFixed(6));
+  for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(6));
   return out;
 }
 const tickTxt=(v,step)=>v.toFixed(step>=1?0:step>=0.1?1:2);
@@ -577,7 +577,7 @@ class KChart{
     const iAt=s+(e.clientX-rect.left-this.PADL)/step;
     const f=e.deltaY>0?1.18:1/1.18, total=this.d.bars.length;
     let ns=Math.round(iAt-(iAt-s)*f), ne=Math.round(iAt+(eI-iAt)*f);
-    if(ne-ns<20){ const c=(ns+ne)/2; ns=c-10; ne=c+10; }
+    if(ne-ns<20){ const c=Math.round((ns+ne)/2); ns=c-10; ne=c+10; }
     ns=Math.max(0,Math.min(ns,total-20)); ne=Math.max(ns+20,Math.min(total,ne));
     this.view=[ns,ne]; this.draw();
   }
@@ -663,9 +663,9 @@ class KChart{
       h+='<rect x="'+(X(a)-step/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+
          ((b-a+1)*step).toFixed(1)+'" height="'+Math.max(1,bot-top).toFixed(1)+
          '" fill="rgba(110,168,254,.06)"/>'+
-         '<path d="'+up.slice(1)+'" fill="none" stroke="rgba(110,168,254,.55)" '+
+         '<path d="M'+up.slice(1)+'" fill="none" stroke="rgba(110,168,254,.55)" '+
          'stroke-width="1" stroke-dasharray="4 3"/>'+
-         '<path d="'+dn.slice(1)+'" fill="none" stroke="rgba(110,168,254,.55)" '+
+         '<path d="M'+dn.slice(1)+'" fill="none" stroke="rgba(110,168,254,.55)" '+
          'stroke-width="1" stroke-dasharray="4 3"/>';
     };
     for(let i=s;i<eI;i++){

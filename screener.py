@@ -34,8 +34,8 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from zuanqian import (BOLD, DIM, RESET, check_signal, compute_indicators,
-                      enable_ansi, fetch_kline, find_box, load_config, pad,
-                      paint, resolve_targets)
+                      enable_ansi, fetch_kline, find_box, load_config, open_url,
+                      pad, paint, resolve_targets)
 
 CLIST_PATH = ("{host}/api/qt/clist/get"
               "?pn={pn}&pz=100&po=1&np=1&fltt=2&invt=2&fid=f6&fs={fs}"
@@ -66,7 +66,7 @@ def http_json(url, timeout=15, retries=2):
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
+            with open_url(req, timeout=timeout) as resp:
                 return json.loads(resp.read().decode("utf-8", errors="replace"))
         except (OSError, ValueError) as e:
             last = e
@@ -411,20 +411,20 @@ def build_parser():
     g3.add_argument("--capital", type=float, default=1_000_000, help="资金规模（元），用于建议股数")
     g3.add_argument("--risk", type=float, default=1.0, help="单笔风险占资金%%")
     g4 = ap.add_argument_group("策略参数（与 zuanqian.py 一致）")
-    g4.add_argument("--ema-trend", type=int, default=60, help="日线趋势EMA周期")
+    g4.add_argument("--ema-trend", type=int, default=40, help="日线趋势EMA周期")
     g4.add_argument("--weekly-ema", type=int, default=8, help="周线趋势EMA周期")
-    g4.add_argument("--box-min", type=int, default=6, help="横盘箱体最短K线数")
-    g4.add_argument("--box-max", type=int, default=25, help="横盘箱体最长K线数")
+    g4.add_argument("--box-min", type=int, default=5, help="横盘箱体最短K线数")
+    g4.add_argument("--box-max", type=int, default=35, help="横盘箱体最长K线数")
     g4.add_argument("--box-atr", type=float, default=3.0, help="箱体宽度上限 = 倍数*ATR")
-    g4.add_argument("--body-atr", type=float, default=1.0, help="突破阳线实体下限 = 倍数*ATR")
-    g4.add_argument("--vol-mult", type=float, default=1.5, help="突破量能下限 = 倍数*20日均量")
-    g4.add_argument("--atr-max", type=float, default=7.0, help="ATR占比上限%%，超过不做")
-    g4.add_argument("--chase-atr", type=float, default=1.0, help="收盘超出箱体上沿多少倍ATR放弃")
-    g4.add_argument("--tp1", type=float, default=2.0, help="第一止盈R倍数（减半仓）")
-    g4.add_argument("--tp2", type=float, default=3.0, help="第二止盈R倍数")
-    g4.add_argument("--stop-buffer", type=float, default=0.2, help="止损低于箱体下沿的ATR缓冲")
+    g4.add_argument("--body-atr", type=float, default=0.7, help="突破阳线实体下限 = 倍数*ATR")
+    g4.add_argument("--vol-mult", type=float, default=1.2, help="突破量能下限 = 倍数*20日均量")
+    g4.add_argument("--atr-max", type=float, default=6.0, help="ATR占比上限%%，超过不做")
+    g4.add_argument("--chase-atr", type=float, default=1.5, help="收盘超出箱体上沿多少倍ATR放弃")
+    g4.add_argument("--tp1", type=float, default=2.5, help="第一止盈R倍数（减半仓）")
+    g4.add_argument("--tp2", type=float, default=999.0, help="第二止盈R倍数，设大即近似纯EMA20跟踪（默认999=不设）")
+    g4.add_argument("--stop-buffer", type=float, default=0.0, help="止损低于箱体下沿的ATR缓冲")
     g4.add_argument("--min-stop-atr", type=float, default=1.0, help="最小止损距离 = 倍数*ATR")
-    g4.add_argument("--max-stop-pct", type=float, default=12.0, help="止损距离占现价上限%%，超过剔除")
+    g4.add_argument("--max-stop-pct", type=float, default=15.0, help="止损距离占现价上限%%，超过剔除")
     return ap
 
 

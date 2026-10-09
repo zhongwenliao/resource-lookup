@@ -24,6 +24,8 @@
   python zuanqian.py 600030 --scan --csv 信号.csv   扫描并导出止盈止损CSV
   python zuanqian.py --full             多标的时也输出完整交易明细
   python zuanqian.py 600030 --risk 0.5 --tp1 1.5 --tp2 2.5   调参
+  python zuanqian.py --portfolio        组合模式：共享资金池、多标的并行持仓
+  python zuanqian.py --portfolio --risk 2 --max-pos 8    组合模式调参
 
 说明:
   - 规则是对公开流传的「钻潜」思想的程序化近似，并非官方课程内容；
@@ -33,8 +35,11 @@ import argparse
 import csv
 import json
 import os
+import ssl
 import sys
+import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -49,6 +54,23 @@ KLINE_URLS = ("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={},day,,
 
 # 红涨绿跌（A股习惯）
 RED, GREEN, DIM, BOLD, RESET = "\033[31m", "\033[32m", "\033[2m", "\033[1m", "\033[0m"
+
+# 企业网关/安全代理常用自签证书做HTTPS中间人，正常校验会失败；
+# 确属证书问题时降级为不校验重试（仅公开行情数据，不涉及敏感信息）
+_SSL_CTX = ssl.create_default_context()
+_SSL_OPEN = ssl.create_default_context()
+_SSL_OPEN.check_hostname = False
+_SSL_OPEN.verify_mode = ssl.CERT_NONE
+
+
+def open_url(req, timeout=15):
+    """带证书降级的 urlopen：先按系统证书正常校验，证书验证失败（网关自签）再不校验重试。"""
+    try:
+        return urllib.request.urlopen(req, timeout=timeout, context=_SSL_CTX)
+    except urllib.error.URLError as e:
+        if isinstance(e.reason, ssl.SSLCertVerificationError):
+            return urllib.request.urlopen(req, timeout=timeout, context=_SSL_OPEN)
+        raise
 
 
 def enable_ansi():
@@ -113,7 +135,7 @@ def fetch_kline(symbol, count):
         req = urllib.request.Request(tpl.format(symbol, min(count, 800)),
                                      headers={"User-Agent": "Mozilla/5.0"})
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with open_url(req, timeout=15) as resp:
                 data = json.loads(resp.read().decode("utf-8", errors="replace"))
             break
         except (OSError, ValueError):
@@ -418,6 +440,194 @@ def summarize(trades, equity_curve, bars, warm, p, skipped):
     }
 
 
+# ---------------------------------------------------------------- 组合回测
+
+def run_portfolio(pdata, p):
+    """组合级回测：全部标的共享一个资金池、并行持仓（每标的最多1笔）。
+    约定: 每日先处理持仓退出释放资金，再处理入场（昨收信号->今开买入）；
+    同日多信号按传入顺序分配资金，资金不足一手则放弃。停牌日沿用昨收估值。
+    返回 (trades, equity_curve, info)。
+    """
+    warm = max(p.ema_trend + 10, 70)
+    date_index = {sym: {b["date"]: i for i, b in enumerate(bars)}
+                  for _, sym, bars, _ in pdata}
+    all_dates = sorted(set().union(*(date_index[sym].keys()
+                                     for _, sym, _, _ in pdata)))
+
+    cash = float(p.capital)
+    positions = {}        # sym -> 持仓
+    last_exit_idx = {}    # sym -> 完全平仓时的K线索引（冷却用）
+    trades = []
+    equity_curve = []
+    conc_sum = conc_days = 0
+    util_sum = 0.0
+    max_conc = 0
+
+    def mark_equity():
+        return cash + sum(pos["shares"] * pos["last_close"]
+                          for pos in positions.values())
+
+    def close_pos(sym, pos, note):
+        sell_net = sum(pr * sh - fee for _, pr, sh, _, fee in pos["legs"])
+        cost_total = pos["shares0"] * pos["entry"] + pos["buy_fee"]
+        pnl = sell_net - cost_total
+        trades.append({
+            "name": pos["name"], "symbol": sym,
+            "entry_date": pos["entry_date"], "exit_date": pos["legs"][-1][0],
+            "entry": pos["entry"], "exit": pos["legs"][-1][1],
+            "shares": pos["shares0"], "pnl": pnl,
+            "r": pnl / (pos["shares0"] * pos["dist"]) if pos["dist"] > 0 else 0.0,
+            "bars": pos["exit_idx"] - pos["entry_idx"], "note": note,
+        })
+
+    def sell(sym, pos, date, sh, price, reason):
+        nonlocal cash
+        proceeds = sh * price
+        fee = max(5.0, proceeds * p.commission) + proceeds * p.stamp
+        cash += proceeds - fee
+        pos["legs"].append((date, price, sh, reason, fee))
+        pos["shares"] -= sh
+
+    for d in all_dates:
+        # 1) 持仓退出
+        for _, sym, bars, ind in pdata:
+            pos = positions.get(sym)
+            if pos is None:
+                continue
+            idx = date_index[sym].get(d)
+            if idx is None:
+                continue                      # 当日停牌，沿用昨收估值
+            pos["last_close"] = bars[idx]["close"]
+            pos["last_date"] = bars[idx]["date"]
+            pos["exit_idx"] = idx
+            if idx <= pos["entry_idx"]:       # T+1：买入当根不动作
+                continue
+            b = bars[idx]
+            if b["open"] <= pos["stop"]:
+                sell(sym, pos, b["date"], pos["shares"], b["open"], "止损(跳空)")
+            elif b["low"] <= pos["stop"]:
+                sell(sym, pos, b["date"], pos["shares"], pos["stop"],
+                     "保本止损" if pos["tp1_done"] else "止损")
+            elif pos["shares"] > 0:
+                if not pos["tp1_done"] and b["high"] >= pos["tp1"]:
+                    half = (pos["shares"] // 2) // 100 * 100
+                    if half >= 100 and pos["shares"] - half >= 100:
+                        sell(sym, pos, b["date"], half, pos["tp1"],
+                             f"止盈{p.tp1:g}R减半")
+                        pos["stop"] = max(pos["stop"], pos["entry"])
+                        pos["tp1_done"] = True
+                    else:
+                        sell(sym, pos, b["date"], pos["shares"], pos["tp1"],
+                             f"止盈{p.tp1:g}R")
+                if pos["shares"] > 0 and pos["tp1_done"] and b["low"] <= pos["stop"]:
+                    sell(sym, pos, b["date"], pos["shares"], pos["stop"], "保本止损")
+                elif pos["shares"] > 0 and pos["tp1_done"] and b["high"] >= pos["tp2"]:
+                    sell(sym, pos, b["date"], pos["shares"], pos["tp2"],
+                         f"止盈{p.tp2:g}R")
+                elif (pos["shares"] > 0 and pos["tp1_done"]
+                      and b["close"] < ind["ema_exit"][idx]):
+                    sell(sym, pos, b["date"], pos["shares"], b["close"], "EMA20跟踪离场")
+                elif pos["shares"] > 0 and idx - pos["entry_idx"] >= p.max_hold:
+                    sell(sym, pos, b["date"], pos["shares"], b["close"], "时间止损")
+            if pos["shares"] <= 0:
+                close_pos(sym, pos, "；".join(lg[3] for lg in pos["legs"]))
+                last_exit_idx[sym] = idx
+                del positions[sym]
+
+        # 2) 入场（昨收触发信号 -> 今开买入）
+        for name, sym, bars, ind in pdata:
+            if len(positions) >= p.max_pos:
+                break
+            if sym in positions:
+                continue
+            idx = date_index[sym].get(d)
+            if idx is None:
+                continue
+            j = idx - 1
+            if j < warm or idx - last_exit_idx.get(sym, -10 ** 9) <= p.cooldown:
+                continue
+            sig, _ = check_signal(bars, ind, j, p)
+            if not sig:
+                continue
+            atr = ind["atr"][j]
+            entry = bars[idx]["open"]
+            stop = sig["box_low"] - p.stop_buffer * atr
+            dist = entry - stop
+            if dist < p.min_stop_atr * atr:
+                dist = p.min_stop_atr * atr
+                stop = entry - dist
+            if entry <= stop or dist / entry > p.max_stop_pct / 100:
+                continue                      # 止损过宽，放弃
+            equity = mark_equity()
+            shares = int(equity * p.risk / 100 / dist / 100) * 100
+            if shares * entry > cash:
+                shares = int(cash / entry / 100) * 100
+            if shares < 100:
+                continue                      # 资金不足一手
+            cost = shares * entry
+            fee = max(5.0, cost * p.commission)
+            cash -= cost + fee
+            positions[sym] = {
+                "name": name, "entry_idx": idx, "entry_date": bars[idx]["date"],
+                "entry": entry, "stop": stop, "dist": dist,
+                "shares0": shares, "shares": shares,
+                "tp1": entry + p.tp1 * dist, "tp2": entry + p.tp2 * dist,
+                "tp1_done": False, "buy_fee": fee, "legs": [],
+                "last_close": bars[idx]["close"], "last_date": bars[idx]["date"],
+                "exit_idx": idx,
+            }
+            max_conc = max(max_conc, len(positions))
+
+        conc_sum += len(positions)
+        conc_days += 1
+        eq = mark_equity()
+        equity_curve.append(eq)
+        if eq > 0:
+            util_sum += (eq - cash) / eq
+
+    for sym, pos in list(positions.items()):  # 数据结束强制平仓
+        sell(sym, pos, pos["last_date"], pos["shares"], pos["last_close"],
+             "回测结束平仓")
+        close_pos(sym, pos, "回测结束平仓")
+        del positions[sym]
+    if equity_curve:
+        equity_curve[-1] = cash
+    info = {
+        "max_conc": max_conc,
+        "avg_conc": conc_sum / conc_days if conc_days else 0.0,
+        "avg_util": util_sum / conc_days if conc_days else 0.0,
+        "start_date": all_dates[0] if all_dates else "-",
+        "end_date": all_dates[-1] if all_dates else "-",
+        "days": len(all_dates),
+    }
+    return trades, equity_curve, info
+
+
+def summarize_portfolio(trades, eq, pdata, p, info):
+    final = eq[-1] if eq else p.capital
+    total_ret = (final / p.capital - 1) * 100
+    peak, max_dd = -1.0, 0.0
+    for v in eq:
+        peak = max(peak, v)
+        if peak > 0:
+            max_dd = min(max_dd, (v / peak - 1) * 100)
+    wins = [t for t in trades if t["pnl"] > 0]
+    losses = [t for t in trades if t["pnl"] <= 0]
+    gw = sum(t["pnl"] for t in wins)
+    gl = -sum(t["pnl"] for t in losses)
+    warm = max(p.ema_trend + 10, 70)
+    rets = [bars[-1]["close"] / bars[warm]["close"] - 1
+            for _, _, bars, _ in pdata if len(bars) > warm]
+    bench = sum(rets) / len(rets) * 100 if rets else 0.0
+    return {
+        "trades": trades, "final": final, "total_ret": total_ret, "max_dd": max_dd,
+        "n": len(trades), "win_rate": len(wins) / len(trades) * 100 if trades else 0.0,
+        "avg_r": sum(t["r"] for t in trades) / len(trades) if trades else 0.0,
+        "pf": gw / gl if gl > 0 else float("inf"),
+        "bench": bench, "info": info,
+    }
+
+
 # ---------------------------------------------------------------- 输出
 
 def print_full_report(name, symbol, st):
@@ -457,6 +667,47 @@ def print_full_report(name, symbol, st):
         print(" ".join(row))
 
 
+def write_md_note(name, symbol, st, p):
+    """单标的回测记录以 Markdown 追加写入 src/<名称>.md（不覆盖笔记已有内容）。"""
+    md = SRC_DIR / f"{name}.md"
+    pf = f"{st['pf']:.2f}" if st["pf"] != float("inf") else "∞"
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    tp2_s = "不设" if p.tp2 >= 999 else f"{p.tp2:g}R"
+    lines = [
+        f"## 回测记录 {now}",
+        "",
+        f"- 参数：days={p.days} · risk={p.risk:g}% · tp1={p.tp1:g}R · tp2={tp2_s} · 止损上限={p.max_stop_pct:g}%",
+        f"- 区间：{st['start_date']} ~ {st['end_date']}（{st['bars']}根K线）",
+        f"- 期末权益：{st['final']:,.0f}（{st['total_ret']:+.2f}%）｜基准买入持有：{st['bench']:+.2f}%",
+        f"- 最大回撤：{st['max_dd']:.2f}%",
+        f"- 交易次数：{st['n']}｜胜率 {st['win_rate']:.1f}%｜平均R {st['avg_r']:+.2f}｜盈亏比 {pf}",
+    ]
+    if st["skipped"]:
+        lines.append(f"- 跳过信号：{st['skipped']} 个（止损过宽/资金不足）")
+    lines += [
+        "",
+        "| # | 买入日 | 卖出日 | 买入价 | 卖出价 | 股数 | 净盈亏 | R | 天 | 出场 |",
+        "|---|--------|--------|-------:|-------:|-----:|-------:|--:|--:|------|",
+    ]
+    for k, t in enumerate(st["trades"], 1):
+        lines.append(
+            f"| {k} | {t['entry_date']} | {t['exit_date']} | {t['entry']:.2f} | "
+            f"{t['exit']:.2f} | {t['shares']} | {t['pnl']:+,.0f} | {t['r']:+.2f} | "
+            f"{t['bars']} | {t['note']} |")
+    if not st["trades"]:
+        lines.append("| - | 区间内无成交信号 | | | | | | | | |")
+    body = "\n".join(lines) + "\n"
+    try:
+        if md.exists():
+            old = md.read_text("utf-8").rstrip("\n")
+            md.write_text(old + "\n\n---\n\n" + body, "utf-8")
+        else:
+            md.write_text(f"# {name}（{symbol}）\n\n" + body, "utf-8")
+        print(DIM + f"回测记录已写入 {md}" + RESET)
+    except OSError as e:
+        print(DIM + f"写入 {md} 失败: {e}" + RESET)
+
+
 def print_summary_row(name, symbol, st):
     pf = f"{st['pf']:.2f}" if st["pf"] != float("inf") else "∞"
     row = [
@@ -471,6 +722,56 @@ def print_summary_row(name, symbol, st):
     ]
     row[6] = paint(st["total_ret"], row[6])
     print(" ".join(row))
+
+
+def print_portfolio_report(st, p):
+    line = "─" * 66
+    info = st["info"]
+    print(f"\n{BOLD}钻潜组合回测（共享资金池，并行持仓）{RESET}  "
+          f"{DIM}{info['start_date']} ~ {info['end_date']}（{info['days']}个交易日）{RESET}")
+    print(line)
+    eq_s = paint(st["total_ret"], f"{st['final']:,.0f}（{st['total_ret']:+.2f}%）")
+    bench_s = paint(st["bench"], f"{st['bench']:+.2f}%")
+    r_s = paint(st["avg_r"], f"{st['avg_r']:+.2f}")
+    pf = f"{st['pf']:.2f}" if st["pf"] != float("inf") else "∞"
+    print(f"期末权益    {eq_s}   等权买入持有基准: {bench_s}")
+    print(f"最大回撤    {st['max_dd']:.2f}%   平均资金利用率 {info['avg_util']*100:.1f}%   "
+          f"同时持仓 均{info['avg_conc']:.1f}/峰{info['max_conc']}")
+    print(f"交易次数    {st['n']}   胜率 {st['win_rate']:.1f}%   平均R {r_s}   盈亏比 {pf}")
+    if not st["trades"]:
+        print(DIM + "区间内无成交信号" + RESET)
+        return
+    by_sym = {}
+    for t in st["trades"]:
+        s = by_sym.setdefault(t["name"], {"n": 0, "win": 0, "pnl": 0.0})
+        s["n"] += 1
+        s["win"] += 1 if t["pnl"] > 0 else 0
+        s["pnl"] += t["pnl"]
+    print(DIM + "\n按标的盈亏:" + RESET)
+    for name, s in sorted(by_sym.items(), key=lambda kv: -kv[1]["pnl"]):
+        wr = s["win"] / s["n"] * 100
+        print(f"  {pad(name, 10)} {s['n']:>2}笔 {wr:4.0f}%  "
+              + paint(s["pnl"], f"{s['pnl']:+,.0f}"))
+    if p.full:
+        header = ("#", "标的", "买入日", "卖出日", "买入价", "卖出价",
+                  "股数", "净盈亏", "R", "天", "出场")
+        widths = [4, 10, 11, 11, 9, 9, 7, 11, 7, 4, 24]
+        print(DIM + "\n" + " ".join(pad(h, w) for h, w in zip(header, widths)) + RESET)
+        for k, t in enumerate(st["trades"], 1):
+            row = [
+                pad(str(k), widths[0]), pad(t["name"], widths[1]),
+                pad(t["entry_date"], widths[2]), pad(t["exit_date"], widths[3]),
+                pad(f"{t['entry']:.2f}", widths[4], "right"),
+                pad(f"{t['exit']:.2f}", widths[5], "right"),
+                pad(f"{t['shares']}", widths[6], "right"),
+                pad(f"{t['pnl']:+,.0f}", widths[7], "right"),
+                pad(f"{t['r']:+.2f}", widths[8], "right"),
+                pad(str(t["bars"]), widths[9], "right"),
+                pad(t["note"], widths[10]),
+            ]
+            row[7] = paint(t["pnl"], row[7])
+            row[8] = paint(t["r"], row[8])
+            print(" ".join(row))
 
 
 # ---------------------------------------------------------------- 信号扫描
@@ -580,11 +881,12 @@ def write_csv(path, rows):
 
 def resolve_targets(tokens, config):
     """代码/名称 -> (名称, 带前缀代码)。名称优先查 stocks.json。"""
+    code2name = {v: k for k, v in config.items()}
     out = []
     for t in tokens:
         sym = guess_symbol(t)
         if sym:
-            out.append((t, sym))
+            out.append((code2name.get(t) or code2name.get(sym[2:]) or t, sym))
             continue
         code = config.get(t)
         if code:
@@ -607,11 +909,89 @@ def watchlist(config):
     return items
 
 
+def universe_targets(p):
+    """全市场预筛样本（复用 screener.py 的列表拉取与预筛规则）。"""
+    from screener import base_filter, fetch_universe, fetch_universe_tencent
+    print("拉取全市场列表（东财）...")
+    try:
+        universe = fetch_universe(False)
+        if not universe:
+            raise OSError("东财返回空列表")
+    except (OSError, ValueError) as e:
+        print(DIM + f"东财列表不可用（{e}），切换腾讯备用列表 ..." + RESET)
+        try:
+            universe = fetch_universe_tencent()
+        except (OSError, ValueError) as e2:
+            print(f"列表获取失败: {e2}")
+            return []
+    items = [u for u in universe if base_filter(u, p)]
+    print(f"全市场 {len(universe)} 只 → 预筛 {len(items)} 只")
+    return [(u["name"], u["symbol"]) for u in items]
+
+
+def fetch_pdata(valid, p, workers=1):
+    """拉K线并计算指标，返回 pdata（保持传入顺序）；workers>1 时并发。"""
+    warm = max(p.ema_trend + 10, 70)
+    out = [None] * len(valid)
+    errs = []
+
+    def work(i, name, sym):
+        try:
+            bars = fetch_kline(sym, p.days)
+        except OSError as e:
+            return f"{name} {sym} 获取失败: {e}"
+        if len(bars) < warm + 30:
+            return f"{name} {sym} 数据不足（{len(bars)}根），跳过"
+        out[i] = (name, sym, bars, compute_indicators(bars, p))
+        return None
+
+    if workers <= 1:
+        for i, (name, sym) in enumerate(valid):
+            e = work(i, name, sym)
+            if e:
+                errs.append(e)
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = [ex.submit(work, i, n, s) for i, (n, s) in enumerate(valid)]
+            done = 0
+            for fut in as_completed(futs):
+                e = fut.result()
+                if e:
+                    errs.append(e)
+                done += 1
+                if done % 50 == 0 or done == len(valid):
+                    print(f"\r  拉取进度 {done}/{len(valid)}", end="", flush=True)
+        print("\r" + " " * 30 + "\r", end="")
+    for e in errs:
+        print(DIM + e + RESET)
+    return [x for x in out if x]
+
+
 def build_parser():
     ap = argparse.ArgumentParser(description="钻潜交易体系·规则化回测与信号扫描（腾讯日K数据）")
     ap.add_argument("targets", nargs="*", help="股票代码或名称，留空则回测 src/ 全部自选股")
     ap.add_argument("--scan", action="store_true", help="只扫描最近3个交易日的信号，不回测")
     ap.add_argument("--full", action="store_true", help="多标的时也输出完整交易明细")
+    ap.add_argument("--md", action="store_true",
+                    help="回测记录追加写入 src/<名称>.md 笔记")
+    ap.add_argument("--portfolio", action="store_true",
+                    help="组合模式：全部标的共享资金池并行持仓回测")
+    ap.add_argument("--universe", action="store_true",
+                    help="全市场预筛样本组合回测（东财列表+预筛，隐含--portfolio，忽略命令行标的）")
+    ap.add_argument("--workers", type=int, default=12,
+                    help="--universe 模式并发拉取K线的线程数")
+    ap.add_argument("--min-amount", type=float, default=2000,
+                    help="--universe 预筛: 当日成交额下限（万元）")
+    ap.add_argument("--min-cap", type=float, default=0,
+                    help="--universe 预筛: 流通市值下限（亿元，0=不限）")
+    ap.add_argument("--min-price", type=float, default=2.0,
+                    help="--universe 预筛: 股价下限（元）")
+    ap.add_argument("--max-price", type=float, default=0,
+                    help="--universe 预筛: 股价上限（元，0=不限）")
+    ap.add_argument("--min-chg", type=float, default=0,
+                    help="--universe 预筛: 当日涨幅下限%%（0=不限，设置后可大幅缩小样本提速）")
+    ap.add_argument("--max-pos", type=int, default=5,
+                    help="组合模式最大同时持仓数（默认5）")
     ap.add_argument("--csv", metavar="FILE", help="扫描结果导出CSV（配合--scan，含止盈止损位）")
     ap.add_argument("--watch-dist", type=float, default=3.0,
                     help="预备箱体: 收盘距触发价上限%%（默认3）")
@@ -620,22 +1000,22 @@ def build_parser():
     ap.add_argument("--risk", type=float, default=1.0, help="单笔风险占资金%%（默认1.0）")
     ap.add_argument("--commission", type=float, default=0.0003, help="佣金率（双边，默认万3）")
     ap.add_argument("--stamp", type=float, default=0.0005, help="印花税率（仅卖出，默认万5）")
-    ap.add_argument("--ema-trend", type=int, default=60, help="日线趋势EMA周期（默认60）")
+    ap.add_argument("--ema-trend", type=int, default=40, help="日线趋势EMA周期（默认40）")
     ap.add_argument("--weekly-ema", type=int, default=8, help="周线趋势EMA周期（默认8）")
-    ap.add_argument("--box-min", type=int, default=6, help="横盘箱体最短K线数（默认6）")
-    ap.add_argument("--box-max", type=int, default=25, help="横盘箱体最长K线数（默认25）")
+    ap.add_argument("--box-min", type=int, default=5, help="横盘箱体最短K线数（默认5）")
+    ap.add_argument("--box-max", type=int, default=35, help="横盘箱体最长K线数（默认35）")
     ap.add_argument("--box-atr", type=float, default=3.0, help="箱体宽度上限 = 倍数*ATR（默认3.0）")
-    ap.add_argument("--body-atr", type=float, default=1.0, help="突破阳线实体下限 = 倍数*ATR（默认1.0）")
-    ap.add_argument("--vol-mult", type=float, default=1.5, help="突破量能下限 = 倍数*20日均量（默认1.5）")
-    ap.add_argument("--atr-max", type=float, default=7.0, help="ATR占比上限%%，超过不做（默认7.0）")
-    ap.add_argument("--chase-atr", type=float, default=1.0, help="收盘超出箱体上沿多少倍ATR放弃（默认1.0）")
-    ap.add_argument("--tp1", type=float, default=2.0, help="第一止盈R倍数，减半仓（默认2.0）")
-    ap.add_argument("--tp2", type=float, default=3.0, help="第二止盈R倍数（默认3.0）")
-    ap.add_argument("--stop-buffer", type=float, default=0.2, help="止损低于箱体下沿的ATR缓冲（默认0.2）")
+    ap.add_argument("--body-atr", type=float, default=0.7, help="突破阳线实体下限 = 倍数*ATR（默认0.7）")
+    ap.add_argument("--vol-mult", type=float, default=1.2, help="突破量能下限 = 倍数*20日均量（默认1.2）")
+    ap.add_argument("--atr-max", type=float, default=6.0, help="ATR占比上限%%，超过不做（默认6.0）")
+    ap.add_argument("--chase-atr", type=float, default=1.5, help="收盘超出箱体上沿多少倍ATR放弃（默认1.5）")
+    ap.add_argument("--tp1", type=float, default=2.5, help="第一止盈R倍数，减半仓（默认2.5）")
+    ap.add_argument("--tp2", type=float, default=999.0, help="第二止盈R倍数，设大即近似纯EMA20跟踪（默认999=不设）")
+    ap.add_argument("--stop-buffer", type=float, default=0.0, help="止损低于箱体下沿的ATR缓冲（默认0.0）")
     ap.add_argument("--min-stop-atr", type=float, default=1.0, help="最小止损距离 = 倍数*ATR（默认1.0）")
-    ap.add_argument("--max-stop-pct", type=float, default=12.0, help="止损距离占现价上限%%（默认12）")
+    ap.add_argument("--max-stop-pct", type=float, default=15.0, help="止损距离占现价上限%%（默认15）")
     ap.add_argument("--max-hold", type=int, default=60, help="最长持仓K线数（默认60）")
-    ap.add_argument("--cooldown", type=int, default=5, help="平仓后冷却K线数（默认5）")
+    ap.add_argument("--cooldown", type=int, default=3, help="平仓后冷却K线数（默认3）")
     return ap
 
 
@@ -670,6 +1050,26 @@ def main():
         return 0
 
     warm = max(p.ema_trend + 10, 70)
+
+    if p.portfolio or p.universe:
+        if p.universe:
+            if p.targets:
+                print(DIM + "--universe 模式忽略命令行标的，使用全市场预筛样本" + RESET)
+            valid = universe_targets(p)
+            if not valid:
+                return 1
+        pdata = fetch_pdata(valid, p,
+                            max(1, min(p.workers, 32)) if p.universe else 1)
+        if len(pdata) < 2:
+            print("组合模式至少需要2个可用标的")
+            return 1
+        trades, eq, info = run_portfolio(pdata, p)
+        st = summarize_portfolio(trades, eq, pdata, p, info)
+        print_portfolio_report(st, p)
+        print(DIM + "\n提示: 规则为公开「钻潜」思想的程序化近似；"
+              "回测不代表未来收益，仅供学习研究。" + RESET)
+        return 0
+
     results = []
     for name, sym in valid:
         try:
@@ -686,6 +1086,8 @@ def main():
         results.append((name, sym, st))
         if len(results) == 1 or p.full:
             print_full_report(name, sym, st)
+        if p.md:
+            write_md_note(name, sym, st, p)
 
     if len(results) > 1:
         print(BOLD + "\n钻潜体系回测汇总（参数: "

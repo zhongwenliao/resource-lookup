@@ -28,6 +28,8 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from zuanqian import open_url
+
 ROOT = Path(__file__).resolve().parent
 SRC_DIR = ROOT / "src"
 CONFIG_FILE = ROOT / "stocks.json"
@@ -65,7 +67,7 @@ def enable_ansi():
 
 def http_get(url: str) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=10) as resp:
+    with open_url(req, timeout=10) as resp:
         return resp.read().decode("gbk", errors="replace")
 
 
@@ -248,7 +250,7 @@ def fetch_daily_kline(symbol, fq=""):
         try:
             req = urllib.request.Request(api.format(symbol) + fq,
                                          headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with open_url(req, timeout=10) as resp:
                 data = json.loads(resp.read().decode("utf-8", errors="replace"))
             node = data["data"][symbol]
             bars = (node.get("qfqday" if fq == "qfq" else "day")
