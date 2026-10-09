@@ -29,7 +29,8 @@ DEFAULTS = dict(days=600, capital=1_000_000, risk=1.0, commission=0.0003,
                 box_atr=3.0, body_atr=1.0, vol_mult=1.5, atr_max=7.0,
                 chase_atr=1.0, tp1=2.0, tp2=3.0, stop_buffer=0.2,
                 min_stop_atr=1.0, max_stop_pct=12.0, max_hold=60, cooldown=5,
-                watch_dist=3.0)
+                watch_dist=3.0, reentry=False, reentry_min=1, reentry_max=10,
+                max_pos_pct=10.0, max_total_pct=40.0)
 
 
 def make_params(**over):
@@ -57,6 +58,7 @@ def params_from_q(q):
         tp1=_num(q, "tp1", 2.0, 0.5, 10),
         tp2=_num(q, "tp2", 3.0, 0.5, 20),
         max_stop_pct=_num(q, "max_stop_pct", 12.0, 1, 50),
+        tp_mid=(q.get("tp_mid") or [""])[0] in ("1", "true", "on"),
     )
 
 
@@ -105,8 +107,30 @@ def build_backtest(name, symbol, bars, p, warm):
                             "box_high": round(sig["box_high"], 2),
                             "box_low": round(sig["box_low"], 2), "L": sig["L"]})
     rnd = lambda arr: [None if v is None else round(v, 4) for v in arr]
+    if getattr(p, "tp_mid", False):
+        # 中值止盈线序列（与回测同口径重放）：进场日高点起算；tp1 减半触发当日
+        # 高点先计入阶段最高价，其余每根收盘后并入新高；盘中判定用当前阶段最高价
+        for t in trades:
+            i0, i1 = t["entry_i"], t["exit_i"]
+            if i0 < 0 or i1 <= i0:
+                continue
+            seq = [None] * n
+            hi = bars[i0]["high"]
+            seq[i0] = round((t["entry"] + hi) / 2.0, 4)
+            half = (t["shares"] // 2) // 100 * 100   # shares 即初始股数
+            tp1_ok = half >= 100 and t["shares"] - half >= 100
+            tp1_done = False
+            for i in range(i0 + 1, i1 + 1):
+                b = bars[i]
+                if tp1_ok and not tp1_done and b["high"] >= t["tp1"]:
+                    tp1_done = True
+                    hi = max(hi, b["high"])          # 突破当日高点计入
+                seq[i] = round((t["entry"] + hi) / 2.0, 4)
+                hi = max(hi, b["high"])              # 收盘后更新
+            t["mid_seq"] = seq
     return {
         "name": name, "symbol": symbol, "stats": st, "warm": warm,
+        "tp_mid": bool(getattr(p, "tp_mid", False)),
         "bars": bars,
         "ema_exit": rnd(ind["ema_exit"]),
         "ema_trend": rnd(ema_series([b["close"] for b in bars], p.ema_trend)),
@@ -313,6 +337,7 @@ tbody tr:hover{background:#151c25}
   <label>止盈1(R) <input id="p-tp1" type="number" value="2" step="0.5" min="0.5"></label>
   <label>止盈2(R) <input id="p-tp2" type="number" value="3" step="0.5" min="0.5"></label>
   <label>止损上限% <input id="p-msp" type="number" value="12" step="1" min="1"></label>
+  <label><input id="p-tpmid" type="checkbox"> 中值止盈</label>
 </div>
 <main>
   <div class="tabs">
@@ -367,7 +392,8 @@ async function api(path){
 }
 function getParams(){
   return {days:$("#p-days").value, capital:$("#p-cap").value, risk:$("#p-risk").value,
-          tp1:$("#p-tp1").value, tp2:$("#p-tp2").value, max_stop_pct:$("#p-msp").value};
+          tp1:$("#p-tp1").value, tp2:$("#p-tp2").value, max_stop_pct:$("#p-msp").value,
+          tp_mid:$("#p-tpmid").checked?1:0};
 }
 const qs = o => Object.entries(o).map(([k,v])=>k+"="+encodeURIComponent(v)).join("&");
 function busy(btn,on,txt){
@@ -471,6 +497,8 @@ function renderBt(){
     return;
   }
   body.className="";
+  const legendMid = r.tp_mid ?
+    '<span><i style="background:none;border-top:2px dashed #4dd0e1;height:0"></i>中值止盈线</span>' : "";
   body.innerHTML=
     '<div class="stats" id="bt-stats"></div>'+
     '<div class="card"><h3>K线 · 买卖点（'+esc(r.bars[r.warm].date)+" ~ "+
@@ -483,16 +511,21 @@ function renderBt(){
         '<span><i style="background:#8f7ff0"></i>EMA趋势线</span>'+
         '<span><i style="background:#6ea8fe"></i>横盘箱体</span>'+
         '<span><i style="background:none;border-top:2px dotted #e8b339;height:0"></i>未成交信号</span>'+
+        legendMid+
       "</div>"+
       '<div class="hint">滚轮缩放 · 拖动平移 · 双击复位 · 悬停看明细</div></div>'+
     '<div class="card"><h3>权益曲线（策略 vs 买入持有，归一化）</h3>'+
       '<div class="chart-box small"><svg id="echart"></svg></div></div>'+
-    '<div class="card"><h3>交易明细</h3><div id="trades"></div></div>';
+    '<div class="card"><h3>交易明细</h3><div id="trades"></div></div>'+
+    '<div class="card" id="card-yearly" hidden><h3>分年度统计</h3><div id="yearly"></div></div>'+
+    '<div class="card" id="card-monthly" hidden><h3>月度收益%（月末权益环比）</h3><div id="monthly"></div></div>';
   renderStats(r.stats);
   if(!kchart) kchart=new KChart($("#kchart"),$("#cross"),$("#tip"));
   kchart.setData(r);
   drawEquity($("#echart"),r);
   renderTrades(r.trades);
+  renderYearly(r.stats);
+  renderMonthly(r.stats);
 }
 function renderStats(st){
   const pf = st.pf==null?"∞":st.pf.toFixed(2);
@@ -534,6 +567,43 @@ function renderTrades(trades){
     "买入日":t.entry_date,"卖出日":t.exit_date,"买入价":t.entry,"卖出价":t.exit,
     "股数":t.shares,"净盈亏":Math.round(t.pnl),"R":+t.r.toFixed(2),
     "持仓天":t.bars,"出场原因":t.note})),"交易明细.csv");
+}
+function renderYearly(st){
+  const card=$("#card-yearly"), box=$("#yearly");
+  if(!st.yearly||st.yearly.length<2){ card.hidden=true; box.innerHTML=""; return; }
+  let h='<div class="table-wrap"><table><thead><tr><th>年份</th><th class="num">交易</th>'+
+    "<th class='num'>胜率</th><th class='num'>盈亏</th><th class='num'>平均R</th></tr></thead><tbody>";
+  st.yearly.forEach(row=>{
+    const y=row[0], n=row[1], win=row[2], pnl=row[3], rSum=row[4];
+    h+="<tr><td>"+y+"</td><td class='num'>"+n+"</td>"+
+      "<td class='num'>"+(win/n*100).toFixed(0)+"%</td>"+
+      "<td class='num "+cls(pnl)+"'>"+(pnl>0?"+":"")+fmt(pnl,0)+"</td>"+
+      "<td class='num "+cls(rSum/n)+"'>"+(rSum/n>0?"+":"")+(rSum/n).toFixed(2)+"</td></tr>";
+  });
+  h+="</tbody></table></div>";
+  card.hidden=false; box.innerHTML=h;
+}
+function renderMonthly(st){
+  const card=$("#card-monthly"), box=$("#monthly");
+  if(!st.monthly||st.monthly.length<2){ card.hidden=true; box.innerHTML=""; return; }
+  const byYear={};
+  st.monthly.forEach(row=>{
+    const y=row[0].slice(0,4), m=row[0].slice(5,7);
+    (byYear[y]=byYear[y]||{})[m]=row[1];
+  });
+  let h='<div class="table-wrap"><table><thead><tr><th>年份</th>'+
+    Array.from({length:12},(_,i)=>"<th class='num'>"+(i+1)+"月</th>").join("")+
+    "</tr></thead><tbody>";
+  Object.keys(byYear).sort().forEach(y=>{
+    h+="<tr><td>"+y+"</td>"+Array.from({length:12},(_,i)=>{
+      const v=byYear[y][String(i+1).padStart(2,"0")];
+      return v==null?"<td class='num' style='color:var(--dim)'>—</td>"
+        :"<td class='num "+cls(v)+"'>"+(v>0?"+":"")+v.toFixed(1)+"</td>";
+    }).join("")+"</tr>";
+  });
+  h+="</tbody></table></div>"+
+    '<div class="hint" style="margin-top:6px">红=正收益 · 绿=负收益 · 未交易月份留白</div>';
+  card.hidden=false; box.innerHTML=h;
 }
 """
 
@@ -686,12 +756,13 @@ class KChart{
       }
     }
     // 均线
-    const line=(arr,color,w)=>{
+    const line=(arr,color,w,dash)=>{
       let p="",pen=false;
       for(let i=s;i<eI;i++){ const v=arr[i];
         if(v==null){ pen=false; continue; }
         p+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1); pen=true; }
-      return p?'<path d="'+p+'" fill="none" stroke="'+color+'" stroke-width="'+w+'"/>':""; };
+      return p?'<path d="'+p+'" fill="none" stroke="'+color+'" stroke-width="'+w+'"'+
+        (dash?' stroke-dasharray="'+dash+'"':"")+'/>':""; };
     h+=line(d.ema_exit,"#e8b339",1.3)+line(d.ema_trend,"#8f7ff0",1.3);
     // 持仓区间：止损/止盈线 + B/S 标记
     for(const t of d.trades){
@@ -708,6 +779,7 @@ class KChart{
            '" fill="'+color+'" font-size="9">'+tickTxt(v,0.01)+"</text>";
       };
       seg(t.stop,"#f0524f"); seg(t.tp1,"#2ebd85"); seg(t.tp2,"#2ebd85");
+      if(t.mid_seq) h+=line(t.mid_seq,"#4dd0e1",1.2,"4 3");   // 中值止盈线（随新高上移）
       if(t.entry_i>=s&&t.entry_i<eI){
         const x=X(t.entry_i), y=Y(bars[t.entry_i].low)+8;
         h+='<path d="M'+x.toFixed(1)+" "+(y-6).toFixed(1)+"l5 9h-10z"+'" fill="#f0524f"/>'+

@@ -6,22 +6,36 @@
 规则写成可回测的程序，用来验证策略思想在历史数据上的统计表现。
 
 策略规则（全部可参数化）:
-  1. 趋势定义  日线收盘 > EMA趋势线且均线上行，且周线收盘 > 周线EMA（多周期共振）
-  2. 两类不做  趋势向下不做；ATR占比过高（波动极端）不做
-  3. 横盘箱体  最近 box_min~box_max 根K线高低点区间 <= box_atr * ATR
-  4. 动能突破  阳线实体 >= body_atr * ATR，收盘突破箱体上沿且未远离（防追高）
-  5. 量价配合  突破日成交量 >= vol_mult * 20日均量，且收盘位于K线上部60%
-  6. 入场      信号次日开盘价买入
-  7. 止损      箱体下沿 - stop_buffer*ATR（结构破坏）；过窄则放宽到 min_stop_atr*ATR
-  8. 止盈      达到 tp1*R 减半仓并将止损上移到成本；其余在 tp2*R 或收盘跌破EMA20离场
-  9. 资金管理  单笔风险 = 资金 * risk%，按止损距离反推股数（100股整数倍，不加杠杆）
-  10. 规则化   T+1、佣金/印花税、时间止损，全程无主观干预
+  1. 趋势定义  日线收盘 > EMA趋势线且均线上行，且周线收盘 > 周线EMA（多周期共振）；
+              --strict 时还须收盘站上MA20（月线级别平均成本线）
+  2. 两类不做  趋势向下不做；ATR占比高于 atr_max 或低于 atr_min（摆动量区间外）不做
+  3. 横盘箱体  最近 box_min~box_max 根K线高低点区间 <= box_atr * ATR；箱体内部出现
+              >= purify_atr*ATR 的大波动K线则该箱体作废（箱体内大K线不纳入交易范围）
+  4. 四共振    均线粘合(MA20与长均线收敛<=glue_pct%) + 长均线方向(ma_long走平或上行)
+              + 波动幅度(箱体宽度) + ATR摆动量(atr_min~atr_max%)，缺一不做；
+              --strict 一键启用纪要口径（横盘>=40根≈2个月、标准K线2*ATR、净化2*ATR）
+  5. 动能突破  阳线实体 >= body_atr * ATR（--std-kline-atr 时整根幅度还须 >= N*ATR），
+              收盘突破箱体上沿且未远离（防追高）
+  6. 量价配合  突破日成交量 >= vol_mult * 20日均量，且收盘位于K线上部60%
+  7. 入场      信号次日开盘价买入；--reentry 二次进场模式：不参与第一根方向确立K线，
+              等小级别调整结束、收盘再次突破前高，次日开盘进场（收盘跌回箱体内或
+              调整超过 reentry_max 根K线则作废）
+  8. 止损      箱体下沿 - stop_buffer*ATR（结构破坏）；二次进场模式取调整段最低点；
+              过窄则放宽到 min_stop_atr*ATR
+  9. 止盈      达到 tp1*R 减半仓并将止损上移到成本；其余在 tp2*R、收盘跌破EMA20或
+              --tp-mid 中值止盈线（(进场价+阶段最高价)/2，随新高上移）离场
+  10. 资金管理 单笔风险 = 资金 * risk%，按止损距离反推股数（100股整数倍，不加杠杆）；
+              单只仓位不超过 max_pos_pct% 总资金；组合模式总仓位不超过 max_total_pct%、
+              最多 max_pos 只，盈利释放仓位后同样不得超限
+  11. 规则化   T+1、佣金/印花税、时间止损，全程无主观干预
 
 用法:
   python zuanqian.py                    回测 src/ 全部自选股（汇总）
   python zuanqian.py 600030 万华化学     回测指定标的（含交易明细）
   python zuanqian.py 600030 --scan      只扫描最近信号，不回测
   python zuanqian.py 600030 --scan --csv 信号.csv   扫描并导出止盈止损CSV
+  python zuanqian.py 600030 --reentry --scan   二次进场模式扫描（止损=调整段最低点）
+  python zuanqian.py 600030 --strict --scan   纪要严格口径扫描（四共振+2个月箱体+标准K线）
   python zuanqian.py --full             多标的时也输出完整交易明细
   python zuanqian.py 600030 --risk 0.5 --tp1 1.5 --tp2 2.5   调参
   python zuanqian.py --portfolio        组合模式：共享资金池、多标的并行持仓
@@ -248,19 +262,25 @@ def weekly_flags(bars, ema_n=8):
 
 def compute_indicators(bars, p):
     closes = [b["close"] for b in bars]
+    ma_long_n = getattr(p, "ma_long", 0)      # 长均线周期（0=不启用，兼容旧参数对象）
     return {
         "ema_exit": ema_series(closes, 20),
         "atr": atr_series(bars, 14),
         "vol_ma": sma_series([b["vol"] for b in bars], 20),
         "daily_up": daily_flags(closes, p.ema_trend),
         "weekly_up": weekly_flags(bars, p.weekly_ema),
+        "ma20": sma_series(closes, 20),
+        "ma_long": sma_series(closes, ma_long_n) if ma_long_n else None,
     }
 
 
 # ---------------------------------------------------------------- 信号规则
 
 def find_box(bars, atr, j, p):
-    """在信号K线 j 之前寻找横盘箱体，返回 (box_high, box_low, L) 或 None（取最长有效箱体）。"""
+    """在信号K线 j 之前寻找横盘箱体，返回 (box_high, box_low, L) 或 None（取最长有效箱体）。
+    purify_atr > 0 时，箱体内部出现整根幅度 >= purify_atr*ATR 的大波动K线则该箱体
+    作废，向前缩短箱体重找（纪要口径：箱体内的大波动K线不纳入交易范围）。"""
+    purify = getattr(p, "purify_atr", 0.0)    # 0=不启用（兼容旧参数对象）
     for L in range(p.box_max, p.box_min - 1, -1):
         lo = j - L
         if lo < 0:
@@ -269,19 +289,46 @@ def find_box(bars, atr, j, p):
         bh = max(b["high"] for b in seg)
         bl = min(b["low"] for b in seg)
         if atr and (bh - bl) <= p.box_atr * atr:
+            if purify > 0 and any((x["high"] - x["low"]) >= purify * atr for x in seg):
+                continue                      # 内部有大波动K线，作废，缩短箱体重找
             return bh, bl, L
     return None
 
 
 def check_signal(bars, ind, j, p):
-    """判断第 j 根K线收盘是否触发钻潜突破信号。返回 (信号dict, 未触发原因)。"""
-    """判断第 j 根K线收盘是否触发钻潜突破信号。返回 (信号dict, 未触发原因)。"""
+    """判断第 j 根K线收盘是否触发钻潜突破信号。返回 (信号dict, 未触发原因)。
+    四共振/标准K线/MA20 位置等新条件经 getattr 读取，缺字段视为不启用，
+    兼容 gui.py/screener.py 的旧参数对象。"""
     b = bars[j]
     if not (ind["daily_up"][j] and ind["weekly_up"][j]):
         return None, "趋势过滤未通过"
+    if getattr(p, "strict", False):           # MA20=月线级别平均成本线，趋势方向核心参照
+        m20 = ind.get("ma20")
+        if not (m20 and m20[j]):
+            return None, "MA20数据不足"
+        if b["close"] <= m20[j]:
+            return None, "收盘未站上MA20"
     atr = ind["atr"][j]
     if not atr or atr / b["close"] > p.atr_max / 100:
         return None, "波动过大（不做）"
+    atr_min = getattr(p, "atr_min", 0.0)
+    if atr_min > 0 and atr / b["close"] * 100 < atr_min:
+        return None, "波动过小（无能量）"
+    ma_long_n = getattr(p, "ma_long", 0)
+    glue_pct = getattr(p, "glue_pct", 0.0)
+    if ma_long_n > 0:
+        ml = ind.get("ma_long")
+        if not (ml and j >= 5 and ml[j] is not None and ml[j - 5] is not None):
+            return None, "长均线数据不足"
+        if ml[j] < ml[j - 5]:
+            return None, "长均线方向向下"
+        if glue_pct > 0:                      # 均线粘合: MA20 与长均线收敛
+            m20 = ind.get("ma20")
+            if not (m20 and m20[j]):
+                return None, "均线数据不足"
+            lo_ma = min(m20[j], ml[j])
+            if (max(m20[j], ml[j]) - lo_ma) / lo_ma * 100 > glue_pct:
+                return None, "均线未粘合"
     box = find_box(bars, atr, j, p)
     if not box:
         return None, "无有效横盘箱体"
@@ -290,6 +337,9 @@ def check_signal(bars, ind, j, p):
         return None, "未突破箱体上沿"
     if b["close"] - bh > p.chase_atr * atr:
         return None, "突破过远（防追高）"
+    std_k = getattr(p, "std_kline_atr", 0.0)
+    if std_k > 0 and (b["high"] - b["low"]) < std_k * atr:
+        return None, "非标准K线（幅度不足）"
     if b["close"] - b["open"] < p.body_atr * atr:
         return None, "动能不足"
     hl = b["high"] - b["low"]
@@ -301,16 +351,60 @@ def check_signal(bars, ind, j, p):
     return {"box_high": bh, "box_low": bl, "L": L}, None
 
 
+def reentry_update(pend, i, b, p):
+    """推进二次进场状态机一步。pend 为突破K线后的等待状态，b 为当根K线。
+    返回 (新状态或None, 是否触发再次突破)。收盘跌回箱体内或调整超过
+    reentry_max 根K线则作废；触发时止损冻结为调整段最低点。"""
+    hi_prev = pend["hi"]                      # 突破后前高（不含当根）
+    adj = b["low"] if pend["adj_low"] is None else min(pend["adj_low"], b["low"])
+    age = i - pend["bo_bar"] - 1              # 突破K线与当根之间的调整根数
+    if b["close"] < pend["box_high"] or age > p.reentry_max:
+        return None, False
+    new = dict(pend)
+    new["adj_low"] = adj
+    if age >= p.reentry_min and b["close"] > hi_prev:
+        new["stop"] = adj                     # 止损 = 调整段最低点
+        return new, True
+    new["hi"] = max(hi_prev, b["high"])
+    return new, False
+
+
+def reentry_scan_state(bars, p, j0, box_high):
+    """从突破K线 j0 起重放二次进场状态机至最后一根K线。
+    返回 (状态, 触发K线索引或None, 止损参考, 再突破参考价, 调整段最低点)。"""
+    pend = {"bo_bar": j0, "hi": bars[j0]["high"], "box_high": box_high,
+            "adj_low": None}
+    for i in range(j0 + 1, len(bars)):
+        pend, trig = reentry_update(pend, i, bars[i], p)
+        if pend is None:
+            return "failed", None, None, None, None
+        if trig:
+            return "triggered", i, pend["stop"], None, pend["adj_low"]
+    return "waiting", None, pend["adj_low"], pend["hi"], pend["adj_low"]
+
+
+def cap_shares(shares, entry, p):
+    """按单只最大开仓比例限制股数（max_pos_pct% 初始资金，0=不限）。
+    用 getattr 兼容未定义该字段的旧参数对象（如 qushi.py 复用 fill_position）。"""
+    cap_pct = getattr(p, "max_pos_pct", 0.0)
+    if cap_pct > 0 and entry > 0:
+        cap = int(p.capital * cap_pct / 100 / entry / 100) * 100
+        shares = min(shares, cap)
+    return shares
+
+
 # ---------------------------------------------------------------- 回测引擎
 
 def run_backtest(symbol, bars, ind, p):
     """单标的、单持仓的规则化回测。返回 (trades, equity_curve, skipped)。"""
     cash = float(p.capital)
     pos = None
+    pending = None       # 二次进场模式：突破K线后的等待状态
     trades = []
     equity_curve = []
     skipped = 0
     last_exit_bar = -10 ** 9
+    tp_mid = getattr(p, "tp_mid", False)   # 剩余仓位中值止盈线（缺字段=不启用）
     n = len(bars)
     warm = max(p.ema_trend + 10, 70)
 
@@ -346,13 +440,23 @@ def run_backtest(symbol, bars, ind, p):
     for i in range(warm, n):
         b = bars[i]
         if pos is None:
-            j = i - 1  # 昨收触发信号 -> 今开入场
-            if j >= warm and i - last_exit_bar > p.cooldown:
-                sig, _ = check_signal(bars, ind, j, p)
-                if sig:
-                    atr = ind["atr"][j]
+            if p.reentry:
+                # 二次进场：突破K线后等待小级别调整，收盘再次突破前高才进场
+                if pending is None:
+                    j = i - 1  # 昨收方向确立K线 -> 今起跟踪调整
+                    if j >= warm and i - last_exit_bar > p.cooldown:
+                        sig, _ = check_signal(bars, ind, j, p)
+                        if sig:
+                            pending = {"bo_bar": j, "hi": bars[j]["high"],
+                                       "box_high": sig["box_high"], "adj_low": None}
+                if pending is not None and "enter_bar" not in pending:
+                    pending, trig = reentry_update(pending, i, b, p)
+                    if pending is not None and trig:
+                        pending["enter_bar"] = i + 1  # 次日开盘进场
+                if pending is not None and i >= pending.get("enter_bar", 10 ** 9):
+                    atr = ind["atr"][pending["bo_bar"]]
                     entry = b["open"]
-                    stop = sig["box_low"] - p.stop_buffer * atr
+                    stop = pending["stop"]  # 调整段最低点（触发日冻结）
                     dist = entry - stop
                     if dist < p.min_stop_atr * atr:
                         dist = p.min_stop_atr * atr
@@ -360,7 +464,8 @@ def run_backtest(symbol, bars, ind, p):
                     if entry <= stop or dist / entry > p.max_stop_pct / 100:
                         skipped += 1  # 止损过宽，放弃
                     else:
-                        shares = int(cash * p.risk / 100 / dist / 100) * 100
+                        shares = cap_shares(
+                            int(cash * p.risk / 100 / dist / 100) * 100, entry, p)
                         if shares * entry > cash:
                             shares = int(cash / entry / 100) * 100
                         if shares < 100:
@@ -376,7 +481,44 @@ def run_backtest(symbol, bars, ind, p):
                                 "tp1": entry + p.tp1 * dist,
                                 "tp2": entry + p.tp2 * dist,
                                 "tp1_done": False, "buy_fee": fee, "legs": [],
+                                "hi": b["high"],
                             }
+                    pending = None  # 无论成败，本次 setup 已消费
+            else:
+                j = i - 1  # 昨收触发信号 -> 今开入场
+                if j >= warm and i - last_exit_bar > p.cooldown:
+                    sig, _ = check_signal(bars, ind, j, p)
+                    if sig:
+                        atr = ind["atr"][j]
+                        entry = b["open"]
+                        stop = sig["box_low"] - p.stop_buffer * atr
+                        dist = entry - stop
+                        if dist < p.min_stop_atr * atr:
+                            dist = p.min_stop_atr * atr
+                            stop = entry - dist
+                        if entry <= stop or dist / entry > p.max_stop_pct / 100:
+                            skipped += 1  # 止损过宽，放弃
+                        else:
+                            shares = cap_shares(
+                                int(cash * p.risk / 100 / dist / 100) * 100,
+                                entry, p)
+                            if shares * entry > cash:
+                                shares = int(cash / entry / 100) * 100
+                            if shares < 100:
+                                skipped += 1  # 资金不足一手
+                            else:
+                                cost = shares * entry
+                                fee = max(5.0, cost * p.commission)
+                                cash -= cost + fee
+                                pos = {
+                                    "entry_bar": i, "entry_date": b["date"],
+                                    "entry": entry, "stop": stop, "dist": dist,
+                                    "shares0": shares, "shares": shares,
+                                    "tp1": entry + p.tp1 * dist,
+                                    "tp2": entry + p.tp2 * dist,
+                                    "tp1_done": False, "buy_fee": fee, "legs": [],
+                                    "hi": b["high"],
+                                }
         elif i > pos["entry_bar"]:  # T+1：买入当根不动作
             exited = False
             if b["open"] <= pos["stop"]:
@@ -392,9 +534,15 @@ def run_backtest(symbol, bars, ind, p):
                         sell(i, half, pos["tp1"], f"止盈{p.tp1:g}R减半")
                         pos["stop"] = max(pos["stop"], pos["entry"])
                         pos["tp1_done"] = True
+                        pos["hi"] = max(pos["hi"], b["high"])  # 突破当日高点计入阶段最高价
                     else:
                         sell(i, pos["shares"], pos["tp1"], f"止盈{p.tp1:g}R")
-                if pos["shares"] > 0 and pos["tp1_done"] and b["low"] <= pos["stop"]:
+                mid = (pos["entry"] + pos["hi"]) / 2.0  # 中值止盈线（随阶段新高上移）
+                if (pos["shares"] > 0 and pos["tp1_done"] and tp_mid
+                        and b["low"] <= mid):
+                    px = mid if b["high"] >= mid else b["open"]
+                    sell(i, pos["shares"], px, "中值止盈线")
+                elif pos["shares"] > 0 and pos["tp1_done"] and b["low"] <= pos["stop"]:
                     sell(i, pos["shares"], pos["stop"], "保本止损")
                 elif pos["shares"] > 0 and pos["tp1_done"] and b["high"] >= pos["tp2"]:
                     sell(i, pos["shares"], pos["tp2"], f"止盈{p.tp2:g}R")
@@ -402,6 +550,8 @@ def run_backtest(symbol, bars, ind, p):
                     sell(i, pos["shares"], b["close"], "EMA20跟踪离场")
                 elif pos["shares"] > 0 and i - pos["entry_bar"] >= p.max_hold:
                     sell(i, pos["shares"], b["close"], "时间止损")
+            if pos["shares"] > 0:
+                pos["hi"] = max(pos["hi"], b["high"])  # 阶段最高价（收盘后更新）
             if pos and pos["shares"] <= 0:
                 close_trade(i, "；".join(lg[3] for lg in pos["legs"]))
         equity_curve.append(cash + (pos["shares"] * b["close"] if pos else 0.0))
@@ -412,6 +562,36 @@ def run_backtest(symbol, bars, ind, p):
         close_trade(i, "回测结束平仓")
         equity_curve[-1] = cash
     return trades, equity_curve, skipped
+
+
+def yearly_stats(trades):
+    """按卖出日年份聚合交易，返回 [(年份, 笔数, 胜数, 盈亏合计, R合计), ...]（按年升序）。"""
+    by = {}
+    for t in trades:
+        s = by.setdefault(t["exit_date"][:4], {"n": 0, "win": 0, "pnl": 0.0, "r": 0.0})
+        s["n"] += 1
+        s["win"] += 1 if t["pnl"] > 0 else 0
+        s["pnl"] += t["pnl"]
+        s["r"] += t["r"]
+    return [(y, s["n"], s["win"], s["pnl"], s["r"]) for y, s in sorted(by.items())]
+
+
+def monthly_returns(dates, eq, base):
+    """按自然月计算月收益率（月末权益/上月末权益-1，首月以初始资金为基准）。
+    返回 [("YYYY-MM", %), ...]；dates 与 eq 须一一对应
+    （单股为 bars[warm:] 日期，组合为全部交易日并集）。"""
+    rows, cur, month_end, prev_end = [], None, None, base
+    for d, v in zip(dates, eq):
+        m = d[:7]
+        if m != cur:
+            if cur is not None and month_end is not None:
+                rows.append((cur, (month_end / prev_end - 1) * 100))
+                prev_end = month_end
+            cur = m
+        month_end = v
+    if cur is not None and month_end is not None:
+        rows.append((cur, (month_end / prev_end - 1) * 100))
+    return rows
 
 
 def summarize(trades, equity_curve, bars, warm, p, skipped):
@@ -428,6 +608,7 @@ def summarize(trades, equity_curve, bars, warm, p, skipped):
     gw = sum(t["pnl"] for t in wins)
     gl = -sum(t["pnl"] for t in losses)
     bench = (bars[-1]["close"] / bars[warm]["close"] - 1) * 100 if len(bars) > warm else 0.0
+    dates = [b["date"] for b in bars[warm:]]      # 与 equity_curve 逐日对齐
     return {
         "trades": trades, "final": final, "total_ret": total_ret, "max_dd": max_dd,
         "n": len(trades), "win_rate": len(wins) / len(trades) * 100 if trades else 0.0,
@@ -437,6 +618,8 @@ def summarize(trades, equity_curve, bars, warm, p, skipped):
         "start_date": bars[warm]["date"] if len(bars) > warm else "-",
         "end_date": bars[-1]["date"] if bars else "-",
         "bars": max(0, len(bars) - warm),
+        "yearly": yearly_stats(trades),
+        "monthly": monthly_returns(dates, eq, p.capital),
     }
 
 
@@ -444,7 +627,8 @@ def summarize(trades, equity_curve, bars, warm, p, skipped):
 
 def run_portfolio(pdata, p):
     """组合级回测：全部标的共享一个资金池、并行持仓（每标的最多1笔）。
-    约定: 每日先处理持仓退出释放资金，再处理入场（昨收信号->今开买入）；
+    约定: 每日先处理持仓退出释放资金，再处理入场（昨收信号->今开买入；
+    --reentry 时为二次进场模式，突破后等调整再突破才进场）；
     同日多信号按传入顺序分配资金，资金不足一手则放弃。停牌日沿用昨收估值。
     返回 (trades, equity_curve, info)。
     """
@@ -455,8 +639,10 @@ def run_portfolio(pdata, p):
                                      for _, sym, _, _ in pdata)))
 
     cash = float(p.capital)
+    tp_mid = getattr(p, "tp_mid", False)   # 剩余仓位中值止盈线（缺字段=不启用）
     positions = {}        # sym -> 持仓
     last_exit_idx = {}    # sym -> 完全平仓时的K线索引（冷却用）
+    pendings = {}         # sym -> 二次进场等待状态（仅 --reentry 模式使用）
     trades = []
     equity_curve = []
     conc_sum = conc_days = 0
@@ -516,10 +702,16 @@ def run_portfolio(pdata, p):
                              f"止盈{p.tp1:g}R减半")
                         pos["stop"] = max(pos["stop"], pos["entry"])
                         pos["tp1_done"] = True
+                        pos["hi"] = max(pos["hi"], b["high"])  # 突破当日高点计入阶段最高价
                     else:
                         sell(sym, pos, b["date"], pos["shares"], pos["tp1"],
                              f"止盈{p.tp1:g}R")
-                if pos["shares"] > 0 and pos["tp1_done"] and b["low"] <= pos["stop"]:
+                mid = (pos["entry"] + pos["hi"]) / 2.0  # 中值止盈线（随阶段新高上移）
+                if (pos["shares"] > 0 and pos["tp1_done"] and tp_mid
+                        and b["low"] <= mid):
+                    px = mid if b["high"] >= mid else b["open"]
+                    sell(sym, pos, b["date"], pos["shares"], px, "中值止盈线")
+                elif pos["shares"] > 0 and pos["tp1_done"] and b["low"] <= pos["stop"]:
                     sell(sym, pos, b["date"], pos["shares"], pos["stop"], "保本止损")
                 elif pos["shares"] > 0 and pos["tp1_done"] and b["high"] >= pos["tp2"]:
                     sell(sym, pos, b["date"], pos["shares"], pos["tp2"],
@@ -529,21 +721,85 @@ def run_portfolio(pdata, p):
                     sell(sym, pos, b["date"], pos["shares"], b["close"], "EMA20跟踪离场")
                 elif pos["shares"] > 0 and idx - pos["entry_idx"] >= p.max_hold:
                     sell(sym, pos, b["date"], pos["shares"], b["close"], "时间止损")
+            if pos["shares"] > 0:
+                pos["hi"] = max(pos["hi"], b["high"])  # 阶段最高价（收盘后更新）
             if pos["shares"] <= 0:
                 close_pos(sym, pos, "；".join(lg[3] for lg in pos["legs"]))
                 last_exit_idx[sym] = idx
                 del positions[sym]
 
-        # 2) 入场（昨收触发信号 -> 今开买入）
+        # 2) 入场（昨收触发信号 -> 今开买入；--reentry 为二次进场模式）
         for name, sym, bars, ind in pdata:
-            if len(positions) >= p.max_pos:
-                break
             if sym in positions:
                 continue
             idx = date_index[sym].get(d)
             if idx is None:
                 continue
+            b = bars[idx]
             j = idx - 1
+            if p.reentry:
+                pend = pendings.get(sym)
+                if pend is None:
+                    if (j >= warm
+                            and idx - last_exit_idx.get(sym, -10 ** 9) > p.cooldown):
+                        sig, _ = check_signal(bars, ind, j, p)
+                        if sig:
+                            pend = {"bo_bar": j, "hi": bars[j]["high"],
+                                    "box_high": sig["box_high"], "adj_low": None}
+                if pend is not None and "enter_bar" not in pend:
+                    pend, trig = reentry_update(pend, idx, b, p)
+                    if pend is None:
+                        pendings.pop(sym, None)       # 跌回箱体/调整超时，作废
+                    else:
+                        pendings[sym] = pend
+                        if trig:
+                            pend["enter_bar"] = idx + 1   # 次日开盘进场
+                elif pend is not None and idx >= pend["enter_bar"]:
+                    if len(positions) >= p.max_pos:
+                        pendings.pop(sym, None)           # 无空位，放弃本次机会
+                        continue
+                    atr = ind["atr"][pend["bo_bar"]]
+                    entry = b["open"]
+                    stop = pend["stop"]                   # 调整段最低点（触发日冻结）
+                    dist = entry - stop
+                    if dist < p.min_stop_atr * atr:
+                        dist = p.min_stop_atr * atr
+                        stop = entry - dist
+                    if entry <= stop or dist / entry > p.max_stop_pct / 100:
+                        pendings.pop(sym, None)           # 止损过宽，放弃
+                        continue
+                    equity = mark_equity()
+                    shares = cap_shares(
+                        int(equity * p.risk / 100 / dist / 100) * 100, entry, p)
+                    if shares * entry > cash:
+                        shares = int(cash / entry / 100) * 100
+                    if p.max_total_pct > 0:               # 总仓位上限（按初始资金计）
+                        held = sum(pp["shares"] * pp["last_close"]
+                                   for pp in positions.values())
+                        room = p.capital * p.max_total_pct / 100 - held
+                        if shares * entry > room:
+                            shares = int(room / entry / 100) * 100
+                    if shares < 100:
+                        pendings.pop(sym, None)           # 资金不足一手
+                        continue
+                    cost = shares * entry
+                    fee = max(5.0, cost * p.commission)
+                    cash -= cost + fee
+                    positions[sym] = {
+                        "name": name, "entry_idx": idx, "entry_date": b["date"],
+                        "entry": entry, "stop": stop, "dist": dist,
+                        "shares0": shares, "shares": shares,
+                        "tp1": entry + p.tp1 * dist, "tp2": entry + p.tp2 * dist,
+                        "tp1_done": False, "buy_fee": fee, "legs": [],
+                        "hi": b["high"],
+                        "last_close": b["close"], "last_date": b["date"],
+                        "exit_idx": idx,
+                    }
+                    max_conc = max(max_conc, len(positions))
+                    pendings.pop(sym, None)
+                continue
+            if len(positions) >= p.max_pos:
+                break
             if j < warm or idx - last_exit_idx.get(sym, -10 ** 9) <= p.cooldown:
                 continue
             sig, _ = check_signal(bars, ind, j, p)
@@ -559,11 +815,18 @@ def run_portfolio(pdata, p):
             if entry <= stop or dist / entry > p.max_stop_pct / 100:
                 continue                      # 止损过宽，放弃
             equity = mark_equity()
-            shares = int(equity * p.risk / 100 / dist / 100) * 100
+            shares = cap_shares(int(equity * p.risk / 100 / dist / 100) * 100,
+                                entry, p)
             if shares * entry > cash:
                 shares = int(cash / entry / 100) * 100
+            if p.max_total_pct > 0:           # 总仓位上限（按初始资金计）
+                held = sum(pp["shares"] * pp["last_close"]
+                           for pp in positions.values())
+                room = p.capital * p.max_total_pct / 100 - held
+                if shares * entry > room:
+                    shares = int(room / entry / 100) * 100
             if shares < 100:
-                continue                      # 资金不足一手
+                continue                      # 资金不足一手/仓位上限已满
             cost = shares * entry
             fee = max(5.0, cost * p.commission)
             cash -= cost + fee
@@ -573,6 +836,7 @@ def run_portfolio(pdata, p):
                 "shares0": shares, "shares": shares,
                 "tp1": entry + p.tp1 * dist, "tp2": entry + p.tp2 * dist,
                 "tp1_done": False, "buy_fee": fee, "legs": [],
+                "hi": b["high"],
                 "last_close": bars[idx]["close"], "last_date": bars[idx]["date"],
                 "exit_idx": idx,
             }
@@ -619,16 +883,64 @@ def summarize_portfolio(trades, eq, pdata, p, info):
     rets = [bars[-1]["close"] / bars[warm]["close"] - 1
             for _, _, bars, _ in pdata if len(bars) > warm]
     bench = sum(rets) / len(rets) * 100 if rets else 0.0
+    # 组合权益曲线与全部交易日并集逐日对齐（与 run_portfolio 的 all_dates 同一构造）
+    all_dates = sorted({b["date"] for _, _, bars, _ in pdata for b in bars})
     return {
         "trades": trades, "final": final, "total_ret": total_ret, "max_dd": max_dd,
         "n": len(trades), "win_rate": len(wins) / len(trades) * 100 if trades else 0.0,
         "avg_r": sum(t["r"] for t in trades) / len(trades) if trades else 0.0,
         "pf": gw / gl if gl > 0 else float("inf"),
         "bench": bench, "info": info,
+        "yearly": yearly_stats(trades),
+        "monthly": monthly_returns(all_dates, eq, p.capital),
     }
 
 
 # ---------------------------------------------------------------- 输出
+
+def print_yearly(rows):
+    """分年度统计块（跨年时输出；单年与顶部汇总重复，省略）。"""
+    if len(rows) < 2:
+        return
+    print(DIM + "\n分年度统计:" + RESET)
+    header = ("年份", "交易", "胜率", "盈亏", "平均R")
+    widths = (6, 4, 5, 12, 7)
+    print(DIM + "  ".join(pad(h, w) for h, w in zip(header, widths)) + RESET)
+    for y, n, win, pnl, r_sum in rows:
+        avg_r = r_sum / n
+        row = [
+            pad(y, widths[0]), pad(str(n), widths[1], "right"),
+            pad(f"{win / n * 100:.0f}%", widths[2], "right"),
+            pad(f"{pnl:+,.0f}", widths[3], "right"),
+            pad(f"{avg_r:+.2f}", widths[4], "right"),
+        ]
+        row[3] = paint(pnl, row[3])
+        row[4] = paint(avg_r, row[4])
+        print("  ".join(row))
+
+
+def print_monthly(rows):
+    """月度收益块：每年一行、1~12月定宽格子（月末权益环比%）。"""
+    if len(rows) < 2:
+        return
+    print(DIM + "\n月度收益%（月末权益环比）:" + RESET)
+    by_year = {}
+    for m, ret in rows:
+        by_year.setdefault(m[:4], {})[m[5:7]] = ret
+    head = pad("年份", 4) + " " + " ".join(pad(f"{mm}月", 5, "right")
+                                          for mm in range(1, 13))
+    print(DIM + head + RESET)
+    for y in sorted(by_year):
+        cells = [pad(y, 4)]
+        for mm in range(1, 13):
+            key = f"{mm:02d}"
+            if key in by_year[y]:
+                v = by_year[y][key]
+                cells.append(paint(v, f"{v:+5.1f}"))
+            else:
+                cells.append(DIM + pad("·", 5, "right") + RESET)
+        print(" ".join(cells))
+
 
 def print_full_report(name, symbol, st):
     line = "─" * 66
@@ -665,6 +977,8 @@ def print_full_report(name, symbol, st):
         row[6] = paint(t["pnl"], row[6])
         row[7] = paint(t["r"], row[7])
         print(" ".join(row))
+    print_yearly(st["yearly"])
+    print_monthly(st["monthly"])
 
 
 def write_md_note(name, symbol, st, p):
@@ -673,10 +987,14 @@ def write_md_note(name, symbol, st, p):
     pf = f"{st['pf']:.2f}" if st["pf"] != float("inf") else "∞"
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     tp2_s = "不设" if p.tp2 >= 999 else f"{p.tp2:g}R"
+    mode_s = " · 二次进场" if p.reentry else ""
+    if getattr(p, "tp_mid", False):
+        mode_s += " · 中值止盈线"
     lines = [
         f"## 回测记录 {now}",
         "",
-        f"- 参数：days={p.days} · risk={p.risk:g}% · tp1={p.tp1:g}R · tp2={tp2_s} · 止损上限={p.max_stop_pct:g}%",
+        f"- 参数：days={p.days} · risk={p.risk:g}% · tp1={p.tp1:g}R · tp2={tp2_s}"
+        f" · 止损上限={p.max_stop_pct:g}%{mode_s}",
         f"- 区间：{st['start_date']} ~ {st['end_date']}（{st['bars']}根K线）",
         f"- 期末权益：{st['final']:,.0f}（{st['total_ret']:+.2f}%）｜基准买入持有：{st['bench']:+.2f}%",
         f"- 最大回撤：{st['max_dd']:.2f}%",
@@ -684,6 +1002,17 @@ def write_md_note(name, symbol, st, p):
     ]
     if st["skipped"]:
         lines.append(f"- 跳过信号：{st['skipped']} 个（止损过宽/资金不足）")
+    if len(st["yearly"]) >= 2:                 # 跨年时附分年度统计表
+        lines += [
+            "",
+            "**分年度统计**",
+            "",
+            "| 年份 | 交易 | 胜率 | 盈亏 | 平均R |",
+            "|------|-----:|-----:|-----:|------:|",
+        ]
+        for y, n, win, pnl, r_sum in st["yearly"]:
+            lines.append(f"| {y} | {n} | {win / n * 100:.0f}% "
+                         f"| {pnl:+,.0f} | {r_sum / n:+.2f} |")
     lines += [
         "",
         "| # | 买入日 | 卖出日 | 买入价 | 卖出价 | 股数 | 净盈亏 | R | 天 | 出场 |",
@@ -752,6 +1081,8 @@ def print_portfolio_report(st, p):
         wr = s["win"] / s["n"] * 100
         print(f"  {pad(name, 10)} {s['n']:>2}笔 {wr:4.0f}%  "
               + paint(s["pnl"], f"{s['pnl']:+,.0f}"))
+    print_yearly(st["yearly"])
+    print_monthly(st["monthly"])
     if p.full:
         header = ("#", "标的", "买入日", "卖出日", "买入价", "卖出价",
                   "股数", "净盈亏", "R", "天", "出场")
@@ -780,10 +1111,61 @@ def fill_position(row, ref_price, dist, p):
     """按资金管理规则填入建议股数与仓位占比（与回测口径一致）。"""
     if dist <= 0:
         return
-    shares = int(p.capital * p.risk / 100 / dist / 100) * 100
+    shares = cap_shares(int(p.capital * p.risk / 100 / dist / 100) * 100,
+                        ref_price, p)
     if shares >= 100:
         row["建议股数"] = shares
         row["仓位%"] = round(shares * ref_price / p.capital * 100, 1)
+
+
+def scan_reentry(p, bars, ind, head, row, n, last):
+    """二次进场模式扫描：报告 方向确立/等待二次进场/二次进场 三种状态。"""
+    j0, sig0 = None, None
+    for j in range(n - 1, max(70, n - p.reentry_max - 8) - 1, -1):
+        sg, _ = check_signal(bars, ind, j, p)
+        if sg:
+            j0, sig0 = j, sg
+            break
+    if j0 is None:
+        print(head + DIM + "无信号（近期无方向确立K线）" + RESET)
+        row["状态"], row["说明"] = "无信号", "近期无突破K线"
+        return row
+    state, t, stop_r, hi_r, adj_r = reentry_scan_state(bars, p, j0, sig0["box_high"])
+    if state == "triggered" and t >= n - 3:
+        entry = bars[t + 1]["open"] if t + 1 < n else last["close"]
+        stop = stop_r
+        atr_j = ind["atr"][t] or ind["atr"][-1] or 0.0
+        dist = max(entry - stop, p.min_stop_atr * atr_j)
+        tp1, tp2 = entry + p.tp1 * dist, entry + p.tp2 * dist
+        print(head + f"{RED}二次进场@{bars[t]['date']}{RESET} 突破K@{bars[j0]['date']} "
+                     f"买入参考{entry:.2f} → 止损(调整低点) {stop:.2f} / "
+                     f"止盈1 {tp1:.2f} / 止盈2 {tp2:.2f}")
+        row.update({"状态": "二次进场", "信号日": bars[t]["date"],
+                    "触发价": round(entry, 2), "止损价": round(stop, 2),
+                    "止盈1价": round(tp1, 2), "止盈2价": round(tp2, 2),
+                    "止损距离%": round(dist / entry * 100, 1),
+                    "说明": f"突破K@{bars[j0]['date']}，止损=调整段最低点"})
+        fill_position(row, entry, dist, p)
+        if dist / entry > p.max_stop_pct / 100:
+            row["说明"] = f"止损距离超{p.max_stop_pct:g}%上限，按规则放弃"
+        return row
+    if state == "waiting":
+        trigger = hi_r
+        stop_s = f"{adj_r:.2f}" if adj_r else "待调整形成"
+        print(head + f"方向确立@{bars[j0]['date']} 调整中 → 收盘过 {trigger:.2f} "
+                     f"触发二次进场（止损参考=调整低点 {stop_s}）")
+        row.update({"状态": "等待二次进场", "信号日": bars[j0]["date"],
+                    "触发价": round(trigger, 2),
+                    "止损价": round(adj_r, 2) if adj_r else "",
+                    "说明": "突破K线后小级别调整中；收盘再过前高触发，止损=调整段最低点"})
+        return row
+    if state == "triggered":
+        print(head + DIM + f"无信号（{bars[t]['date']}已触发二次进场，超出近3日）" + RESET)
+        row["状态"], row["说明"] = "无信号", "二次进场触发已过3日"
+        return row
+    print(head + DIM + "无信号（突破后跌回箱体或调整超时）" + RESET)
+    row["状态"], row["说明"] = "无信号", "突破后结构破坏或调整超时"
+    return row
 
 
 def scan_symbol(name, symbol, p):
@@ -814,6 +1196,9 @@ def scan_symbol(name, symbol, p):
     close_s = f"{last['close']:.2f}"
     head = (f"{pad(name, 10)} {pad(symbol, 9)} {pad(close_s, 8, 'right')} "
             f"趋势:{trend:<6} ATR%:{atr_pct:.1f}  ")
+
+    if p.reentry:
+        return scan_reentry(p, bars, ind, head, row, n, last)
 
     found = None
     for j in range(max(70, n - 3), n):
@@ -967,6 +1352,21 @@ def fetch_pdata(valid, p, workers=1):
     return [x for x in out if x]
 
 
+def apply_strict(p):
+    """--strict 会议纪要严格筛选口径：四共振 + 标准K线 + 箱体净化 + 横盘2个月。
+    仅填充未显式指定的项（值为0视为未指定）；box_min 不低于40根（约2个月交易日）。"""
+    if not getattr(p, "strict", False):
+        return p
+    p.std_kline_atr = p.std_kline_atr or 2.0      # 标准K线: 整根幅度 >= 2*ATR
+    p.glue_pct = p.glue_pct or 3.0                # 均线粘合: MA20/长均线收敛 <= 3%
+    p.ma_long = p.ma_long or 60                   # 长均线方向: MA60 走平或上行
+    p.atr_min = p.atr_min or 1.5                  # ATR摆动量下限 1.5%
+    p.purify_atr = p.purify_atr or 2.0            # 箱体净化: 内部 2*ATR 大K线作废
+    p.box_min = max(p.box_min, 40)                # 横盘 >= 2个月（约40个交易日）
+    p.box_max = max(p.box_max, p.box_min)
+    return p
+
+
 def build_parser():
     ap = argparse.ArgumentParser(description="钻潜交易体系·规则化回测与信号扫描（腾讯日K数据）")
     ap.add_argument("targets", nargs="*", help="股票代码或名称，留空则回测 src/ 全部自选股")
@@ -990,8 +1390,8 @@ def build_parser():
                     help="--universe 预筛: 股价上限（元，0=不限）")
     ap.add_argument("--min-chg", type=float, default=0,
                     help="--universe 预筛: 当日涨幅下限%%（0=不限，设置后可大幅缩小样本提速）")
-    ap.add_argument("--max-pos", type=int, default=5,
-                    help="组合模式最大同时持仓数（默认5）")
+    ap.add_argument("--max-pos", type=int, default=4,
+                    help="组合模式最大同时持仓数（默认4）")
     ap.add_argument("--csv", metavar="FILE", help="扫描结果导出CSV（配合--scan，含止盈止损位）")
     ap.add_argument("--watch-dist", type=float, default=3.0,
                     help="预备箱体: 收盘距触发价上限%%（默认3）")
@@ -1011,17 +1411,47 @@ def build_parser():
     ap.add_argument("--chase-atr", type=float, default=1.5, help="收盘超出箱体上沿多少倍ATR放弃（默认1.5）")
     ap.add_argument("--tp1", type=float, default=2.5, help="第一止盈R倍数，减半仓（默认2.5）")
     ap.add_argument("--tp2", type=float, default=999.0, help="第二止盈R倍数，设大即近似纯EMA20跟踪（默认999=不设）")
+    ap.add_argument("--tp-mid", action="store_true",
+                    help="剩余仓位中值止盈线: (进场价+阶段最高价)/2，回落触及离场"
+                         "（随新高上移，锁住约一半峰值利润）")
     ap.add_argument("--stop-buffer", type=float, default=0.0, help="止损低于箱体下沿的ATR缓冲（默认0.0）")
     ap.add_argument("--min-stop-atr", type=float, default=1.0, help="最小止损距离 = 倍数*ATR（默认1.0）")
     ap.add_argument("--max-stop-pct", type=float, default=15.0, help="止损距离占现价上限%%（默认15）")
     ap.add_argument("--max-hold", type=int, default=60, help="最长持仓K线数（默认60）")
     ap.add_argument("--cooldown", type=int, default=3, help="平仓后冷却K线数（默认3）")
+    ap.add_argument("--reentry", action="store_true",
+                    help="二次进场模式：不参与第一根方向确立K线，调整后再突破才进场，"
+                         "止损=调整段最低点")
+    ap.add_argument("--reentry-min", type=int, default=1,
+                    help="二次进场: 突破后至少调整几根K线才可触发（默认1）")
+    ap.add_argument("--reentry-max", type=int, default=10,
+                    help="二次进场: 调整超过几根K线作废（默认10）")
+    ap.add_argument("--max-pos-pct", type=float, default=10.0,
+                    help="单只最大开仓比例%%总资金（默认10，0=不限）")
+    ap.add_argument("--max-total-pct", type=float, default=40.0,
+                    help="组合模式总仓位上限%%初始资金（默认40，0=不限）")
+    ap.add_argument("--strict", action="store_true",
+                    help="会议纪要严格筛选口径: 横盘>=40根(2个月) + 标准K线2*ATR + "
+                         "均线粘合(MA20/长均线<=3%%) + 长均线MA60走平或上行 + "
+                         "ATR摆动量1.5%%~6%% + 箱体净化(内部2*ATR大K线作废)")
+    ap.add_argument("--std-kline-atr", type=float, default=0.0,
+                    help="标准K线: 整根幅度>=N*ATR（0=不启用，纪要口径2.0）")
+    ap.add_argument("--glue-pct", type=float, default=0.0,
+                    help="均线粘合: (MA20与长均线max-min)/min<=N%%（0=不启用，纪要口径3，"
+                         "需配合--ma-long）")
+    ap.add_argument("--ma-long", type=int, default=0,
+                    help="长均线周期N，走平或上行才可做（0=不启用，纪要口径60）")
+    ap.add_argument("--atr-min", type=float, default=0.0,
+                    help="ATR摆动量下限: ATR/收盘>=N%%（0=不启用）")
+    ap.add_argument("--purify-atr", type=float, default=0.0,
+                    help="箱体净化: 箱体内整根幅度>=N*ATR的大K线使箱体作废"
+                         "（0=不启用，纪要口径2.0）")
     return ap
 
 
 def main():
     enable_ansi()
-    p = build_parser().parse_args()
+    p = apply_strict(build_parser().parse_args())
     config = load_config()
 
     if p.targets:
@@ -1090,8 +1520,9 @@ def main():
             write_md_note(name, sym, st, p)
 
     if len(results) > 1:
-        print(BOLD + "\n钻潜体系回测汇总（参数: "
-              f"risk={p.risk:g}% box={p.box_min}~{p.box_max} tp={p.tp1:g}R/{p.tp2:g}R）" + RESET)
+        mode_s = "二次进场" if p.reentry else "突破直入"
+        print(BOLD + f"\n钻潜体系回测汇总（{mode_s} · risk={p.risk:g}% "
+              f"box={p.box_min}~{p.box_max} tp={p.tp1:g}R/{p.tp2:g}R）" + RESET)
         header = ("名称", "代码", "交易", "胜率", "平均R", "盈亏比", "总收益", "回撤", "基准")
         widths = [10, 9, 4, 5, 7, 6, 8, 7, 8]
         print(DIM + " ".join(pad(h, w) for h, w in zip(header, widths)) + RESET)
