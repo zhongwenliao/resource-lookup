@@ -10,6 +10,8 @@
     15:00 后一键把当日收盘记录追加到 src/*.md（幂等，已有当日记录自动跳过）
   - 全市场选股：东财列表+腾讯日K多线程扫描（screener.py），突破信号/预备箱体
     两种模式，后台线程执行、进度条实时反馈，结果可导出CSV、一键转回测
+  - 超短线：情绪周期择时（涨停池/炸板率/昨日涨停表现）+ 隔日候选
+    （A 首板排板 / B 尾盘强势）+ 次日卖出预案（duanxian.py）
 
 用法:
   python gui.py                # 启动后自动打开浏览器（默认 http://127.0.0.1:8666）
@@ -28,6 +30,7 @@ from contextlib import redirect_stdout
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+import duanxian
 from screener import (MIN_BARS, base_filter, eval_one, fetch_universe,
                       fetch_universe_tencent, sizing)
 from stock import (fetch_quotes, fmt_time, load_holdings, resolve_symbol,
@@ -412,6 +415,49 @@ def api_screener_progress():
     return out
 
 
+# ---------------------------------------------------------------- 隔日超短线
+
+DX_STATE: dict[str, Any] = {"running": False, "phase": "", "done": 0, "total": 0,
+                            "result": None, "error": None}
+
+
+def _dx_worker(date):
+    """后台线程：情绪周期 + 隔日候选（duanxian.scan，约 15~45 秒视网络）。"""
+    st = DX_STATE
+    try:
+        st["result"] = duanxian.scan(
+            date=date or None, mode="all", top=30, workers=12,
+            progress=lambda ph, d, t: st.update(phase=ph, done=d, total=t))
+    except Exception as e:  # 兜底，避免线程静默死亡
+        st["error"] = f"{type(e).__name__}: {e}"
+    finally:
+        st["running"] = False
+        st["phase"] = "完成"
+
+
+def api_duanxian_start(q):
+    """启动超短线扫描（date 可选，YYYYMMDD，近 8 个交易日内复盘）。"""
+    if DX_STATE["running"]:
+        return {"started": False, "error": "已有扫描在进行，请稍候"}
+    date = ((q.get("date") or [""])[0] or "").strip().replace("-", "")
+    if date and not (len(date) == 8 and date.isdigit()):
+        return {"started": False, "error": "日期格式应为 YYYYMMDD"}
+    DX_STATE.update(running=True, phase="启动", done=0, total=0,
+                    result=None, error=None)
+    threading.Thread(target=_dx_worker, args=(date,), daemon=True).start()
+    return {"started": True}
+
+
+def api_duanxian_progress():
+    """轮询超短线扫描进度；完成后附带结果。"""
+    st = DX_STATE
+    out = {"running": st["running"], "phase": st["phase"], "done": st["done"],
+           "total": st["total"], "error": st["error"]}
+    if not st["running"] and st["result"] is not None:
+        out["result"] = st["result"]
+    return out
+
+
 # ---------------------------------------------------------------- HTTP 服务
 
 class Handler(BaseHTTPRequestHandler):
@@ -459,6 +505,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(api_screener_start(q))
             elif u.path == "/api/screener/progress":
                 self._json(api_screener_progress())
+            elif u.path == "/api/duanxian":
+                self._json(api_duanxian_start(q))
+            elif u.path == "/api/duanxian/progress":
+                self._json(api_duanxian_progress())
             else:
                 self._json({"error": "not found"}, 404)
         except (BrokenPipeError, ConnectionResetError):
@@ -531,6 +581,9 @@ main{padding:14px 18px 40px;max-width:1280px;margin:0 auto}
 .chip.active{border-color:var(--accent);color:var(--accent)}
 .chip.err{border-color:#7a2e2e;color:#c66}
 .table-wrap{overflow-x:auto}
+.dx-head{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:10px}
+.dx-cycle{font-size:26px;font-weight:700;color:var(--accent)}
+.dx-reasons{margin:8px 0 0;padding-left:18px;color:var(--dim);font-size:13px;line-height:1.9}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{color:var(--dim);font-weight:600;text-align:left;padding:7px 10px;
   border-bottom:1px solid var(--border);white-space:nowrap}
@@ -604,6 +657,7 @@ tbody tr:hover{background:#151c25}
     <button class="tab" data-tab="bt">回测分析</button>
     <button class="tab" data-tab="quote">行情监控</button>
     <button class="tab" data-tab="screen">全市场选股</button>
+    <button class="tab" data-tab="dx">超短线</button>
   </div>
   <section id="pane-scan">
     <div class="pane-head">
@@ -665,6 +719,22 @@ tbody tr:hover{background:#151c25}
     </div>
     <div id="screen-body" class="empty">点「开始扫描」运行全市场选股（约 1~2 分钟，视网络而定）；盘中最后一根K线为实时快照，收盘前信号可能变化</div>
   </section>
+  <section id="pane-dx" hidden>
+    <div class="card">
+      <h3>隔日超短线（当天买、次日卖；情绪周期决定做不做——冰点/退潮建议空仓，不一定要每天操作）</h3>
+      <div class="s-params">
+        <label>日期 <input id="dx-date" type="date" title="留空=最新交易日；选历史日期为复盘模式（仅 A 首板可复盘）"></label>
+        <button id="btn-dx" class="primary">开始扫描</button>
+        <span class="meta" id="dx-status"></span>
+      </div>
+      <div class="meta" style="margin-top:6px">
+        择时口径：涨停家数 / 最高连板 / 炸板率 / 跌停家数 / 昨日涨停股今日表现（接力赚钱效应）
+        → 冰点·退潮·修复·启动·发酵·高潮；A=当日首板排板（次日冲高卖），B=尾盘强势（涨幅4~9.5%未涨停，尾盘买入次日卖）
+      </div>
+    </div>
+    <div id="dx-senti" class="empty">尚未扫描。建议 14:30 后运行：B 模式用实时快照选尾盘标的，A 模式看当日首板准备次日排板</div>
+    <div id="dx-out"></div>
+  </section>
 </main>
 <div id="toast"></div>
 <script>
@@ -672,6 +742,7 @@ tbody tr:hover{background:#151c25}
 __JS1__
 __JS2__
 __JS3__
+__JS4__
 </script>
 </body>
 </html>
@@ -716,6 +787,7 @@ function switchTab(name){
   $("#pane-bt").hidden = name!=="bt";
   $("#pane-quote").hidden = name!=="quote";
   $("#pane-screen").hidden = name!=="screen";
+  $("#pane-dx").hidden = name!=="dx";
   if(name==="quote") loadHoldings(true);
 }
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
@@ -1364,6 +1436,85 @@ $("#btn-scsv").onclick=()=>exportCsv(screenRows,screenMode==="预备箱体"?"预
 """
 
 
+# ---------------------------------------------------------------- 前端脚本 4
+# 超短线：情绪周期卡片 + 隔日候选（A 首板排板 / B 尾盘强势）+ 次日卖出预案
+JS4 = r"""
+/* ============ 超短线（情绪周期 + 隔日候选） ============ */
+let dxTimer=null;
+function startDx(){
+  const btn=$("#btn-dx"); busy(btn,true,"扫描中…");
+  const d=($("#dx-date").value||"").replace(/-/g,"");
+  api("api/duanxian?date="+encodeURIComponent(d)).then(r=>{
+    if(!r.started){ toast(r.error||"启动失败"); busy(btn,false); return; }
+    $("#dx-status").textContent="启动…";
+    $("#dx-senti").className="empty"; $("#dx-senti").textContent="扫描中…";
+    $("#dx-out").innerHTML="";
+    dxTimer=setInterval(pollDx,1200);
+  }).catch(e=>{ toast("启动失败: "+e.message); busy(btn,false); });
+}
+function pollDx(){
+  api("api/duanxian/progress").then(r=>{
+    $("#dx-status").textContent=r.running
+      ? (r.phase+(r.total?(" "+r.done+"/"+r.total):""))
+      : (r.error?("失败: "+r.error):"完成");
+    if(r.running) return;
+    clearInterval(dxTimer); dxTimer=null; busy($("#btn-dx"),false);
+    if(r.error){ toast("超短线扫描失败: "+r.error); $("#dx-senti").textContent="扫描失败: "+r.error; return; }
+    if(r.result) renderDx(r.result);
+  }).catch(()=>{});
+}
+function dxTable(rows){
+  const cols=Object.keys(rows[0]);
+  return `<div class="table-wrap"><table><thead><tr>${
+    cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${
+    rows.map(r=>`<tr>${cols.map(c=>{
+      const v=r[c];
+      let cls="";
+      if(c==="建议") cls=v==="重点关注"?' class="up"':(v==="观察"?' class="dn"':"");
+      if(c==="涨幅%"&&typeof v==="number") cls=v>0?' class="up"':(v<0?' class="dn"':"");
+      return `<td${cls}>${v==null?"—":esc(String(v))}</td>`;
+    }).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function renderDx(res){
+  const s=res.sentiment||{}, m=s.metrics||{};
+  const chips=Object.entries(m).map(([k,v])=>
+    `<span class="chip" style="cursor:default">${esc(k)} <b>${v==null?"—":esc(String(v))}</b></span>`).join("");
+  const series=(s.series||[]).map(x=>
+    `${x.date.slice(4,6)}/${x.date.slice(6,8)} ${x.count}家·${x.lb_max}板`).join(" → ");
+  $("#dx-senti").className="";
+  $("#dx-senti").innerHTML=`
+    <div class="card">
+      <div class="dx-head">
+        <span class="dx-cycle">${esc(s.cycle||"—")}</span>
+        <span>建议仓位 <b>${esc(s.position||"—")}</b></span>
+        <span>情绪分 <b>${s.score==null?"—":(s.score>0?"+":"")+s.score}</b></span>
+        <span class="meta">${esc(s.date||"")}${s.intraday?" · 盘中数据，收盘前会变化":""}</span>
+      </div>
+      <div class="chips">${chips}</div>
+      <div class="meta">近${(s.series||[]).length}日（涨停家数·最高连板）: ${esc(series||"—")}</div>
+      <ul class="dx-reasons">${(s.reasons||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+      <div class="meta" style="margin-top:8px">${esc(s.advice||"")}</div>
+    </div>`;
+  let h="";
+  if(res.rows_a&&res.rows_a.length){
+    h+=`<div class="card" style="margin-top:14px"><h3>A 首板排板候选（${esc(res.note_a||"")}）—— 收盘涨停价排板，次日按预案卖</h3>${dxTable(res.rows_a)}</div>`;
+  }else if(res.note_a){
+    h+=`<div class="card" style="margin-top:14px"><h3>A 首板排板候选</h3><div class="empty">${esc(res.note_a)}，无候选</div></div>`;
+  }
+  if(res.rows_b&&res.rows_b.length){
+    h+=`<div class="card" style="margin-top:14px"><h3>B 尾盘强势候选（${esc(res.note_b||"")}）—— 尾盘竞价买入，次日按预案卖</h3>${dxTable(res.rows_b)}</div>`;
+  }else if(res.note_b){
+    h+=`<div class="card" style="margin-top:14px"><h3>B 尾盘强势候选</h3><div class="empty">${esc(res.note_b)}</div></div>`;
+  }
+  h+=`<div class="card" style="margin-top:14px"><h3>次日卖出预案（竞价后对号入座）</h3>
+      <ul class="dx-reasons">${(res.plan||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+      <div class="meta" style="margin-top:8px">${esc(res.disclaimer||"")}</div></div>`;
+  $("#dx-out").innerHTML=h;
+}
+$("#btn-dx").onclick=startDx;
+"""
+
+
 def main():
     enable_ansi()  # 防止子函数 print 中文/转义时在部分终端抛编码异常
     ap = argparse.ArgumentParser(description="钻潜交易体系·本地可视化界面")
@@ -1383,7 +1534,7 @@ def main():
 
     url = f"http://127.0.0.1:{httpd.server_address[1]}/"
     html = (PAGE_HTML.replace("__JS1__", JS1).replace("__JS2__", JS2)
-            .replace("__JS3__", JS3))
+            .replace("__JS3__", JS3).replace("__JS4__", JS4))
     globals()["PAGE_HTML"] = html
     print(f"钻潜可视化界面已启动: {url}   （Ctrl+C 退出）")
     threading.Timer(0.5, webbrowser.open, args=(url,)).start()
