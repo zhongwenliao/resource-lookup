@@ -2,9 +2,14 @@
 # -*- coding: utf-8 -*-
 """钻潜交易体系·本地可视化界面（零第三方依赖，纯标准库）
 
-用 http.server 在本机起服务，内嵌单页应用，与 zuanqian.py 共用同一套规则引擎：
+用 http.server 在本机起服务，内嵌单页应用，与 zuanqian.py 共用同一套规则引擎，
+并整合项目全部功能：
   - 信号扫描：输入代码/名称，查看最近3个交易日止盈止损位，一键导出CSV
   - 回测分析：K线买卖点图（箱体/EMA/止损止盈线）、权益曲线、交易明细、统计卡片
+  - 行情监控：自选股实时行情与持仓盈亏（stock.py），可自动刷新、查看个股详情，
+    15:00 后一键把当日收盘记录追加到 src/*.md（幂等，已有当日记录自动跳过）
+  - 全市场选股：东财列表+腾讯日K多线程扫描（screener.py），突破信号/预备箱体
+    两种模式，后台线程执行、进度条实时反馈，结果可导出CSV、一键转回测
 
 用法:
   python gui.py                # 启动后自动打开浏览器（默认 http://127.0.0.1:8666）
@@ -12,24 +17,37 @@
 仅供学习研究，不构成投资建议。
 """
 import argparse
+import io
 import json
+import re
 import threading
 import webbrowser
+from typing import Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import redirect_stdout
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+from screener import (MIN_BARS, base_filter, eval_one, fetch_universe,
+                      fetch_universe_tencent, sizing)
+from stock import (fetch_quotes, fmt_time, load_holdings, resolve_symbol,
+                   sync_daily_entries)
 from zuanqian import (check_signal, compute_indicators, ema_series, enable_ansi,
-                      fetch_kline, find_box, guess_symbol, load_config,
+                      fetch_kline, find_box, load_config,
                       resolve_targets, run_backtest, scan_symbol, summarize,
                       watchlist)
 
-# 与 zuanqian.py 默认参数保持一致（界面可覆盖部分）
+# 与 zuanqian.py / screener.py 默认参数保持一致（界面可覆盖部分）
 DEFAULTS = dict(days=600, capital=1_000_000, risk=1.0, commission=0.0003,
                 stamp=0.0005, ema_trend=60, weekly_ema=8, box_min=6, box_max=25,
                 box_atr=3.0, body_atr=1.0, vol_mult=1.5, atr_max=7.0,
                 chase_atr=1.0, tp1=2.0, tp2=3.0, stop_buffer=0.2,
                 min_stop_atr=1.0, max_stop_pct=12.0, max_hold=60, cooldown=5,
-                watch_dist=3.0)
+                watch_dist=3.0,
+                # screener.py 选股参数
+                watch=False, lookback=1, klines=180, workers=12, top=40,
+                min_amount=2000.0, min_cap=0.0, min_price=2.0, max_price=0.0,
+                min_chg=0.0, include_bj=False)
 
 
 def make_params(**over):
@@ -60,12 +78,16 @@ def params_from_q(q):
     )
 
 
-def parse_codes(q):
-    raw = (q.get("codes") or [""])[0]
+def split_tokens(raw):
+    """把用户输入按中英文逗号/分号/顿号/空格拆成标的列表。"""
     for ch in ("，", "；", ";", "、", " "):
         raw = raw.replace(ch, ",")
-    tokens = [t.strip() for t in raw.split(",") if t.strip()]
-    return resolve_targets(tokens, load_config())[:20]
+    return [t.strip() for t in raw.split(",") if t.strip()]
+
+
+def parse_codes(q):
+    return resolve_targets(split_tokens((q.get("codes") or [""])[0]),
+                           load_config())[:20]
 
 
 # ---------------------------------------------------------------- API 实现
@@ -155,6 +177,241 @@ def api_watchlist():
     return {"items": [{"name": n, "symbol": s} for n, s in watchlist(load_config())]}
 
 
+# ------------------------------------------------- 行情监控（整合 stock.py）
+
+ANSI_RE = re.compile(r"\033\[[0-9;]*m")
+SYNC_LOCK = threading.Lock()  # redirect_stdout 非线程安全，同步操作串行化
+
+
+def api_holdings():
+    """自选股实时行情与持仓盈亏（src/*.md 文件名 + 首行成本价口径）。"""
+    config = load_config()
+    holdings = load_holdings(config)
+    quotes = fetch_quotes([h["symbol"] for h in holdings if h["symbol"]])
+    items = []
+    for h in holdings:
+        q = quotes.get(h["symbol"])
+        if not h["symbol"]:
+            items.append({"名称": h["name"], "代码": "-", "状态": "未匹配代码，可在 stocks.json 补充"})
+            continue
+        if not q:
+            items.append({"名称": h["name"], "代码": h["symbol"], "状态": "暂无行情数据"})
+            continue
+        pnl = (q["price"] / h["cost"] - 1) * 100 if h["cost"] else None
+        items.append({
+            "名称": q["name"], "代码": q["symbol"], "状态": "",
+            "现价": q["price"], "成本": h["cost"],
+            "盈亏%": round(pnl, 2) if pnl is not None else "",
+            "涨跌%": q["pct"], "换手%": q["turnover"],
+            "成交额(万)": q["amount"], "行情时间": fmt_time(q["time"]),
+        })
+    return {"items": items}
+
+
+def api_quotes(q):
+    """指定标的的实时行情详情（名称经 stocks.json，未收录时腾讯搜索兜底）。"""
+    tokens = split_tokens((q.get("codes") or [""])[0])[:20]
+    config = load_config()
+    symbols, unresolved = [], []
+    for t in tokens:
+        sym = resolve_symbol(t, config)
+        if sym:
+            symbols.append(sym)
+        else:
+            unresolved.append(t)
+    symbols = list(dict.fromkeys(symbols))
+    quotes = fetch_quotes(symbols)
+    items = []
+    for s in symbols:
+        d = quotes.get(s)
+        if not d:
+            items.append({"名称": s, "代码": s, "状态": "未获取到行情（代码可能无效或已退市）"})
+            continue
+        items.append({
+            "名称": d["name"], "代码": d["symbol"], "状态": "",
+            "现价": d["price"], "涨跌": d["change"], "涨跌%": d["pct"],
+            "今开": d["open"], "昨收": d["prev_close"],
+            "最高": d["high"], "最低": d["low"],
+            "成交量(手)": d["volume"], "成交额(万)": d["amount"],
+            "换手%": d["turnover"], "振幅%": d["amplitude"],
+            "市盈率TTM": d["pe"], "市净率": d["pb"],
+            "流通市值(亿)": d["float_mv"], "总市值(亿)": d["total_mv"],
+            "涨停价": d["limit_up"], "跌停价": d["limit_down"],
+            "行情时间": fmt_time(d["time"]),
+        })
+    for t in unresolved:
+        items.append({"名称": t, "代码": "-", "状态": "未找到，可在 stocks.json 补充映射"})
+    return {"items": items}
+
+
+def api_sync():
+    """把当日收盘记录追加到 src/*.md（stock.py 既有逻辑，幂等：已有当日记录自动跳过）。"""
+    buf = io.StringIO()
+    with SYNC_LOCK, redirect_stdout(buf):
+        try:
+            sync_daily_entries(load_config())
+        except Exception as e:  # 单只失败在函数内部已跳过，这里兜底整体异常
+            buf.write(f"同步失败: {type(e).__name__}: {e}")
+    out = ANSI_RE.sub("", buf.getvalue()).strip()
+    return {"output": out or "没有需要同步的内容"}
+
+
+# ------------------------------------------------- 全市场选股（整合 screener.py）
+
+SCREENER_STATE: dict[str, Any] = {"running": False, "phase": "", "done": 0,
+                                  "total": 0, "scope": "", "mode": "",
+                                  "result": None, "error": None}
+
+
+def _signal_row(item, d, p):
+    """突破信号 -> 中文字段行（与 screener.save_csv 列口径一致）。"""
+    shares, pct = sizing(d["close"], d["dist"], p)
+    return {
+        "代码": item["code"], "名称": item["name"], "行业": item["industry"],
+        "信号日": d["date"], "收盘": round(d["close"], 2),
+        "涨幅%": round(d["chg"], 2), "ATR%": round(d["atr_pct"], 2),
+        "量比": round(d["vol_ratio"], 2),
+        "箱体低": round(d["box_low"], 2), "箱体高": round(d["box_high"], 2),
+        "箱体K线数": d["L"], "止损": round(d["stop"], 2),
+        "止盈1": round(d["tp1"], 2), "止盈2": round(d["tp2"], 2),
+        "建议股数": shares if shares >= 100 else "",
+        "仓位%": round(pct, 1) if shares >= 100 else "",
+    }
+
+
+def _watch_row(item, d):
+    """预备箱体 -> 中文字段行。"""
+    return {
+        "代码": item["code"], "名称": item["name"], "行业": item["industry"],
+        "日期": d["date"], "收盘": round(d["close"], 2),
+        "触发价": round(d["trigger"], 2), "距触发%": round(d["dist_pct"], 1),
+        "ATR%": round(d["atr_pct"], 2),
+        "箱体低": round(d["box_low"], 2), "箱体高": round(d["box_high"], 2),
+        "箱体K线数": d["L"],
+    }
+
+
+def _screener_worker(p):
+    """后台线程：拉列表 -> 预筛 -> 多线程逐只检查 -> 排序截取（screener.main 流程）。"""
+    st = SCREENER_STATE
+    try:
+        st["phase"] = "准备标的列表"
+        if p.targets:
+            config = load_config()
+            items = []
+            for name, sym in resolve_targets(p.targets, config):
+                if not sym:
+                    continue
+                items.append({"code": sym[2:], "name": name, "symbol": sym,
+                              "industry": "-", "price": None, "chg": None,
+                              "amount": None, "float_mv": None})
+            scope = f"指定标的 {len(items)} 只"
+        else:
+            st["phase"] = "拉取全市场列表（东财）"
+            universe = None
+            try:
+                universe = fetch_universe(p.include_bj)
+                if not universe:
+                    raise OSError("东财返回空列表")
+            except (OSError, ValueError):
+                universe = None
+            if universe is None:
+                st["phase"] = "东财不可用，切换腾讯备用列表"
+                universe = fetch_universe_tencent()
+            items = [u for u in universe if base_filter(u, p)]
+            scope = f"全市场 {len(universe)} 只 → 预筛 {len(items)} 只"
+        if not items:
+            st["scope"] = scope
+            st["error"] = "没有符合条件的标的（可放宽预筛条件，或检查网络）"
+            return
+        st.update(total=len(items), scope=scope, phase="逐只检查日K信号")
+        counters = {"fail": 0, "short": 0, "wide": 0}
+        signals, watches = [], []
+        klines = max(MIN_BARS + 60, min(p.klines, 800))
+        workers = max(1, min(p.workers, 64))
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = [ex.submit(eval_one, it, p, klines) for it in items]
+            for fut in as_completed(futs):
+                kind, item, payload = fut.result()
+                if kind == "signal":
+                    signals.append((item, payload))
+                elif kind == "watch":
+                    watches.append((item, payload))
+                elif kind in counters:
+                    counters[kind] += 1
+                st["done"] += 1
+        if p.watch:
+            watches.sort(key=lambda x: x[1]["dist_pct"])
+            hits = watches[: max(0, p.top)]
+            rows = [_watch_row(it, d) for it, d in hits]
+            mode = "预备箱体"
+        else:
+            signals.sort(key=lambda x: (-x[1]["vol_ratio"], -x[1]["chg"]))
+            hits = signals[: max(0, p.top)]
+            rows = [_signal_row(it, d, p) for it, d in hits]
+            mode = "突破信号"
+        extra = []
+        if counters["short"]:
+            extra.append(f"数据不足 {counters['short']}")
+        if counters["fail"]:
+            extra.append(f"失败 {counters['fail']}")
+        if counters["wide"]:
+            extra.append(f"止损过宽剔除 {counters['wide']}")
+        st["result"] = {
+            "rows": rows, "mode": mode, "scope": scope,
+            "total_hits": len(watches) if p.watch else len(signals),
+            "note": "；".join(extra),
+            "hint": "盘中运行时最后一根K线为实时快照，收盘前信号可能变化，建议收盘后运行",
+        }
+    except Exception as e:  # 任何异常都落到状态里，由前端展示
+        st["error"] = f"{type(e).__name__}: {e}"
+    finally:
+        st["running"] = False
+        st["phase"] = "完成"
+
+
+def api_screener_start(q):
+    """启动一次选股扫描（后台线程，立即返回）。顶部输入框有内容时只查指定标的。"""
+    st = SCREENER_STATE
+    if st["running"]:
+        return {"started": False, "msg": "已有扫描在进行中，请稍候"}
+    p = make_params(
+        watch=(q.get("watch") or ["0"])[0] in ("1", "true", "on"),
+        lookback=int(_num(q, "lookback", 1, 1, 10)),
+        klines=int(_num(q, "klines", 180, 180, 800)),
+        workers=int(_num(q, "workers", 12, 1, 64)),
+        top=int(_num(q, "top", 40, 1, 200)),
+        min_amount=_num(q, "min_amount", 2000.0, 0, 1e9),
+        min_cap=_num(q, "min_cap", 0.0, 0, 1e6),
+        min_price=_num(q, "min_price", 2.0, 0, 1e6),
+        max_price=_num(q, "max_price", 0.0, 0, 1e6),
+        min_chg=_num(q, "min_chg", 0.0, -20, 20),
+        include_bj=(q.get("include_bj") or ["0"])[0] in ("1", "true", "on"),
+        capital=_num(q, "capital", 1_000_000, 10_000, 1e10),
+        risk=_num(q, "risk", 1.0, 0.05, 20),
+        # 止盈止损与信号扫描共用顶部参数栏
+        tp1=_num(q, "tp1", 2.0, 0.5, 10),
+        tp2=_num(q, "tp2", 3.0, 0.5, 20),
+        max_stop_pct=_num(q, "max_stop_pct", 12.0, 1, 50),
+    )
+    p.targets = split_tokens((q.get("codes") or [""])[0])[:50]
+    st.update(running=True, phase="启动", done=0, total=0, scope="", mode="",
+              result=None, error=None)
+    threading.Thread(target=_screener_worker, args=(p,), daemon=True).start()
+    return {"started": True}
+
+
+def api_screener_progress():
+    """轮询扫描进度；完成后附带结果（保留到下次启动前）。"""
+    st = SCREENER_STATE
+    out = {"running": st["running"], "phase": st["phase"], "done": st["done"],
+           "total": st["total"], "scope": st["scope"], "mode": st["mode"],
+           "error": st["error"]}
+    if not st["running"] and st["result"] is not None:
+        out["result"] = st["result"]
+    return out
+
+
 # ---------------------------------------------------------------- HTTP 服务
 
 class Handler(BaseHTTPRequestHandler):
@@ -192,6 +449,16 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(api_search(q))
             elif u.path == "/api/watchlist":
                 self._json(api_watchlist())
+            elif u.path == "/api/holdings":
+                self._json(api_holdings())
+            elif u.path == "/api/quotes":
+                self._json(api_quotes(q))
+            elif u.path == "/api/sync":
+                self._json(api_sync())
+            elif u.path == "/api/screener":
+                self._json(api_screener_start(q))
+            elif u.path == "/api/screener/progress":
+                self._json(api_screener_progress())
             else:
                 self._json({"error": "not found"}, 404)
         except (BrokenPipeError, ConnectionResetError):
@@ -204,7 +471,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 # ---------------------------------------------------------------- 内嵌页面
-# JS 分两段注入：__JS1__（工具/扫描/回测渲染）、__JS2__（K线图/权益曲线/初始化）
+# JS 分三段注入：__JS1__（工具/扫描/回测渲染）、__JS2__（K线图/权益曲线/初始化）、
+# __JS3__（行情监控/收盘同步/全市场选股）
 
 PAGE_HTML = r"""<!doctype html>
 <html lang="zh-CN">
@@ -289,6 +557,21 @@ tbody tr:hover{background:#151c25}
 #toast.bad{border-color:#7a2e2e;color:#f2b8b5}
 .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:12px;margin-top:6px}
 .legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.prog{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:10px 0 6px}
+.prog-bar{height:100%;background:var(--accent);width:0;transition:width .3s}
+.s-params{display:flex;gap:12px;flex-wrap:wrap;align-items:center;color:var(--dim);font-size:12px}
+.s-params label{display:flex;align-items:center;gap:5px}
+.s-params input[type=number]{width:72px;background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);border-radius:6px;padding:3px 7px;outline:none;font-size:12px}
+.s-params select{background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  border-radius:6px;padding:3px 7px;outline:none;font-size:12px}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kv>div{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:7px 10px}
+.kv .k{color:var(--dim);font-size:11px}
+.kv .v{font-size:14px;font-weight:600;margin-top:2px;word-break:break-all}
+.sync-out{background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;font-size:12px;line-height:1.8;white-space:pre-wrap;color:var(--dim);
+  max-height:260px;overflow:auto}
 @media (max-width:900px){
   .stats{grid-template-columns:repeat(2,1fr)}
   #codes{width:100%;max-width:none}
@@ -304,6 +587,7 @@ tbody tr:hover{background:#151c25}
   <datalist id="dl"></datalist>
   <button id="btn-scan" class="primary">信号扫描</button>
   <button id="btn-bt" class="primary">回测分析</button>
+  <button id="btn-quote" class="primary">查行情</button>
   <button id="btn-watch" title="载入 src/ 自选股">载入自选</button>
 </header>
 <div class="params">
@@ -318,6 +602,8 @@ tbody tr:hover{background:#151c25}
   <div class="tabs">
     <button class="tab active" data-tab="scan">信号扫描</button>
     <button class="tab" data-tab="bt">回测分析</button>
+    <button class="tab" data-tab="quote">行情监控</button>
+    <button class="tab" data-tab="screen">全市场选股</button>
   </div>
   <section id="pane-scan">
     <div class="pane-head">
@@ -330,12 +616,62 @@ tbody tr:hover{background:#151c25}
     <div class="chips" id="bt-chips"></div>
     <div id="bt-body" class="empty">输入标的，点「回测分析」查看策略收益与买卖点</div>
   </section>
+  <section id="pane-quote" hidden>
+    <div class="pane-head">
+      <span class="meta" id="quote-meta"></span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label style="color:var(--dim);font-size:12px;display:flex;align-items:center;gap:5px">
+          自动刷新
+          <select id="q-interval">
+            <option value="0">关</option>
+            <option value="5">5秒</option>
+            <option value="15">15秒</option>
+            <option value="30">30秒</option>
+            <option value="60">60秒</option>
+          </select>
+        </label>
+        <button id="btn-q-refresh" class="small">立即刷新</button>
+        <button id="btn-sync" class="small" title="15:00 后把当日收盘记录追加到 src/*.md（幂等，可重复执行）">收盘同步</button>
+      </div>
+    </div>
+    <div id="quote-body" class="empty">载入自选股行情…</div>
+    <div id="quote-detail"></div>
+    <div id="sync-out" style="margin-top:14px"></div>
+  </section>
+  <section id="pane-screen" hidden>
+    <div class="card">
+      <h3>扫描设置（顶部输入框有内容时只检查指定标的，留空为全市场；止损/止盈/股数按顶部参数栏计算）</h3>
+      <div class="s-params">
+        <label>模式
+          <select id="s-watch">
+            <option value="0">突破信号</option>
+            <option value="1">预备箱体</option>
+          </select>
+        </label>
+        <label>回看K线 <input id="s-lookback" type="number" value="1" min="1" max="10"></label>
+        <label>成交额下限(万) <input id="s-amount" type="number" value="2000" min="0" step="500"></label>
+        <label>涨幅下限% <input id="s-chg" type="number" value="0" step="0.5"></label>
+        <label>股价下限 <input id="s-price" type="number" value="2" min="0" step="0.5"></label>
+        <label>最多显示 <input id="s-top" type="number" value="40" min="1" max="200"></label>
+        <label><input id="s-bj" type="checkbox" style="accent-color:var(--accent)"> 含北交所</label>
+        <button id="btn-screen" class="primary">开始扫描</button>
+      </div>
+      <div class="prog" id="s-prog" hidden><div class="prog-bar" id="s-prog-bar"></div></div>
+      <div style="color:var(--dim);font-size:12px" id="s-status"></div>
+    </div>
+    <div class="pane-head" id="s-res-head" hidden>
+      <span class="meta" id="s-meta"></span>
+      <button id="btn-scsv" class="small" disabled>导出 CSV</button>
+    </div>
+    <div id="screen-body" class="empty">点「开始扫描」运行全市场选股（约 1~2 分钟，视网络而定）；盘中最后一根K线为实时快照，收盘前信号可能变化</div>
+  </section>
 </main>
 <div id="toast"></div>
 <script>
 "use strict";
 __JS1__
 __JS2__
+__JS3__
 </script>
 </body>
 </html>
@@ -378,6 +714,9 @@ function switchTab(name){
   document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
   $("#pane-scan").hidden = name!=="scan";
   $("#pane-bt").hidden = name!=="bt";
+  $("#pane-quote").hidden = name!=="quote";
+  $("#pane-screen").hidden = name!=="screen";
+  if(name==="quote") loadHoldings(true);
 }
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 
@@ -546,7 +885,7 @@ function niceTicks(lo,hi,n){
   const span=hi-lo; if(!(span>0)) return [lo];
   const raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), norm=raw/mag;
   const step=(norm<1.5?1:norm<3?2:norm<7?5:10)*mag, out=[];
-  for(let v=Math.ceil(lo/s)*s; v<=hi+1e-9; v+=s) out.push(+v.toFixed(6));
+  for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(6));
   return out;
 }
 const tickTxt=(v,step)=>v.toFixed(step>=1?0:step>=0.1?1:2);
@@ -738,8 +1077,11 @@ class KChart{
          bw.toFixed(1)+'" height="'+hh.toFixed(1)+'" fill="'+
          (b.close>=b.open?"#f0524f":"#2ebd85")+'" opacity=".5"/>';
     }
-    h+=line(d.vol_ma.map(v=>v==null?null:(v/vmax*P.VOLH+vy0+P.VOLH)),"#e8b339",1)
-       .split('stroke-width="1"').join('stroke-width="1" opacity=".7"');
+    let vp="",vpen=false;
+    for(let i=s;i<eI;i++){ const v=d.vol_ma[i];
+      if(v==null||!vmax){ vpen=false; continue; }
+      vp+=(vpen?"L":"M")+X(i).toFixed(1)+" "+(vy0+P.VOLH-v/vmax*P.VOLH).toFixed(1); vpen=true; }
+    if(vp) h+='<path d="'+vp+'" fill="none" stroke="#e8b339" stroke-width="1" opacity=".7"/>';
     // 日期轴
     const tickN=Math.max(2,Math.floor((W-PADL-PADR)/90));
     for(let k=0;k<=tickN;k++){
@@ -823,6 +1165,205 @@ $("#codes").addEventListener("input",()=>{
 """
 
 
+# ---------------------------------------------------------------- 前端脚本 3
+# 行情监控（自选股行情/个股详情/收盘同步）与全市场选股
+
+JS3 = r"""
+const fmtWan = w => (w==null||isNaN(w)) ? "—" :
+  Math.abs(w)>=1e4 ? (w/1e4).toFixed(2)+"亿" : Math.round(w)+"万";
+const fmtShou = v => (v==null||isNaN(v)) ? "—" :
+  v>=1e8 ? (v/1e8).toFixed(2)+"亿手" : v>=1e4 ? (v/1e4).toFixed(2)+"万手" : Math.round(v)+"手";
+
+/* ---------------- 行情监控 ---------------- */
+let quoteTimer=null;
+async function loadHoldings(silent){
+  try{
+    const j=await api("api/holdings");
+    renderHoldings(j.items||[]);
+  }catch(e){
+    if(!silent) toast("行情获取失败: "+e.message,true);
+    $("#quote-body").className="empty";
+    $("#quote-body").textContent="行情获取失败: "+e.message;
+  }
+}
+function renderHoldings(items){
+  const box=$("#quote-body");
+  const ok=items.filter(x=>!x["状态"]);
+  $("#quote-meta").textContent="自选股 "+items.length+" 只 · 数据源腾讯行情快照";
+  if(!items.length){ box.className="empty"; box.textContent="src/ 下没有自选股（*.md）"; return; }
+  let h='<div class="card"><div class="table-wrap"><table><thead><tr>'+
+    "<th>名称/代码</th><th class='num'>现价</th><th class='num'>成本</th>"+
+    "<th class='num'>盈亏</th><th class='num'>涨跌</th><th class='num'>换手</th>"+
+    "<th class='num'>成交额</th><th>行情时间</th><th>操作</th></tr></thead><tbody>";
+  for(const r of items){
+    if(r["状态"]){
+      h+="<tr><td><b>"+esc(r["名称"])+"</b> <span style='color:var(--dim)'>"+esc(r["代码"])+"</span></td>"+
+        "<td colspan='8' style='color:var(--dim)'>"+esc(r["状态"])+"</td></tr>";
+      continue;
+    }
+    h+="<tr><td><b>"+esc(r["名称"])+"</b> <span style='color:var(--dim)'>"+esc(r["代码"])+"</span></td>"+
+      "<td class='num'>"+fmt(r["现价"])+"</td>"+
+      "<td class='num'>"+(r["成本"]!=null?fmt(r["成本"]):"—")+"</td>"+
+      "<td class='num "+cls(r["盈亏%"])+"'>"+pctS(r["盈亏%"])+"</td>"+
+      "<td class='num "+cls(r["涨跌%"])+"'>"+pctS(r["涨跌%"])+"</td>"+
+      "<td class='num'>"+fmt(r["换手%"])+"%</td>"+
+      "<td class='num'>"+fmtWan(r["成交额(万)"])+"</td>"+
+      "<td style='color:var(--dim)'>"+esc(r["行情时间"]||"—")+"</td>"+
+      "<td>"+(r["代码"]&&r["代码"]!=="-"?'<button class="small" data-bt="'+esc(r["代码"])+'">回测</button>':"")+"</td></tr>";
+  }
+  h+="</tbody></table></div></div>";
+  box.className=""; box.innerHTML=h;
+  box.querySelectorAll("[data-bt]").forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation(); $("#codes").value=b.dataset.bt; runBacktest();
+  });
+}
+function setQuoteInterval(){
+  clearInterval(quoteTimer); quoteTimer=null;
+  const sec=+$("#q-interval").value;
+  if(sec>0) quoteTimer=setInterval(()=>loadHoldings(true),sec*1000);
+}
+async function runQuote(){
+  const codes=$("#codes").value.trim();
+  if(!codes){ toast("请先在上方输入股票代码或名称",true); return; }
+  const btn=$("#btn-quote"); busy(btn,true,"查询中…");
+  try{
+    const j=await api("api/quotes?"+qs({codes}));
+    renderQuoteDetail(j.items||[]);
+    switchTab("quote");
+  }catch(e){ toast("行情查询失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+}
+function renderQuoteDetail(items){
+  const box=$("#quote-detail");
+  if(!items.length){ box.innerHTML=""; return; }
+  const kv=(k,v,cl)=>'<div><div class="k">'+k+'</div><div class="v '+(cl||"")+'">'+v+"</div></div>";
+  box.innerHTML=items.map(r=>{
+    if(r["状态"]) return '<div class="card"><h3>'+esc(r["名称"])+"</h3><div class='empty' style='padding:18px'>"+
+      esc(r["状态"])+"</div></div>";
+    const head='<b>'+esc(r["名称"])+"</b> <span style='color:var(--dim)'>"+esc(r["代码"])+"</span>　"+
+      '<span class="'+cls(r["涨跌%"])+'">'+fmt(r["现价"])+"  "+pctS(r["涨跌%"])+"</span>";
+    return '<div class="card"><h3>'+head+"</h3><div class=\"kv\">"+
+      kv("今开",fmt(r["今开"]))+kv("昨收",fmt(r["昨收"]))+
+      kv("最高",fmt(r["最高"]))+kv("最低",fmt(r["最低"]))+
+      kv("成交量",fmtShou(r["成交量(手)"]))+kv("成交额",fmtWan(r["成交额(万)"]))+
+      kv("换手率",fmt(r["换手%"])+"%")+kv("振幅",fmt(r["振幅%"])+"%")+
+      kv("市盈率TTM",esc(r["市盈率TTM"]||"—"))+kv("市净率",esc(r["市净率"]||"—"))+
+      kv("流通市值",fmt(r["流通市值(亿)"],0)+"亿")+kv("总市值",fmt(r["总市值(亿)"],0)+"亿")+
+      kv("涨停价",esc(r["涨停价"]||"—"))+kv("跌停价",esc(r["跌停价"]||"—"))+
+      kv("行情时间",esc(r["行情时间"]||"—"))+"</div></div>";
+  }).join("");
+}
+$("#btn-quote").onclick=runQuote;
+$("#btn-q-refresh").onclick=()=>loadHoldings();
+$("#q-interval").onchange=setQuoteInterval;
+$("#btn-sync").onclick=async()=>{
+  const btn=$("#btn-sync"); busy(btn,true,"同步中…");
+  try{
+    const j=await api("api/sync");
+    $("#sync-out").innerHTML='<div class="card"><h3>收盘同步结果（追加到 src/*.md，已有当日记录自动跳过）</h3>'+
+      '<div class="sync-out">'+esc(j.output||"没有需要同步的内容")+"</div></div>";
+    toast("收盘同步已执行");
+  }catch(e){ toast("同步失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+};
+
+/* ---------------- 全市场选股 ---------------- */
+let screenRows=[], screenMode="突破信号", pollTimer=null;
+async function startScreen(){
+  if(pollTimer){ toast("扫描正在进行中",true); return; }
+  const btn=$("#btn-screen"); busy(btn,true,"提交中…");
+  try{
+    const params={watch:$("#s-watch").value, lookback:$("#s-lookback").value,
+      min_amount:$("#s-amount").value, min_chg:$("#s-chg").value,
+      min_price:$("#s-price").value, top:$("#s-top").value,
+      include_bj:$("#s-bj").checked?"1":"0",
+      capital:$("#p-cap").value, risk:$("#p-risk").value,
+      tp1:$("#p-tp1").value, tp2:$("#p-tp2").value, max_stop_pct:$("#p-msp").value};
+    const codes=$("#codes").value.trim();
+    if(codes) params.codes=codes;
+    const j=await api("api/screener?"+qs(params));
+    if(!j.started){ toast(j.msg||"无法启动扫描",true); return; }
+    $("#s-prog").hidden=false; $("#s-prog-bar").style.width="0";
+    $("#s-status").textContent="扫描已启动…";
+    pollScreen();
+  }catch(e){ toast("启动失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+}
+function pollScreen(){
+  clearInterval(pollTimer);
+  pollTimer=setInterval(async()=>{
+    let j;
+    try{ j=await api("api/screener/progress"); }
+    catch(e){ return; }
+    const pct=j.total?Math.round(j.done/j.total*100):0;
+    $("#s-prog-bar").style.width=pct+"%";
+    $("#s-status").textContent=(j.running?("扫描中 "+j.done+"/"+j.total+"（"+pct+"%）· "+j.phase)
+      :j.phase||"")+(j.scope?" · "+j.scope:"");
+    if(j.running) return;
+    clearInterval(pollTimer); pollTimer=null;
+    $("#s-prog").hidden=true;
+    if(j.error){
+      $("#s-status").textContent="扫描失败: "+j.error;
+      toast("扫描失败: "+j.error,true);
+      return;
+    }
+    if(j.result){
+      screenRows=j.result.rows||[]; screenMode=j.result.mode;
+      renderScreen(j.result);
+      toast("扫描完成：命中 "+j.result.total_hits+" 只");
+    }
+  },1000);
+}
+function renderScreen(res){
+  const head=$("#s-res-head"), body=$("#screen-body");
+  head.hidden=false;
+  $("#btn-scsv").disabled=!screenRows.length;
+  $("#s-meta").textContent=res.mode+" · "+res.scope+" · 命中 "+res.total_hits+" 只，显示 "+
+    screenRows.length+" 只"+(res.note?" · "+res.note:"")+" · 盘中最后一根K线为实时快照";
+  if(!screenRows.length){
+    body.className="empty";
+    body.textContent="无命中。可放宽参数（成交额/涨幅下限、回看K线数），或切换「预备箱体」模式";
+    return;
+  }
+  const isSig=screenMode==="突破信号";
+  let h='<div class="card"><div class="table-wrap"><table><thead><tr>'+
+    "<th>名称/代码</th><th>行业</th>"+(isSig?"<th>信号日</th>":"<th>日期</th>")+
+    "<th class='num'>收盘</th>"+(isSig?"<th class='num'>涨幅</th>":"<th class='num'>触发价</th><th class='num'>距触发</th>")+
+    "<th class='num'>ATR%</th>"+(isSig?"<th class='num'>量比</th>":"")+
+    "<th>箱体</th>"+(isSig?"<th class='num'>止损</th><th class='num'>止盈1</th><th class='num'>止盈2</th>"+
+      "<th class='num'>股数</th><th class='num'>仓位</th>":"")+
+    "<th></th></tr></thead><tbody>";
+  for(const r of screenRows){
+    const boxTxt=fmt(r["箱体低"])+" ~ "+fmt(r["箱体高"])+" ("+r["箱体K线数"]+"根)";
+    h+="<tr><td><b>"+esc(r["名称"])+"</b> <span style='color:var(--dim)'>"+esc(r["代码"])+"</span></td>"+
+      "<td style='color:var(--dim)'>"+esc(r["行业"]||"-")+"</td>"+
+      "<td>"+esc(r[isSig?"信号日":"日期"]||"—")+"</td>"+
+      "<td class='num'>"+fmt(r["收盘"])+"</td>"+
+      (isSig
+        ?"<td class='num "+cls(r["涨幅%"])+"'>"+pctS(r["涨幅%"])+"</td>"
+        :"<td class='num up'>"+fmt(r["触发价"])+"</td><td class='num'>"+fmt(r["距触发%"])+"%</td>")+
+      "<td class='num'>"+fmt(r["ATR%"])+"</td>"+
+      (isSig?"<td class='num'>"+fmt(r["量比"])+"</td>":"")+
+      "<td>"+boxTxt+"</td>"+
+      (isSig
+        ?"<td class='num dn'>"+fmt(r["止损"])+"</td>"+
+         "<td class='num up'>"+fmt(r["止盈1"])+"</td><td class='num up'>"+fmt(r["止盈2"])+"</td>"+
+         "<td class='num'>"+fmtI(r["建议股数"])+"</td>"+
+         "<td class='num'>"+(r["仓位%"]!==""&&r["仓位%"]!=null?r["仓位%"]+"%":"—")+"</td>"
+        :"")+
+      "<td>"+'<button class="small" data-bt="'+esc(r["代码"])+'">回测</button>'+"</td></tr>";
+  }
+  h+="</tbody></table></div></div>";
+  body.className=""; body.innerHTML=h;
+  body.querySelectorAll("[data-bt]").forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation(); $("#codes").value=b.dataset.bt; runBacktest();
+  });
+}
+$("#btn-screen").onclick=startScreen;
+$("#btn-scsv").onclick=()=>exportCsv(screenRows,screenMode==="预备箱体"?"预备箱体.csv":"选股信号.csv");
+"""
+
+
 def main():
     enable_ansi()  # 防止子函数 print 中文/转义时在部分终端抛编码异常
     ap = argparse.ArgumentParser(description="钻潜交易体系·本地可视化界面")
@@ -841,7 +1382,8 @@ def main():
         return 1
 
     url = f"http://127.0.0.1:{httpd.server_address[1]}/"
-    html = PAGE_HTML.replace("__JS1__", JS1).replace("__JS2__", JS2)
+    html = (PAGE_HTML.replace("__JS1__", JS1).replace("__JS2__", JS2)
+            .replace("__JS3__", JS3))
     globals()["PAGE_HTML"] = html
     print(f"钻潜可视化界面已启动: {url}   （Ctrl+C 退出）")
     threading.Timer(0.5, webbrowser.open, args=(url,)).start()
