@@ -398,11 +398,12 @@ export default {
 
     /**
      * 自动识别判定列：统计每列中 OK/NG 值的个数，取最多的一列。
-     * 有效判定值不足 3 个则认为不是检测设备导出的数据。
+     * 完全无 OK/NG 命中才认为不是检测设备导出的数据（与绑定页 parseQcExcel 同一门槛）：
+     * 不设最低个数限制，设备刚开工时文件可能只有 1 行数据（仅 1 个判定值），也要能识别。
      */
     autoDetect () {
       const hit = detectJudgeCol(this.rows);
-      if (!hit || hit.count < 3) {
+      if (!hit) {
         this.parseErr = '未找到判定列（OK/NG），请确认这是检测设备导出的数据';
         this.stats = null;
         return;

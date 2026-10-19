@@ -46,8 +46,8 @@
     </demo-block>
 
     <!-- ==================== 区块 2：扫码绑定 ==================== -->
-    <demo-block v-if="records.length" :index="2" title="扫码绑定"
-      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，全程无需点击。摄像头开启后连续扫码即连续绑定；扫码枪（键盘模式）页面任意位置即扫即绑。NG 记录无二维码、不参与自动绑定；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
+    <demo-block v-if="okRecords.length" :index="2" title="扫码绑定"
+      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，全程无需点击。摄像头开启后连续扫码即连续绑定；扫码枪（键盘模式）页面任意位置即扫即绑。表格仅展示 OK 记录、序号连续编排，NG 无二维码、不参与绑定也不展示；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
       <div class="pending-bar">
         <el-button type="success" size="small" plain icon="el-icon-camera" @click="scanVisible = true">摄像头连续扫码</el-button>
         <el-input v-model="manualCode" size="small" class="manual-input" placeholder="手动输入码值（回车直接绑定）"
@@ -56,13 +56,13 @@
       </div>
       <p class="bind-tip">
         下一条扫码将绑定：
-        <template v-if="nextBindRow"><span class="next-seq">#{{ nextBindRow.record.seq || nextBindRow.index + 1 }}</span>（{{ nextBindRow.record.time || '时间未识别' }}）</template>
+        <template v-if="nextBindRow"><span class="next-seq">#{{ nextBindRow.index + 1 }}</span>（{{ nextBindRow.record.time || '时间未识别' }}）</template>
         <span v-else class="no-next">合格记录已全部绑定</span>
       </p>
 
-      <el-table :data="records" size="mini" border class="record-table">
+      <el-table :data="okRecords" size="mini" border class="record-table">
         <el-table-column label="序号" width="70">
-          <template slot-scope="s"><span :class="s.row.judge === 'OK' ? 'txt-ok' : 'txt-ng'">#{{ s.row.seq || (s.$index + 1) }}</span></template>
+          <template slot-scope="s"><span class="txt-ok">#{{ s.$index + 1 }}</span></template>
         </el-table-column>
         <el-table-column prop="time" label="检测时间" width="160"></el-table-column>
         <el-table-column prop="judge" label="判定" width="60">
@@ -198,6 +198,14 @@ export default {
       return !!(window.electronAPI && window.electronAPI.pickExcelFile &&
         window.electronAPI.readExcelFile && window.electronAPI.statExcelFile);
     },
+    /**
+     * 表格展示记录：仅 OK 合格记录。NG 无二维码、不参与绑定，
+     * 展示出来只会干扰扫码核对（NG 数量仍在统计卡片展示）。
+     * 行对象与 records 内引用一致；序号按本数组位置连续编排（隐藏 NG 不跳号）。
+     */
+    okRecords () {
+      return this.records.filter(r => r.judge === 'OK');
+    },
     /** 表格展示的测量列（截断） */
     measurePreviewCols () {
       const max = this.records.reduce((m, r) => Math.max(m, (r.measures || []).length), 0);
@@ -206,16 +214,17 @@ export default {
       return cols;
     },
     /**
-     * 自动绑定的下一条目标行：表格顺序第一条「OK 且未绑定」的记录。
-     * 标签只为 OK 记录生成（NG 不打码），扫码顺序即 OK 记录顺序；
+     * 自动绑定的下一条目标行：表格（仅 OK 记录）中第一条未绑定行。
+     * 标签只为 OK 记录生成（NG 不打码），扫码顺序即表格顺序；
      * 绑定错了在列表删除后该行自动回到待绑定队头，扫码即自动补绑。
+     * index 为 OK 记录中的位置，仅作展示序号（隐藏 NG 后仍连续）；
+     * 绑定标识 recordKey 另用全量记录下标（见 rowKey），两者解耦。
      */
     nextBindRow () {
-      for (let i = 0; i < this.records.length; i++) {
-        const r = this.records[i];
-        if (r.judge !== 'OK') continue;
-        if (this.rowBinding(r)) continue;
-        return { record: r, index: i };
+      for (let i = 0; i < this.okRecords.length; i++) {
+        if (!this.rowBinding(this.okRecords[i])) {
+          return { record: this.okRecords[i], index: i };
+        }
       }
       return null;
     }
@@ -430,7 +439,9 @@ export default {
     },
     /**
      * 行标识（绑定 recordKey）：序号优先（人可读、检测数据追加行后仍稳定），
-     * 空序号回退行下标。前缀为数据源标识（文件路径），同一文件重开页面绑定标记不丢。
+     * 空序号回退全量记录行下标（设计 D4：判定分布变化时仍稳定）。
+     * 注意与展示序号解耦：表格序号按 OK 记录位置连续编排，标识不用展示序号。
+     * 前缀为数据源标识（文件路径），同一文件重开页面绑定标记不丢。
      */
     rowKey (index, record) {
       const seq = record && record.seq;
@@ -491,12 +502,12 @@ export default {
           sourceKey: this.sourceKey,
           sourceName: this.sourceName,
           record: target.record,
-          recordKey: this.rowKey(target.index, target.record),
+          recordKey: this.rowKey(this.records.indexOf(target.record), target.record),
           // 设备标识：行级值（表格自带设备列）优先，整表手动标识兜底，均无则空串
           machine: target.record.machine || this.machineLabel.trim(),
           boundAt: this.nowStr()
         });
-        this.$message.success('已绑定 ' + this.codePreview(c) + ' → #' + (target.record.seq || target.index + 1));
+        this.$message.success('已绑定 ' + this.codePreview(c) + ' → #' + (target.index + 1));
         // 串行链上等刷新完成，下一码计算 nextBindRow 时看到的才是最新绑定状态
         await this.refreshBindings();
         this.loadBindingList();

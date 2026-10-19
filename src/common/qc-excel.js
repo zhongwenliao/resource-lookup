@@ -55,7 +55,8 @@ export function detectJudgeCol (rows) {
 /**
  * 以判定列为锚点识别其余列：
  *   时间列 —— 判定列左侧，Date 类型占比 > 50%（取最靠近判定列的命中者）
- *   序号列 —— 判定列左侧（跳过时间列），数值且递增比例 > 80%
+ *   序号列 —— 判定列左侧（跳过时间列），数值且递增比例 > 80%；
+ *             单行数据递增无法验证，回退按表头关键词精确匹配识别
  *   测量列 —— 判定列右侧，数值占比 > 80%（全部收集）
  * @param {Array<Array>} rows 原始二维数组
  * @param {number} judgeCol 判定列索引
@@ -110,6 +111,25 @@ export function detectOtherCols (rows, judgeCol) {
     if (nums > recRows.length * 0.5 && pairs > 0 && inc / pairs > 0.8) {
       seqCol = c;
       break;
+    }
+  }
+
+  // 单行数据无法用「递增」验证序号列（至少两行才有递增对，pairs 恒为 0）：
+  // 回退按表头关键词精确匹配识别。这样设备逐行追加场景下（1 行 → 多行）
+  // 序号列识别结果保持同一列，绑定标识（seq 优先）不会因识别翻转而丢行标记
+  if (seqCol < 0 && recRows.length < 2) {
+    const seqHeaderKeys = ['序号', 'no', 'no.', 'seq', 'index', '#'];
+    for (let c = judgeCol - 1; c >= 0; c--) {
+      if (c === timeCol) continue;
+      for (let r = 0; r < rows.length && r < 5; r++) {
+        const v = rows[r][c];
+        const s = v === null || v === undefined ? '' : String(v).trim().toLowerCase();
+        if (s && seqHeaderKeys.indexOf(s) >= 0) {
+          seqCol = c;
+          break;
+        }
+      }
+      if (seqCol >= 0) break;
     }
   }
 
@@ -230,8 +250,9 @@ export function buildRecords (rows, mapping) {
 export function parseQcExcel (buf, name) {
   const rows = readSheetRows(buf);
   const hit = detectJudgeCol(rows);
-  // 有效判定值不足 3 个则认为不是检测设备导出的数据（与生成页判定一致）
-  if (!hit || hit.count < 3) {
+  // 完全无 OK/NG 命中才认为不是检测设备导出的数据（与生成页 autoDetect 同一门槛）：
+  // 不设最低个数限制，设备刚开工时文件可能只有 1 行数据（仅 1 个判定值），也要能识别
+  if (!hit) {
     throw new Error('未找到判定列（OK/NG），请确认这是检测设备导出的数据');
   }
   const others = detectOtherCols(rows, hit.col);

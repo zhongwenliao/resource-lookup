@@ -22,7 +22,7 @@
         <mxCell id="detect" value="自动识别列：判定列（OK/NG 占比最多）&lt;br&gt;← 左侧找时间列、序号列&lt;br&gt;→ 右侧收集测量列" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
           <mxGeometry x="160" y="290" width="260" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="judge_ok" value="找到判定列且&lt;br&gt;有效值 ≥ 3？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
+        <mxCell id="judge_ok" value="找到判定列且&lt;br&gt;存在 OK/NG 值？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
           <mxGeometry x="180" y="390" width="220" height="70" as="geometry" />
         </mxCell>
         <mxCell id="err1" value="提示：未找到判定列&lt;br&gt;请确认为检测设备导出数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#8E0000;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="lane1">
