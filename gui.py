@@ -31,6 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 import dapan
+import daily
 import duanxian
 from screener import (MIN_BARS, base_filter, eval_one, fetch_universe,
                       fetch_universe_tencent, sizing)
@@ -40,6 +41,7 @@ from zuanqian import (check_signal, compute_indicators, ema_series, enable_ansi,
                       fetch_kline, find_box, load_config,
                       resolve_targets, run_backtest, scan_symbol, summarize,
                       watchlist)
+import value
 
 # 与 zuanqian.py / screener.py 默认参数保持一致（界面可覆盖部分）
 DEFAULTS = dict(days=600, capital=1_000_000, risk=1.0, commission=0.0003,
@@ -276,6 +278,21 @@ def api_dapan_sync():
             buf.write(f"同步失败: {type(e).__name__}: {e}")
     out = ANSI_RE.sub("", buf.getvalue()).strip()
     return {"output": out or "没有需要同步的内容"}
+
+
+def api_value(q):
+    """价值投资分析（value.py：估值硬模型 + 安全边际）。"""
+    token = (q.get("symbol") or [""])[0].strip()
+    if not token:
+        raise ValueError("缺少标的参数 symbol（6 位代码或名称）")
+    res = value.analyze(token)
+    return {"report": res["report"], "name": res["name"], "price": res["price"]}
+
+
+def api_daily():
+    """每日分析报告（daily.py：大盘+持仓+候选股+执行价位+条件单，写入 reports/）。"""
+    text, csv_path = daily.build_report()
+    return {"report": text, "csv": csv_path.name if csv_path else ""}
 
 
 # ------------------------------------------------- 全市场选股（整合 screener.py）
@@ -524,6 +541,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(api_dapan())
             elif u.path == "/api/dapan/sync":
                 self._json(api_dapan_sync())
+            elif u.path == "/api/value":
+                self._json(api_value(q))
+            elif u.path == "/api/daily":
+                self._json(api_daily())
             elif u.path == "/api/screener":
                 self._json(api_screener_start(q))
             elif u.path == "/api/screener/progress":
@@ -710,6 +731,8 @@ tbody tr:hover{background:#151c25}
         <button id="btn-q-refresh" class="small">立即刷新</button>
         <button id="btn-sync" class="small" title="15:00 后把当日收盘记录追加到 src/*.md（幂等，可重复执行）">收盘同步</button>
         <button id="btn-dapan-sync" class="small" title="把指数收盘记录补齐/追加到 src/大盘/*.md（幂等，可重复执行）">大盘同步</button>
+        <button id="btn-value" class="small" title="对输入框第一个标的做价值投资分析（估值模型+安全边际，value.py）">价值分析</button>
+        <button id="btn-daily" class="small" title="生成每日分析报告：大盘+持仓+候选股+执行价位+条件单（写入 reports/，daily.py）">每日报告</button>
       </div>
     </div>
     <div id="dapan-body" class="empty">大盘指数载入中…</div>
@@ -1493,6 +1516,32 @@ $("#btn-dapan-sync").onclick=async()=>{
       '<div class="sync-out">'+esc(j.output||"没有需要同步的内容")+"</div></div>";
     toast("大盘同步已执行");
   }catch(e){ toast("大盘同步失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+};
+
+/* ---------------- 价值分析（value.py）与每日报告（daily.py） ---------------- */
+$("#btn-value").onclick=async()=>{
+  const sym=$("#codes").value.split(",")[0].trim();
+  if(!sym){ toast("请先在输入框填写标的（6 位代码或名称）",true); return; }
+  const btn=$("#btn-value"); busy(btn,true,"分析中…");
+  try{
+    const j=await api("api/value?symbol="+encodeURIComponent(sym));
+    $("#sync-out").innerHTML='<div class="card"><h3>价值分析：'+esc(j.name||"")+
+      '（现价 '+esc(j.price)+"）</h3>"+
+      '<pre style="white-space:pre-wrap;font-size:13px;line-height:1.6">'+esc(j.report||"")+"</pre></div>";
+    toast("价值分析完成");
+  }catch(e){ toast("价值分析失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+};
+$("#btn-daily").onclick=async()=>{
+  const btn=$("#btn-daily"); busy(btn,true,"生成中…");
+  try{
+    const j=await api("api/daily");
+    $("#sync-out").innerHTML='<div class="card"><h3>每日分析报告'+
+      (j.csv?'（条件单清单：reports/'+esc(j.csv)+"）":"（今日无候选股，无条件单）")+
+      '</h3><pre style="white-space:pre-wrap;font-size:13px;line-height:1.6">'+esc(j.report||"")+"</pre></div>";
+    toast("每日报告已生成");
+  }catch(e){ toast("每日报告生成失败: "+e.message,true); }
   finally{ busy(btn,false); }
 };
 """
