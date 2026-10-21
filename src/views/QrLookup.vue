@@ -262,12 +262,16 @@ export default {
         this.$message.warning('请先输入或扫描二维码内容');
         return;
       }
+      // 查询令牌：扫码枪连续扫码会并发多个查询，仅令牌最新的结果可写状态，
+      // 防止慢返回的旧查询覆盖新结果（界面码值与绑定记录对不上）
+      const seq = this._querySeq = (this._querySeq || 0) + 1;
       let binding = null;
       try {
         binding = await findBindingByCode(text);
       } catch (e) {
         binding = null;
       }
+      if (seq !== this._querySeq) return; // 已有更新的查询在跑，丢弃本次过期结果
       if (binding) {
         this.customComponent = '';
         this.relatedHits = null;
@@ -276,6 +280,7 @@ export default {
         return;
       }
       const parsed = parseQrContent(text);
+      if (seq !== this._querySeq) return;
       if (parsed.mode === 'unknown') {
         // 无法识别：展示原因并保留原始输入（输入框内容不动）
         this.result = { mode: 'unknown', error: parsed.error, cached: false };
@@ -314,10 +319,15 @@ export default {
     async fetchRelated (d) {
       const code = d.code || (d.prefix + (d.stageSegment || d.stage.code) + d.color.code + d.supplier + d.raw + d.anode +
         d.year + d.month + d.day + d.serial);
+      // 回查令牌：连续扫码时仅最新一次回查可写结果，旧回查慢返回直接丢弃
+      const seq = this._relatedSeq = (this._relatedSeq || 0) + 1;
       this.relatedLoading = true;
       try {
-        this.relatedHits = await findByRuleCode(code);
+        const hits = await findByRuleCode(code);
+        if (seq !== this._relatedSeq) return;
+        this.relatedHits = hits;
       } catch (e) {
+        if (seq !== this._relatedSeq) return;
         this.relatedHits = null;
       }
       this.relatedLoading = false;
