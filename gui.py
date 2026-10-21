@@ -30,6 +30,7 @@ from contextlib import redirect_stdout
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+import dapan
 import duanxian
 from screener import (MIN_BARS, base_filter, eval_one, fetch_universe,
                       fetch_universe_tencent, sizing)
@@ -253,6 +254,24 @@ def api_sync():
     with SYNC_LOCK, redirect_stdout(buf):
         try:
             sync_daily_entries(load_config())
+        except Exception as e:  # 单只失败在函数内部已跳过，这里兜底整体异常
+            buf.write(f"同步失败: {type(e).__name__}: {e}")
+    out = ANSI_RE.sub("", buf.getvalue()).strip()
+    return {"output": out or "没有需要同步的内容"}
+
+
+def api_dapan():
+    """五大指数最新状态（dapan.collect_rows，复盘先看大盘）。"""
+    rows, asof = dapan.collect_rows()
+    return {"asof": asof, "rows": rows}
+
+
+def api_dapan_sync():
+    """把指数收盘记录补齐/追加到 src/大盘/*.md（dapan.py 逻辑，幂等）。"""
+    buf = io.StringIO()
+    with SYNC_LOCK, redirect_stdout(buf):
+        try:
+            dapan.sync_all()
         except Exception as e:  # 单只失败在函数内部已跳过，这里兜底整体异常
             buf.write(f"同步失败: {type(e).__name__}: {e}")
     out = ANSI_RE.sub("", buf.getvalue()).strip()
@@ -501,6 +520,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(api_quotes(q))
             elif u.path == "/api/sync":
                 self._json(api_sync())
+            elif u.path == "/api/dapan":
+                self._json(api_dapan())
+            elif u.path == "/api/dapan/sync":
+                self._json(api_dapan_sync())
             elif u.path == "/api/screener":
                 self._json(api_screener_start(q))
             elif u.path == "/api/screener/progress":
@@ -686,8 +709,10 @@ tbody tr:hover{background:#151c25}
         </label>
         <button id="btn-q-refresh" class="small">立即刷新</button>
         <button id="btn-sync" class="small" title="15:00 后把当日收盘记录追加到 src/*.md（幂等，可重复执行）">收盘同步</button>
+        <button id="btn-dapan-sync" class="small" title="把指数收盘记录补齐/追加到 src/大盘/*.md（幂等，可重复执行）">大盘同步</button>
       </div>
     </div>
+    <div id="dapan-body" class="empty">大盘指数载入中…</div>
     <div id="quote-body" class="empty">载入自选股行情…</div>
     <div id="quote-detail"></div>
     <div id="sync-out" style="margin-top:14px"></div>
@@ -788,7 +813,7 @@ function switchTab(name){
   $("#pane-quote").hidden = name!=="quote";
   $("#pane-screen").hidden = name!=="screen";
   $("#pane-dx").hidden = name!=="dx";
-  if(name==="quote") loadHoldings(true);
+  if(name==="quote"){ loadHoldings(true); loadDapan(); }
 }
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 
@@ -1326,7 +1351,7 @@ function renderQuoteDetail(items){
   }).join("");
 }
 $("#btn-quote").onclick=runQuote;
-$("#btn-q-refresh").onclick=()=>loadHoldings();
+$("#btn-q-refresh").onclick=()=>{ loadHoldings(); loadDapan(); };
 $("#q-interval").onchange=setQuoteInterval;
 $("#btn-sync").onclick=async()=>{
   const btn=$("#btn-sync"); busy(btn,true,"同步中…");
@@ -1433,6 +1458,43 @@ function renderScreen(res){
 }
 $("#btn-screen").onclick=startScreen;
 $("#btn-scsv").onclick=()=>exportCsv(screenRows,screenMode==="预备箱体"?"预备箱体.csv":"选股信号.csv");
+
+/* ---------------- 大盘指数（dapan.py，复盘先看大盘） ---------------- */
+async function loadDapan(){
+  const body=$("#dapan-body");
+  try{
+    const j=await api("api/dapan");
+    if(!j.rows||!j.rows.length){ body.className="empty"; body.textContent="暂无指数数据"; return; }
+    let h='<div class="card"><div class="table-wrap"><table><thead><tr>'+
+      "<th>指数</th><th class='num'>收盘</th><th class='num'>涨跌</th>"+
+      "<th class='num'>ma5</th><th class='num'>ma13</th><th class='num'>ma60</th>"+
+      "<th class='num'>MACD柱</th><th>量能</th></tr></thead><tbody>";
+    for(const r of j.rows){
+      if(r["状态"]){ h+='<tr><td>'+esc(r["名称"])+'</td><td colspan="7" style="color:var(--dim)">'+esc(r["状态"])+"</td></tr>"; continue; }
+      h+="<tr><td><b>"+esc(r["名称"])+"</b></td>"+
+        '<td class="num">'+fmt(r["收盘"])+"</td>"+
+        '<td class="num '+cls(r["涨跌%"])+'">'+pctS(r["涨跌%"])+"</td>"+
+        '<td class="num">'+fmt(r["ma5"])+"</td>"+
+        '<td class="num">'+fmt(r["ma13"])+"</td>"+
+        '<td class="num">'+fmt(r["ma60"])+"</td>"+
+        '<td class="num '+cls(r["macd柱"])+'">'+fmt(r["macd柱"])+"</td>"+
+        "<td>"+esc(r["量能"])+"</td></tr>";
+    }
+    h+="</tbody></table></div><div style='color:var(--dim);font-size:12px;margin-top:6px'>数据截至 "+esc(j.asof||"—")+
+       "（今日未收盘时为上一交易日）；15:00 后点「大盘同步」把当日记录追加到 src/大盘/*.md</div></div>";
+    body.className=""; body.innerHTML=h;
+  }catch(e){ body.className="empty"; body.textContent="大盘指数载入失败: "+e.message; }
+}
+$("#btn-dapan-sync").onclick=async()=>{
+  const btn=$("#btn-dapan-sync"); busy(btn,true,"同步中…");
+  try{
+    const j=await api("api/dapan/sync");
+    $("#sync-out").innerHTML='<div class="card"><h3>大盘同步结果（追加到 src/大盘/*.md，已有记录自动跳过）</h3>'+
+      '<div class="sync-out">'+esc(j.output||"没有需要同步的内容")+"</div></div>";
+    toast("大盘同步已执行");
+  }catch(e){ toast("大盘同步失败: "+e.message,true); }
+  finally{ busy(btn,false); }
+};
 """
 
 
