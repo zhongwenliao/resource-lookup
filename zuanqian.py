@@ -33,10 +33,14 @@ import argparse
 import csv
 import json
 import os
+import ssl
 import sys
 import urllib.request
 from datetime import datetime
 from pathlib import Path
+
+# 与 stock.py 等模块一致：跳过 SSL 证书校验（部分系统 Python 缺证书链会导致全部请求失败）
+ssl._create_default_https_context = ssl._create_unverified_context
 
 ROOT = Path(__file__).resolve().parent
 SRC_DIR = ROOT / "src"
@@ -109,6 +113,7 @@ def load_config():
 def fetch_kline(symbol, count):
     """腾讯日K（前复权），返回 [{date, open, close, high, low, vol}, ...]"""
     data = None
+    last_err = None
     for tpl in KLINE_URLS:
         req = urllib.request.Request(tpl.format(symbol, min(count, 800)),
                                      headers={"User-Agent": "Mozilla/5.0"})
@@ -116,10 +121,11 @@ def fetch_kline(symbol, count):
             with urllib.request.urlopen(req, timeout=15) as resp:
                 data = json.loads(resp.read().decode("utf-8", errors="replace"))
             break
-        except (OSError, ValueError):
+        except (OSError, ValueError) as e:
+            last_err = e
             continue
     if data is None:
-        raise OSError(f"K线接口不可用: {symbol}")
+        raise OSError(f"K线接口不可用: {symbol}（{type(last_err).__name__}: {last_err}）")
     node = (data.get("data") or {}).get(symbol) or {}
     rows = node.get("qfqday") or node.get("day") or []
     bars = []
