@@ -54,7 +54,8 @@ module.exports = {
          * Source Maps
          */
 
-        productionSourceMap: true,
+        // 离线桌面应用无需线上排错 sourcemap：关闭可减小包体并避免源码随包分发
+        productionSourceMap: false,
         // https://webpack.js.org/configuration/devtool/#production
         devtool: '#source-map',
 

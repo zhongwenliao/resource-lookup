@@ -60,9 +60,9 @@
         <span v-else class="no-next">合格记录已全部绑定</span>
       </p>
 
-      <el-table :data="okRecords" size="mini" border class="record-table" :row-key="tableRowKey">
+      <el-table :data="pagedRecords" size="mini" border class="record-table" :row-key="tableRowKey">
         <el-table-column label="序号" width="70">
-          <template slot-scope="s"><span class="txt-ok">#{{ s.$index + 1 }}</span></template>
+          <template slot-scope="s"><span class="txt-ok">#{{ (bindPage - 1) * bindPageSize + s.$index + 1 }}</span></template>
         </el-table-column>
         <el-table-column prop="time" label="检测时间" width="160"></el-table-column>
         <el-table-column prop="judge" label="判定" width="60">
@@ -84,6 +84,10 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination v-if="okRecords.length > bindPageSize" class="bind-pager"
+        layout="prev, pager, next, jumper" small
+        :current-page.sync="bindPage" :page-size="bindPageSize"
+        :total="okRecords.length"></el-pagination>
     </demo-block>
 
     <!-- ==================== 区块 3：本机绑定记录 ==================== -->
@@ -150,6 +154,9 @@ import {
 
 // 表格测量列最多展示列数（避免表格过宽）
 const MEASURE_PREVIEW_COLS = 3;
+// 绑定表格每页行数：检测设备持续导出时 OK 记录可达数千行，
+// 全量渲染 DOM 会拖慢首屏与每次扫码后的重渲染，分页只渲染当前页
+const BIND_PAGE_SIZE = 100;
 // 本机绑定列表最多展示条数
 const BINDING_LIST_MAX = 50;
 // 实时监听轮询间隔（ms）：stat 只探测 mtime，变化才重读全文件，避免大体积 IPC 空转
@@ -189,7 +196,11 @@ export default {
 
       /* ---- 本机绑定列表 ---- */
       bindingList: [], // 最近绑定（倒序，最多 50 条）
-      bindingListLoading: false
+      bindingListLoading: false,
+
+      /* ---- 绑定表格分页 ---- */
+      bindPage: 1, // 当前页（从 1 起）
+      bindPageSize: BIND_PAGE_SIZE // 每页行数（模板需要，故挂 data）
     };
   },
   computed: {
@@ -205,6 +216,11 @@ export default {
      */
     okRecords () {
       return this.records.filter(r => r.judge === 'OK');
+    },
+    /** 当前页展示的 OK 记录切片（全量渲染数千行 DOM 会卡顿，见 BIND_PAGE_SIZE） */
+    pagedRecords () {
+      const start = (this.bindPage - 1) * this.bindPageSize;
+      return this.okRecords.slice(start, start + this.bindPageSize);
     },
     /**
      * 绑定索引表：recordKey → 绑定对象。
@@ -276,7 +292,12 @@ export default {
 
     /** 选择数据源文件（系统对话框）：记住路径并立即读取，随后进入实时监听 */
     async pickFile () {
-      const r = await window.electronAPI.pickExcelFile();
+      let r = null;
+      try {
+        r = await window.electronAPI.pickExcelFile();
+      } catch (e) {
+        r = { ok: false, error: '打开文件选择框失败：' + (e && e.message) };
+      }
       if (!r || !r.ok) {
         if (r && r.canceled) return; // 用户取消属正常操作，不打扰
         this.$message.error((r && r.error) || '选择文件失败');
@@ -291,6 +312,7 @@ export default {
       this.sourceName = this.baseName(path);
       this.lastMtime = 0; // 归零强制下一次读取（换文件后旧 mtime 无意义）
       this.sourceErr = '';
+      this.bindPage = 1; // 换数据源回到第一页（旧页码对新数据无意义）
       try {
         localStorage.setItem(SOURCE_PATH_KEY, path);
       } catch (e) { /* 存储不可用：仅本次会话记忆路径，不影响功能 */ }
@@ -324,6 +346,9 @@ export default {
         }
         this.lastMtime = r.mtimeMs;
         this.applyParsed(r.data, this.sourceName);
+      } catch (e) {
+        // IPC 通道异常：手动刷新给出提示，轮询路径静默等下一轮重试
+        if (manual) this.$message.warning('读取失败：' + (e && e.message));
       } finally {
         this.reading = false;
       }
@@ -397,6 +422,9 @@ export default {
       }
       this.records = Object.freeze(parsed.records);
       this.stats = parsed.stats;
+      // 实时刷新后记录数可能变少（文件被截断/更换）：当前页越界时收敛到最后一页
+      const maxPage = Math.max(1, Math.ceil(this.okRecords.length / this.bindPageSize));
+      if (this.bindPage > maxPage) this.bindPage = maxPage;
       this.lastRefreshAt = this.nowStr();
       this.machineCol = parsed.machineCol >= 0 ? parsed.machineCol : -1;
       this.machineColName = this.machineCol >= 0 ? this.headCellName(parsed.rows, this.machineCol) : '';
@@ -533,6 +561,7 @@ export default {
         this.$message.success('已绑定 ' + this.codePreview(c) + ' → #' + (target.index + 1));
         // 串行链上等刷新完成，下一码计算 nextBindRow 时看到的才是最新绑定状态
         await this.refreshBindings();
+        this.followNextPage(); // 当前页全部绑完自动翻下一页，连续扫码不中断
         this.loadBindingList();
       } catch (e) {
         this.$message.warning('绑定失败：' + ((e && e.message) || '未知原因'));
@@ -545,6 +574,7 @@ export default {
         await deleteBinding(binding.id);
         this.$message.success('已解绑 ' + this.codePreview(binding.code));
         this.refreshBindings();
+        this.revealRow(binding.recordKey); // 跳到被解绑行所在页，方便立即重扫
         this.loadBindingList();
       } catch (e) {
         this.$message.warning('解绑失败：' + ((e && e.message) || '未知原因'));
@@ -571,6 +601,31 @@ export default {
         this.bindingList = [];
       }
       this.bindingListLoading = false;
+    },
+    /**
+     * 绑定成功后的分页跟随：当前页已无未绑定行且还有后续页时自动翻页，
+     * 连续扫码作业不必手动翻页找下一目标行（页内仍有未绑定行则留在当前页）。
+     */
+    followNextPage () {
+      const start = (this.bindPage - 1) * this.bindPageSize;
+      const end = Math.min(this.bindPage * this.bindPageSize, this.okRecords.length);
+      for (let i = start; i < end; i++) {
+        if (!this.rowBinding(this.okRecords[i])) return;
+      }
+      if (end < this.okRecords.length) this.bindPage++;
+    },
+    /**
+     * 跳到指定 recordKey 行所在页：解绑后该行回到待绑定队头，
+     * 自动翻过去让用户看到目标行，便于立即重扫。
+     */
+    revealRow (recordKey) {
+      if (!recordKey) return;
+      for (let i = 0; i < this.okRecords.length; i++) {
+        if (this.rowKey(this.okRecords[i]) === recordKey) {
+          this.bindPage = Math.floor(i / this.bindPageSize) + 1;
+          return;
+        }
+      }
     },
 
     /* ==================== 展示辅助 ==================== */
@@ -733,6 +788,12 @@ export default {
     padding: 0;
     color: #cf1322;
   }
+}
+
+// 绑定表格分页器：右对齐，与表格留出间距
+.bind-pager {
+  margin-top: 12px;
+  text-align: right;
 }
 
 /* ==================== 绑定列表区 ==================== */

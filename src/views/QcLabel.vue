@@ -239,10 +239,6 @@ const RECEIPT_SPECS = {
   'receipt38': { w: 38, qr: 8, gap: 1 } // 38mm 窄卷纸：一行 4 个 8mm 码
 };
 
-// 浏览器模式（npm run dev，无 Electron 主进程）下的默认模板路径：
-// 无法探测本机路径，回退到开发机上的模板原位置；安装包/Electron 环境用内置模板，不经过此常量
-const DEFAULT_BTW_PATH = 'E:\\xwechat_files\\wxid_qwxn8c1tnfo422_9f87\\msg\\file\\2026-09\\歌尔260701-1中框 锖色.btw';
-
 export default {
   name: 'QcLabel',
   components: { DemoPage, DemoBlock },
@@ -326,11 +322,11 @@ export default {
       window.electronAPI.listBtwTemplates().then(list => {
         this.bundledBtw = list || [];
         if (!this.btwPath && this.bundledBtw.length) this.btwPath = this.bundledBtw[0].path;
+      }).catch(() => {
+        // 主进程枚举模板失败（如 dist 未构建）：不阻断页面，用户可手动填写模板路径
       });
-    } else if (!this.btwPath) {
-      // 浏览器模式（npm run dev）：无主进程，回退到开发机上的模板路径
-      this.btwPath = DEFAULT_BTW_PATH;
     }
+    // 浏览器模式（npm run dev）：无主进程，模板路径留空由用户手动填写
   },
   computed: {
     /** 合格记录（仅 OK 参与二维码生成） */
@@ -804,7 +800,13 @@ export default {
         this.parseErr = '直接打印仅在安装包版本可用；当前浏览器模式请用「导出 BTXML 文件」';
         return;
       }
-      const res = await window.electronAPI.printBtxml(r.xml);
+      let res = null;
+      try {
+        res = await window.electronAPI.printBtxml(r.xml);
+      } catch (e) {
+        // IPC 通道异常（主进程 reject）时同样落到错误提示，避免静默失败
+        res = { ok: false, error: '调起打印失败：' + (e && e.message) };
+      }
       if (res && res.ok) {
         if (this.$message) this.$message.success('已调起 BarTender 打印（' + r.count + ' 个标签）');
       } else {

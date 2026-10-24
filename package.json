@@ -19,7 +19,7 @@
     "qrcode": "^1.5.4",
     "vue": "^2.6.14",
     "vue-router": "^3.0.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -87,7 +87,8 @@
     "files": [
       "electron/**/*",
       "dist/**/*",
-      "!node_modules/**/*"
+      "!node_modules/**/*",
+      "!electron/keygen.js"
     ],
     "asarUnpack": [
       "dist/static/**/*.btw"
