@@ -30,6 +30,10 @@ import jsQR from 'jsqr';
 
 // 摄像头抽帧识别间隔（ms）
 const SCAN_INTERVAL_MS = 200;
+// 抽帧识别的最大边长（px）：摄像头原始帧常为 1080p，jsQR 耗时与像素数成正比，
+// 全帧识别 CPU 高占用会与页面渲染叠加造成连续扫码卡顿；等比降采样后
+// 正常取景距离下（码占画面 ≥ 1/4）每模块仍有充足像素，识别率无损
+const SCAN_MAX_EDGE = 800;
 // 连续模式识别成功后的冷却期（ms）：留给操作员移开已绑实物，避免连续帧重复触发
 const SCAN_COOLDOWN_MS = 1000;
 // 连续模式同码抑制窗口（ms）：同一实物仍在取景框内时不重复上报；超窗后同码可再触发（支持删绑后重扫）
@@ -106,10 +110,14 @@ export default {
       this._scanTimer = setInterval(() => {
         const video = this.$refs.scanVideo;
         if (!video || video.readyState < 2 || !video.videoWidth) return;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        // 等比降采样后识别：canvas 尺寸仅在变化时设置（重复赋值会重置位图白费一次清屏）
+        const scale = Math.min(1, SCAN_MAX_EDGE / Math.max(video.videoWidth, video.videoHeight));
+        const w = Math.round(video.videoWidth * scale);
+        const h = Math.round(video.videoHeight * scale);
+        if (canvas.width !== w) canvas.width = w;
+        if (canvas.height !== h) canvas.height = h;
+        ctx.drawImage(video, 0, 0, w, h);
+        const img = ctx.getImageData(0, 0, w, h);
         let code = null;
         try {
           code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });

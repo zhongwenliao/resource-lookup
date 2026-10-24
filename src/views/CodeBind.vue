@@ -60,7 +60,7 @@
         <span v-else class="no-next">合格记录已全部绑定</span>
       </p>
 
-      <el-table :data="okRecords" size="mini" border class="record-table">
+      <el-table :data="okRecords" size="mini" border class="record-table" :row-key="tableRowKey">
         <el-table-column label="序号" width="70">
           <template slot-scope="s"><span class="txt-ok">#{{ s.$index + 1 }}</span></template>
         </el-table-column>
@@ -175,7 +175,7 @@ export default {
       sourceErr: '', // 数据源文件访问错误（被移动/删除等），空串表示正常
 
       /* ---- 解析结果 ---- */
-      records: [], // 记录：{ seq, time, judge, measures, machine?, ruleCode? }
+      records: [], // 记录：{ seq, time, judge, measures, machine?, ruleCode?, _keySuffix }（冻结只读）
       stats: null, // 统计：{ total, ok, ng }
       parseErr: '', // 解析错误提示，空串表示无错误
       machineCol: -1, // 表格自带设备/机台列索引（-1 未识别，用整表设备标识兜底）
@@ -206,6 +206,21 @@ export default {
     okRecords () {
       return this.records.filter(r => r.judge === 'OK');
     },
+    /**
+     * 绑定索引表：recordKey → 绑定对象。
+     * bindings 变化时 O(M) 重建一次，行绑定匹配（模板每行、nextBindRow）
+     * 全部走 O(1) 查表，替代原先每行遍历绑定数组的 O(行数×绑定数) 开销——
+     * 绑定数到几百条后这是扫码页越用越卡的主因。
+     * 同 recordKey 历史脏数据保留先出现的一条（与原线性遍历语义一致）。
+     */
+    bindingMap () {
+      const map = {};
+      for (let i = 0; i < this.bindings.length; i++) {
+        const b = this.bindings[i];
+        if (b && b.recordKey && map[b.recordKey] === undefined) map[b.recordKey] = b;
+      }
+      return map;
+    },
     /** 表格展示的测量列（截断） */
     measurePreviewCols () {
       const max = this.records.reduce((m, r) => Math.max(m, (r.measures || []).length), 0);
@@ -218,7 +233,7 @@ export default {
      * 标签只为 OK 记录生成（NG 不打码），扫码顺序即表格顺序；
      * 绑定错了在列表删除后该行自动回到待绑定队头，扫码即自动补绑。
      * index 为 OK 记录中的位置，仅作展示序号（隐藏 NG 后仍连续）；
-     * 绑定标识 recordKey 另用全量记录下标（见 rowKey），两者解耦。
+     * 绑定标识 recordKey 用解析时预计算的行后缀（见 rowKey），两者解耦。
      */
     nextBindRow () {
       for (let i = 0; i < this.okRecords.length; i++) {
@@ -371,7 +386,16 @@ export default {
         return;
       }
       this.parseErr = '';
-      this.records = parsed.records;
+      // 预计算行标识后缀（seq 优先、空序号回退全量下标，与保存端/历史数据 recordKey 规则一致）：
+      // 行绑定匹配从「indexOf 全表扫描 + 遍历绑定数组」的 O(行数×绑定数) 降为 O(1) 查表
+      for (let i = 0; i < parsed.records.length; i++) {
+        const r = parsed.records[i];
+        r._keySuffix = (r.seq !== '' && r.seq !== undefined) ? 'seq:' + r.seq : 'idx:' + i;
+        // 冻结记录对象：记录只读展示、从不单条修改（刷新即整体替换），
+        // 冻结后 Vue observe 直接跳过（measures 子数组也随之免于深度监听）
+        Object.freeze(r);
+      }
+      this.records = Object.freeze(parsed.records);
       this.stats = parsed.stats;
       this.lastRefreshAt = this.nowStr();
       this.machineCol = parsed.machineCol >= 0 ? parsed.machineCol : -1;
@@ -438,23 +462,22 @@ export default {
       this.autoBind(code);
     },
     /**
-     * 行标识（绑定 recordKey）：序号优先（人可读、检测数据追加行后仍稳定），
-     * 空序号回退全量记录行下标（设计 D4：判定分布变化时仍稳定）。
+     * 行标识（绑定 recordKey）：数据源前缀 + 解析时预计算的行后缀
+     * （applyParsed 生成：序号优先、空序号回退全量记录下标，追加行后仍稳定）。
      * 注意与展示序号解耦：表格序号按 OK 记录位置连续编排，标识不用展示序号。
      * 前缀为数据源标识（文件路径），同一文件重开页面绑定标记不丢。
      */
-    rowKey (index, record) {
-      const seq = record && record.seq;
-      return this.sourceKey + ':' + (seq !== '' && seq !== undefined ? 'seq:' + seq : 'idx:' + index);
+    rowKey (record) {
+      return this.sourceKey + ':' + (record && record._keySuffix);
     },
-    /** 行的当前绑定（无返回 null）；按 recordKey 在当前数据源绑定数组中匹配 */
+    /** 行的当前绑定（无返回 null）：按 recordKey 查 bindingMap 索引，O(1) */
     rowBinding (row) {
-      if (!this.sourceKey) return null;
-      const key = this.rowKey(this.records.indexOf(row), row);
-      for (let i = 0; i < this.bindings.length; i++) {
-        if (this.bindings[i].recordKey === key) return this.bindings[i];
-      }
-      return null;
+      if (!this.sourceKey || !row) return null;
+      return this.bindingMap[this.rowKey(row)] || null;
+    },
+    /** 表格行复用 key（Element UI row-key）：用预计算行后缀，实时刷新时同标识行组件可复用，避免整表重建 */
+    tableRowKey (row) {
+      return row && row._keySuffix;
     },
     /**
      * 自动绑定入口（摄像头连续扫码/扫码枪/手动输入共用）：串行排队执行。
@@ -502,7 +525,7 @@ export default {
           sourceKey: this.sourceKey,
           sourceName: this.sourceName,
           record: target.record,
-          recordKey: this.rowKey(this.records.indexOf(target.record), target.record),
+          recordKey: this.rowKey(target.record),
           // 设备标识：行级值（表格自带设备列）优先，整表手动标识兜底，均无则空串
           machine: target.record.machine || this.machineLabel.trim(),
           boundAt: this.nowStr()
