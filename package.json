@@ -1,6 +1,6 @@
 {
   "name": "qc-label-generator",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "质检二维码标签生成器：检测设备导出 Excel → 合格品一物一码二维码标签打印",
   "author": "深圳市进欣网络科技有限公司",
   "private": true,
