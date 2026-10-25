@@ -3,13 +3,15 @@
 """A股实时行情查询工具（数据源：腾讯财经公开接口，仅用标准库，零第三方依赖）
 
 用法:
-  python stock.py                   查询 src/ 全部自选股现价与持仓盈亏
+  python stock.py                   查询 src/ 自选股与 src/高股息/ 观察池现价
   python stock.py -w 5              自选股行情每 5 秒自动刷新
   python stock.py 600030 300750     按代码查询（自动识别沪/深/北交易所）
   python stock.py 中信证券 万华化学  按名称查询（stocks.json 优先，腾讯搜索兜底）
 
 说明:
   - 自选股名单取自 src/*.md 文件名，成本取自标题「目前成本（xx.xx）」
+  - src/高股息/*.md 为高股息观察池（文件名即名称，标题无成本行），
+    行情单独成表展示、不计盈亏，收盘后同样追加当日收盘记录
   - 股票名称与代码的映射保存在 stocks.json，可自行增删；未收录的名称会自动
     通过腾讯搜索接口匹配，并把结果写回 stocks.json
   - 接口返回的是最近一次行情快照；收盘后/休市期间显示最后成交数据
@@ -30,6 +32,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SRC_DIR = ROOT / "src"
+WATCH_DIR = SRC_DIR / "高股息"   # 高股息观察池（子目录，不参与持仓盈亏）
 CONFIG_FILE = ROOT / "stocks.json"
 
 QUOTE_API = "https://qt.gtimg.cn/q={}"
@@ -50,6 +53,9 @@ COST_RE = re.compile(r"成本\s*[（(]\s*([\d.]+)")
 ENTRY_RE = re.compile(
     r"^(\d+)\.\s*(\d+)月(\d+)日：收(红|绿)线（([\d.]+)）,"
     r"ma5\(([\d.]+)\),ma13\(([\d.]+)\),ma60\(([\d.]+)\)\s*$")
+
+# guxi.py 写入的建仓体检记录（与收盘记录并存，序号互不影响）
+CHECK_RE = re.compile(r"^体检\s*(\d+)月(\d+)日：")
 BEIJING_TZ = timezone(timedelta(hours=8))
 VOL_UP, VOL_DOWN = 1.104, 0.908  # 量能放大/缩小判定阈值（较昨日成交量比值）
 
@@ -206,12 +212,12 @@ def resolve_symbol(token, config):
     return None
 
 
-def load_holdings(config):
-    """从 src/*.md 读取自选股：文件名为股票名，标题里带成本。"""
-    holdings = []
-    if not SRC_DIR.is_dir():
-        return holdings
-    for md in sorted(SRC_DIR.glob("*.md")):
+def _load_md_entries(directory, config):
+    """从目录下 *.md 读取条目：文件名为名称，标题可带成本（观察文件无成本）。"""
+    entries = []
+    if not directory.is_dir():
+        return entries
+    for md in sorted(directory.glob("*.md")):
         name = md.stem
         cost = None
         try:
@@ -229,8 +235,18 @@ def load_holdings(config):
                 symbol, canonical = hit
                 config[canonical] = symbol[2:]
                 save_config(config)
-        holdings.append({"name": name, "symbol": symbol, "cost": cost})
-    return holdings
+        entries.append({"name": name, "symbol": symbol, "cost": cost})
+    return entries
+
+
+def load_holdings(config):
+    """从 src/*.md 读取自选股：文件名为股票名，标题里带成本。"""
+    return _load_md_entries(SRC_DIR, config)
+
+
+def load_watchlist(config):
+    """从 src/高股息/*.md 读取高股息观察池：仅观察，标题无成本行。"""
+    return _load_md_entries(WATCH_DIR, config)
 
 
 # ---------------- 当日收盘数据同步（追加到 src/*.md） ----------------
@@ -331,8 +347,24 @@ def _vol_desc(vol, prev_vol):
     return "量能与昨日基本持平"
 
 
+def _strip_check_blocks(lines):
+    """剔除 guxi.py 写入的体检结论块（头行 + 缩进子项），用于识别标准收盘记录。"""
+    out, in_block = [], False
+    for ln in lines:
+        if CHECK_RE.match(ln):
+            in_block = True
+            continue
+        if in_block:
+            if ln.startswith(" ") or not ln.strip():
+                continue
+            in_block = False
+        out.append(ln)
+    return out
+
+
 def sync_daily_entries(config):
-    """15:00 后运行时，把当日收盘记录追加到 src/*.md（已有当日记录则跳过）。
+    """15:00 后运行时，把当日收盘记录追加到 src/*.md 与 src/高股息/*.md
+    （已有当日记录则跳过）。
 
     口径默认不复权（以文件最后一条记录自动校验，不符时改用前复权），
     MACD柱=2×(DIF-DEA)、量能按较昨日成交量比值描述；价格小数位沿用
@@ -344,7 +376,10 @@ def sync_daily_entries(config):
         return
     today_cn = f"{now.month}月{now.day}日"
     today_iso = now.strftime("%Y-%m-%d")
-    for md in sorted(SRC_DIR.glob("*.md")):
+    md_files = sorted(SRC_DIR.glob("*.md"))
+    if WATCH_DIR.is_dir():
+        md_files += sorted(WATCH_DIR.glob("*.md"))
+    for md in md_files:
         name = md.stem
         symbol = guess_symbol(config[name]) if name in config else None
         if not symbol:
@@ -358,7 +393,8 @@ def sync_daily_entries(config):
                 if m:
                     last = m
             if last is None:
-                body = [ln for ln in text.splitlines()[1:] if ln.strip()]
+                body = [ln for ln in _strip_check_blocks(text.splitlines())[1:]
+                        if ln.strip()]
                 if body:
                     print(DIM + f"  - {name}: 未识别到标准记录格式，跳过" + RESET)
                     continue
@@ -448,20 +484,15 @@ def fmt_time(ts):
     return ts or "-"
 
 
-def render_holdings(config):
-    holdings = load_holdings(config)
-    if not holdings:
-        print(f"未在 {SRC_DIR} 找到自选股（*.md）")
-        return
-    quotes = fetch_quotes([h["symbol"] for h in holdings if h["symbol"]])
-
+def _render_quote_rows(entries, quotes):
+    """打印一张行情表：表头 + 现价/成本/盈亏各行，附未匹配提示。"""
     header = ("名称", "代码", "现价", "成本", "盈亏", "涨跌", "换手", "成交额", "行情时间")
     widths = [10, 9, 8, 8, 9, 9, 7, 9, 15]
     print(BOLD + " ".join(pad(h, w) for h, w in zip(header, widths)) + RESET)
 
     unresolved = []
     no_quote = []
-    for h in holdings:
+    for h in entries:
         if not h["symbol"]:
             unresolved.append(h["name"])
             continue
@@ -490,6 +521,20 @@ def render_holdings(config):
         print(DIM + f"  ? {name}: 暂无行情数据" + RESET)
     for name in unresolved:
         print(DIM + f"  ? {name}: 未匹配到代码，可在 stocks.json 中手动补充" + RESET)
+
+
+def render_holdings(config):
+    holdings = load_holdings(config)
+    watchlist = load_watchlist(config)
+    if not holdings and not watchlist:
+        print(f"未在 {SRC_DIR} 找到自选股（*.md）")
+        return
+    quotes = fetch_quotes([h["symbol"] for h in holdings + watchlist if h["symbol"]])
+    _render_quote_rows(holdings, quotes)
+    if watchlist:
+        print()
+        print(BOLD + "高股息观察池（src/高股息/，未建仓）" + RESET)
+        _render_quote_rows(watchlist, quotes)
 
 
 def render_detail(symbols):
