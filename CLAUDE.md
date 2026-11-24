@@ -1,4 +1,4 @@
-# AI 开发规范 — 质检二维码标签生成器
+# AI 开发规范 — 华源湘条码追溯系统
 
 > **本文件是本项目唯一的 AI 规范内容源**，随仓库分发。
 > `.codebuddy/rules/`、`AGENTS.md` 等入口文件均为指向本文件的薄引用。
@@ -124,7 +124,7 @@ if (window.electronAPI && window.electronAPI.printBtxml) {
 ```bash
 npm run dev            # 浏览器调试（localhost:8080，无 Electron 能力）
 npm run electron:dev   # Electron 窗口运行（需先 build 或同时起 dev）
-npm run electron:build # 打 NSIS 安装包 → release/质检二维码标签生成器-Setup-x.x.x.exe
+npm run electron:build # 打 NSIS 安装包 → release/华源湘条码追溯系统-Setup-x.x.x.exe
 ```
 
 ---

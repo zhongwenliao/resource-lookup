@@ -48,6 +48,46 @@ export const normalizeColor = c => {
   return COLOR_CODE_MAP[k] || COLOR_CODE_MAP[k.toUpperCase()] || k;
 };
 
+/* ==================== 产品PVD码校验（码对绑定） ==================== */
+
+// 产品本体打标的唯一 PVD 码：纯数字且不少于 4 位（下限过滤扫码枪误触与流水尾号）。
+// 码对绑定页与溯源查询页共用同一判定，避免「哪一段才算 PVD 码」两端不一致
+export const isDigitCode = s => /^\d{4,}$/.test(String(s || '').trim());
+
+/* ==================== 聚合二维码内容格式（多码聚合，生成端与解析端共用） ==================== */
+
+// 聚合码内容头标识行：多行内容中凭首行判定是否为聚合码（华源湘 HuayuanXiang 缩写 + AGG）。
+// 内容格式：首行 AGG_HEADER，其后每行一个油墨追溯码（2码）——通用扫码器即可读出全部成员，
+// 不依赖本软件也能核对；解析端按此行与普通多行明文区分
+export const AGG_HEADER = 'HYX-AGG';
+
+/**
+ * 构建聚合码内容（生成端）：标识行 + 成员油墨追溯码逐行拼接。
+ * @param {string[]} codes 成员油墨追溯码数组（调用方保证去重且非空）
+ * @returns {string} 多行二维码内容
+ */
+export function buildAggContent (codes) {
+  return AGG_HEADER + '\n' + (codes || []).join('\n');
+}
+
+/**
+ * 解析聚合码内容（解析端）：首行必须等于标识行，其余行为成员码。
+ * 成员按原文保留（前向兼容非数字成员）并去重去空行；首行不符返回 null
+ * （交由 parseQrContent 继续按其他模式识别，不在这里吞错）。
+ * @param {string} text 二维码原文（多行）
+ * @returns {{ codes: string[] } | null} 成员数组；非聚合码内容返回 null
+ */
+export function parseAggContent (text) {
+  const lines = String(text || '').split(/\r?\n/).map(l => l.trim());
+  if (!lines.length || lines[0] !== AGG_HEADER) return null;
+  const codes = [];
+  for (let i = 1; i < lines.length; i++) {
+    const c = lines[i];
+    if (c && codes.indexOf(c) === -1) codes.push(c);
+  }
+  return { codes };
+}
+
 /* ==================== 规则码拆段（解析端） ==================== */
 
 // 内置组件词表：规则码前缀（项目+组件直接拼接，无法无损拆分）按词表从尾部匹配拆分

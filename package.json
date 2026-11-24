@@ -1,7 +1,7 @@
 {
   "name": "qc-label-generator",
-  "version": "1.2.0",
-  "description": "质检二维码标签生成器：检测设备导出 Excel → 合格品一物一码二维码标签打印",
+  "version": "1.3.0",
+  "description": "华源湘条码追溯系统：质检标签生成/扫码绑定/码对绑定/汇总二维码/关联溯源查询",
   "author": "深圳市进欣网络科技有限公司",
   "private": true,
   "main": "electron/main.js",
@@ -76,7 +76,7 @@
   },
   "build": {
     "appId": "com.qclabel.generator",
-    "productName": "质检二维码标签生成器",
+    "productName": "华源湘条码追溯系统",
     "electronDownload": {
       "mirror": "https://npmmirror.com/mirrors/electron/"
     },
@@ -109,8 +109,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "质检二维码标签生成器",
-      "artifactName": "质检二维码标签生成器-Setup-${version}.${ext}"
+      "shortcutName": "华源湘条码追溯系统",
+      "artifactName": "华源湘条码追溯系统-Setup-${version}.${ext}"
     }
   },
   "engines": {

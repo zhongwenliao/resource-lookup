@@ -1,4 +1,4 @@
-// Electron 主进程：质检二维码标签生成器
+// Electron 主进程：华源湘条码追溯系统
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -96,6 +96,31 @@ ipcMain.handle('excel:read-file', (event, p) => {
   }
 });
 
+// 导出 Excel 绑定清单：渲染层用 SheetJS 组好 xlsx 二进制（Uint8Array），
+// 主进程弹出系统保存对话框定名落盘（xlsx 为二进制格式，Buffer 直写不设编码；
+// 「显式 utf8」约定只针对文本文件——Windows 中文环境下无 BOM 文本会乱码）
+ipcMain.handle('excel:export-file', async (event, defaultName, payload) => {
+  if (typeof defaultName !== 'string' || !defaultName) {
+    return { ok: false, error: '导出文件名无效' };
+  }
+  if (!(payload instanceof Uint8Array) || !payload.length) {
+    return { ok: false, error: '导出内容为空' };
+  }
+  try {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const r = await dialog.showSaveDialog(win, {
+      title: '导出绑定清单',
+      defaultPath: defaultName,
+      filters: [{ name: 'Excel 表格', extensions: ['xlsx'] }]
+    });
+    if (r.canceled || !r.filePath) return { ok: false, canceled: true };
+    await fs.promises.writeFile(r.filePath, Buffer.from(payload));
+    return { ok: true, path: r.filePath };
+  } catch (e) {
+    return { ok: false, error: '导出失败：' + e.message };
+  }
+});
+
 // ==================== 授权(试用期 + 授权码)====================
 // 渲染进程启动时查询状态;过期后界面锁死,激活需输入与机器码绑定的授权码
 ipcMain.handle('license:get-state', () => license.getState());
@@ -138,7 +163,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 1280,
     height: 860,
-    title: '质检二维码标签生成器',
+    title: '华源湘条码追溯系统',
     icon: path.join(__dirname, '..', 'build-res', 'icon.ico'),
     webPreferences: {
       contextIsolation: true,

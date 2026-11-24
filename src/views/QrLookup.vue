@@ -1,12 +1,12 @@
 <template>
   <demo-page
     title="二维码溯源查询"
-    description="粘贴/输入或摄像头扫描二维码内容，自动识别两种内容模式（明文文本 / 编码规则）并解析展示质检溯源信息；编码规则码可回查本机批次中的关联检测记录。全程离线、不依赖服务器；查询成功的记录在本机离线留存，可随时回看。">
+    description="粘贴/输入或摄像头扫描二维码内容，关联检索本机数据库：聚合码（HYX-AGG 多行油墨追溯码）、扫码绑定记录、出货码展开、码对绑定（产品PVD码 ↔ 油墨追溯码）、聚合成员反查，再回退明文文本 / 编码规则解析。全程离线、不依赖服务器；查询成功的记录在本机离线留存，可随时回看。">
     <!-- ==================== 区块 1：码值输入 ==================== -->
     <demo-block :index="1" title="码值输入"
-      description="支持粘贴含换行的多行明文码与单行编码规则码；可调用摄像头实时扫码，也支持扫码枪（键盘模式）即扫即查。">
+      description="支持单行编码规则码、多行明文码与多行聚合码；可调用摄像头实时扫码，也支持扫码枪（键盘模式）即扫即查。">
       <el-input v-model="inputText" type="textarea" :rows="6" class="code-input"
-        placeholder="粘贴或输入二维码内容：明文（型号:/序号:/时间:/判定:/测量:）或编码规则码（如 KBWKV3-3QHYX691400001）"></el-input>
+        placeholder="粘贴或输入码内容：编码规则码（如 KBWKV3-3QHYX691400001）、明文（型号:/序号:/…）、聚合码（HYX-AGG + 油墨追溯码逐行）、出货码或产品PVD码/油墨追溯码"></el-input>
       <div class="action-bar">
         <el-button type="primary" size="small" @click="doQuery">查 询</el-button>
         <el-button type="success" size="small" plain icon="el-icon-camera" @click="openScan">摄像头扫码</el-button>
@@ -27,6 +27,104 @@
       <div v-if="result.mode === 'unknown'" class="unknown-box">
         <i class="el-icon-warning"></i> {{ result.error }}
       </div>
+
+      <!-- 聚合码命中（3码）：成员 2码 逐个关联码对成对展示（1↔2），并反查绑定的出货码 -->
+      <template v-else-if="result.mode === 'agg'">
+        <div class="agg-head">
+          <i class="el-icon-box"></i>
+          <b>{{ result.data.aggDoc ? result.data.aggDoc.title : '聚合码（未落库）' }}</b>
+          <span class="agg-sub">
+            共 {{ result.data.codes.length }} 对
+            <template v-if="result.data.aggDoc"> · 创建于 {{ result.data.aggDoc.createdAt }}</template>
+            <template v-else> · 外来聚合码，本机库中无对应记录</template>
+          </span>
+        </div>
+        <el-table :data="aggMembers" size="mini" border class="agg-table">
+          <el-table-column type="index" label="序号" width="70" align="center" />
+          <el-table-column label="油墨追溯码（2码）" min-width="180">
+            <template slot-scope="{ row }">{{ row.code }}</template>
+          </el-table-column>
+          <el-table-column label="产品PVD码（1码）" min-width="150">
+            <template slot-scope="{ row }">
+              <span v-if="row.pair" :title="row.pair.digitCode">{{ row.pair.digitCode }}</span>
+              <span v-else class="pair-none">未绑定产品PVD码</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属文档" width="180">
+            <template slot-scope="{ row }">{{ row.pair ? (row.pair.docName || '未分组') : '-' }}</template>
+          </el-table-column>
+        </el-table>
+        <template v-if="result.data.ships && result.data.ships.length">
+          <h3 class="sub-title">已绑出货码（{{ result.data.ships.length }}）</h3>
+          <div v-for="s in result.data.ships" :key="s.id" class="agg-item">
+            <i class="el-icon-truck"></i>
+            {{ s.shipmentCode }}
+            <span class="agg-sub">绑定于 {{ s.createdAt }}</span>
+          </div>
+        </template>
+        <p class="bind-source">
+          聚合码管理：
+          <router-link to="/agg" class="bind-manage-link">聚合二维码</router-link>
+        </p>
+      </template>
+
+      <!-- 出货码命中（4码）：展开被绑定的聚合码及箱内全部 1↔2 配对（套娃第 4 级） -->
+      <template v-else-if="result.mode === 'ship'">
+        <div class="agg-head">
+          <i class="el-icon-truck"></i>
+          <b>出货码 {{ result.data.ship.shipmentCode }}</b>
+          <span class="agg-sub">绑定于 {{ result.data.ship.createdAt }}</span>
+        </div>
+        <div class="agg-head">
+          <i class="el-icon-box"></i>
+          <b>{{ result.data.ship.aggTitle || (result.data.aggDoc && result.data.aggDoc.title) || '（未命名聚合）' }}</b>
+          <span class="agg-sub">共 {{ result.data.codes.length }} 对</span>
+        </div>
+        <el-table :data="aggMembers" size="mini" border class="agg-table">
+          <el-table-column type="index" label="序号" width="70" align="center" />
+          <el-table-column label="油墨追溯码（2码）" min-width="180">
+            <template slot-scope="{ row }">{{ row.code }}</template>
+          </el-table-column>
+          <el-table-column label="产品PVD码（1码）" min-width="150">
+            <template slot-scope="{ row }">
+              <span v-if="row.pair" :title="row.pair.digitCode">{{ row.pair.digitCode }}</span>
+              <span v-else class="pair-none">未绑定产品PVD码</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属文档" width="180">
+            <template slot-scope="{ row }">{{ row.pair ? (row.pair.docName || '未分组') : '-' }}</template>
+          </el-table-column>
+        </el-table>
+        <p class="bind-source">
+          出货绑定管理：
+          <router-link to="/ship" class="bind-manage-link">出货绑定</router-link>
+        </p>
+      </template>
+
+      <!-- 码对绑定命中：产品PVD码 ↔ 油墨追溯码 1:1 绑定（双向查询）+ 所在聚合码反查 -->
+      <template v-else-if="result.mode === 'pair'">
+        <template v-if="result.data.pair">
+          <div class="record-grid">
+            <div class="record-cell"><span class="k">产品PVD码</span><span class="v">{{ result.data.pair.digitCode || '-' }}</span></div>
+            <div class="record-cell"><span class="k">油墨追溯码</span><span class="v">{{ result.data.pair.labelCode || '-' }}</span></div>
+            <div class="record-cell"><span class="k">所属文档</span><span class="v">{{ result.data.pair.docName || '未分组' }}</span></div>
+            <div class="record-cell"><span class="k">绑定时间</span><span class="v">{{ result.data.pair.createdAt || '-' }}</span></div>
+          </div>
+          <p class="bind-source">
+            本次扫描的是{{ result.data.role === 'label' ? '油墨追溯码（反向查到产品PVD码）' : '产品PVD码' }}；码对管理：
+            <router-link to="/pair" class="bind-manage-link">码对绑定</router-link>
+          </p>
+        </template>
+        <p v-else class="no-related">该产品PVD码未建立码对绑定</p>
+        <template v-if="result.data.aggs && result.data.aggs.length">
+          <h3 class="sub-title">所在聚合码（{{ result.data.aggs.length }}）</h3>
+          <div v-for="a in result.data.aggs" :key="a.id" class="agg-item">
+            <i class="el-icon-box"></i>
+            {{ a.title || '（未命名聚合）' }}
+            <span class="agg-sub">{{ a.codes.length }} 对 · 创建于 {{ a.createdAt }}</span>
+          </div>
+        </template>
+      </template>
 
       <!-- 扫码绑定命中：码值已与本机表格数据绑定，直接展示绑定记录（优先于模式解析） -->
       <template v-else-if="result.mode === 'binding'">
@@ -154,9 +252,13 @@
 /**
  * 二维码溯源查询页 —— 与标签生成页（QcLabel.vue）并列的路由页
  *
- * 数据流：输入/扫码码值 → 优先查本机扫码绑定库（code-bindings，命中直接展示绑定的表格记录）
- *         → 未绑定再 parseQrContent 识别模式（text/rule）→ 展示结构化溯源信息
- *         → 成功解析的记录写入 localStorage（qc-lookup-history，离线缓存，含解析结果）
+ * 数据流（四级套娃关联检索，先具体后宽泛）：
+ *   输入/扫码 → parseQrContent 先识别聚合码内容（多行 HYX-AGG，成员 2码 成对关联展示）
+ *   → 本机扫码绑定库（code-bindings，命中展示绑定的表格记录）
+ *   → 出货码库（shipment-codes，扫 4码 展开聚合码及箱内全部 1↔2 配对）
+ *   → 码对绑定库（pair-bindings，产品PVD码/油墨追溯码双向）+ 聚合成员反查（所在聚合码）
+ *   → parseQrContent 识别 text/rule 模式 → 展示结构化溯源信息
+ *   → 成功解析的记录写入 localStorage（qc-lookup-history，离线缓存，含解析结果）
  * 摄像头扫码走公共组件 ScanDialog（与绑定页共用）。全程纯前端、数据不出本机。
  */
 import DemoPage from '@/components/DemoPage';
@@ -164,8 +266,13 @@ import DemoBlock from '@/components/DemoBlock';
 import ScanDialog from '@/components/ScanDialog';
 import { createScannerGun } from '@/common/scanner-gun';
 import { parseQrContent } from '@/common/qr-parse';
-import { pad2 } from '@/common/qc-code-rules';
-import { findByRuleCode, findBindingByCode } from '@/common/qc-db';
+import { isDigitCode, pad2 } from '@/common/qc-code-rules';
+import {
+  findByRuleCode, findBindingByCode,
+  findPairByDigit, findPairByLabel, findPairsByAnyCodes,
+  findAggByContent, findAggsByCode,
+  findShipmentByCode, findShipmentsByAgg
+} from '@/common/qc-db';
 
 // 查询历史 localStorage 键与容量（设计 D6：最近 20 条，去重置顶）
 const HISTORY_KEY = 'qc-lookup-history';
@@ -208,6 +315,12 @@ export default {
     judgeClass () {
       const j = this.result && this.result.mode === 'binding' ? this.bindingRecord.judge : this.recordData.j;
       return j === 'OK' ? 'txt-ok' : (j === 'NG' ? 'txt-ng' : '');
+    },
+    /** 聚合码成员明细：成员码逐个成对关联码对绑定（未绑定的也列出并标注） */
+    aggMembers () {
+      const d = (this.result && this.result.data) || {};
+      const map = d.pairMap || {};
+      return (d.codes || []).map(code => ({ code: code, pair: map[code] || null }));
     },
     /** 编码规则逐段含义行 */
     ruleRows () {
@@ -252,9 +365,13 @@ export default {
     /* ==================== 查询与解析 ==================== */
 
     /**
-     * 触发查询：空输入提示不解析。优先查本机扫码绑定库（外部码/规则码都可能已绑定
-     * 表格数据，绑定命中直接展示绑定记录）；未绑定再走模式解析。
-     * 绑定库查询失败静默降级为解析流程（解析能力不受影响）。
+     * 触发查询（关联检索，先具体后宽泛）：空输入提示不解析。
+     * ① 聚合码内容（多行 HYX-AGG）→ 成员 2码 批量成对关联 + 出货去向反查；
+     * ② 本机扫码绑定库（外部码/规则码都可能已绑定表格数据，命中直接展示绑定记录）；
+     * ③ 出货码库（4码）→ 展开被绑定的聚合码及箱内全部 1↔2 配对；
+     * ④ 码对绑定库（产品PVD码/油墨追溯码双向）+ 聚合成员反查（所在聚合码）；
+     * ⑤ parseQrContent 模式解析（text/rule）。
+     * 库查询失败静默降级为下一步（解析能力不受影响）。
      */
     async doQuery () {
       const text = this.inputText.trim();
@@ -265,6 +382,37 @@ export default {
       // 查询令牌：扫码枪连续扫码会并发多个查询，仅令牌最新的结果可写状态，
       // 防止慢返回的旧查询覆盖新结果（界面码值与绑定记录对不上）
       const seq = this._querySeq = (this._querySeq || 0) + 1;
+      // 先做同步内容识别：聚合码是多行内容，绑定库只存单码，必须先分流
+      const parsed = parseQrContent(text);
+      if (seq !== this._querySeq) return;
+      if (parsed.mode === 'agg') {
+        let aggDoc = null;
+        let pairs = [];
+        let ships = [];
+        try {
+          // 原文精确回查落库记录（取标题/创建时间）；成员码（2码）批量成对关联 + 出货去向反查
+          aggDoc = await findAggByContent(text);
+          pairs = await findPairsByAnyCodes(parsed.data.codes);
+          ships = await findShipmentsByAgg(text);
+        } catch (e) {
+          aggDoc = null;
+          pairs = [];
+          ships = [];
+        }
+        if (seq !== this._querySeq) return;
+        const pairMap = {};
+        pairs.forEach(p => {
+          // 成员以 2码 为主（v7），兼容旧 1码 成员：两种键都登记，成员码直查命中
+          pairMap[p.labelCode] = p;
+          pairMap[p.digitCode] = p;
+        });
+        const data = { codes: parsed.data.codes, aggDoc: aggDoc, pairMap: pairMap, ships: ships };
+        this.customComponent = '';
+        this.relatedHits = null;
+        this.result = { mode: 'agg', data: data, cached: false };
+        this.upsertHistory(text, 'agg', data);
+        return;
+      }
       let binding = null;
       try {
         binding = await findBindingByCode(text);
@@ -279,8 +427,86 @@ export default {
         this.upsertHistory(text, 'binding', binding);
         return;
       }
-      const parsed = parseQrContent(text);
+      // 出货码命中（套娃第 4 级）：扫 4码 → 找到绑定的聚合码（3码）→ 展开箱内全部 1↔2 配对；
+      // 聚合码落库记录存在则补标题，外来内容也能按成员展开
+      let ship = null;
+      try {
+        ship = await findShipmentByCode(text);
+      } catch (e) {
+        ship = null;
+      }
       if (seq !== this._querySeq) return;
+      if (ship) {
+        let aggDoc = null;
+        let pairs = [];
+        try {
+          aggDoc = await findAggByContent(ship.aggContent);
+          pairs = await findPairsByAnyCodes(String(ship.aggContent || '').split('\n'));
+        } catch (e) {
+          aggDoc = null;
+          pairs = [];
+        }
+        if (seq !== this._querySeq) return;
+        const pairMap = {};
+        pairs.forEach(p => {
+          pairMap[p.labelCode] = p;
+          pairMap[p.digitCode] = p;
+        });
+        const codes = String(ship.aggContent || '').split('\n').filter(c => c.trim() && c.trim().toUpperCase() !== 'HYX-AGG');
+        const data = { ship: ship, aggDoc: aggDoc, codes: codes, pairMap: pairMap };
+        this.customComponent = '';
+        this.relatedHits = null;
+        this.result = { mode: 'ship', data: data, cached: false };
+        this.upsertHistory(text, 'ship', data);
+        return;
+      }
+      // 码对绑定（双向）：先按产品PVD码查（纯数字），再按油墨追溯码反向查；
+      // 命中任一方向都带上「该码所在的全部聚合码」一并展示（聚合成员为 2码，按油墨追溯码反查）
+      let pair = null;
+      try {
+        pair = await findPairByDigit(text);
+        if (!pair) pair = await findPairByLabel(text);
+      } catch (e) {
+        pair = null;
+      }
+      if (seq !== this._querySeq) return;
+      if (pair) {
+        let aggs = [];
+        try {
+          aggs = await findAggsByCode(pair.labelCode);
+        } catch (e) {
+          aggs = [];
+        }
+        if (seq !== this._querySeq) return;
+        const data = {
+          pair: pair,
+          role: String(text).toUpperCase() === String(pair.labelCode).toUpperCase() ? 'label' : 'digit',
+          aggs: aggs
+        };
+        this.customComponent = '';
+        this.relatedHits = null;
+        this.result = { mode: 'pair', data: data, cached: false };
+        this.upsertHistory(text, 'pair', data);
+        return;
+      }
+      // 未建码对绑定但出现在某些聚合码中的码：展示所在聚合（multiEntry 索引按原值命中）
+      if (isDigitCode(text)) {
+        let aggs = [];
+        try {
+          aggs = await findAggsByCode(text);
+        } catch (e) {
+          aggs = [];
+        }
+        if (seq !== this._querySeq) return;
+        if (aggs.length) {
+          const data = { pair: null, role: 'digit', aggs: aggs };
+          this.customComponent = '';
+          this.relatedHits = null;
+          this.result = { mode: 'pair', data: data, cached: false };
+          this.upsertHistory(text, 'pair', data);
+          return;
+        }
+      }
       if (parsed.mode === 'unknown') {
         // 无法识别：展示原因并保留原始输入（输入框内容不动）
         this.result = { mode: 'unknown', error: parsed.error, cached: false };
@@ -297,7 +523,8 @@ export default {
     /** 点击历史条目：优先直接展示缓存结果（无需重新解析），缓存缺失/损坏时回退重新解析 */
     openHistory (item) {
       this.inputText = item.text;
-      if ((item.mode === 'text' || item.mode === 'rule' || item.mode === 'binding') &&
+      if ((item.mode === 'text' || item.mode === 'rule' || item.mode === 'binding' ||
+        item.mode === 'pair' || item.mode === 'agg' || item.mode === 'ship') &&
         item.data && typeof item.data === 'object') {
         this.customComponent = '';
         this.relatedHits = null;
@@ -390,10 +617,28 @@ export default {
       return line.length > 46 ? line.slice(0, 46) + '…' : line;
     },
     historyModeLabel (mode) {
-      return { text: '明文文本', rule: '编码规则', binding: '扫码绑定', unknown: '无法识别' }[mode] || mode;
+      const map = {
+        text: '明文文本',
+        rule: '编码规则',
+        binding: '扫码绑定',
+        pair: '码对绑定',
+        agg: '聚合码',
+        ship: '出货码',
+        unknown: '无法识别'
+      };
+      return map[mode] || mode;
     },
     historyTagType (mode) {
-      return { text: '', rule: 'warning', binding: 'success', unknown: 'danger' }[mode] || 'info';
+      const map = {
+        text: '',
+        rule: 'warning',
+        binding: 'success',
+        pair: 'success',
+        agg: 'success',
+        ship: 'success',
+        unknown: 'danger'
+      };
+      return map[mode] || 'info';
     },
 
     /* ==================== 摄像头扫码（公共组件 ScanDialog） ==================== */
@@ -741,5 +986,56 @@ export default {
 
 .bind-manage-link {
   color: #409eff;
+}
+
+/* ==================== 聚合码与码对结果区 ==================== */
+.agg-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #333;
+
+  i {
+    margin-right: 6px;
+    color: #409eff;
+  }
+
+  .agg-sub {
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999;
+  }
+}
+
+.agg-table {
+  width: 100%;
+}
+
+.agg-item {
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #333;
+  background: #f0f5ff;
+  border: 1px solid #adc6ff;
+  border-radius: 6px;
+
+  i {
+    margin-right: 6px;
+    color: #409eff;
+  }
+
+  .agg-sub {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+.pair-none {
+  color: #bfbfbf;
 }
 </style>

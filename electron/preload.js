@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   pickExcelFile: () => ipcRenderer.invoke('excel:pick-file'),
   statExcelFile: (path) => ipcRenderer.invoke('excel:stat-file', path),
   readExcelFile: (path) => ipcRenderer.invoke('excel:read-file', path),
+  // 码对绑定页导出 Excel 清单：data 为渲染层组好的 xlsx 二进制（Uint8Array），主进程保存对话框定名写盘
+  exportExcelFile: (defaultName, data) => ipcRenderer.invoke('excel:export-file', defaultName, data),
   // 授权:查询试用期/激活状态;输入授权码激活(与机器码绑定)
   getLicenseState: () => ipcRenderer.invoke('license:get-state'),
   activateLicense: (code) => ipcRenderer.invoke('license:activate', code)

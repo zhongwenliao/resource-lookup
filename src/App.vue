@@ -1,10 +1,14 @@
 <template>
   <div id="app">
     <license-gate>
-      <!-- 顶部导航条：三个功能页并列切换 -->
+      <!-- 顶部导航条：品牌名 + 五个功能页并列切换 -->
       <nav class="top-nav">
+        <span class="brand"><i class="el-icon-place"></i> 华源湘条码追溯系统</span>
         <router-link to="/" exact class="nav-link">标签生成</router-link>
         <router-link to="/bind" class="nav-link">扫码绑定</router-link>
+        <router-link to="/pair" class="nav-link">码对绑定</router-link>
+        <router-link to="/agg" class="nav-link">聚合码</router-link>
+        <router-link to="/ship" class="nav-link">出货绑定</router-link>
         <router-link to="/lookup" class="nav-link">溯源查询</router-link>
       </nav>
       <router-view/>
@@ -43,6 +47,21 @@ html, body {
   background: #fff;
   border-bottom: 1px solid #e8e8e8;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.06);
+}
+
+/* 品牌名：与导航链接视觉区分（右侧留白隔开） */
+.brand {
+  margin-right: 20px;
+  padding-right: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a3a6b;
+  border-right: 1px solid #e8e8e8;
+
+  i {
+    margin-right: 4px;
+    color: #409eff;
+  }
 }
 
 .nav-link {

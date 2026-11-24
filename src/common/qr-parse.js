@@ -1,12 +1,13 @@
 /**
  * 二维码内容解析纯函数（溯源查询端）
  *
- * parseQrContent(text) 按先具体后宽泛的顺序识别两种内容模式：
+ * parseQrContent(text) 按先具体后宽泛的顺序识别三种内容模式：
  *   1. text 明文文本 —— 含「型号:」特征行 + 至少一个已知字段行
- *   2. rule 编码规则 —— 单行无空白且按 KBWK@@##*!%YMMDDXXXXX 拆段校验通过
+ *   2. agg 聚合码 —— 多行且首行为 HYX-AGG 标识行（每行一个油墨追溯码）
+ *   3. rule 编码规则 —— 单行无空白且按 KBWK@@##*!%YMMDDXXXXX 拆段校验通过
  * 返回 { mode, data } 或 { mode: 'unknown', error }。
  */
-import { splitRuleCode } from './qc-code-rules';
+import { splitRuleCode, parseAggContent } from './qc-code-rules';
 
 // 明文模式的字段行前缀（生成端早期明文码格式；生成端已收窄为仅编码规则模式，此处仅解析历史明文码）
 const TEXT_FIELD_PREFIXES = ['型号:', '序号:', '时间:', '判定:', '测量:'];
@@ -61,7 +62,15 @@ export function parseQrContent (text) {
     return { mode: 'unknown', error: '含「型号:」行但缺少其他字段行（序号/时间/判定/测量），不像生成端产出的明文码' };
   }
 
-  // ---- 2. 编码规则模式：单行、无空白、拆段校验通过 ----
+  // ---- 2. 聚合码模式：多行且首行为 HYX-AGG 标识行，其余行每行一个油墨追溯码 ----
+  if (lines.length > 1) {
+    const agg = parseAggContent(trimmed);
+    if (agg) {
+      return { mode: 'agg', data: agg };
+    }
+  }
+
+  // ---- 3. 编码规则模式：单行、无空白、拆段校验通过 ----
   if (lines.length === 1) {
     const rule = splitRuleCode(trimmed);
     if (rule) {
@@ -69,11 +78,11 @@ export function parseQrContent (text) {
     }
   }
 
-  // ---- 3. 无法识别 ----
+  // ---- 4. 无法识别 ----
   return {
     mode: 'unknown',
     error: lines.length > 1
-      ? '多行文本但无明文特征行（型号:/序号:/时间:/判定:/测量:），无法识别'
+      ? '多行文本但无明文特征行（型号:/序号:/时间:/判定:/测量:）且非聚合码格式，无法识别'
       : '无明文特征行、也不符合编码规则拆段校验，无法识别'
   };
 }
