@@ -24,6 +24,10 @@
  *     旧结构检测到后同事务内游标搬迁重建，不丢历史记录
  *   - 新增 `shipment-codes`：出货绑定 { id, shipmentCode, aggContent, aggTitle, createdAt }，
  *     4码出货码 ↔ 3码聚合码；shipmentCode 先清后写维持一箱一码，aggContent 索引反查聚合去向
+ * - v8 出货直绑（产品装箱场景）：新增 `ship-pairs`：
+ *   - `ship-pairs`：直绑 { id, digitCode, shipmentCode, docId, docName, createdAt }，
+ *     产品PVD码（1码）直接绑出货码（4码），不必先有油墨追溯码/聚合码；
+ *     一个 PVD 码同一时间只在一个箱（digitCode 先清后写，重绑即覆盖），一箱可装多个 PVD 码
  * - `importedAt` / `boundAt` / `createdAt` 须为可排序值（ISO 字符串或时间戳），历史列表按其倒序排列
  * - 所有接口返回 Promise：打开或读写失败时 reject(Error)，由调用方降级提示、不阻断解析
  */
@@ -36,7 +40,8 @@ const DB_NAME = 'qc-label-db';
 //     溯源回查由「遍历全部批次全部记录」降为按码索引精确命中，批次积累后不再变慢
 // v6：码对绑定（bind-docs / pair-bindings）与汇总二维码（agg-codes）三仓
 // v7：四级套娃绑定链——聚合成员改 codes（2码驱动）+ 出货码仓 shipment-codes（4码 ↔ 3码）
-const DB_VERSION = 7;
+// v8：出货直绑（产品装箱）——ship-pairs 仓（1码产品PVD码 ↔ 4码出货码，跳过油墨/聚合环节）
+const DB_VERSION = 8;
 const META_STORE = 'batch-meta'; // 批次摘要（不含 records，历史列表只读此仓）
 const RECORDS_STORE = 'batch-records'; // 批次记录明细（每批次一条 { batchId, records }）
 const RULECODE_STORE = 'rule-codes'; // 规则码倒排索引（溯源回查 O(log n) 命中）
@@ -45,6 +50,7 @@ const DOC_STORE = 'bind-docs'; // 绑定文档（码对/聚合的分组单位）
 const PAIR_STORE = 'pair-bindings'; // 产品PVD码 ↔ 油墨追溯码 1:1 绑定
 const AGG_STORE = 'agg-codes'; // 聚合二维码（内容 + 成员 2码 列表）
 const SHIP_STORE = 'shipment-codes'; // 出货绑定（4码出货码 ↔ 3码聚合码）
+const SHIP_PAIR_STORE = 'ship-pairs'; // 出货直绑（1码产品PVD码 ↔ 4码出货码，装箱场景）
 
 // 打开成功的数据库连接缓存（失败不缓存，下次调用自动重试）
 let dbPromise = null;
@@ -106,10 +112,13 @@ function openDb () {
           // v4：既有绑定仓库补 sourceKey 索引（v3 装机用户原地升级；旧绑定无该字段，索引自动跳过）
           tx.objectStore(BINDING_STORE).createIndex('sourceKey', 'sourceKey', { unique: false });
         }
-        // v6：码对绑定与汇总码三仓（索引均非唯一，唯一性/一致性由写入端先清后写维护）
+        // v6：码对绑定与聚合码三仓（索引均非唯一，唯一性/一致性由写入端先清后写维护）
         if (!db.objectStoreNames.contains(DOC_STORE)) {
           const store = db.createObjectStore(DOC_STORE, { keyPath: 'id', autoIncrement: true });
           store.createIndex('createdAt', 'createdAt', { unique: false });
+        } else if (!tx.objectStore(DOC_STORE).indexNames.contains('createdAt')) {
+          // 早期装机仓缺索引时原地补齐（缺字段的旧记录不入索引，非 unique 无冲突）
+          tx.objectStore(DOC_STORE).createIndex('createdAt', 'createdAt', { unique: false });
         }
         if (!db.objectStoreNames.contains(PAIR_STORE)) {
           const store = db.createObjectStore(PAIR_STORE, { keyPath: 'id', autoIncrement: true });
@@ -117,6 +126,14 @@ function openDb () {
           store.createIndex('labelCode', 'labelCode', { unique: false });
           store.createIndex('docId', 'docId', { unique: false });
           store.createIndex('createdAt', 'createdAt', { unique: false });
+        } else {
+          // 旧装机码对仓缺索引时逐个补齐——否则读取走 index() 直接抛 index not found
+          const store = tx.objectStore(PAIR_STORE);
+          const names = store.indexNames;
+          if (!names.contains('digitCode')) store.createIndex('digitCode', 'digitCode', { unique: false });
+          if (!names.contains('labelCode')) store.createIndex('labelCode', 'labelCode', { unique: false });
+          if (!names.contains('docId')) store.createIndex('docId', 'docId', { unique: false });
+          if (!names.contains('createdAt')) store.createIndex('createdAt', 'createdAt', { unique: false });
         }
         if (!db.objectStoreNames.contains(AGG_STORE)) {
           const store = db.createObjectStore(AGG_STORE, { keyPath: 'id', autoIncrement: true });
@@ -124,6 +141,12 @@ function openDb () {
           store.createIndex('codes', 'codes', { unique: false, multiEntry: true });
           store.createIndex('content', 'content', { unique: false });
           store.createIndex('createdAt', 'createdAt', { unique: false });
+        } else if (tx.objectStore(AGG_STORE).indexNames.contains('codes')) {
+          // 旧聚合仓结构正常（有 codes 索引）但缺辅助索引时补齐；
+          // 待迁移的 digitCodes 旧仓（无 codes 索引）不在此补，由下方搬迁重建覆盖
+          const store = tx.objectStore(AGG_STORE);
+          if (!store.indexNames.contains('content')) store.createIndex('content', 'content', { unique: false });
+          if (!store.indexNames.contains('createdAt')) store.createIndex('createdAt', 'createdAt', { unique: false });
         }
         // v7 聚合仓搬迁：digitCodes → codes 字段重命名（游标读完 → 删旧仓 → 重建 → 回写）
         if (legacyAggStore) {
@@ -157,6 +180,23 @@ function openDb () {
           store.createIndex('shipmentCode', 'shipmentCode', { unique: false });
           store.createIndex('aggContent', 'aggContent', { unique: false });
           store.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+        // v8：出货直绑仓（1码产品PVD码 ↔ 4码出货码，装箱场景；索引均非唯一，
+        // 一 PVD 一箱由 saveShipPair 先清后写维护，一箱多 PVD 不做出货码侧唯一限制）
+        if (!db.objectStoreNames.contains(SHIP_PAIR_STORE)) {
+          const store = db.createObjectStore(SHIP_PAIR_STORE, { keyPath: 'id', autoIncrement: true });
+          store.createIndex('digitCode', 'digitCode', { unique: false });
+          store.createIndex('shipmentCode', 'shipmentCode', { unique: false });
+          store.createIndex('docId', 'docId', { unique: false });
+          store.createIndex('createdAt', 'createdAt', { unique: false });
+        } else {
+          // 旧装机直绑仓缺索引时逐个补齐（防御性，与码对仓同策略）
+          const store = tx.objectStore(SHIP_PAIR_STORE);
+          const names = store.indexNames;
+          if (!names.contains('digitCode')) store.createIndex('digitCode', 'digitCode', { unique: false });
+          if (!names.contains('shipmentCode')) store.createIndex('shipmentCode', 'shipmentCode', { unique: false });
+          if (!names.contains('docId')) store.createIndex('docId', 'docId', { unique: false });
+          if (!names.contains('createdAt')) store.createIndex('createdAt', 'createdAt', { unique: false });
         }
         // v5 数据迁移：旧仓逐批拆写进摘要/明细/倒排索引三仓，读完后删除旧仓。
         // cursor 异步推进期间版本事务保持活跃；沿用旧自增 id，批次引用（currentBatchId）不断链
@@ -1147,4 +1187,100 @@ export function listShipments (limit) {
  */
 export function deleteShipment (id) {
   return withStore('readwrite', store => store.delete(id), SHIP_STORE).then(() => undefined);
+}
+
+/* ==================== 出货直绑（ship-pairs 仓库，v8 产品装箱场景） ==================== */
+
+/**
+ * 写入一条出货直绑（1码产品PVD码 ↔ 4码出货码，跳过油墨/聚合环节的装箱绑定）：
+ * 同 digitCode 旧绑定在同一事务内先删除再写入——一个 PVD 码同一时间只在一个箱，
+ * 重绑即覆盖；同一出货码可装多个 PVD 码，不做出货码侧唯一限制。
+ * @param {object} rec { digitCode, shipmentCode, docId, docName, createdAt }
+ * @returns {Promise<void>}
+ */
+export function saveShipPair (rec) {
+  const digit = String((rec && rec.digitCode) || '').trim();
+  const shipCode = String((rec && rec.shipmentCode) || '').trim();
+  if (!digit || !shipCode) {
+    return Promise.reject(new Error('出货直绑的产品PVD码与出货码均不能为空'));
+  }
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const record = {
+      digitCode: digit,
+      shipmentCode: shipCode,
+      docId: (rec && rec.docId) || null,
+      docName: String((rec && rec.docName) || ''),
+      createdAt: (rec && rec.createdAt) || new Date().toISOString()
+    };
+    const tx = db.transaction(SHIP_PAIR_STORE, 'readwrite');
+    const store = tx.objectStore(SHIP_PAIR_STORE);
+    const req = store.index('digitCode').openCursor(IDBKeyRange.only(digit));
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        cursor.delete(); // 重绑即覆盖：同 PVD 码旧直绑先删（同箱重复绑等价于无操作 + 重写）
+        cursor.continue();
+      } else {
+        store.put(record);
+      }
+    };
+    tx.oncomplete = () => resolve(undefined);
+    tx.onerror = () => reject(tx.error || new Error('保存出货直绑失败'));
+    tx.onabort = () => reject(tx.error || new Error('保存出货直绑已中止'));
+  }));
+}
+
+/**
+ * 按产品PVD码查出货直绑（扫 1码 → 这个产品装进了哪个箱）。
+ * @param {string} code 产品PVD码（纯数字）
+ * @returns {Promise<object|null>} 直绑记录；无绑定返回 null
+ */
+export function findShipPairByDigit (code) {
+  const target = String(code || '').trim();
+  if (!target) return Promise.resolve(null);
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(SHIP_PAIR_STORE, 'readonly');
+    const req = tx.objectStore(SHIP_PAIR_STORE).index('digitCode').get(target);
+    req.onsuccess = () => resolve(req.result || null);
+    tx.onerror = () => reject(tx.error || new Error('查询出货直绑失败'));
+    tx.onabort = () => reject(tx.error || new Error('查询出货直绑已中止'));
+  }));
+}
+
+/**
+ * 出货直绑列表（按创建时间倒序，码对绑定页直绑清单用）。
+ * @param {number} [limit] 最多返回条数，缺省 1000
+ * @returns {Promise<Array<object>>}
+ */
+export function listShipPairBindings (limit) {
+  const max = typeof limit === 'number' && limit > 0 ? limit : 1000;
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const out = [];
+    const tx = db.transaction(SHIP_PAIR_STORE, 'readonly');
+    const req = tx.objectStore(SHIP_PAIR_STORE).index('createdAt').openCursor(null, 'prev');
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        out.push(cursor.value);
+        if (out.length >= max) {
+          resolve(out.slice(0, max));
+          return;
+        }
+        cursor.continue();
+      } else {
+        resolve(out);
+      }
+    };
+    tx.onerror = () => reject(tx.error || new Error('读取出货直绑列表失败'));
+    tx.onabort = () => reject(tx.error || new Error('读取出货直绑列表已中止'));
+  }));
+}
+
+/**
+ * 删除一条出货直绑（仅删 1↔4 直绑关系，不影响码对/聚合/出货绑定）。
+ * @param {number} id 直绑 id
+ * @returns {Promise<void>}
+ */
+export function deleteShipPairBinding (id) {
+  return withStore('readwrite', store => store.delete(id), SHIP_PAIR_STORE).then(() => undefined);
 }
