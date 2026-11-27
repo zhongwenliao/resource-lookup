@@ -1,7 +1,7 @@
 <template>
   <demo-page
     title="扫码绑定"
-    description="选定检测数据表格（桌面版实时读取，检测数据更新后自动刷新，无需导入）后，逐个扫描实物二维码，按表格顺序自动绑定到未绑定的合格（OK）记录，无需手动点选与确认。外部码与本系统规则码均可绑定；绑定关系保存在本机，溯源查询页扫码时优先展示绑定数据。">
+    description="选定检测数据表格（桌面版实时读取，检测数据更新后自动刷新，无需导入）后，先输入物料编码（必填，未输入前扫码与绑定不可用），再逐个扫描实物二维码，按表格顺序自动绑定到未绑定的合格（OK）记录并归属当前物料编码，无需手动点选与确认。外部码与本系统规则码均可绑定；绑定关系（含物料编码）保存在本机，溯源查询页扫码时优先展示绑定数据。">
     <!-- ==================== 区块 1：数据源表格（实时读取） ==================== -->
     <demo-block :index="1" title="数据源表格（实时读取）"
       description="桌面版选择检测数据表格文件后实时读取（不导入本机批次库）：检测设备持续导出数据时自动刷新，与标签生成页共用同一套列识别逻辑。浏览器调试模式降级为上传快照。">
@@ -28,11 +28,16 @@
         </el-upload>
       </template>
       <!-- 检测设备标识：表格自带设备列时按行自动读取，否则整表手动指定（区分 1号机/2号机） -->
+      <!-- 物料编码必填门槛与设备标识同区：绑定前置输入集中在区块 1，扫码枪等不经过按钮的入口在方法内同样拦截 -->
       <div v-if="sourceKey" class="machine-bar">
         <span class="machine-tag">检测设备</span>
         <el-input v-model="machineLabel" size="small" class="machine-input"
           :placeholder="machineCol >= 0 ? '表格已识别设备列，按行自动读取（可留空）' : '如 1号机 / 2号机（区分多台检测设备）'"></el-input>
         <span v-if="machineCol >= 0" class="machine-auto">已按表头识别设备列「{{ machineColName }}」，逐行读取</span>
+        <span class="machine-tag material-tag"><span class="required-mark">*</span>物料编码</span>
+        <el-input v-model="materialNo" size="small" class="material-input" clearable
+          placeholder="必填：先输入物料编码，再开始扫码绑定"></el-input>
+        <span v-if="!hasMaterialNo" class="material-warn">未输入物料编码时扫码与绑定不可用</span>
       </div>
       <p v-if="sourceErr" class="err-tip">{{ sourceErr }}</p>
       <p v-if="parseErr" class="err-tip">{{ parseErr }}</p>
@@ -47,12 +52,13 @@
 
     <!-- ==================== 区块 2：扫码绑定 ==================== -->
     <demo-block v-if="okRecords.length" :index="2" title="扫码绑定"
-      description="扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录 → 扫下一个，全程无需点击。摄像头开启后连续扫码即连续绑定；扫码枪（键盘模式）页面任意位置即扫即绑。表格仅展示 OK 记录、序号连续编排，NG 无二维码、不参与绑定也不展示；同一码重复扫码自动跳过（重绑请先在下方绑定记录中删除）。">
+      description="先输入物料编码（必填，未输入前扫码与绑定不可用）→ 扫描一个码 → 自动绑定到表格中第一条未绑定的合格（OK）记录并归属当前物料编码 → 扫下一个。摄像头开启后连续扫码即连续绑定；扫码枪（键盘模式）页面任意位置即扫即绑。表格仅展示 OK 记录、序号连续编排，NG 无二维码、不参与绑定也不展示；换物料编码时重新输入即可，之后扫的码归属新物料编码。">
       <div class="pending-bar">
-        <el-button type="success" size="small" plain icon="el-icon-camera" @click="scanVisible = true">摄像头连续扫码</el-button>
+        <el-button type="success" size="small" plain icon="el-icon-camera"
+          :disabled="!hasMaterialNo" @click="scanVisible = true">摄像头连续扫码</el-button>
         <el-input v-model="manualCode" size="small" class="manual-input" placeholder="手动输入码值（回车直接绑定）"
           @keyup.enter.native="onManualEnter"></el-input>
-        <el-button size="small" @click="useManualCode">绑定</el-button>
+        <el-button size="small" :disabled="!hasMaterialNo" @click="useManualCode">绑定</el-button>
       </div>
       <p class="bind-tip">
         下一条扫码将绑定：
@@ -83,6 +89,11 @@
             <span v-else class="unbound">未绑定</span>
           </template>
         </el-table-column>
+        <el-table-column label="物料编码" min-width="120" show-overflow-tooltip>
+          <template slot-scope="s">
+            <span v-if="rowBinding(s.row)" class="material-cell">{{ rowBinding(s.row).materialNo || '-' }}</span>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination v-if="okRecords.length > bindPageSize" class="bind-pager"
         layout="prev, pager, next, jumper" small
@@ -96,6 +107,9 @@
       <el-table :data="bindingList" size="mini" border v-loading="bindingListLoading" class="binding-table">
         <el-table-column label="码值" min-width="200" show-overflow-tooltip>
           <template slot-scope="s"><span class="bound-code">{{ s.row.code }}</span></template>
+        </el-table-column>
+        <el-table-column label="物料编码" min-width="120" show-overflow-tooltip>
+          <template slot-scope="s"><span class="material-cell">{{ s.row.materialNo || '-' }}</span></template>
         </el-table-column>
         <el-table-column label="序号" width="70">
           <template slot-scope="s">#{{ (s.row.record && s.row.record.seq) || '-' }}</template>
@@ -133,9 +147,11 @@
  * 扫码绑定页 —— 把「已存在的二维码」与「检测数据表格行」建立绑定关系的路由页
  *
  * 数据流：选择数据源表格文件（桌面版经主进程 IPC 实时读取，不导入批次库；轮询
- *         mtime 感知检测设备持续导出，变化后自动重读刷新）→ 摄像头扫码（ScanDialog）
+ *         mtime 感知检测设备持续导出，变化后自动重读刷新）→ 输入物料编码（必填门槛，
+ *         未输入前摄像头/扫码枪/手动绑定全部拦截）→ 摄像头扫码（ScanDialog）
  *         / 扫码枪 / 手动输入得到码值 → 自动绑定到表格中第一条未绑定的合格（OK）
- *         记录（标签只为 OK 记录生成，扫码顺序即表格顺序）→ saveBinding 落
+ *         记录（标签只为 OK 记录生成，扫码顺序即表格顺序），绑定记录归属当前
+ *         物料编码（materialNo，随记录快照落库一起展示）→ saveBinding 落
  *         IndexedDB（一码一行）→ 溯源查询页扫码优先展示绑定记录。
  * 绑定存记录快照（非引用）：数据源文件删除/更换后绑定仍可独立查询。
  * 浏览器调试模式无 electronAPI，降级为上传快照（sourceKey 用 'upload:文件名'）。
@@ -189,6 +205,7 @@ export default {
       machineColName: '', // 设备列表头名（识别成功时展示，帮用户确认认对了列）
 
       /* ---- 绑定操作 ---- */
+      materialNo: '', // 物料编码（必填门槛）：不填时扫码/绑定全部不可用，扫到的码归属该编码；换料时重新输入
       scanVisible: false, // 摄像头扫码弹层
       manualCode: '', // 手动输入码值（扫码不可用降级入口，回车直接绑定）
       machineLabel: '', // 整表设备标识（手动指定，如「1号机」；按数据源记忆，行级设备值优先）
@@ -208,6 +225,13 @@ export default {
     hasExcelApi () {
       return !!(window.electronAPI && window.electronAPI.pickExcelFile &&
         window.electronAPI.readExcelFile && window.electronAPI.statExcelFile);
+    },
+    /**
+     * 物料编码已输入（去空白判定）：扫码/绑定入口的统一开关。
+     * 按钮走 :disabled，扫码枪走方法内拦截，两处共用此值避免口径漂移。
+     */
+    hasMaterialNo () {
+      return !!this.materialNo.trim();
     },
     /**
      * 表格展示记录：仅 OK 合格记录。NG 无二维码、不参与绑定，
@@ -473,6 +497,11 @@ export default {
     onScanCode (code) {
       // 扫码枪字符可能落入聚焦的输入框，清空避免其回车键二次触发手动绑定
       this.manualCode = '';
+      // 物料编码必填门槛：扫码枪监听是全局的、不经过按钮 disabled，必须在回调内再拦一次
+      if (!this.hasMaterialNo) {
+        this.$message.error('请先输入物料编码，再进行扫码绑定');
+        return;
+      }
       this.autoBind(code);
     },
     /** 输入框回车：空值静默忽略（扫码枪回车被全局监听接管后此处可能为空） */
@@ -485,6 +514,11 @@ export default {
       this.manualCode = '';
       if (!code) {
         this.$message.warning('请先输入码值');
+        return;
+      }
+      // 物料编码必填门槛：绑定按钮已 disabled，回车路径兜底拦截
+      if (!this.hasMaterialNo) {
+        this.$message.error('请先输入物料编码，再进行扫码绑定');
         return;
       }
       this.autoBind(code);
@@ -554,6 +588,8 @@ export default {
           sourceName: this.sourceName,
           record: target.record,
           recordKey: this.rowKey(target.record),
+          // 物料编码随绑定快照落库：绑定列表/绑定表格据此展示归属（doAutoBind 前入口已校验非空）
+          materialNo: this.materialNo.trim(),
           // 设备标识：行级值（表格自带设备列）优先，整表手动标识兜底，均无则空串
           machine: target.record.machine || this.machineLabel.trim(),
           boundAt: this.nowStr()
@@ -690,6 +726,7 @@ export default {
   margin-top: 10px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* 窄窗口下设备输入与物料编码换行排布，不挤压 */
   gap: 8px;
 
   .machine-tag {
@@ -742,6 +779,27 @@ export default {
 }
 
 /* ==================== 绑定操作区 ==================== */
+/* 物料编码必填输入：位于区块1设备行内（与检测设备同排），复用 machine-bar 的 flex 布局 */
+.material-tag {
+  font-weight: 700;
+  color: #333;
+}
+
+.required-mark {
+  color: #cf1322;
+  margin-right: 2px;
+}
+
+.material-input {
+  width: 220px;
+}
+
+.material-warn {
+  font-size: 12px;
+  color: #cf1322;
+  flex-shrink: 0;
+}
+
 .pending-bar {
   display: flex;
   align-items: center;
@@ -778,6 +836,11 @@ export default {
     color: #096dd9;
   }
 
+  .material-cell {
+    font-size: 12px;
+    color: #333;
+  }
+
   .unbound {
     font-size: 12px;
     color: #bbb;
@@ -805,6 +868,11 @@ export default {
     font-family: Consolas, 'Courier New', monospace;
     font-size: 12px;
     color: #096dd9;
+  }
+
+  .material-cell {
+    font-size: 12px;
+    color: #333;
   }
 
   .unbind-btn {

@@ -328,14 +328,15 @@ export function findByRuleCode (code) {
  * 写入一条扫码绑定（一码一行，双向唯一）：
  * 同码旧绑定与同 recordKey 旧绑定在同一事务内先删除再写入，保证
  * 「一个码只指向一条记录、一条记录只挂一个码」，重绑即覆盖。
- * @param {object} binding { code, sourceKey, sourceName, record, recordKey, boundAt }
+ * @param {object} binding { code, sourceKey, sourceName, record, recordKey, materialNo, machine, boundAt }
  *   record 为绑定行的记录快照（seq/time/judge/measures），数据源文件删除/更换后仍可独立展示；
+ *   materialNo 为绑定时的物料编码快照（绑定页扫码前必填输入，随记录一起展示；旧绑定无此字段展示为 '-'）；
  *   sourceKey 为数据源标识（桌面版实时读取模式为文件绝对路径，浏览器降级上传为 'upload:文件名'）；
  *   batchId/batchFileName 为旧批次模式遗留字段，仅历史绑定记录存在，查询端向后兼容展示
  * @returns {Promise<void>}
  */
 export function saveBinding (binding) {
-  const code = String(binding && binding.code || '').trim();
+  const code = String((binding && binding.code) || '').trim();
   if (!code) return Promise.reject(new Error('绑定码值不能为空'));
   return openDb().then(db => new Promise((resolve, reject) => {
     const tx = db.transaction(BINDING_STORE, 'readwrite');
